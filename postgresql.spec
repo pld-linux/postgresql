@@ -17,7 +17,7 @@
 %bcond_without	slony1			# disable Slony-I replication system
 
 %define		postgresql_version	7.4.6
-%define		postgresql_release	3
+%define		postgresql_release	4
 %define		slony1_version	1.0.5
 %define		slony1_release	1
 
