@@ -1,11 +1,12 @@
---- postgresql-7.4.6/configure.in.orig	2004-10-22 02:26:22.000000000 +0200
-+++ postgresql-7.4.6/configure.in	2004-10-23 10:53:26.446102128 +0200
+diff -Naur postgresql-7.4.7.orig/configure.in postgresql-7.4.7/configure.in
+--- postgresql-7.4.7.orig/configure.in	2005-02-10 12:48:09.683051872 +0100
++++ postgresql-7.4.7/configure.in	2005-02-10 12:47:17.457991288 +0100
 @@ -20,9 +20,7 @@
  dnl The GNU folks apparently haven't heard that some people don't use
  dnl Texinfo. Use this sorcery to use "docdir" instead of "infodir".
  m4_define([info], [doc])
 -m4_define([infodir], [docdir])
- AC_INIT([PostgreSQL], [7.4.6], [pgsql-bugs@postgresql.org])
+ AC_INIT([PostgreSQL], [7.4.7], [pgsql-bugs@postgresql.org])
 -m4_undefine([infodir])
  m4_undefine([info])
  AC_SUBST(docdir)
@@ -19,15 +20,17 @@
  
  AC_CANONICAL_HOST
  
---- postgresql-7.4/doc/Makefile.orig	2003-12-18 09:05:55.000000000 +0100
-+++ postgresql-7.4/doc/Makefile	2003-12-18 09:07:05.000000000 +0100
-@@ -25,9 +25,6 @@
+diff -Naur postgresql-7.4.7.orig/doc/Makefile postgresql-7.4.7/doc/Makefile
+--- postgresql-7.4.7.orig/doc/Makefile	2005-02-10 12:48:09.509078320 +0100
++++ postgresql-7.4.7/doc/Makefile	2005-02-10 12:47:09.336225984 +0100
+@@ -25,10 +25,6 @@
  
  .NOTPARALLEL:
  
 -ifneq ($(wildcard $(srcdir)/postgres.tar.gz),)
 -found_html := yes
 -endif
- 
+-
  ifneq ($(wildcard $(srcdir)/man.tar.gz),)
  # SCO OpenServer's man system is sufficiently different to not bother.
+ ifneq ($(PORTNAME), sco)
