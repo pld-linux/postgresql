@@ -168,33 +168,35 @@ PostgreSQL tourne sur Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD,
 et la plupart des Unix.
 
 %description -l pl
-System Zarz±dzania Baz± Danych PostgreSQL (dawniej znany jako Postgres,
-nastêpnie jako Postgres95).
+System Zarz±dzania Baz± Danych PostgreSQL (dawniej znany jako
+Postgres, nastêpnie jako Postgres95).
 
 PostgreSQL jest rozszerzeniem systemu zarz±dzania baz danych POSTGRES,
-prototypu DBMS nastêpnej generacji. Co prawda PostgreSQL odziedziczy³ model
-danych oraz bogaty zbiór ró¿nych typów danych, to jednak jêzyk zapytañ
-PostQuel zosta³ zast±piony rozszerzonym SQL-em. PostgreSQL jest wolnym
-oprogramowaniem i kody ¼ród³owe tego oprogramowania s± w pe³ni dostêpne. 
+prototypu DBMS nastêpnej generacji. Co prawda PostgreSQL odziedziczy³
+model danych oraz bogaty zbiór ró¿nych typów danych, to jednak jêzyk
+zapytañ PostQuel zosta³ zast±piony rozszerzonym SQL-em. PostgreSQL
+jest wolnym oprogramowaniem i kody ¼ród³owe tego oprogramowania s± w
+pe³ni dostêpne.
 
-System PostgreSQL jest tworzony przez zespó³ ludzi, którzy s± zapisani na
-listê dyskusyjn± dotycz±c± PostgreSQL-a. Obecnym koordynatorem jest  Marc
-G. Fournier (scrappy@postgreSQL.org).  Wymieniony wy¿ej zespó³ jest
-odpowiedzialny za aktualny i przysz³y rozwój systemu PostgreSQL.
+System PostgreSQL jest tworzony przez zespó³ ludzi, którzy s± zapisani
+na listê dyskusyjn± dotycz±c± PostgreSQL-a. Obecnym koordynatorem jest
+Marc G. Fournier (scrappy@postgreSQL.org). Wymieniony wy¿ej zespó³
+jest odpowiedzialny za aktualny i przysz³y rozwój systemu PostgreSQL.
 
-Autorami PostgreSQL-a 1.01 byli Andrew Yu oraz Jolly Chen. Wielu innych
-pomaga³o przenosz±c na ró¿ne platformy, testuj±c, analizuj±c i rozszerzaj±c
-kod. Oryginalny kod Postgres-a, na podstawie którego PostgreSQL powsta³,
-by³ wysi³kiem wielu absolwentów, studentów oraz zespo³u programistów,
-którzy pracowali pod kierunkiem profesora Michaela Stonebrakera z
-Uniwersytetu Kalifornii w Berkeley.
+Autorami PostgreSQL-a 1.01 byli Andrew Yu oraz Jolly Chen. Wielu
+innych pomaga³o przenosz±c na ró¿ne platformy, testuj±c, analizuj±c i
+rozszerzaj±c kod. Oryginalny kod Postgres-a, na podstawie którego
+PostgreSQL powsta³, by³ wysi³kiem wielu absolwentów, studentów oraz
+zespo³u programistów, którzy pracowali pod kierunkiem profesora
+Michaela Stonebrakera z Uniwersytetu Kalifornii w Berkeley.
 
-Nazwa oryginalna oprogramowania tworzonego w Berkeley brzmia³a Postgres.
-W 1995 roku dodano jêzyk zapytañ SQL i nazwê zmieniono na Postgres95.
-W koñcu roku 1996 nazwê ostatecznie zmieniono na PostgreSQL.
+Nazwa oryginalna oprogramowania tworzonego w Berkeley brzmia³a
+Postgres. W 1995 roku dodano jêzyk zapytañ SQL i nazwê zmieniono na
+Postgres95. W koñcu roku 1996 nazwê ostatecznie zmieniono na
+PostgreSQL.
 
-PostgreSQL mo¿e byæ uruchominy pod nastêpuj±cymi systemami: Solaris, SunOS,
-HPUX, AIX, Linux, Irix, FreeBSD i innych systemach Unix.
+PostgreSQL mo¿e byæ uruchominy pod nastêpuj±cymi systemami: Solaris,
+SunOS, HPUX, AIX, Linux, Irix, FreeBSD i innych systemach Unix.
 
 %description -l pt_BR
 Gerenciador de Banco de Dados PostgreSQL (conhecido anteriormente como
@@ -221,7 +223,7 @@ sorgulama dilini koyar.
 
 %package devel
 Summary:	PostgreSQL development header files and libraries
-Summary(de):	PostgreSQL-Entwicklungs-Header-Dateien und Libraries 
+Summary(de):	PostgreSQL-Entwicklungs-Header-Dateien und Libraries
 Summary(es):	Archivos de inclusión y bibliotecas PostgreSQL
 Summary(fr):	En-têtes et bibliothèques de développement PostgreSQL
 Summary(pl):	PostgreSQL - pliki nag³ówkowe i biblioteki
@@ -288,11 +290,10 @@ Requires:	%{name}-libs = %{version}
 
 %description clients
 This package includes only the clients needed to access an PostgreSQL
-server. The server is included in the main package. If all you need
-is to connect to another PostgreSQL server, the this is the only
-package you need to install. Clients include several command-line
-utilities you can use to manage your databases on a remote PostgreSQL
-server.
+server. The server is included in the main package. If all you need is
+to connect to another PostgreSQL server, the this is the only package
+you need to install. Clients include several command-line utilities
+you can use to manage your databases on a remote PostgreSQL server.
 
 %description clients -l es
 Este paquete incluye solamente los clientes necesarios para acceder un
@@ -887,8 +888,8 @@ fi
 %{_mandir}/man1/postmaster.1*
 %{_mandir}/man1/ipcclean.1*
 
-%doc contrib 
-%doc doc/FAQ* doc/README* 
+%doc contrib
+%doc doc/FAQ* doc/README*
 %doc COPYRIGHT.gz README.gz HISTORY.gz doc/bug.template.gz
 
 %files doc
