@@ -6,7 +6,7 @@ Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.0.2
-Release:	18
+Release:	19
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -19,6 +19,8 @@ Patch1:		%{name}-DESTDIR.patch
 Patch2:		%{name}-perl.patch
 Patch3:		%{name}-python.patch
 Patch4:		%{name}-no_libnsl.patch
+Patch5:		%{name}-pgaccess-typo.patch
+Patch6:		%{name}-pgaccess-modpath.patch
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
 Requires:	rc-scripts
@@ -34,10 +36,8 @@ Requires:	%{name}-libs = %{version}
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
 
-%define		_sysconfdir	/etc
-%define		pglibdir	%{_libdir}/pgsql
-%define		pgsqldir	%{_datadir}/pgsql/sql
-%define		pgmoduledir	%{pglibdir}/modules
+%define		pgsqldir	%{_libdir}/pgsql/sql
+%define		pgmoduledir	%{_libdir}/pgsql/modules
 
 
 %description
@@ -353,6 +353,15 @@ This package includes static library for interface ODBC.
 %description -l pl odbc-static
 Pakiet ten zawiera biblioteki statyczne dla interface'u ODBC.
 
+%package -n pgaccess
+Summary:	A free graphical database management tool for PostgreSQL.
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy danych
+Requires:	%{name}-libs = %{version}
+
+%description -n pgaccess
+A free graphical database management tool for PostgreSQL.
+
 %package tcl
 Summary:	tcl interface for PostgreSQL
 Summary(pl):	tcl interface dla PostgreSQL
@@ -519,6 +528,8 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
 
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
@@ -526,6 +537,11 @@ rm -fR `find contrib/ -type d -name CVS`
 %build
 PATH=$PATH:. ; export PATH
 cd src
+
+
+# NOTE: this doesn't work. 
+#CONFIGURE_OPT=%{pgsql_with_locale?: "--enable-locale"}
+#CONFIGURE_OPT="$CONFIGURE_FLAGS %{pgsql_with_unicode?: --with-mulitbyte=UNICODE}"
 
 aclocal
 autoconf
@@ -536,36 +552,38 @@ autoconf
 	--with-template=linux_%{_target_cpu} \
 %endif
 	--enable-hba \
-	--with-mulitbyte=UNICODE \
-	--enable-locale \
 	--with-odbc \
 	--with-odbcinst=%{_sysconfdir} \
 	--with-tcl \
 	--with-tk \
 	--with-python \
 	--with-x \
-	--with-perl
+	--with-perl $CONFIGURE_OPT
 
-%{__make} OPT="%{!?debug:$RPM_OPT_FLAGS}%{?debug:-O -g}"
+%{__make} OPT="%{!?debug:$RPM_OPT_FLAGS}%{?debug:-O -g}" \
+	  TEMPLATEDIR=%{_libdir}/pgsql
 
 cd ..
 %{__make} all PGDOCS=unpacked -C doc
 
+# remake pgaccess
+make -C src/bin/pgaccess clean pgaccess POSTGRESDIR=/usr/lib
+
 # for datetime functions
-make -C contrib/datetime LIBDIR=%{pglibdir}
+make -C contrib/datetime LIBDIR=%{_libdir}/pgsql
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
-        $RPM_BUILD_ROOT/var/lib/pgsql \
-	$RPM_BUILD_ROOT%{_libdir}/pgsql
+        $RPM_BUILD_ROOT/var/{lib/pgsql,log} \
+	$RPM_BUILD_ROOT%{_libdir}/pgsql/{modules,sql}
 
-%{__make} -C src install DESTDIR=$RPM_BUILD_ROOT
+%{__make} -C src install DESTDIR=$RPM_BUILD_ROOT TEMPLATEDIR=%{_libdir}/pgsql
 %{__make} -C doc install DESTDIR=$RPM_BUILD_ROOT
+touch $RPM_BUILD_ROOT/var/log/pgsql
 
 # for datetime functions
-%{__make} -C contrib/datetime install \
-	LIBDIR=$RPM_BUILD_ROOT%{pglibdir} SQLDIR=$RPM_BUILD_ROOT%{pgsqldir}
+%{__make} -C contrib/datetime install LIBDIR=$RPM_BUILD_ROOT%{_libdir}/pgsql
 
 # Move PL/pgSQL procedural language to %{pgmoduledir}
 ( cd $RPM_BUILD_ROOT%{_libdir}
@@ -582,11 +600,6 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
   mv -f .packlist .packlist.old
   sed -e "s|$RPM_BUILD_ROOT/|/|g" -e "s|./||" < .packlist.old > .packlist
   rm -f .packlist.old
-)
-
-# Move all templates/examples beneath %{_libdir}/pgsql
-( cd $RPM_BUILD_ROOT%{_libdir}
-  mv -f  *description *source *sample pgsql
 )
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
@@ -646,20 +659,10 @@ fi
 rm -rf $RPM_BUILD_ROOT
 rm -f /tmp/tmp_perl_info
 
-%files doc
-%defattr(644,root,root,755)
-%doc doc/unpacked/*
-%doc howto
-
 %files
 %defattr(644,root,root,755)
-%doc contrib 
-%doc doc/FAQ doc/FAQ_Linux doc/README* 
-%doc COPYRIGHT README HISTORY doc/bug.template
-%doc doc/*.ps.gz
-
 %attr(754,root,root) /etc/rc.d/init.d/*
-%attr(644,root,root) /etc/sysconfig/*
+%attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/*
 
 %attr(755,root,root) %{_bindir}/createdb
 %attr(755,root,root) %{_bindir}/createuser
@@ -675,6 +678,14 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_bindir}/createlang
 %attr(755,root,root) %{_bindir}/droplang
 
+%dir %{_libdir}/pgsql
+%{_libdir}/pgsql/*.source 
+%{_libdir}/pgsql/*.sample
+%{_libdir}/pgsql/*.description
+
+%attr(750,postgres,postgres) %dir /var/lib/pgsql
+%attr(640,postgres,postgres) %config(noreplace) %verify(not md5 size mtime) /var/log/pgsql
+
 %{_mandir}/man1/createdb.1*
 %{_mandir}/man1/createlang.1*
 %{_mandir}/man1/createuser.1*
@@ -688,17 +699,20 @@ rm -f /tmp/tmp_perl_info
 %{_mandir}/man1/postmaster.1*
 %{_mandir}/man1/ipcclean.1*
 
-%attr(750,postgres,postgres) %dir /var/lib/pgsql
+%doc contrib 
+%doc doc/FAQ doc/FAQ_Linux doc/README* 
+%doc COPYRIGHT README HISTORY doc/bug.template
+
+%files doc
+%defattr(644,root,root,755)
+%doc doc/unpacked/*
+%doc howto
 
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
-
 %attr(755,root,root) %{_bindir}/pg_id
-
-%attr(755,root,root) %dir %{_libdir}/pgsql
-%attr(644,root,root) %{_libdir}/pgsql/*
 
 %files devel
 %defattr(644,root,root,755)
@@ -796,7 +810,12 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
 %attr(755,root,root) %{_bindir}/pgtclsh
 %attr(755,root,root) %{_bindir}/pgtksh
+
+%files -n pgaccess
+%defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pgaccess
+%{_libdir}/pgaccess
+%doc src/bin/pgaccess/doc/html/*
 
 %files tcl-devel
 %defattr(644,root,root,755)
