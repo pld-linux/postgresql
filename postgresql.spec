@@ -87,7 +87,7 @@ Requires(pre):	/usr/sbin/usermod
 Requires(post,preun):	/sbin/chkconfig
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
-BuildRoot:	%{tmpdir}/%{name}-%{posgresql_version}-root-%(id -u -n)
+BuildRoot:	%{tmpdir}/%{name}-%{postgresql_version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
 %define		_pgsqldir	%{_pgmoduledir}/sql
