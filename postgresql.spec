@@ -57,7 +57,7 @@ BuildRequires:	automake
 BuildRequires:	bison >= 1.875
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openssl-devel >= 0.9.7c
+BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
 %{?with_python:BuildRequires:	python-devel >= 2.3}
