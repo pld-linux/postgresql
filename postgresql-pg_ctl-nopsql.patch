@@ -1,0 +1,31 @@
+--- src/bin/pg_ctl/pg_ctl.sh 	Sat Sep 29 05:09:32 2001
++++ src/bin/pg_ctl/pg_ctl.sh.mis	Mon Mar 24 23:16:48 2002
+@@ -96,12 +96,12 @@
+ fi
+ 
+ # Check if needed programs actually exist in path
+-if [ -x "$self_path/postmaster" ] && [ -x "$self_path/psql" ]; then
++if [ -x "$self_path/postmaster" ]; then
+     PGPATH="$self_path"
+-elif [ -x "$bindir/postmaster" ] && [ -x "$bindir/psql" ]; then
++elif [ -x "$bindir/postmaster" ]; then
+     PGPATH="$bindir"
+ else
+-    echo "The programs 'postmaster' and 'psql' are needed by $CMDNAME but" 1>&2
++    echo "The program 'postmaster' is needed by $CMDNAME but" 1>&2
+     echo "were not found in the directory '$bindir'." 1>&2
+     echo "Check your installation." 1>&2
+     exit 1
+@@ -370,8 +370,10 @@
+ # 6) If the dynamic loader is not set up correctly (for this user/at
+ #    this time), psql will fail (to find libpq).
+ # 7) If psql is misconfigured, this may fail.
+-	    if "$PGPATH/psql" -l >/dev/null 2>&1
+-	    then
++
++# YES, this is horribly misconceived.
++
++	    if ps -C postmaster >/dev/null 2>&1; then
+ 		break;
+ 	    else
+ 		$silence_echo $ECHO_N "."$ECHO_C
