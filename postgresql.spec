@@ -6,6 +6,8 @@
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.python
 
+%define relc rc2
+
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
 Summary(es):	Gestor de Banco de Datos PostgreSQL
@@ -17,22 +19,19 @@ Summary(tr):	Veri Taban˝ Yˆnetim Sistemi
 Summary(uk):	PostgreSQL - ”…”‘≈Õ¡ À≈“’◊¡ŒŒ— ¬¡⁄¡Õ… ƒ¡Œ…»
 Summary(zh_CN):	PostgreSQL øÕªß∂À≥Ã–Ú∫Õø‚Œƒº˛
 Name:		postgresql
-Version:	7.2.3
-Release:	1.1
+Version:	7.3
+Release:	0.1.%{relc}
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{relc}.tar.gz
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
 Source4:	pgaccess.desktop
 Source5:	pgaccess.png
-Patch0:		%{name}-no_libnsl.patch
-Patch1:		%{name}-configure.patch
-Patch2:		%{name}-ac_fixes.patch
-Patch3:		%{name}-pg_ctl-silent.patch
-Patch4:		%{name}-DESTDIR.patch
-Patch5:		%{name}-pg_ctl-nopsql.patch
+Patch0:		%{name}-configure.patch
+Patch1:		%{name}-pg_ctl-silent.patch
+Patch2:		%{name}-pg_ctl-nopsql.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	XFree86-devel
@@ -883,13 +882,10 @@ Za pomoc± komendy createlang moøna dodaÊ wsparcie dla jÍzyka
 proceduralnego PL/TCL dla swojej bazy danych.
 
 %prep
-%setup  -q
+%setup  -q -n %{name}-%{version}%{relc}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p0
+%patch2 -p0
 
 tar xzf doc/man*.tar.gz
 
