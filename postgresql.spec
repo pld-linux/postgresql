@@ -66,9 +66,6 @@ Patch3:		%{name}-pg_ctl-silent.patch
 Patch4:		%{name}-DESTDIR.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
-Prereq:		/sbin/chkconfig
-Prereq:		rc-scripts
-Prereq:		%{name}-clients
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	tcl-devel >= 8.3.2
@@ -83,8 +80,10 @@ BuildRequires:	zlib-devel
 BuildRequires:	openssl-devel >= 0.9.6a
 BuildRequires:	XFree86-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+Prereq:		/sbin/chkconfig
+Prereq:		rc-scripts
+Prereq:		%{name}-clients = %{version}
 Requires:	%{name}-libs = %{version}
-Requires:	%{name} = %{version}
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
 
