@@ -39,6 +39,7 @@ Patch4:		%{name}-DESTDIR.patch
 Patch5:		%{name}-pg_ctl-nopsql.patch
 Patch6:		%{name}-acfix.patch
 Patch7:		%{name}-to_ascii-overflows.patch
+Patch8:		%{name}-tcl-link.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	XFree86-devel
@@ -911,6 +912,7 @@ Funkcje kryptograficzne dla PostgreSQL.
 %patch5 -p0
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 tar xzf doc/man*.tar.gz
 
