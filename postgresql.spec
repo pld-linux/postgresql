@@ -11,7 +11,7 @@ Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.0.2
-Release:	8
+Release:	9
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -219,8 +219,8 @@ PostgreSQL.
 
 %package python
 Summary:	The python-based client programs needed for accessing a PostgreSQL server
-Group:		Development/Databases
-######		Unknown group!
+Group:		Development/Languages/Python
+Group(pl):	Programowanie/Jêzyki/Python
 Requires:	python >= 1.5
 Requires:	%{name}-libs = %{version}
 
@@ -442,6 +442,7 @@ Summary:	PL/pgSQL - PostgreSQL procedural language
 Summary(pl):	PL/pgSQL jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
+Requires:	%{name} = %{version}
 
 %description module-plpgsql
 From PostgreSQL documentation.
@@ -476,6 +477,7 @@ Summary:	PL/TCL - PostgreSQL procedural language
 Summary(pl):	PL/TCL jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
+Requires:	%{name} = %{version}
 
 %description module-pltcl
 From PostgreSQL documentation.
