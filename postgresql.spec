@@ -12,11 +12,15 @@ Group(pl):	Aplikacje/Bazy danych
 Source0:	ftp://ftp.postgresql.org/pub/%{name}-%{version}.tar.gz
 Source1:	postgresql.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
-Patch:		postgresql-6.4.2-opt.patch
+Patch0:		postgresql-6.4.2-opt.patch
+Patch1:		postgresql-DESTDIR.patch
+Patch2:		postgresql-perl.patch
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
 Buildroot:	/tmp/%{name}-%{version}-root
 Requires:	%{name}-clients = %{version}
+
+%define		_prefix		/usr
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres, then as
@@ -260,77 +264,167 @@ Summary:	ODBC interface to PostgreSQL
 Summary(pl):	Interface ODBC do PostgreSQL
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
-Requires:	%{name} = %{version}
+#Requires:	%{name} = %{version}
 
 %description odbc
-This package includes library and header files for interface ODBC.
+This package includes library for interface ODBC.
 
 %description -l pl odbc
+Pakiet ten zawiera biblioteki dla interface'u ODBC.
+
+%package odbc-devel
+Summary:	ODBC interface to PostgreSQL - development part
+Summary(pl):	Interface ODBC do PostgreSQL - cze¶æ programistyczna
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy danych
+Requires:	%{name}-odbc = %{version}
+
+%description odbc-devel
+This package includes library and header files for interface ODBC.
+
+%description -l pl odbc-devel
 Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interface'u ODBC.
 
+%package odbc-static
+Summary:	ODBC interface to PostgreSQL - static libraries
+Summary(pl):	Interface ODBC do PostgreSQL - biblioteki statyczne
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy danych
+#Requires:	%{name}-odbc-devel = %{version}
+
+%description odbc-static
+This package includes static library for interface ODBC.
+
+%description -l pl odbc-static
+Pakiet ten zawiera biblioteki statyczne dla interface'u ODBC.
+
+%package libs
+Summary:	PostgreSQL libraries
+Summary(pl):	Biblioteki dzielone programu PostgreSQL
+Group:		Libraries
+Group(pl):	Biblioteki
+
+%description libs
+PostgreSQL libraries.
+
+%description libs -l pl
+Biblioteki dzielone programu PostgreSQL.
+
+%package static
+Summary:	PostgreSQL static libraries
+Summary(pl):	Biblioteki statyczne programu PostgreSQL
+Group:		Development/Libraries
+Group(pl):	Programowanie/Biblioteki
+
+%description static
+PostgreSQL static libraries.
+
+%description libs -l pl
+Biblioteki statyczne programu PostgreSQL.
+
+%package tcl
+Summary:	tcl interface for PostgreSQL
+Summary(pl):	tcl interface dla PostgreSQL
+Group:		Development/Languages/Tcl
+Group(pl):	Programowanie/Jêzyki/Tcl
+#Requires:	%{name}-libs = %{version}
+
+%description tcl
+tcl interface for PostgreSQL.
+
+%description tcl -l pl
+tcl interface dla PostgreSQL.
+
+%package tcl-devel
+Summary:	Development part of tcl interface for PostgreSQL
+Summary(pl):	Czê¶æ dla programistów interafece tcl dla PostgreSQL
+Group:		Development/Languages/Tcl
+Group(pl):      Programowanie/Jêzyki/Tcl
+Requires:	%{name}-tcl = %{version}
+
+%description tcl-devel
+Development part of tcl interface for PostgreSQL.
+
+%description tcl-devel -l pl
+Czê¶æ dla programistów interafece tcl dla PostgreSQL.
+
+%package tcl-static
+Summary:        Static libraries of tcl interface for PostgreSQL
+Summary(pl):    Biblioteki statyczne interafece tcl dla PostgreSQL
+Group:          Development/Languages/Tcl
+Group(pl):      Programowanie/Jêzyki/Tcl
+Requires:       %{name}-tcl-devel = %{version}
+
+%description tcl-static
+Static libraries of tcl interface for PostgreSQL
+
+%description tcl-devel -l pl
+Biblioteki statyczne interafece tcl dla PostgreSQL
+
 %prep
-%setup -q
-%patch -p1 -b .opt
+%setup  -q
+%patch0 -p1 
+%patch1 -p1 
+%patch2 -p1 
 
 %build
+PATH=$PATH:. ; export PATH
 cd src
 
-CFLAGS="$RPM_OPT_FLAGS" \
-./configure %{_target_platform} \
-	--prefix=/usr \
+aclocal
+autoconf
+
+%configure \
 	--enable-hba \
 	--enable-locale \
 	--with-odbc \
 	--with-odbcinst=/etc \
-	--without-tcl \
+	--with-tcl \
 	--with-x \
-%ifarch alpha
-	--with-template=linuxalpha \
+%ifarch %{ix86}
+	--with-template=linux_i386 \
+%else
+	--with-template=linux_%{target_cpu} \
 %endif
 	--with-perl
 
-gmake OPT_FLAGS="$RPM_OPT_FLAGS"
+make OPT_FLAGS="$RPM_OPT_FLAGS"
 
 cd ..
 make all PGDOCS=unpacked -C doc
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
-install -d $RPM_BUILD_ROOT/usr/{include/pgsql,lib,bin,man}
-install -d $RPM_BUILD_ROOT/var/lib/pgsql
-
+install -d $RPM_BUILD_ROOT/etc/rc.d/init.d \
+        $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_mandir},%{_includedir}/pgsql} \
+        $RPM_BUILD_ROOT/var/lib/pgsql
+		
 ( cd src
-  gmake POSTGRESDIR=$RPM_BUILD_ROOT/usr install
-  gmake POSTGRESDIR=$RPM_BUILD_ROOT/usr install-man
+  make DESTDIR=$RPM_BUILD_ROOT PREFIX=$RPM_BUILD_ROOT%{_prefix} install
+  make DESTDIR=$RPM_BUILD_ROOT install-man
 )
 
 # For Perl interface
-( cd src/interfaces/perl5
+#( cd src/interfaces/perl5
+#
+#  install -d $RPM_BUILD_ROOT/%{perl_sitearch}
+#  perl Makefile.PL
+#  make PREFIX=$RPM_BUILD_ROOT/usr install
 
-perl -V:installarchlib  > /tmp/tmp_perl_info
-perl -V:installsitearch >> /tmp/tmp_perl_info
-. /tmp/tmp_perl_info
-
-  PERLVER=$installarchlib
-  install -d $RPM_BUILD_ROOT/$PERLVER
-  perl Makefile.PL
-  make PREFIX=$RPM_BUILD_ROOT/usr install
-
-  PACK="$RPM_BUILD_ROOT$installsitearch/auto/Pg/.packlist"
-  mv $PACK $PACK.old
-  sed -e "s|$RPM_BUILD_ROOT/|/|g" -e "s|./||" < $PACK.old > $PACK
-  rm -f $PACK.old
-  
-  LOCAL="$RPM_BUILD_ROOT/$PERLVER/perllocal.pod"
-  mv $LOCAL $LOCAL.old
-  sed -e "s|$RPM_BUILD_ROOT/|/|g" < $LOCAL.old > $LOCAL.pg
-  rm -f $LOCAL.old
-)
-find $RPM_BUILD_ROOT%{_libdir}/perl5 -type f -print | \
-	sed -e "s|$RPM_BUILD_ROOT/|/|g" | grep -v "perllocal.pod$" > perlfiles.list
-find $RPM_BUILD_ROOT%{_libdir}/perl5 -type d -name Pg -print | \
-	sed -e "s|$RPM_BUILD_ROOT/|%dir /|g" >> perlfiles.list
+  ( cd $RPM_BUILD_ROOT%{perl_sitearch}/auto/Pg
+    mv .packlist .packlist.old
+    sed -e "s|$RPM_BUILD_ROOT/|/|g" -e "s|./||" < .packlist.old > .packlist
+    rm -f .packlist.old
+  )
+#  LOCAL="$RPM_BUILD_ROOT/$PERLVER/perllocal.pod"
+#  mv $LOCAL $LOCAL.old
+#  sed -e "s|$RPM_BUILD_ROOT/|/|g" < $LOCAL.old > $LOCAL.pg
+#  rm -f $LOCAL.old
+#)
+#find $RPM_BUILD_ROOT%{_libdir}/perl5 -type f -print | \
+#	sed -e "s|$RPM_BUILD_ROOT/|/|g" | grep -v "perllocal.pod$" > perlfiles.list
+#find $RPM_BUILD_ROOT%{_libdir}/perl5 -type d -name Pg -print | \
+#	sed -e "s|$RPM_BUILD_ROOT/|%dir /|g" >> perlfiles.list
 
 # Move all includes beneath %{_includedir}/pgsql.
 ( cd $RPM_BUILD_ROOT%{_includedir}
@@ -366,6 +460,8 @@ gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man*/*
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
 
+chmod +x $RPM_BUILD_ROOT%{_libdir}/*.so*
+
 %pre data
 if ! `grep postgres /etc/passwd >/dev/null 2>&1`; then
     useradd -M -o -r -d /var/lib/pgsql -s /bin/bash \
@@ -398,16 +494,16 @@ su postgres -c "LD_LIBRARY_PATH=%{_libdir} \
 %post   -p /sbin/ldconfig odbc
 %postun -p /sbin/ldconfig odbc
 
-%post perl
-POD=`find %{_libdir} -name perllocal.pod.pg`
-DIR=`dirname $POD`
-if [ -f $DIR/perllocal.pod ]; then
-	mv $DIR/perllocal.pod $DIR/perllocal.pod.prepg
-	cat $DIR/perllocal.pod.pg $DIR/perllocal.pod.prepg > $DIR/perllocal.pod
-else
-	cp $DIR/perllocal.pod.pg $DIR/perllocal.pod
-fi
-rm -f $DIR/perllocal.pod.pg
+#%post perl
+#POD=`find %{_libdir} -name perllocal.pod.pg`
+#DIR=`dirname $POD`
+#if [ -f $DIR/perllocal.pod ]; then
+#	mv $DIR/perllocal.pod $DIR/perllocal.pod.prepg
+#	cat $DIR/perllocal.pod.pg $DIR/perllocal.pod.prepg > $DIR/perllocal.pod
+#else
+#	cp $DIR/perllocal.pod.pg $DIR/perllocal.pod
+#fi
+#rm -f $DIR/perllocal.pod.pg
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -427,7 +523,10 @@ rm -f /tmp/tmp_perl_info
 
 %attr(754,root,root) /etc/rc.d/init.d/*
 
-%attr(644, postgres, postgres,755) %{_libdir}/pgsql
+%defattr(644,postgres,postgres,755)
+%{_libdir}/pgsql
+
+%defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/cleardbdir
 %attr(755,root,root) %{_bindir}/createdb
 %attr(755,root,root) %{_bindir}/createuser
@@ -439,57 +538,105 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_bindir}/pg_version
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
-%{_mandir}/man1/cleardbdir.1.gz
-%{_mandir}/man1/createdb.1.gz
-%{_mandir}/man1/createuser.1.gz
-%{_mandir}/man1/destroydb.1.gz
-%{_mandir}/man1/destroyuser.1.gz
-%{_mandir}/man1/initdb.1.gz
-%{_mandir}/man1/initlocation.1.gz
-%{_mandir}/man1/pg_passwd.1.gz
-%{_mandir}/man1/postgres.1.gz
-%{_mandir}/man1/postmaster.1.gz
-%{_mandir}/man5/*.5.gz
+%attr(755,root,root) %{_bindir}/ipcclean
+
+%{_mandir}/man1/cleardbdir.1*
+%{_mandir}/man1/createdb.1*
+%{_mandir}/man1/createuser.1*
+%{_mandir}/man1/destroydb.1*
+%{_mandir}/man1/destroyuser.1*
+%{_mandir}/man1/initdb.1*
+%{_mandir}/man1/initlocation.1*
+%{_mandir}/man1/pg_passwd.1*
+%{_mandir}/man1/postgres.1*
+%{_mandir}/man1/postmaster.1*
+%{_mandir}/man1/ipcclean.1*
+%{_mandir}/man5/*.5*
+
+%files libs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libpq.so.*.*
+%attr(755,root,root) %{_libdir}/libpq++.so.*.*
+%attr(755,root,root) %{_libdir}/libecpg.so.*.*
+# nie wiem do czego to
+%attr(755,root,root) %{_libdir}/plpgsql.so 
+%{_libdir}/*.description
+
+%files tcl
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
+%attr(755,root,root) %{_libdir}/pltcl.so
+%attr(755,root,root) %{_bindir}/pgtclsh
+%attr(755,root,root) %{_bindir}/pgtksh
+%attr(755,root,root) %{_bindir}/pgaccess
+
+%files tcl-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libpgtcl.so
+
+%files tcl-static
+%defattr(644,root,root,755)
+%{_libdir}/libpgtcl.a
 
 %files devel
 %defattr(644,root,root,755)
-%{_libdir}/libec*.a
-%{_libdir}/libpq*.a
-%attr(755,root,root) %{_libdir}/libec*.so
-%attr(755,root,root) %{_libdir}/libpq*.so
+%attr(755,root,root) %{_libdir}/libecpg.so
+%attr(755,root,root) %{_libdir}/libpq.so
+%attr(755,root,root) %{_libdir}/libpq++.so
 %{_includedir}/pgsql
-%{_mandir}/man3/*.gz
+%{_mandir}/man3/*.3*
 %attr(755,root,root) %{_bindir}/ecpg
-%{_mandir}/man1/ecpg.1.gz
+%{_mandir}/man1/ecpg.1*
+
+%files static
+%defattr(644,root,root,755)
+%{_libdir}/libecpg.a
+%{_libdir}/libpq.a
+%{_libdir}/libpq++.a
 
 %files data
-%defattr(-,postgres,postgres)
-%attr(-,postgres,postgres) /var/lib/pgsql
+%defattr(644,postgres,postgres,755)
+/var/lib/pgsql
 
 %files clients
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libec*.so.*
-%attr(755,root,root) %{_libdir}/libpq*.so.*
+%attr(755,root,root) %{_libdir}/libec*.so.*.*
+%attr(755,root,root) %{_libdir}/libpq*.so.*.*
 %attr(755,root,root) %{_bindir}/pg_dump
-%attr(755,root,root) %{_bindir}/pg_dumpall
+%attr(756,root,root) %{_bindir}/pg_dumpall
 %attr(755,root,root) %{_bindir}/pg_id
 %attr(755,root,root) %{_bindir}/pg_upgrade
 %attr(755,root,root) %{_bindir}/psql
-%{_mandir}/man1/pg_dump.1.gz
-%{_mandir}/man1/pg_dumpall.1.gz
-%{_mandir}/man1/pg_upgrade.1.gz
-%{_mandir}/man1/psql.1.gz
-%{_mandir}/manl/*.gz
 
-%files -f perlfiles.list perl
-%defattr(-,root,root)
+%{_mandir}/man1/pg_dump.1*
+%{_mandir}/man1/pg_dumpall.1*
+%{_mandir}/man1/pg_upgrade.1*
+%{_mandir}/man1/psql.1*
+%{_mandir}/manl/*.l*
+
+%files perl
+%defattr(644,root,root,755)
+%dir %{perl_sitearch}/auto/Pg
+%{perl_sitearch}/auto/Pg/Pg.so
+%attr(755,root,root) %{perl_sitearch}/auto/Pg/Pg.bs
+%{perl_sitearch}/auto/Pg/autosplit.ix
+%{perl_sitearch}/auto/Pg/.packlist
+%{perl_sitearch}/Pg.pm
 
 %files odbc
 %defattr(644,root,root,755)
 %doc src/interfaces/odbc/readme.txt src/interfaces/odbc/notice.txt
 %config(noreplace) %verify(not size mtime md5) /etc/odbc*
-%{_libdir}/libpsqlodbc*
+%{_libdir}/libpsqlodbc.so.*.*
+
+%files odbc-devel
+%defattr(644,root,root,755)
 %{_includedir}/iodbc
+%attr(755,root,root) %{_libdir}/libpsqlodbc.so
+
+%files odbc-static
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libpsqlodbc.a
 
 %changelog
 * Wed Mar 24 1999 Jacek Smyda <smyda@posexperts.com.pl>
