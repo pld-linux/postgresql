@@ -358,7 +358,7 @@ LDFLAGS="-s"; export LDFLAGS
 %ifarch %{ix86}
 	--with-template=linux_i386 \
 %else
-	--with-template=linux_%{target_cpu} \
+	--with-template=linux_%{_target_cpu} \
 %endif
 	--with-perl
 
