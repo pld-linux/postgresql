@@ -15,6 +15,7 @@ Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(ru):	PostgreSQL - система управления базами данных
 Summary(tr):	Veri TabanЩ YЖnetim Sistemi
 Summary(uk):	PostgreSQL - система керування базами даних
+Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.2.2
 Release:	1
@@ -409,6 +410,7 @@ Summary(pl):	Interfejs dla Perla umo©liwiaj╠cy dostЙp do baz PostgreSQL
 Summary(pt_BR):	MСdulo Perl para acesso ao servidor PostgreSQL
 Summary(ru):	Библиотеки и модули для доступа к postgresql из perl
 Summary(uk):	Б╕бл╕отеки та модул╕ для доступу до postgresql з Perl
+Summary(zh_CN):	PostgreSQL ╣д PL/Perl ЁлпРсОят
 Group:		Applications/Databases
 Requires:	perl >= 5.004
 Requires:	%{name}-libs = %{version}
@@ -445,7 +447,8 @@ perl-DBD-%{name} !
 Summary:	The python-based client programs needed for accessing a PostgreSQL server
 Summary(es):	MСdulo Python para acceder un servidor PostgreSQL
 Summary(pl):	Programy klienckie do dostЙpu do serwera PostgreSQL napisane w Pythonie
-Summary(pt_BR):	MСdulo Python para acesso ao servidor PostgreSQL.
+Summary(pt_BR):	MСdulo Python para acesso ao servidor PostgreSQL
+Summary(zh_CN):	Python ЁлпР╥цнй PostgreSQL йЩ╬щ©БкЫпХ╣д©╙╥╒дё©И
 Group:		Libraries/Python
 Requires:	python >= 2.0
 Requires:	python-mx-DateTime
@@ -486,6 +489,7 @@ Summary:	PostgreSQL libraries
 Summary(es):	Biblioteca compartida del PostgreSQL
 Summary(pl):	Biblioteki dzielone programu PostgreSQL
 Summary(pt_BR):	Biblioteca compartilhada do PostgreSQL
+Summary(zh_CN):	PostgreSQL ©м╩╖кЫпХр╙╣д╧╡оМ©Б.
 Group:		Libraries
 
 %description libs
@@ -610,6 +614,7 @@ Summary:	ODBC interface to PostgreSQL
 Summary(es):	Driver ODBC para acceder un servidor PostgreSQL
 Summary(pl):	Interfejs ODBC do PostgreSQL
 Summary(pt_BR):	Driver ODBC necessАrio para acessar um servidor PostgreSQL
+Summary(zh_CN):	сц ODBC ╥цнй р╩╦Ж PostgreSQL йЩ╬щ©Б╣д ODBC гЩ╤╞
 Group:		Applications/Databases
 Requires:	%{name}-libs = %{version}
 
@@ -669,6 +674,7 @@ Summary(pl):	Interfejs tcl dla PostgreSQL
 Summary(pt_BR):	Bibliotecas e shell para programas em TCL acessarem o servidor PostgreSQL
 Summary(ru):	Библиотеки для доступа к postgresql из tcl
 Summary(uk):	Б╕бл╕отеки для доступу до postgresql з tcl
+Summary(zh_CN):	р╩╦Ж Tcl ©Б╨м PostgreSQL ╣д PL/Tcl ╠ЮЁлсОят
 Group:		Development/Languages/Tcl
 Requires:	%{name}-libs = %{version}
 
