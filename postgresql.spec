@@ -17,7 +17,7 @@
 					# (disabled by default because it is a security risk)
 
 %include	/usr/lib/rpm/macros.python
- 
+
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
 Summary(es):	Gestor de Banco de Datos PostgreSQL
@@ -736,7 +736,7 @@ proceduralnego PL/TCL dla swojej bazy danych.
 Summary:	Cryptographic functions for PostgreSQL
 Summary(pl):	Funkcje kryptograficzne dla PostgreSQL
 Group:		Applications/Databases
-Requires:       %{name} = %{version}-%{release}
+Requires:	%{name} = %{version}-%{release}
 
 %description module-pgcrypto
 Cryptographic functions for PostgreSQL.
@@ -780,15 +780,16 @@ tar xzf doc/man*.tar.gz
 mkdir doc/unpacked
 tar zxf doc/postgres.tar.gz -C doc/unpacked
 
-# Erase all CVS dir
+# Erase all CVS dirs
 find contrib -type d -name CVS -exec rm -rf {} \;
 
 %build
 rm -f config/libtool.m4
-install /usr/share/automake/config.* config/
+install /usr/share/automake/config.* config
 %{__aclocal} -I config
 %{__autoconf}
-%configure CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS"\
+%configure \
+	CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS"\
 	%{?with_pgsql_locale:--enable-locale} \
 	%{?with_pgsql_multibyte:--enable-multibyte} \
 	--disable-rpath \
@@ -828,7 +829,10 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 %{__make} install install-all-headers \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%{?with_perl:%{__make} install -C src/pl/plperl DESTDIR=$RPM_BUILD_ROOT}
+%if %{with perl}
+%{__make} install -C src/pl/plperl \
+	DESTDIR=$RPM_BUILD_ROOT
+%endif
 
 %{__make} -C contrib/pg_autovacuum install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -934,9 +938,8 @@ fi
 
 %files -f main.lang
 %defattr(644,root,root,755)
+%doc COPYRIGHT README HISTORY doc/{FAQ*,README*,bug.template}
 %doc contrib/pg_autovacuum/README*
-%doc doc/FAQ* doc/README* doc/bug.template
-%doc COPYRIGHT README HISTORY
 %attr(754,root,root) /etc/rc.d/init.d/*
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/*
 
@@ -995,9 +998,7 @@ fi
 
 %files doc
 %defattr(644,root,root,755)
-%doc doc/unpacked/*
-%doc doc/src/FAQ
-%doc howto
+%doc doc/unpacked/* doc/src/FAQ howto
 
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
