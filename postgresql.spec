@@ -218,7 +218,7 @@ Postgres95. W koñcu roku 1996 nazwê ostatecznie zmieniono na
 PostgreSQL.
 
 PostgreSQL mo¿e byæ uruchomiony pod nastêpuj±cymi systemami: Solaris,
-SunOS, HPUX, AIX, Linux, Irix, FreeBSD i innych systemach Unix.
+SunOS, HPUX, AIX, Linux, Irix, FreeBSD i innymi systemami uniksowymi.
 
 %description -l pt_BR
 Gerenciador de Banco de Dados PostgreSQL (conhecido anteriormente como
