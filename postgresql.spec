@@ -46,6 +46,7 @@ URL:		http://www.postgresql.org/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	libtool
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7c
 BuildRequires:	pam-devel
