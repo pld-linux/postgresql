@@ -1,5 +1,29 @@
 --- postgresql-7.0.3/src/bin/psql/tab-complete.c.wiget	Fri Apr 13 17:05:43 2001
-+++ postgresql-7.0.3/src/bin/psql/tab-complete.c	Fri Apr 13 17:07:31 2001
++++ postgresql-7.0.3/src/bin/psql/tab-complete.c	Fri Apr 13 17:53:23 2001
+@@ -50,8 +50,8 @@
+ #include "common.h"
+ #include "settings.h"
+ 
+-#if defined(HAVE_FILENAME_COMPLETION_FUNCTION) && !defined(HAVE_FILENAME_COMPLETION_FUNCTION_DECL)
+-char	   *filename_completion_function(char *, int);
++#if defined(HAVE_RL_FILENAME_COMPLETION_FUNCTION) && !defined(HAVE_RL_FILENAME_COMPLETION_FUNCTION_DECL)
++char	   *rl_filename_completion_function(char *, int);
+ 
+ #endif
+ 
+@@ -62,9 +62,9 @@
+ /* Forward declaration of functions */
+ static char **psql_completion(char *text, int start, int end);
+ static char *create_command_generator(char *text, int state);
+-static char *complete_from_query(char *text, int state);
+-static char *complete_from_const(char *text, int state);
+-static char *complete_from_list(char *text, int state);
++static char *complete_from_query(const char *text, int state);
++static char *complete_from_const(const char *text, int state);
++static char *complete_from_list(const char *text, int state);
+ 
+ static PGresult *exec_query(char *query);
+ char	   *quote_file_name(char *text, int match_type, char *quote_pointer);
 @@ -152,13 +152,13 @@
     4) The list of attributes to the given table.
  */
@@ -27,12 +51,38 @@
  
  /* ALTER */
  	/* complete with what you can alter (TABLE or USER) */
-@@ -620,7 +620,7 @@
+@@ -619,8 +619,8 @@
+ 		   strcmp(prev_wd, "\\w") == 0 || strcmp(prev_wd, "\\write") == 0
  		)
  	{
- #ifdef HAVE_FILENAME_COMPLETION_FUNCTION
+-#ifdef HAVE_FILENAME_COMPLETION_FUNCTION
 -		matches = completion_matches(text, filename_completion_function);
-+		matches = rl_completion_matches(text, filename_completion_function);
++#ifdef HAVE_RL_FILENAME_COMPLETION_FUNCTION
++		matches = rl_completion_matches(text, rl_filename_completion_function);
  #else
  
  		/*
+--- postgresql-7.0.3/src/configure.in.wiget	Fri Apr 13 17:53:57 2001
++++ postgresql-7.0.3/src/configure.in	Fri Apr 13 17:55:00 2001
+@@ -915,14 +915,14 @@
+ dnl Check for readline's filename_completion_function.
+ dnl Some versions have it but it's not in the headers, so we have to take
+ dnl care of that, too.
+-AC_CHECK_FUNCS(filename_completion_function,
+-    AC_EGREP_HEADER(filename_completion_function, readline.h,
+-        AC_DEFINE(HAVE_FILENAME_COMPLETION_FUNCTION_DECL),
+-        [AC_EGREP_HEADER(filename_completion_function, readline/readline.h,
+-            AC_DEFINE(HAVE_FILENAME_COMPLETION_FUNCTION_DECL))])
++AC_CHECK_FUNCS(rl_filename_completion_function,
++    AC_EGREP_HEADER(rl_filename_completion_function, readline.h,
++        AC_DEFINE(HAVE_RL_FILENAME_COMPLETION_FUNCTION_DECL),
++        [AC_EGREP_HEADER(rl_filename_completion_function, readline/readline.h,
++            AC_DEFINE(HAVE_RL_FILENAME_COMPLETION_FUNCTION_DECL))])
+ )
+-AC_SUBST(HAVE_FILENAME_COMPLETION_FUNCTION)
+-AC_SUBST(HAVE_FILENAME_COMPLETION_FUNCTION_DECL)
++AC_SUBST(HAVE_RL_FILENAME_COMPLETION_FUNCTION)
++AC_SUBST(HAVE_RL_FILENAME_COMPLETION_FUNCTION_DECL)
+ 
+ dnl Check for GNU style long options support (getopt_long)
+ AC_CHECK_FUNCS(getopt_long)
