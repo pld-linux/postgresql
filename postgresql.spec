@@ -2,8 +2,14 @@
 # - pg_autovacuum init support? look at its readme file, please
 # - put pgcrypto docs into docdir
 # - put pgcrypto sql files in %{_datadir}/postgresql
-# - look at locales (libpq and others - --enable-nls for configure should
-#   suffice)
+# - add locales:
+#        libpq.mo
+#        pg_controldata.mo
+#        pg_dump.mo
+#        pg_resetxlog.mo
+#        pgscripts.mo
+#        postgres.mo
+#        psql.mo
 # - pg_ctl uses psql again, current patch2 doesn't eliminate this
 # - remove postgresql-configure patch and create postgresql-doc patch,
 #   which will prevent documentation and manuals installation (the routine
@@ -769,6 +775,7 @@ rm -f config/libtool.m4
 	%{!?_without_pgsql_locale:--enable-locale} \
 	%{!?_without_pgsql_multibyte:--enable-multibyte} \
 	--disable-rpath \
+	--enable-nls \
 	--enable-thread-safety \
 	--enable-integer-datetimes \
 	--enable-depend \
