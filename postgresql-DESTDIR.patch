@@ -1,24 +1,17 @@
-diff -ur postgresql-6.4.2.old/src/Makefile.global.in postgresql-6.4.2/src/Makefile.global.in
---- postgresql-6.4.2.old/src/Makefile.global.in	Wed Jun 30 10:43:20 1999
-+++ postgresql-6.4.2/src/Makefile.global.in	Wed Jun 30 10:42:13 1999
-@@ -62,13 +62,13 @@
+diff -Nur postgresql-7.0.2.orig/src/Makefile.global.in postgresql-7.0.2/src/Makefile.global.in
+--- postgresql-7.0.2.orig/src/Makefile.global.in	Tue May 23 04:12:46 2000
++++ postgresql-7.0.2/src/Makefile.global.in	Wed Jul  5 13:56:19 2000
+@@ -62,7 +62,7 @@
+ # For convenience, POSTGRESDIR is where BINDIR, and LIBDIR
+ # and other target destinations are rooted.  Of course, each of these is
+ # changable separately.
+-POSTGRESDIR= @prefix@
++POSTGRESDIR= $(DESTDIR)@prefix@
  
  # Where the postgres executables live (changeable by just putting them
  # somewhere else and putting that directory in your shell PATH)
--BINDIR= $(POSTGRESDIR)/bin
-+BINDIR= $(DESTDIR)$(POSTGRESDIR)/bin
- 
- # Where libpq.a gets installed.  You must put it where your loader will
- # look for it if you wish to use the -lpq convention.  Otherwise you
- # can just put the absolute pathname to the library at the end of your
- # command line.
--LIBDIR= $(POSTGRESDIR)/lib
-+LIBDIR= $(DESTDIR)$(POSTGRESDIR)/lib
- 
- # This is the directory where IPC utilities ipcs and ipcrm are located
- #
-@@ -76,18 +76,18 @@
- IPCRM=@ipcrm@ 
+@@ -84,10 +84,10 @@
+ IPCRM=@ipcrm@
  
  # Where the man pages (suitable for use with "man") get installed.
 -POSTMANDIR= $(POSTGRESDIR)/man
@@ -26,17 +19,7 @@ diff -ur postgresql-6.4.2.old/src/Makefile.global.in postgresql-6.4.2/src/Makefi
  
  # Where the formatted documents (e.g., the reference manual) get installed.
 -POSTDOCDIR= $(POSTGRESDIR)/doc
-+POSTDOCDIR= $(DESTDIR)$(POSTGRESDIR)/doc
++POSTDOCDIR= $(POSTGRESDIR)/share/doc
  
  # Where the header files necessary to build frontend programs get installed.
--HEADERDIR= $(POSTGRESDIR)/include
-+HEADERDIR= $(DESTDIR)$(POSTGRESDIR)/include
- 
- # Where the ODBC installation-wide configuration file gets installed.
- # This needs to be a client-side readable area, so can't go in $PGDATA.
- # - thomas 1998-10-05
--ODBCINST= $(POSTGRESDIR)
-+ODBCINST= $(DESTDIR)$(POSTGRESDIR)
- 
- ##############################################################################
- #
+ HEADERDIR= $(POSTGRESDIR)/include
