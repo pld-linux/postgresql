@@ -17,7 +17,7 @@ Summary(tr):	Veri TabanЩ YЖnetim Sistemi
 Summary(uk):	PostgreSQL - система керування базами даних
 Name:		postgresql
 Version:	7.2.1
-Release:	7
+Release:	8
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -965,10 +965,6 @@ install -d howto
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
 
-gzip -9nf doc/FAQ doc/README* COPYRIGHT README HISTORY doc/bug.template \
-	src/interfaces/odbc/readme.txt \
-	src/interfaces/odbc/notice.txt
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 rm -f /tmp/tmp_perl_info
@@ -1078,7 +1074,7 @@ fi
 
 %doc contrib
 %doc doc/FAQ* doc/README*
-%doc COPYRIGHT.gz README.gz HISTORY.gz doc/bug.template.gz
+%doc COPYRIGHT README HISTORY doc/bug.template
 
 %files doc
 %defattr(644,root,root,755)
@@ -1169,6 +1165,7 @@ fi
 
 %files -n python-postgresql
 %defattr(644,root,root,755)
+%doc src/interfaces/python/{README*,ChangeLog}
 %{py_sitedir}/*.pyc
 %{py_sitedir}/*.pyo
 %attr(755,root,root) %{py_sitedir}/*.so
@@ -1204,7 +1201,7 @@ fi
 
 %files odbc
 %defattr(644,root,root,755)
-%doc src/interfaces/odbc/readme.txt.gz src/interfaces/odbc/notice.txt.gz
+%doc src/interfaces/odbc/readme.txt src/interfaces/odbc/notice.txt
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/odbc*
 %attr(755,root,root) %{_libdir}/libpsqlodbc.so.*.*
 %{_datadir}/postgresql/odbc.sql
