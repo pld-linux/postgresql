@@ -5,8 +5,8 @@ Summary(fr):	Sysème de gestion de base de données PostgreSQL
 Summary(pl):	PostgreSQL - system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
-Version:	7.0.3
-Release:	9
+Version:	7.1
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -16,13 +16,14 @@ Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
 Source4:	pgaccess.desktop
 Source5:	pgaccess.png
-Patch0:		%{name}-opt.patch
+#Patch0:		%{name}-opt.patch
 Patch1:		%{name}-DESTDIR.patch
-Patch2:		%{name}-perl.patch
-Patch3:		%{name}-python.patch
+#Patch2:		%{name}-perl.patch
+#Patch3:		%{name}-python.patch
 Patch4:		%{name}-no_libnsl.patch
-Patch5:		%{name}-pgaccess-typo.patch
+#Patch5:		%{name}-pgaccess-typo.patch
 Patch6:		%{name}-readline.patch
+Patch7:		%{name}-configure.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
@@ -32,8 +33,11 @@ BuildRequires:	tcl-devel >= 8.3.2
 BuildRequires:	tk-devel >= 8.3.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	perl >= 5.6
+BuildRequires:	perl-lib-devel >= 5.6
+BuildRequires:	python-devel
 BuildRequires:	rpm-perlprov
+BuildRequires:	zlib-devel
+BuildRequires:	openssl-devel
 BuildRequires:	XFree86-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Requires:	%{name}-libs = %{version}
@@ -533,52 +537,40 @@ proceduralnego PL/TCL dla swojej bazy danych.
 
 %prep
 %setup  -q
-%patch0 -p1
+#%patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
+#%patch2 -p1
+#%patch3 -p1
 %patch4 -p1
-%patch5 -p1
+#%patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
 
 %build
-PATH=$PATH:. ; export PATH
-cd src
-
-ENABLE_LOCALE="%{!?bcond_off_pgsql_locale:--enable-locale}"
-ENABLE_MULTIBYTE="%{!?bcond_off_pgsql_multibyte:--enable-multibyte}"
-
-aclocal
+aclocal -I config
 autoconf
 %configure \
-%ifarch %{ix86}
-	--with-template=linux_i386 \
-%else
-	--with-template=linux_%{_target_cpu} \
-%endif
-	--enable-hba \
-	--with-odbc \
-	--with-odbcinst=%{_sysconfdir} \
+	%{!?bcond_off_pgsql_locale:--enable-locale} \
+	%{!?bcond_off_pgsql_multibyte:--enable-multibyte} \
+	--enable-recode \
+	--enable-unicode-conversion \
 	--with-tcl \
 	--with-tk \
+	--with-perl \
 	--with-python \
-	--with-x \
-	--with-perl $ENABLE_LOCALE $ENABLE_MULTIBYTE
+	--with-openssl \
+	--enable-odbc \
+	--with-odbcinst=%{_sysconfdir} \
+	--with-template=%{_target_os} \
+	--with-x
 
-%{__make} OPT="%{?debug:-O0 -g}%{!?debug:$RPM_OPT_FLAGS}" \
-	  TEMPLATEDIR=%{_libdir}/pgsql
-
-cd ..
-%{__make} all PGDOCS=unpacked -C doc
+%{__make}
 
 # remake pgaccess
 make -C src/bin/pgaccess clean pgaccess POSTGRESDIR=/usr/lib
-
-# for datetime functions
-make -C contrib/datetime LIBDIR=%{_libdir}/pgsql
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -588,18 +580,14 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
 	$RPM_BUILD_ROOT{%{_applnkdir}/System,%{_pixmapsdir}}
 
 %{__make} -C src install \
-	DESTDIR=$RPM_BUILD_ROOT \
-	TEMPLATEDIR=%{_libdir}/pgsql \
-	INSTALLMAN3DIR=$RPM_BUILD_ROOT%{_mandir}/man3
+	DESTDIR=$RPM_BUILD_ROOT
 
-%{__make} -C doc install DESTDIR=$RPM_BUILD_ROOT
+#%{__make} -C doc install DESTDIR=$RPM_BUILD_ROOT
+
 touch $RPM_BUILD_ROOT/var/log/pgsql
 
 # pgaccess 
 ln -sf . $RPM_BUILD_ROOT%{_libdir}/pgaccess/lib
-
-# for datetime functions
-%{__make} -C contrib/datetime install LIBDIR=$RPM_BUILD_ROOT%{_libdir}/pgsql
 
 # Move PL/pgSQL procedural language to %{pgmoduledir}
 ( cd $RPM_BUILD_ROOT%{_libdir}
@@ -634,6 +622,12 @@ install -d howto
 ( cd src/include
   cp -Lrf * $RPM_BUILD_ROOT%{_includedir}/pgsql
 )
+
+for f in `find $RPM_BUILD_ROOT -type f`; do
+	if (file $f | grep -q "script"); then
+		perl -pi -e 's@#\!.*python@#\!%{_bindir}/python@' $f;
+	fi
+done
 
 %pre
 getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
