@@ -15,7 +15,7 @@ Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.2.1
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -629,7 +629,7 @@ Summary:	PL/python - PostgreSQL procedural language
 Summary(pl):	PL/python jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}
-%requires_eq	python
+%pyrequires_eq	python
 
 %description module-plpython
 From PostgreSQL documentation.
