@@ -1,25 +1,10 @@
 # $Revision$
 
+# standard setting
 # POSTGRES_DB_CLUSTERS="/var/lib/pgsql"
 
-# Default database chcaracter encoding
-# Avaible character sets:
-#
-# Encoding 	| Description
-# --------------------------------------------------------------
-# SQL_ASCII	| ASCII
-# EUC_JP	| Japanese EUC
-# EUC_CN	| Chinese EUC
-# EUC_KR	| Korean EUC
-# EUC_TW 	| Taiwan EUC
-# UNICODE	| Unicode(UTF-8)
-# MULE_INTERNAL | Mule internal
-# LATIN1 	| ISO 8859-1 English and some European languages
-# LATIN2	| ISO 8859-2 English and some European languages
-# LATIN3	| ISO 8859-3 English and some European languages
-# LATIN4	| ISO 8859-4 English and some European languages
-# LATIN5	| ISO 8859-5 English and some European languages
-# KOI8		| KOI8-R
-# WIN		| Windows CP1251
-# ALT		| Windows CP866			
-ENCODING=UNICODE
+# predictable usage
+# POSTGRES_DB_CLUSTERS="/var/lib/pgsql/01 /var/lib/pgsql/02"
+
+# new database disk arrived
+# POSTGRES_DB_CLUSTERS="/var/lib/pgsql/01 /var/lib/pgsql/02 /mnt/db/01"
