@@ -11,7 +11,7 @@ Summary(pl):	PostgreSQL - system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.1.3
-Release:	3
+Release:	4
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -595,7 +595,9 @@ autoconf
 	--enable-syslog
 
 %{__make}
+%ifnarch sparc sparcv9 sparc64 alpha
 %{!?_without_tests: %{__make} check }
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
