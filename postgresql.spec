@@ -7,14 +7,14 @@
 #   routine and send it to postgresql team...
 #
 # Conditional build:
-# _with_jdbc				- with JDBC driver
-# _with_absolute_dbpaths	- allow absolute paths to create database
-#	(disallowed by default because it is a security risk)
-#
+%bcond_without	tcl			# disables Tcl support
+%bcond_with	jdbc			# enable JDBC driver
+%bcond_with	absolute_dbpaths	# enable absolute paths to create database
+					# (disabled by default because it is a security risk)
 
 %include	/usr/lib/rpm/macros.python
 
-%define beta beta1
+%define beta beta2
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
@@ -32,7 +32,7 @@ Release:	0.1.%{beta}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp3.us.postgresql.org/pub/postgresql/source/v%{version}/%{name}-%{version}%{beta}.tar.bz2
-# Source0-md5:	e208bf65fee9f573d512386c0181ff96
+# Source0-md5:	d61a6b2677ad3401b47748fb11c0b14c
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -48,6 +48,7 @@ URL:		http://www.postgresql.org/
 BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	bison >= 1.875
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7
 BuildRequires:	pam-devel
@@ -55,8 +56,8 @@ BuildRequires:	perl-devel
 BuildRequires:	python-devel >= 2.3
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-pythonprov
-BuildRequires:	tcl-devel >= 8.4.3
-BuildRequires:	tk-devel >= 8.4.3
+%{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
+%{?with_tcl:BuildRequires:	tk-devel >= 8.4.3}
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 PreReq:		rc-scripts
@@ -767,8 +768,8 @@ rm -f config/libtool.m4
 	--enable-syslog \
 	--enable-unicode-conversion \
 	--with-CXX \
-	--with-tcl \
-	--with-tk \
+	%{?with_tcl:--with-tcl} \
+	%{?with_tcl:--with-tk} \
 	--with-pam \
 	--with-perl \
 	--with-python \
@@ -1030,6 +1031,7 @@ fi
 #%{py_sitedir}/*.pyo
 #%attr(755,root,root) %{py_sitedir}/*.so
 
+%if %{with tcl}
 %files tcl
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpgtcl.so
@@ -1046,6 +1048,7 @@ fi
 %files tcl-static
 %defattr(644,root,root,755)
 %{_libdir}/libpgtcl.a
+%endif
 
 %files module-plpgsql
 %defattr(644,root,root,755)
@@ -1059,10 +1062,12 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/plpython.so
 
+%if %{with tcl}
 %files module-pltcl
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
+%endif
 
 %files module-pgcrypto
 %defattr(644,root,root,755)
