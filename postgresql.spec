@@ -56,7 +56,7 @@ Patch8:		%{name}-ecpg-includedir.patch
 Patch9:		%{name}-contrib_install.patch
 Patch10:	%{name}-tsearch2-compound_word_support_20031210.patch
 Patch11:	%{name}-python-configdir.patch
-Patch12:	%{name}-gram.patch
+Patch12:	%{name}-gram-7.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
