@@ -5,7 +5,7 @@ Summary(fr):	Sysème de gestion de base de données PostgreSQL
 Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
-Version:	6.5.3
+Version:	7.0.2
 Release:	8
 License:	BSD
 Group:		Applications/Databases
@@ -17,9 +17,9 @@ Source3:	%{name}.sysconfig
 Patch0:		postgresql-opt.patch
 Patch1:		postgresql-DESTDIR.patch
 Patch2:		postgresql-perl.patch
-Patch3:		postgresql-alpha.patch
-Patch4:		postgresql-sparc64.patch
-Patch5:		postgresql-armlinux.patch
+#Patch3:		postgresql-alpha.patch
+#Patch4:		postgresql-sparc64.patch
+#Patch5:		postgresql-armlinux.patch
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
 Requires:	rc-scripts
@@ -333,9 +333,9 @@ Biblioteki statyczne interafece tcl dla PostgreSQL
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
+#%patch3 -p1
+#%patch4 -p1
+#%patch5 -p1
 
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
@@ -354,7 +354,7 @@ LDFLAGS="-s"; export LDFLAGS
 	--with-odbcinst=%{_sysconfdir} \
 	--with-tcl \
 	--with-x \
-	--with-mb=UNICODE \
+	--with-mulitbyte=UNICODE \
 %ifarch %{ix86}
 	--with-template=linux_i386 \
 %else
@@ -376,7 +376,9 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
 # PREFIX (hack for perl)
 ( cd src
   make DESTDIR=$RPM_BUILD_ROOT install
-  make DESTDIR=$RPM_BUILD_ROOT install-man
+)
+( cd doc
+  make DESTDIR=$RPM_BUILD_ROOT install
 )
 
 # For Perl interface
@@ -477,34 +479,32 @@ rm -f /tmp/tmp_perl_info
 %attr(754,root,root) /etc/rc.d/init.d/*
 %attr(644,root,root) /etc/sysconfig/*
 
-%attr(755,root,root) %{_bindir}/cleardbdir
 %attr(755,root,root) %{_bindir}/createdb
 %attr(755,root,root) %{_bindir}/createuser
-%attr(755,root,root) %{_bindir}/destroydb
-%attr(755,root,root) %{_bindir}/destroyuser
+%attr(755,root,root) %{_bindir}/dropdb
+%attr(755,root,root) %{_bindir}/dropuser
 %attr(755,root,root) %{_bindir}/initdb
 %attr(755,root,root) %{_bindir}/initlocation
 %attr(755,root,root) %{_bindir}/pg_passwd
 %attr(755,root,root) %{_bindir}/pg_version
-%attr(755,root,root) %{_bindir}/pg_encoding
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
 %attr(755,root,root) %{_bindir}/ipcclean
 %attr(755,root,root) %{_bindir}/createlang
-%attr(755,root,root) %{_bindir}/destroylang
+%attr(755,root,root) %{_bindir}/droplang
 
-%{_mandir}/man1/cleardbdir.1*
 %{_mandir}/man1/createdb.1*
+%{_mandir}/man1/createlang.1*
 %{_mandir}/man1/createuser.1*
-%{_mandir}/man1/destroydb.1*
-%{_mandir}/man1/destroyuser.1*
+%{_mandir}/man1/dropdb.1*
+%{_mandir}/man1/droplang.1*
+%{_mandir}/man1/dropuser.1*
 %{_mandir}/man1/initdb.1*
 %{_mandir}/man1/initlocation.1*
 %{_mandir}/man1/pg_passwd.1*
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
 %{_mandir}/man1/ipcclean.1*
-%{_mandir}/man5/*.5*
 
 %attr(750,postgres,postgres) %dir /var/lib/pgsql
 
