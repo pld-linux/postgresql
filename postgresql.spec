@@ -779,6 +779,7 @@ find contrib -type d -name CVS -exec rm -rf {} \;
 
 %build
 rm -f config/libtool.m4
+install /usr/share/automake/config.* config/
 %{__aclocal} -I config
 %{__autoconf}
 %configure CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS"\
