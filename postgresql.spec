@@ -937,7 +937,6 @@ fi
 %{_mandir}/man1/initdb.1*
 %{_mandir}/man1/initlocation.1*
 %{_mandir}/man1/ipcclean.1*
-%{_mandir}/man1/pg_config.1*
 %{_mandir}/man1/pg_controldata.1*
 %{_mandir}/man1/pg_ctl.1*
 %{_mandir}/man1/pg_resetxlog.1*
@@ -986,6 +985,7 @@ fi
 %{_includedir}/postgresql/internal/libpq
 %{_includedir}/libpq
 %{_mandir}/man1/ecpg.1*
+%{_mandir}/man1/pg_config.1*
 
 %files backend-devel
 %defattr(644,root,root,755)
