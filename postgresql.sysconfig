@@ -10,7 +10,7 @@ POSTGRES_DATA_DIR=/var/lib/pgsql
 # maximum number of backend server processes that this postmaster is allowed
 # to start. If not specyfied is 32, and can be set as high as 1024 if your
 # system will support that many processes.
-MAX_NUM_BACKENDS=
+#MAX_NUM_BACKENDS=32
 
 #
 # postgres(1) backend options runed by postmaster
@@ -22,3 +22,6 @@ POSTGRES_QUIET=yes
 # improves performance, but an operating system crash while a transaction is
 # in progress will probably cause data loss.
 POSTGRES_DIABLE_FSYNC=no
+
+# Where postmaster output is redirected
+POSTGRES_LOG=/var/log/pgsql

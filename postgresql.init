@@ -23,6 +23,7 @@ if [ -f /etc/sysconfig/postgresql ] ; then
 else
         ALLOW_TCP_CONNECTIONS=no
 	POSTGRES_DATA_DIR=/var/lib/psql
+	POSTGRES_LOG=/var/log/pgsql
 fi
 
 # Check that networking is up.
@@ -35,18 +36,17 @@ fi
 case "$1" in
   start)
 	# Check if the service is already running?
-	if [ ! -f /var/lock/subsys/postgresql ]; then
-
+	if [ -f /var/lock/subsys/postgresql ]; then
+  		msg_Already_Running PostgreSQL
+	else 	
 		# Sanity check
 		[ -f /tmp/.s.PGSQL.5432 ] || rm -f /tmp/.s.PGSQL.5432
-		STARTTEXT="Starting postgresql"
 		
 		# Check for the PGDATA structure
 		if [ -f $POSTGRES_DATA_DIR/PG_VERSION ] && [ -d $POSTGRES_DATA_DIR/base/template1 ]; then
 		    # Check version of existing PGDATA
 		    if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.0' ]; then
-			STARTTEXT="$STARTTEXT [Old version. Need to Upgrade]"
-			show "$STARTTEXT"; fail
+			show "Databases created under incompatibile version. Migrate them first."; fail
 			exit 1
 		    fi
 		else
@@ -55,38 +55,43 @@ case "$1" in
 			mkdir -p $POSTGRES_DATA_DIR
 			chown postgres.postgres $POSTGRES_DATA_DIR
 		    fi
-		    show "Creating postgresql init database"
-		    busy
 		    su postgres -c "LD_LIBRARY_PATH=/usr/lib \
 			initdb --pgdata=$POSTGRES_DATA_DIR \
-			--pglib=/usr/lib/pgsql &>/tmp/initdb.pgsql"
-		    deltext; ok
+			--pglib=/usr/lib/pgsql"
 		fi
 		
-		show "$STARTTEXT"
+		msg_starting PostgreSQL 
 		busy
-		su postgres -c "/usr/bin/postmaster \
-			$([ "$ALLOW_TCP_CONNECTIONS" = yes ] && echo "-i") \
-			$([ -n "$MAX_NUM_BACKENDS" ] && echo "-N $MAX_NUM_BACKENDS") \
-			$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
-			-o \
-			$([ "$POSTGRES_QUIET" = yes ] && echo "-Q") \
-			$([ "$POSTGRES_DIABLE_FSYNC" = yes ] && echo "-F") 2> /dev/null &"
-		sleep 2
-		if ps ax | grep -v grep | grep -q postmaster; then
-			deltext; ok
+		PGSQL_CMDLINE="$([ "$ALLOW_TCP_CONNECTIONS" = yes ] && echo "-i") \
+		    $([ -n "$MAX_NUM_BACKENDS" ] && echo "-N $MAX_NUM_BACKENDS") \
+		    $([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
+		    $([ "$POSTGRES_QUIET". = yes. ] && echo '-o -Q') \
+		    $([ "$POSTGRES_DIABLE_FSYNC". = yes. ] && echo '-o -F')";
+		su postgres -c "/usr/bin/postmaster $PGSQL_CMDLINE >>$POSTGRES_LOG 2>&1 &"
+		out=`status postmaster`
+		if [ $? -eq 0 ]; then 
+		    deltext; ok
 		else
-			deltext; fail
+		    deltext; fail 
+		    exit 1	
 		fi
-	else
-		msg_Already_Running Postgresql
 	fi
 	touch /var/lock/subsys/postgresql
 	;;
   stop)
-	msg_stopping postgresql
+  	if [ ! -f /var/lock/subsys/postgresql ]; then
+		msg_Not_Running PostgreSQL
+		exit 0	
+	fi
+	msg_stopping postgreSQL
 	killproc postmaster
-	sleep 2
+	out=`status postmaster`
+	if [ $? -eq 0 ]; then 
+	    deltext; fail 
+	    echo -e "\n$out";
+	    exit 1	
+	fi
+	
 	rm -f /var/run/postmaster.pid
 	rm -f /var/lock/subsys/postgresql
 	;;
