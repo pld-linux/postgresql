@@ -727,7 +727,7 @@ proceduralnego PL/TCL dla swojej bazy danych.
 Summary:	Cryptographic functions for PostgreSQL
 Summary(pl):	Funkcje kryptograficzne dla PostgreSQL
 Group:		Applications/Databases
-Requires:       %{name} = %{version}
+Requires:	%{name} = %{version}
 
 %description module-pgcrypto
 Cryptographic functions for PostgreSQL.
@@ -780,7 +780,7 @@ rm -f config/libtool.m4
 %endif
 
 cd contrib/pgcrypto/
-%{__make} 
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
