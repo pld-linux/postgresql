@@ -361,7 +361,7 @@ install -d howto
 strip -s $RPM_BUILD_ROOT/usr/bin/* || :
 
 # gzip all man pages
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man*/*
+gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man*/*
 
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
@@ -439,17 +439,17 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) /usr/bin/pg_version
 %attr(755,root,root) /usr/bin/postgres
 %attr(755,root,root) /usr/bin/postmaster
-/usr/man/man1/cleardbdir.1.gz
-/usr/man/man1/createdb.1.gz
-/usr/man/man1/createuser.1.gz
-/usr/man/man1/destroydb.1.gz
-/usr/man/man1/destroyuser.1.gz
-/usr/man/man1/initdb.1.gz
-/usr/man/man1/initlocation.1.gz
-/usr/man/man1/pg_passwd.1.gz
-/usr/man/man1/postgres.1.gz
-/usr/man/man1/postmaster.1.gz
-/usr/man/man5/*.5.gz
+%{_mandir}/man1/cleardbdir.1.gz
+%{_mandir}/man1/createdb.1.gz
+%{_mandir}/man1/createuser.1.gz
+%{_mandir}/man1/destroydb.1.gz
+%{_mandir}/man1/destroyuser.1.gz
+%{_mandir}/man1/initdb.1.gz
+%{_mandir}/man1/initlocation.1.gz
+%{_mandir}/man1/pg_passwd.1.gz
+%{_mandir}/man1/postgres.1.gz
+%{_mandir}/man1/postmaster.1.gz
+%{_mandir}/man5/*.5.gz
 
 %files devel
 %defattr(644,root,root,755)
@@ -458,9 +458,9 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) /usr/lib/libec*.so
 %attr(755,root,root) /usr/lib/libpq*.so
 /usr/include/pgsql
-/usr/man/man3/*.gz
+%{_mandir}/man3/*.gz
 %attr(755,root,root) /usr/bin/ecpg
-/usr/man/man1/ecpg.1.gz
+%{_mandir}/man1/ecpg.1.gz
 
 %files data
 %defattr(-,postgres,postgres)
@@ -475,11 +475,11 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) /usr/bin/pg_id
 %attr(755,root,root) /usr/bin/pg_upgrade
 %attr(755,root,root) /usr/bin/psql
-/usr/man/man1/pg_dump.1.gz
-/usr/man/man1/pg_dumpall.1.gz
-/usr/man/man1/pg_upgrade.1.gz
-/usr/man/man1/psql.1.gz
-/usr/man/manl/*.gz
+%{_mandir}/man1/pg_dump.1.gz
+%{_mandir}/man1/pg_dumpall.1.gz
+%{_mandir}/man1/pg_upgrade.1.gz
+%{_mandir}/man1/psql.1.gz
+%{_mandir}/manl/*.gz
 
 %files -f perlfiles.list perl
 %defattr(-, root, root)
