@@ -1,0 +1,13 @@
+--- postgresql-8.0.1/config/ac_func_accept_argtypes.m4.orig	2003-11-29 20:51:17.000000000 +0100
++++ postgresql-8.0.1/config/ac_func_accept_argtypes.m4	2005-02-14 03:13:07.495976768 +0100
+@@ -48,8 +48,8 @@
+    [AC_CACHE_VAL(ac_cv_func_accept_arg3,dnl
+     [for ac_cv_func_accept_return in 'int' 'unsigned int PASCAL'; do
+       for ac_cv_func_accept_arg1 in 'int' 'unsigned int'; do
+-       for ac_cv_func_accept_arg2 in 'struct sockaddr *' 'const struct sockaddr *' 'void *'; do
+-        for ac_cv_func_accept_arg3 in 'int' 'size_t' 'socklen_t' 'unsigned int' 'void'; do
++       for ac_cv_func_accept_arg2 in 'struct sockaddr *' 'struct sockaddr *__restrict' 'const struct sockaddr *' 'void *'; do
++        for ac_cv_func_accept_arg3 in 'int' 'size_t' 'socklen_t' 'socklen_t *__restrict' 'unsigned int' 'void'; do
+          AC_TRY_COMPILE(
+ [#ifdef HAVE_SYS_TYPES_H
+ #include <sys/types.h>
