@@ -535,8 +535,26 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_libdir}/libecpg.so
 %attr(755,root,root) %{_libdir}/libpq.so
 %attr(755,root,root) %{_libdir}/libpq++.so
-%{_includedir}/pgsql
-%{_mandir}/man3/*.3*
+%dir %{_includedir}/pgsql
+%{_includedir}/pgsql/*h
+%{_includedir}/pgsql/access
+%{_includedir}/pgsql/bootstrap
+%{_includedir}/pgsql/catalog
+%{_includedir}/pgsql/commands
+%{_includedir}/pgsql/executor
+%{_includedir}/pgsql/iodbc
+%{_includedir}/pgsql/lib
+%{_includedir}/pgsql/libpq
+%{_includedir}/pgsql/libpq++
+%{_includedir}/pgsql/mb
+%{_includedir}/pgsql/nodes
+%{_includedir}/pgsql/optimizer
+%{_includedir}/pgsql/parser
+%{_includedir}/pgsql/regex
+%{_includedir}/pgsql/rewrite
+%{_includedir}/pgsql/storage
+%{_includedir}/pgsql/tcop
+%{_includedir}/pgsql/utils
 %attr(755,root,root) %{_bindir}/ecpg
 %{_mandir}/man1/ecpg.1*
 
@@ -570,6 +588,7 @@ rm -f /tmp/tmp_perl_info
 %{perl_sitearch}/auto/Pg/autosplit.ix
 %{perl_sitearch}/auto/Pg/.packlist
 %{perl_sitearch}/Pg.pm
+%{_mandir}/man3/*
 
 %files odbc
 %defattr(644,root,root,755)
