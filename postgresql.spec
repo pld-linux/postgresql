@@ -19,7 +19,7 @@
 %bcond_without	slony1			# disable Slony-I replication system
 
 %define		postgresql_version	8.0.1
-%define		postgresql_release	0.1
+%define		postgresql_release	0.2
 %define		slony1_version	1.0.5
 %define		slony1_release	1
 
@@ -55,6 +55,7 @@ Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-link.patch
 Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
+Patch5:		%{name}-gram.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -729,6 +730,7 @@ by³y ca³y czas operacyjne.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 tar xzf doc/man*.tar.gz
 
