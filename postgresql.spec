@@ -2,6 +2,7 @@
 # TODO:
 # - pg_autovacuum init support? look at its readme file, please
 # - fix tutorial building
+# - package tcl bindings (removed from main sources) as separate spec
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
@@ -831,7 +832,7 @@ install -d howto
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
 
 # find locales
-for f in libpq pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl; do
+for f in libpq pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl pg_config; do
 	%find_lang $f
 done
 # merge locales
@@ -1019,7 +1020,7 @@ fi
 %attr(755,root,root) %{_libdir}/libpgtypes.so
 %{_includedir}/ecpg
 
-%files devel
+%files devel -f pg_config.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pg_config
 %attr(755,root,root) %{_libdir}/libpq.so
