@@ -17,7 +17,7 @@ Summary(tr):	Veri TabanЩ YЖnetim Sistemi
 Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
-Version:	7.2.2
+Version:	7.2.3
 Release:	1
 License:	BSD
 Group:		Applications/Databases
