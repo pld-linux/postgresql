@@ -1,0 +1,146 @@
+diff -uNr postgresql-7.2devel.orig/src/Makefile.global.in postgresql-7.2devel/src/Makefile.global.in
+--- postgresql-7.2devel.orig/src/Makefile.global.in	Sun Sep 16 18:11:09 2001
++++ postgresql-7.2devel/src/Makefile.global.in	Mon Sep 17 02:08:29 2001
+@@ -83,7 +83,7 @@
+ pkglibdir = $(libdir)
+ ifeq "$(findstring pgsql, $(pkglibdir))" ""
+ ifeq "$(findstring postgres, $(pkglibdir))" ""
+-override pkglibdir := $(pkglibdir)/postgresql
++override pkglibdir := $(pkglibdir)/pgsql
+ endif
+ endif
+ 
+@@ -91,7 +91,7 @@
+ pkgincludedir = $(includedir)
+ ifeq "$(findstring pgsql, $(pkgincludedir))" ""
+ ifeq "$(findstring postgres, $(pkgincludedir))" ""
+-override pkgincludedir := $(pkgincludedir)/postgresql
++override pkgincludedir := $(pkgincludedir)/pgsql
+ endif
+ endif
+ includedir_server = $(pkgincludedir)/server
+diff -uNr postgresql-7.2devel.orig/src/test/regress/GNUmakefile postgresql-7.2devel/src/test/regress/GNUmakefile
+--- postgresql-7.2devel.orig/src/test/regress/GNUmakefile	Sun Sep 16 18:11:11 2001
++++ postgresql-7.2devel/src/test/regress/GNUmakefile	Mon Sep 17 01:58:31 2001
+@@ -68,8 +68,8 @@
+ abs_builddir := $(shell pwd)
+ 
+ define sed-command
+-sed -e 's,@abs_srcdir@,$(abs_srcdir),g' \
+-    -e 's,@abs_builddir@,$(abs_builddir),g' \
++sed -e 's,@abs_srcdir@,/usr/lib/pgsql/test/regress,g' \
++    -e 's,@abs_builddir@,/usr/lib/pgsql/test/regress,g' \
+     -e 's/@DLSUFFIX@/$(DLSUFFIX)/g' $< >$@
+ endef
+ 
+diff -uNr postgresql-7.2devel.orig/src/test/regress/input/create_function_1.source postgresql-7.2devel/src/test/regress/input/create_function_1.source
+--- postgresql-7.2devel.orig/src/test/regress/input/create_function_1.source	Wed May 16 18:32:20 2001
++++ postgresql-7.2devel/src/test/regress/input/create_function_1.source	Mon Sep 17 01:58:31 2001
+@@ -4,41 +4,41 @@
+ 
+ CREATE FUNCTION widget_in(opaque)
+    RETURNS widget
+-   AS '@abs_builddir@/regress@DLSUFFIX@'
++   AS '/usr/lib/pgsql/test/regress/regress.so'
+    LANGUAGE 'c';
+ 
+ CREATE FUNCTION widget_out(opaque)
+    RETURNS opaque
+-   AS '@abs_builddir@/regress@DLSUFFIX@'
++   AS '/usr/lib/pgsql/test/regress/regress.so'
+    LANGUAGE 'c';
+ 
+ CREATE FUNCTION check_primary_key ()
+ 	RETURNS opaque
+-	AS '@abs_builddir@/../../../contrib/spi/refint@DLSUFFIX@'
++	AS '/usr/lib/pgsql/test/regress/refint.so'
+ 	LANGUAGE 'C';
+ 
+ CREATE FUNCTION check_foreign_key ()
+ 	RETURNS opaque
+-	AS '@abs_builddir@/../../../contrib/spi/refint@DLSUFFIX@'
++	AS '/usr/lib/pgsql/test/regress/refint.so'
+ 	LANGUAGE 'C';
+ 
+ CREATE FUNCTION autoinc ()
+ 	RETURNS opaque
+-	AS '@abs_builddir@/../../../contrib/spi/autoinc@DLSUFFIX@'
++	AS '/usr/lib/pgsql/test/regress/autoinc.so'
+ 	LANGUAGE 'C';
+ 
+ CREATE FUNCTION funny_dup17 ()
+         RETURNS opaque
+-        AS '@abs_builddir@/regress@DLSUFFIX@'
++        AS '/usr/lib/pgsql/test/regress/regress.so'
+         LANGUAGE 'C';
+ 
+ CREATE FUNCTION ttdummy ()
+         RETURNS opaque
+-        AS '@abs_builddir@/regress@DLSUFFIX@'
++        AS '/usr/lib/pgsql/test/regress/regress.so'
+         LANGUAGE 'C';
+ 
+ CREATE FUNCTION set_ttdummy (int4)
+         RETURNS int4
+-        AS '@abs_builddir@/regress@DLSUFFIX@'
++        AS '/usr/lib/pgsql/test/regress/regress.so'
+         LANGUAGE 'C';
+ 
+diff -uNr postgresql-7.2devel.orig/src/test/regress/output/create_function_1.source postgresql-7.2devel/src/test/regress/output/create_function_1.source
+--- postgresql-7.2devel.orig/src/test/regress/output/create_function_1.source	Fri Aug 10 23:14:34 2001
++++ postgresql-7.2devel/src/test/regress/output/create_function_1.source	Mon Sep 17 02:01:47 2001
+@@ -3,34 +3,34 @@
+ --
+ CREATE FUNCTION widget_in(opaque)
+    RETURNS widget
+-   AS '@abs_builddir@/regress@DLSUFFIX@'
++   AS '/usr/lib/pgsql/test/regress/regress.so'
+    LANGUAGE 'c';
+ NOTICE:  ProcedureCreate: type widget is not yet defined
+ CREATE FUNCTION widget_out(opaque)
+    RETURNS opaque
+-   AS '@abs_builddir@/regress@DLSUFFIX@'
++   AS '/usr/lib/pgsql/test/regress/regress.so'
+    LANGUAGE 'c';
+ CREATE FUNCTION check_primary_key ()
+ 	RETURNS opaque
+-	AS '@abs_builddir@/../../../contrib/spi/refint@DLSUFFIX@'
++	AS '/usr/lib/pgsql/test/regress/refint.so'
+ 	LANGUAGE 'C';
+ CREATE FUNCTION check_foreign_key ()
+ 	RETURNS opaque
+-	AS '@abs_builddir@/../../../contrib/spi/refint@DLSUFFIX@'
++	AS '/usr/lib/pgsql/test/regress/refint.so'
+ 	LANGUAGE 'C';
+ CREATE FUNCTION autoinc ()
+ 	RETURNS opaque
+-	AS '@abs_builddir@/../../../contrib/spi/autoinc@DLSUFFIX@'
++	AS '/usr/lib/pgsql/test/regress/autoinc.so'
+ 	LANGUAGE 'C';
+ CREATE FUNCTION funny_dup17 ()
+         RETURNS opaque
+-        AS '@abs_builddir@/regress@DLSUFFIX@'
++        AS '/usr/lib/pgsql/test/regress/regress.so'
+         LANGUAGE 'C';
+ CREATE FUNCTION ttdummy ()
+         RETURNS opaque
+-        AS '@abs_builddir@/regress@DLSUFFIX@'
++        AS '/usr/lib/pgsql/test/regress/regress.so'
+         LANGUAGE 'C';
+ CREATE FUNCTION set_ttdummy (int4)
+         RETURNS int4
+-        AS '@abs_builddir@/regress@DLSUFFIX@'
++        AS '/usr/lib/pgsql/test/regress/regress.so'
+         LANGUAGE 'C';
+diff -uNr postgresql-7.2devel.orig/src/test/regress/pg_regress.sh postgresql-7.2devel/src/test/regress/pg_regress.sh
+--- postgresql-7.2devel.orig/src/test/regress/pg_regress.sh	Sun Sep 16 18:11:11 2001
++++ postgresql-7.2devel/src/test/regress/pg_regress.sh	Mon Sep 17 02:02:56 2001
+@@ -70,7 +70,7 @@
+ : ${outputdir=.}
+ 
+ libdir='@libdir@'
+-pkglibdir='@pkglibdir@'
++pkglibdir='/usr/lib/pgsql'
+ bindir='@bindir@'
+ datadir='@datadir@'
+ host_platform='@host_tuple@'
