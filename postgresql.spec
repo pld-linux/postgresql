@@ -332,8 +332,8 @@ find $RPM_BUILD_ROOT%{_libdir}/perl5 -type f -print | \
 find $RPM_BUILD_ROOT%{_libdir}/perl5 -type d -name Pg -print | \
 	sed -e "s|$RPM_BUILD_ROOT/|%dir /|g" >> perlfiles.list
 
-# Move all includes beneath /usr/include/pgsql.
-( cd $RPM_BUILD_ROOT/usr/include
+# Move all includes beneath %{_includedir}/pgsql.
+( cd $RPM_BUILD_ROOT%{_includedir}
   rm -rf include
   for f in *.h access commands executor lib libpq libpq++ port utils
   do
@@ -457,7 +457,7 @@ rm -f /tmp/tmp_perl_info
 %{_libdir}/libpq*.a
 %attr(755,root,root) %{_libdir}/libec*.so
 %attr(755,root,root) %{_libdir}/libpq*.so
-/usr/include/pgsql
+%{_includedir}/pgsql
 %{_mandir}/man3/*.gz
 %attr(755,root,root) %{_bindir}/ecpg
 %{_mandir}/man1/ecpg.1.gz
@@ -489,7 +489,7 @@ rm -f /tmp/tmp_perl_info
 %doc src/interfaces/odbc/readme.txt src/interfaces/odbc/notice.txt
 %config(noreplace) %verify(not size mtime md5) /etc/odbc*
 %{_libdir}/libpsqlodbc*
-/usr/include/iodbc
+%{_includedir}/iodbc
 
 %changelog
 * Wed Mar 24 1999 Jacek Smyda <smyda@posexperts.com.pl>
@@ -528,13 +528,13 @@ rm -f /tmp/tmp_perl_info
 - /var/lib/pgsql/pg_pwd should not be 666
 
 * Sun Jun 21 1998 Jeff Johnson <jbj@redhat.com>
-- create %{_libdir}/pgsql (like /usr/include/pgsql)
+- create %{_libdir}/pgsql (like %{_includedir}/pgsql)
 - resurrect libpq++.so*
 - fix name problem in startup-script (problem #533)
 
 * Fri Jun 19 1998 Jeff Johnson <jbj@redhat.com>
 - configure had "--prefix=$RPM_BUILD_ROOT/usr"
-- move all include files below /usr/include/pgsql.
+- move all include files below %{_includedir}/pgsql.
 - resurrect perl client file lists.
 
 * Tue May 05 1998 Prospector System <bugs@redhat.com>
