@@ -40,33 +40,3 @@ diff -ur postgresql-6.4.2.old/src/Makefile.global.in postgresql-6.4.2/src/Makefi
  
  ##############################################################################
  #
-diff -ur postgresql-6.4.2.old/src/interfaces/ecpg/include/Makefile postgresql-6.4.2/src/interfaces/ecpg/include/Makefile
---- postgresql-6.4.2.old/src/interfaces/ecpg/include/Makefile	Wed Jun 30 10:43:20 1999
-+++ postgresql-6.4.2/src/interfaces/ecpg/include/Makefile	Wed Jun 30 10:42:13 1999
-@@ -6,10 +6,10 @@
- 	@echo Nothing to be done.
- 
- install::
--	$(INSTALL) $(INSTLOPTS) ecpgerrno.h $(DESTDIR)$(HEADERDIR)	
--	$(INSTALL) $(INSTLOPTS) ecpglib.h $(DESTDIR)$(HEADERDIR)	
--	$(INSTALL) $(INSTLOPTS) ecpgtype.h $(DESTDIR)$(HEADERDIR)	
--	$(INSTALL) $(INSTLOPTS) sqlca.h $(DESTDIR)$(HEADERDIR)	
-+	$(INSTALL) $(INSTLOPTS) ecpgerrno.h $(HEADERDIR)	
-+	$(INSTALL) $(INSTLOPTS) ecpglib.h $(HEADERDIR)	
-+	$(INSTALL) $(INSTLOPTS) ecpgtype.h $(HEADERDIR)	
-+	$(INSTALL) $(INSTLOPTS) sqlca.h $(HEADERDIR)	
- 
- uninstall::
- 	rm -f $(DESTDIR)$(HEADERDIR)/ecpgerrno.h
-diff -ur postgresql-6.4.2.old/src/interfaces/ecpg/preproc/Makefile postgresql-6.4.2/src/interfaces/ecpg/preproc/Makefile
---- postgresql-6.4.2.old/src/interfaces/ecpg/preproc/Makefile	Fri Oct 16 06:40:38 1998
-+++ postgresql-6.4.2/src/interfaces/ecpg/preproc/Makefile	Wed Jun 30 10:43:57 1999
-@@ -18,7 +18,7 @@
- 	rm -f *.o core a.out ecpg y.tab.h y.tab.c pgc.c *~
- 
- install: all
--	$(INSTALL) $(INSTL_EXE_OPTS) ecpg $(DESTDIR)$(BINDIR)
-+	$(INSTALL) $(INSTL_EXE_OPTS) ecpg $(BINDIR)
- 
- uninstall:
- 	rm -f $(DESTDIR)$(BINDIR)/ecpg
