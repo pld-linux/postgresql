@@ -7,9 +7,9 @@
 #   routine and send it to postgresql team...
 #
 # Conditional build:
-# _with_jdbc			- with JDBC driver
+# _with_jdbc				- with JDBC driver
 # _with_absolute_dbpaths	- allow absolute paths to create database
-#	( disallowed by default because it is a security risk )
+#	(disallowed by default because it is a security risk)
 #
 
 %include	/usr/lib/rpm/macros.python
