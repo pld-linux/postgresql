@@ -4,5 +4,21 @@
 # only on unix socket
 ALLOW_TCP_CONNECTIONS=no
 
-# Optional parameters
-OPTIONS=
+# Root of the tree of database directories
+DATA_DIR=/var/state/pgsql
+
+# maximum number of backend server processes that this postmaster is allowed
+# to start. If not specyfied is 32, and can be set as high as 1024 if your
+# system will support that many processes.
+MAX_NUM_BACKENDS=
+
+#
+# postgres(1) backend options runed by postmaster
+#
+# run postgres(1) bacend in quiet mode
+POSTGRES_QUIET=yes
+
+# Disable automatic fsync() call after each transac tion. This option
+# improves performance, but an operating system crash while a transaction is
+# in progress will probably cause data loss.
+POSTGRES_DIABLE_FSYNC=no

@@ -24,13 +24,6 @@ else
         ALLOW_TCP=no
 fi
 
-if [ "$ALLOW_TCP" = yes ]; then
-	ALLOW_TCP="-i"
-else
-	ALLOW_TCP=""
-fi
-
-
 # Check that networking is up.
 if [ "${NETWORKING}" = "no" ]; then
 	echo "WARNING: Networking is down. Postgresql service can't be runed."
@@ -47,12 +40,18 @@ case "$1" in
 	if [ ! -f /var/lock/subsys/postgresql ]; then
 		show Starting postgresql
 		busy
-		su postgres -c "/usr/bin/postmaster $ALLOW_TCP $OPTIONS -D /var/state/pgsql" &
-		
+		su postgres -c "/usr/bin/postmaster \
+			$([ "$ALLOW_TCP" = yes ] && echo "-i") \
+			$([ -n "$MAX_NUM_BACKENDS" ] && echo "-N $MAX_NUM_BACKENDS") \
+			$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
+			-o \
+			$([ "$POSTGRES_QUIET" = yes ] && echo "-Q") \
+			$([ "$POSTGRES_DIABLE_FSYNC" = yes ] && echo "-F") \
+			&
 		if ps ax | grep -v grep | grep -q postmaster; then
-		    deltext;ok
+			deltext;ok
 		else
-		    deltext;fail
+			deltext;fail
 		fi
 	else
 		echo "Postgresql already is running"
