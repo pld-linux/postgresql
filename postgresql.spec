@@ -1,6 +1,3 @@
-# [for (x)emacs] -*- coding: utf-8 -*-
-%define beta 0
-
 %{?beta:%define __os_install_post /usr/lib/rpm/brp-compress}
 %{!?perl:%define perl 1}
 %{!?tcl:%define tcl 1}
@@ -31,28 +28,7 @@
 Summary:	PostgreSQL client programs and libraries.
 Name:		postgresql
 Version:	7.2.3
-
-# Conventions for PostgreSQL Global Development Group RPM releases:
-
-# Official PostgreSQL Development Group RPMS have a PGDG after the release number.
-# Integer releases are stable -- 0.1.x releases are Pre-releases, and x.y are
-# test releases.
-
-# Pre-releases are those that are built from CVS snapshots or pre-release
-# tarballs from postgresql.org.  Official beta releases are not
-# considered pre-releases, nor are release candidates, as their beta or
-# release candidate status is reflected in the version of the tarball. Pre-
-# releases' versions do not change -- the pre-release tarball of 7.0.3, for
-# example, has the same tarball version as the final official release of 7.0.3:
-# but the tarball is different.
-
-# Test releases are where PostgreSQL itself is not in beta, but certain parts of
-# the RPM packaging (such as the spec file, the initscript, etc) are in beta.
-
-# Pre-release RPM's should not be put up on the public ftp.postgresql.org server
-# -- only test releases or full releases should be.
-
-Release:	1aur
+Release:	0.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -128,33 +104,6 @@ Obsoletes:	postgresql-docs
 BuildRequires:	pam-devel
 %endif
 
-
-
-# This is the PostgreSQL Global Development Group Official RPMset spec file,
-# or a derivative thereof.
-# Copyright 2001 Lamar Owen <lamar@postgresql.org> <lamar.owen@wgcr.org>
-# and others listed.
-
-# Major Contributors:
-# ---------------
-# Lamar Owen
-# Trond Eivind Glomsrød <teg@redhat.com>
-# Thomas Lockhart
-# Reinhard Max
-# Karl DeBisschop
-# Peter Eisentraut
-# and others in the Changelog....
-
-# This spec file and ancilliary files are licensed in accordance with
-# The PostgreSQL license.
-
-# On top of this file you can find the default build package list macros.  These can be overridden by defining
-# on the rpm command line:
-# rpm --define 'packagename 1' .... to force the package to build.
-# rpm --define 'packagename 0' .... to force the package NOT to build.
-# The base package, the lib package, the devel package, and the server package always get built.
-
-
 %description
 PostgreSQL is an advanced Object-Relational database management system
 (DBMS) that supports almost all SQL constructs (including
@@ -203,7 +152,6 @@ extra documentation. Install this package if you want to help with the
 PostgreSQL documentation project, or if you want to generate printed
 documentation.
 %endif
-
 
 %package contrib
 Summary:	Contributed source and binaries distributed with PostgreSQL
