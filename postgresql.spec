@@ -10,6 +10,7 @@
 %bcond_without	pgsql_locale		# disable PostgreSQL locale
 %bcond_without	pgsql_multibyte		# disable PostgreSQL multibyte
 %bcond_without	python			# disable Python support
+%bcond_without	php			# disable PHP support
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 %bcond_without	slony1			# disable Slony-I replication system
@@ -46,6 +47,8 @@ Source4:	http://developer.postgresql.org/~wieck/slony1/download/slony1-%{slony1_
 Source5:	slony1.init
 Source6:	slony1.pgpass
 Source7:	slony1.sysconfig
+Source8:	http://www.commandprompt.com/files/plphp-8.x.tar.bz2
+# Source8-md5:	d307e4ab8cb6900a1c290a5dde1bdeee
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-link.patch
@@ -66,6 +69,10 @@ BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
+%if %{with php}
+BuildRequires:	php
+BuildRequires:	php-devel
+%endif
 %if %{with python}
 BuildRequires:	python >= 1:2.3
 BuildRequires:	python-devel >= 1:2.3
@@ -592,6 +599,26 @@ potrzeby.
 Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka
 proceduralnego PL/Perl dla swojej bazy danych.
 
+%package module-plphp
+Summary:	PL/PHP - PostgreSQL procedural language
+Summary(pl):	PL/PHP jêzyk proceduralny bazy danych PostgreSQL
+Group:		Applications/Databases
+Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
+
+%description module-plphp
+From PostgreSQL documentation.
+
+Postgres supports the definition of procedural languages. In the case
+of a function or trigger procedure defined in a procedural language,
+the database has no built-in knowledge about how to interpret the
+function's source text. Instead, the task is passed to a handler that
+knows the details of the language. The handler itself is a special
+programming language function compiled into a shared object and loaded
+on demand.
+
+To enable PL/PHP procedural language for your database you have to
+run createlang command.
+
 %package module-plpython
 Summary:	PL/Python - PostgreSQL procedural language
 Summary(pl):	PL/Python jêzyk proceduralny bazy danych PostgreSQL
@@ -723,7 +750,7 @@ wymaga aby zarówno serwer g³ówny jak i wszystkie serwery pomocnicze
 by³y ca³y czas operacyjne.
 
 %prep
-%setup -q -a4
+%setup -q -a4 -a7
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
 %patch2 -p1
@@ -731,6 +758,10 @@ by³y ca³y czas operacyjne.
 %patch4 -p1
 %patch5 -p1
 #patch6 -p1	needed for glibc2.3.4 + gcc4
+
+%if %{with php}
+patch -p1 < plphp.patch
+%endif
 
 tar xzf doc/man*.tar.gz
 
@@ -760,6 +791,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	--with-openssl \
 	--with-pam \
 	%{?with_perl:--with-perl} \
+	%{?with_php:--with-php} \
 	%{?with_python:--with-python} \
 	%{?with_tcl:--with-tcl} \
 	--with-x \
