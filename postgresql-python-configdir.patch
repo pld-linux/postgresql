@@ -1,0 +1,17 @@
+diff -dur postgresql-7.4.1.orig/config/python.m4 postgresql-7.4.1/config/python.m4
+--- postgresql-7.4.1.orig/config/python.m4	2003-09-02 01:01:48.000000000 +0200
++++ postgresql-7.4.1/config/python.m4	2004-01-30 08:48:55.208190373 +0100
+@@ -31,6 +31,12 @@
+   python_includespec="-I${python_execprefix}/include/python${python_version} $python_includespec"
+ fi
+ 
++if test "$python_prefix" == "$prefix"; then
++	if test -d "${libdir}/python${python_version}/config" ; then
++		python_configdir="${libdir}/python${python_version}/config"
++	fi
++fi
++
+ AC_SUBST(python_prefix)[]dnl
+ AC_SUBST(python_execprefix)[]dnl
+ AC_SUBST(python_configdir)[]dnl
+Only in postgresql-7.4.1/config: python.m4~
