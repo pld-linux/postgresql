@@ -24,7 +24,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.3
-Release:	0.1.%{relc}
+Release:	0.2.%{relc}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{relc}.tar.gz
@@ -865,6 +865,7 @@ fi
 %{_datadir}/postgresql/*.bki
 %{_datadir}/postgresql/*.sample
 %{_datadir}/postgresql/*.description
+%{_datadir}/postgresql/*.sql
 
 %attr(700,postgres,postgres) /home/services/postgres
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
