@@ -40,7 +40,7 @@ pgstatus () {
 		PG_STATUS="not running"
 	elif echo "$status" | grep -q 'pg_ctl: postmaster is running'; then
 		PG_STATUS="running"
-		PG_PID=`pg_ctl  -D /var/lib/pgsql status | sed 's/^pg_ctl:.*pid: \([0-9]\+\).*/\1/' | head -1`
+		PG_PID=`echo "$status" | sed 's/^pg_ctl:.*pid: \([0-9]\+\).*/\1/' | head -1`
 	fi
 }
 
@@ -99,7 +99,9 @@ case "$action" in
 		done
 	;;
 	status)
-		TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir status"
+		for pgdir in $POSTGRES_DB_CLUSTERS; do
+			TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir status"
+    	done
 	;;
 	restart)
 		$0 stop
