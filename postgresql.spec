@@ -6,10 +6,10 @@
 %bcond_without	tests			# disable testing
 %bcond_without	tcl			# disables Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
-%bcond_without	perl			# disable perl support
+%bcond_without	perl			# disable Perl support
 %bcond_without	pgsql_locale		# disable PostgreSQL locale
 %bcond_without	pgsql_multibyte		# disable PostgreSQL multibyte
-%bcond_without	python			# disable python support
+%bcond_without	python			# disable Python support
 %bcond_with	jdbc			# build JDBC interface and Java tools
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
@@ -409,7 +409,7 @@ servidor PostgreSQL. O servidor estА no pacote principal.
 единственный пакет, который вам надо установить.
 
 Теперь пакеты с библиотеками для разных языков программирования (C,
-C++, PERL и TCL) разделены. Этот пакет включает только библиотеки для
+C++, Perl и Tcl) разделены. Этот пакет включает только библиотеки для
 языка C.
 
 %description clients -l uk
@@ -418,8 +418,8 @@ C++, PERL и TCL) разделены. Этот пакет включает только библиотеки для
 пакет╕. Якщо вам потр╕бно працювати з ╕ншим сервером PostgreSQL, це
 ╓диний пакет, який вам треба встановити.
 
-Тепер пакети з б╕бл╕отеками для р╕зних мов програмування (C, C++, PERL
-╕ TCL) розд╕лен╕. Цей пакет м╕стить т╕льки б╕бл╕отеки для мови C.
+Тепер пакети з б╕бл╕отеками для р╕зних мов програмування (C, C++, Perl
+╕ Tcl) розд╕лен╕. Цей пакет м╕стить т╕льки б╕бл╕отеки для мови C.
 
 %package doc
 Summary:	Documentation for PostgreSQL
@@ -644,7 +644,7 @@ knows the details of the language. The handler itself is a special
 programming language function compiled into a shared object and loaded
 on demand.
 
-To enable PL/perl procedural language for your database you have to
+To enable PL/Perl procedural language for your database you have to
 run createlang command.
 
 %description module-plperl -l pl
@@ -659,11 +659,11 @@ funkcj╠, ktСra jest skompilowana w obiekt dzielony i Ёadowany w razie
 potrzeby.
 
 Za pomoc╠ komendy createlang mo©na dodaФ wsparcie dla jЙzyka
-proceduralnego PL/perl dla swojej bazy danych.
+proceduralnego PL/Perl dla swojej bazy danych.
 
 %package module-plpython
-Summary:	PL/python - PostgreSQL procedural language
-Summary(pl):	PL/python jЙzyk proceduralny bazy danych PostgreSQL
+Summary:	PL/Python - PostgreSQL procedural language
+Summary(pl):	PL/Python jЙzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 %pyrequires_eq	python
@@ -679,7 +679,7 @@ knows the details of the language. The handler itself is a special
 programming language function compiled into a shared object and loaded
 on demand.
 
-To enable PL/python procedural language for your database you have to
+To enable PL/Python procedural language for your database you have to
 run createlang command.
 
 %description module-plpython -l pl
@@ -694,11 +694,11 @@ funkcj╠, ktСra jest skompilowana w obiekt dzielony i Ёadowany w razie
 potrzeby.
 
 Za pomoc╠ komendy createlang mo©na dodaФ wsparcie dla jЙzyka
-proceduralnego PL/python dla swojej bazy danych.
+proceduralnego PL/Python dla swojej bazy danych.
 
 %package module-pltcl
-Summary:	PL/TCL - PostgreSQL procedural language
-Summary(pl):	PL/TCL - jЙzyk proceduralny bazy danych PostgreSQL
+Summary:	PL/Tcl - PostgreSQL procedural language
+Summary(pl):	PL/Tcl - jЙzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -713,7 +713,7 @@ knows the details of the language. The handler itself is a special
 programming language function compiled into a shared object and loaded
 on demand.
 
-To enable PL/TCL procedural language for your database you have to run
+To enable PL/Tcl procedural language for your database you have to run
 createlang command.
 
 %description module-pltcl -l pl
@@ -728,7 +728,7 @@ funkcj╠, ktСra jest skompilowana w obiekt dzielony i Ёadowany w razie
 potrzeby.
 
 Za pomoc╠ komendy createlang mo©na dodaФ wsparcie dla jЙzyka
-proceduralnego PL/TCL dla swojej bazy danych.
+proceduralnego PL/Tcl dla swojej bazy danych.
 
 %package module-pgcrypto
 Summary:	Cryptographic functions for PostgreSQL
