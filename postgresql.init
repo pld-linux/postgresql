@@ -17,15 +17,16 @@
 # Get network config
 . /etc/sysconfig/network
 
+# Service config defaults
+ALLOW_TCP_CONNECTIONS=no
+ALLOW_USE_SSL=no
+POSTGRES_DATA_DIR=/var/lib/pgsql
+POSTGRES_LOG=/var/log/pgsql
+ENCODING=UNICODE
+
 # Get service config
 if [ -f /etc/sysconfig/postgresql ] ; then
         . /etc/sysconfig/postgresql
-else
-        ALLOW_TCP_CONNECTIONS=no
-	ALLOW_USE_SSL=no
-	POSTGRES_DATA_DIR=/var/lib/pgsql
-	POSTGRES_LOG=/var/log/pgsql
-	ENCODING=UNICODE
 fi
 
 # Check that networking is up.
