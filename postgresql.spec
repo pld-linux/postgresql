@@ -8,7 +8,7 @@ Version:	6.5
 Release:	1
 Copyright:	BSD
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy danych
+Group(pl):	Aplikacje/Bazy Danych
 Source0:	ftp://ftp.postgresql.org/pub/%{name}-%{version}.tar.gz
 Source1:	postgresql.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
@@ -159,7 +159,7 @@ gereken baþlýk dosyalarýný ve kitaplýklarý içerir.
 #Summary(pl):	PostgreSQL - inicjuj±ca struktura bazy danych
 #Summary(tr):	PostgreSQL baþlangýç veritabaný yapýsý
 #Group:		Applications/Databases
-#Group(pl):	Aplikacje/Bazy danych
+#Group(pl):	Aplikacje/Bazy Danych
 #PreReq:		%{name} = %{version}
 #Conflicts:	postgresql-data <= 6.2.1
 #
@@ -213,7 +213,7 @@ gereken baþlýk dosyalarýný ve kitaplýklarý içerir.
 Summary:	clients needed to access a PostgreSQL server
 Summary(pl):	klienci wymagani do dostêpu do serwera PostgreSQL
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy danych
+Group(pl):	Aplikacje/Bazy Danych
 
 %description clients
 This package includes only the clients and client libraries needed to access
@@ -233,7 +233,7 @@ PostgreSQL. Serwer znajduje siê w g³ównym pakiecie.
 Summary:	Perl interface to PostgreSQL database
 Summary(pl):	Interface dla Perl'a umo¿liwiaj±cy dostêp do baz PostgreSQL
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy danych
+Group(pl):	Aplikacje/Bazy Danych
 Requires:	postgresql, perl >= 5.004
 
 %description perl
@@ -247,7 +247,7 @@ PostgreSQL.
 Summary:	Documentation for PostgreSQL
 Summary(pl):	Dodatkowa dokumantacja dla PostgreSQL
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy danych
+Group(pl):	Aplikacje/Bazy Danych
 #Requires:	%{name} = %{version}
 
 %description doc
@@ -262,7 +262,7 @@ administratorów w formacie HTML.
 Summary:	ODBC interface to PostgreSQL
 Summary(pl):	Interface ODBC do PostgreSQL
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy danych
+Group(pl):	Aplikacje/Bazy Danych
 #Requires:	%{name} = %{version}
 
 %description odbc
@@ -275,7 +275,7 @@ Pakiet ten zawiera biblioteki dla interface'u ODBC.
 Summary:	ODBC interface to PostgreSQL - development part
 Summary(pl):	Interface ODBC do PostgreSQL - cze¶æ programistyczna
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy danych
+Group(pl):	Aplikacje/Bazy Danych
 Requires:	%{name}-odbc = %{version}
 
 %description odbc-devel
@@ -288,7 +288,7 @@ Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interface'u ODBC.
 Summary:	ODBC interface to PostgreSQL - static libraries
 Summary(pl):	Interface ODBC do PostgreSQL - biblioteki statyczne
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy danych
+Group(pl):	Aplikacje/Bazy Danych
 #Requires:	%{name}-odbc-devel = %{version}
 
 %description odbc-static
