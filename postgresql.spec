@@ -1024,5 +1024,6 @@ fi
 %files pgcrypto
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/%{name}/pgcrypto.so
+# Hmm i think two below lines shouldn't be here - but i can be wrong ;)
 %{_datadir}/%{name}/contrib/pgcrypto.sql
-%{_datadir}/info/%{name}/contrib/README.pgcrypto
+%{_datadir}/info/%{name}/contrib/README.pgcrypto.gz
