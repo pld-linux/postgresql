@@ -71,7 +71,6 @@ BuildRequires:	python >= 1:2.3
 BuildRequires:	python-devel >= 1:2.3
 %endif
 BuildRequires:	readline-devel >= 4.2
-BuildRequires:	rpm-pythonprov
 BuildRequires:	sed >= 4.0
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
 BuildRequires:	zlib-devel
