@@ -31,7 +31,7 @@ Version:	7.4
 Release:	0.1.%{beta}
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp3.us.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{beta}.tar.bz2
+Source0:	ftp://ftp3.us.postgresql.org/pub/postgresql/source/v%{version}/%{name}-%{version}%{beta}.tar.bz2
 # Source0-md5:	d41d8cd98f00b204e9800998ecf8427e
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
@@ -729,7 +729,7 @@ proceduralnego PL/TCL dla swojej bazy danych.
 Summary:	Cryptographic functions for PostgreSQL
 Summary(pl):	Funkcje kryptograficzne dla PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{version}
+Requires:       %{name} = %{version}
 
 %description module-pgcrypto
 Cryptographic functions for PostgreSQL.
@@ -782,7 +782,7 @@ rm -f config/libtool.m4
 %endif
 
 cd contrib/pgcrypto/
-%{__make}
+%{__make} 
 
 %install
 rm -rf $RPM_BUILD_ROOT
