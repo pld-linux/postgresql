@@ -697,7 +697,7 @@ rm -f /tmp/tmp_perl_info
 
 %attr(755,root,root) %{_bindir}/pg_id
 
-%attr(644,postgres,postgres) %{_libdir}/pgsql
+%attr(644,root,root) %{_libdir}/pgsql
 
 %files devel
 %defattr(644,root,root,755)
