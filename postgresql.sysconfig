@@ -7,11 +7,11 @@ POSTGRES_DATA_DIR=/var/lib/pgsql
 # postgres(1) backend options runed by postmaster
 #
 # run postgres(1) bacend in quiet mode
-POSTGRES_QUIET=yes
+POSTGRES_QUIET=no
 
 # Enable listening on TCP port. Without this postmaster responds
 # only on unix socket
-ALLOW_TCP_CONNECTIONS=yes
+ALLOW_TCP_CONNECTIONS=no
 
 # Disable automatic fsync() call after each transac tion. This option
 # improves performance, but an operating system crash while a transaction is
