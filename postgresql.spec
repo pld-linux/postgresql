@@ -910,7 +910,7 @@ fi
 %post	ecpg -p /sbin/ldconfig
 %postun	ecpg -p /sbin/ldconfig
 
-%pre slony1
+%pre -n slony1
 getgid slony1 >/dev/null 2>&1 || /usr/sbin/groupadd -g 131 -r slony1
 if id slony1 >/dev/null 2>&1 ; then
 	/usr/sbin/usermod -d /home/services/slony1 slony1
@@ -1107,7 +1107,7 @@ fi
 %files -n slony1
 %defattr(644,root,root,755)
 %doc slony1-%{slony1_version}/doc/howto/*
-%config /etc/sysconfig/slony1
+%config(noreplace) /etc/sysconfig/slony1
 %attr(744,root,root) /etc/rc.d/init.d/slony1
 %attr(755,root,root) %{_bindir}/slon
 %attr(755,root,root) %{_bindir}/slonik
