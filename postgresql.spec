@@ -13,6 +13,7 @@
 %bcond_with	jdbc			# build JDBC interface and Java tools
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
+%define beta beta2
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
@@ -25,13 +26,13 @@ Summary(tr):	Veri Tabaný Yönetim Sistemi
 Summary(uk):	PostgreSQL - ÓÉÓÔÅÍÁ ËÅÒÕ×ÁÎÎÑ ÂÁÚÁÍÉ ÄÁÎÉÈ
 Summary(zh_CN):	PostgreSQL ¿Í»§¶Ë³ÌÐòºÍ¿âÎÄ¼þ
 Name:		postgresql
-Version:	7.4.5
-Release:	1
+Version:	8.0.0
+Release:	0.%{beta}.1
 License:	BSD
 Group:		Applications/Databases
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	97e750c8e69c208b75b6efedc5a36efb
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}beta/%{name}-%{version}%{beta}.tar.bz2
+# Source0-md5:	27ea70eb93ed22a6d3d136c9ef7b6ec4
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -81,7 +82,7 @@ Obsoletes:	postgresql-test
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
-%define		_pgsqldir	%{_pgmoduledir}/sql
+%define		_pgsqldir	%{_datadir}/postgresql/contrib
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -760,18 +761,17 @@ przeszukiwaniu z dostêpem poprzez indeksy:
 http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 
 %prep
-%setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
+%setup -q -n %{name}-%{version}%{beta}
+#%patch1 -p1
+#%patch2 -p1
+#%patch3 -p1
 %{?with_absolute_dbpaths:%patch4 -p1}
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
+#%patch7 -p1
 %patch8 -p1
-%patch9 -p1
-%patch10 -p1
+#%patch9 -p1
+#%patch10 -p1
 %patch11 -p1
 
 tar xzf doc/man*.tar.gz
@@ -780,11 +780,11 @@ mkdir doc/unpacked
 tar zxf doc/postgres.tar.gz -C doc/unpacked
 
 # Erase all CVS dirs
-find contrib -type d -name CVS -exec rm -rf {} \;
+#find contrib -type d -name CVS -exec rm -rf {} \;
 
 %build
-rm -f config/libtool.m4
-install /usr/share/automake/config.* config
+#rm -f config/libtool.m4
+#install /usr/share/automake/config.* config
 %{__aclocal} -I config
 %{__autoconf}
 %configure \
@@ -805,9 +805,10 @@ install /usr/share/automake/config.* config
 	%{?with_tcl:--with-tk} \
 	%{?with_perl:--with-perl} \
 	%{?with_python:--with-python} \
-	%{?with_kerberos5:--with-krb5=%{_prefix}} \
+	%{?with_kerberos5:--with-krb5} \
 	--with-openssl \
 	--with-x \
+	--without-docdir \
 	%{?with_jdbc:--with-java}
 
 %{__make}
@@ -861,12 +862,12 @@ install -d howto
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
 
 # find locales
-for f in libpq pg_controldata pg_dump pg_resetxlog pgscripts postgres psql; do
+for f in libpq pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl; do
 	%find_lang $f
 done
 # merge locales
 cat pgscripts.lang pg_resetxlog.lang postgres.lang pg_controldata.lang > main.lang
-cat pg_dump.lang psql.lang > clients.lang
+cat pg_dump.lang psql.lang initdb.lang pg_ctl.lang > clients.lang
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -882,7 +883,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ `cat $pgdir/PG_VERSION` != '7.4' ]; then
+		if [ `cat $pgdir/PG_VERSION` != '8.0' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
@@ -955,12 +956,11 @@ fi
 %attr(755,root,root) %{_bindir}/droplang
 %attr(755,root,root) %{_bindir}/dropuser
 %attr(755,root,root) %{_bindir}/initdb
-%attr(755,root,root) %{_bindir}/initlocation
+#%attr(755,root,root) %{_bindir}/initlocation
 %attr(755,root,root) %{_bindir}/ipcclean
 %attr(755,root,root) %{_bindir}/pg_autovacuum
 %attr(755,root,root) %{_bindir}/pg_controldata
 %attr(755,root,root) %{_bindir}/pg_ctl
-%attr(755,root,root) %{_bindir}/pg_encoding
 %attr(755,root,root) %{_bindir}/pg_resetxlog
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
@@ -974,11 +974,13 @@ fi
 %dir %{_pgsqldir}
 %dir %{_pgmoduledir}
 %dir %{_datadir}/postgresql
+%dir %{_datadir}/postgresql/timezone
 %{_datadir}/postgresql/*.bki
 %{_datadir}/postgresql/*.sample
 %{_datadir}/postgresql/*.description
 %{_datadir}/postgresql/*.sql
 %{_datadir}/postgresql/*.txt
+%{_datadir}/postgresql/timezone/*
 
 %if %{with jdbc}
 #{_javadir}/postgresql-exmaples.jar
@@ -1012,7 +1014,6 @@ fi
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
-%attr(755,root,root) %{_bindir}/pg_id
 
 %files ecpg
 %defattr(644,root,root,755)
@@ -1060,6 +1061,7 @@ fi
 %{_libdir}/libecpg_compat.a
 %{_libdir}/libpq.a
 %{_libdir}/libpgtypes.a
+%{_libdir}/libpgport.a
 
 %files clients -f clients.lang
 %defattr(644,root,root,755)
@@ -1079,20 +1081,20 @@ fi
 %if %{with tcl}
 %files tcl
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpgtcl.so
-%attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
-%attr(755,root,root) %{_bindir}/pgtclsh
-%attr(755,root,root) %{_bindir}/pgtksh
+#%attr(755,root,root) %{_libdir}/libpgtcl.so
+#%attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
+#%attr(755,root,root) %{_bindir}/pgtclsh
+#%attr(755,root,root) %{_bindir}/pgtksh
 %{_mandir}/man1/pgtclsh.1*
 %{_mandir}/man1/pgtksh.1*
 
 %files tcl-devel
 %defattr(644,root,root,755)
-%{_includedir}/libpgtcl.h
+#%{_includedir}/libpgtcl.h
 
 %files tcl-static
 %defattr(644,root,root,755)
-%{_libdir}/libpgtcl.a
+#%{_libdir}/libpgtcl.a
 %endif
 
 %files module-plpgsql
@@ -1122,11 +1124,12 @@ fi
 %defattr(644,root,root,755)
 %doc contrib/pgcrypto/README*
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
-%{_datadir}/%{name}/pgcrypto.sql
+%{_pgsqldir}/pgcrypto.sql
 
 %files module-tsearch2
 %defattr(644,root,root,755)
+%doc contrib/tsearch2/README*
 %attr(755,root,root) %{_pgmoduledir}/tsearch2.so
-%{_datadir}/%{name}/tsearch2.sql
-%{_datadir}/%{name}/untsearch2.sql
-%{_datadir}/%{name}/*.stop
+%{_pgsqldir}/tsearch2.sql
+%{_pgsqldir}/untsearch2.sql
+%{_pgsqldir}/*.stop
