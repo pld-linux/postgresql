@@ -1,7 +1,5 @@
 #
 # todo:
-# - support for multiple db clusters (implies postgresql.init and
-#   postgresql.sysconfig simplifications)
 # - fix postgresql-configure.patch (it puts html doc into /usr/share/info
 #
 # Conditional build:
@@ -728,7 +726,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 rm -fR `find contrib/ -type d -name CVS`
 
 %build
-#rm -f config/libtool.m4
+rm -f config/libtool.m4
 %{__aclocal} -I config
 %{__autoconf}
 %configure \
