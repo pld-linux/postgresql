@@ -29,7 +29,7 @@ fi
 
 # Check that networking is up.
 if is_no "${NETWORKING}"; then
-	msg_Network_Down Postgresql
+	msg_Network_Down PostgreSQL
 	exit 1
 fi
 
@@ -101,11 +101,10 @@ case "$1" in
 		    $(is_yes "$ALLOW_USE_SSL" && echo '-l')";
 
 		TMPDIR=/tmp su postgres -c "\
-			$(echo "/usr/bin/pg_ctl start $PGSQL_CMDLINE -l $POSTGRES_LOG") \
+			$(echo "/usr/bin/pg_ctl start -w $PGSQL_CMDLINE -l $POSTGRES_LOG") \
 			$([ "$POSTMASTER_OPTIONS". != . ] && echo "-o '$POSTMASTER_OPTIONS'") \
 			$(echo "2>&1 >/dev/null")";
 		
-		usleep 100000
 		out=`status postmaster`
 		if [ $? -eq 0 ]; then 
 		    deltext; ok
@@ -122,7 +121,7 @@ case "$1" in
 		msg_Not_Running PostgreSQL
 		exit 0	
 	fi
-	msg_stopping postgreSQL
+	msg_stopping PostgreSQL
 	busy
 	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR")";
 	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl stop $PGSQL_CMDLINE -m fast 2>&1 >/dev/null"
@@ -150,7 +149,7 @@ case "$1" in
 		msg_Not_Running PostgreSQL
 		exit 0	
 	fi
-	msg_reloading postgreSQL
+	msg_reloading PostgreSQL
 	busy
 
 	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
