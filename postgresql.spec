@@ -5,7 +5,7 @@ Summary(pl): PostgreSQL system bazodanowy
 Summary(tr): Veri Tabaný Yönetim Sistemi
 Name:        postgresql
 Version:     6.4.2
-Release:     1
+Release:     2
 Copyright:   BSD
 Group:       Applications/Databases
 URL:         http://www.postgresql.org/
@@ -338,14 +338,6 @@ mv -f $RPM_BUILD_ROOT/usr/*.ini $RPM_BUILD_ROOT/etc
 
 install -m 755 $RPM_SOURCE_DIR/postgresql.init $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 
-# Create sample database
-if ! `grep postgres /etc/passwd >/dev/null 2>&1`; then
-    echo "You must add new user postgres before compiling."
-fi
-( LD_LIBRARY_PATH=$RPM_BUILD_ROOT/usr/lib \
-    $RPM_BUILD_ROOT/usr/bin/initdb --pgdata=$RPM_BUILD_ROOT/var/lib/pgsql \
-    --pglib=$RPM_BUILD_ROOT/usr/lib/pgsql )
-
 install -d howto
 ( cd howto
   tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
@@ -363,6 +355,16 @@ useradd -M -o -r -d /var/lib/pgsql -s /bin/bash \
 
 %post
 /sbin/chkconfig --add postgresql
+
+%post data
+# Create sample database
+if ! `grep postgres /etc/passwd >/dev/null 2>&1`; then
+    echo "You must add new user postgres before init database."
+    exit 1
+fi
+su postgres -c "LD_LIBRARY_PATH=/usr/lib \
+    /usr/bin/initdb --pgdata=/var/lib/pgsql \
+    --pglib=/usr/lib/pgsql"
 
 %post -p /sbin/ldconfig clients
 
@@ -468,6 +470,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/include/iodbc
 
 %changelog
+* Thu Feb 18 1999 Jacek Smyda <smyda@posexperts.com.pl>
+- Remove template database from data package and init after install
+
 * Mon Jan 17 1999 Jacek Smyda <smyda@posexperts.com.pl>
 - added translations for pl
 - new package: perl, doc, odbc
