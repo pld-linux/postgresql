@@ -2,8 +2,6 @@
 # todo:
 # - postgresql.init: 
 #       - use subsys/postgresql
-#       - do not use recursive invocation of postgresql.init in start and
-#         reload (potentialy dangerous)
 #
 # - remove postgresql-configure patch and create postgresql-doc patch,
 #   which will prevent documentation and manulas installation (the routine
