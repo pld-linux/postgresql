@@ -16,8 +16,8 @@
 					# (disabled by default because it is a security risk)
 %bcond_without	slony1			# disable Slony-I replication system
 
-%define		postgresql_version	7.4.6
-%define		postgresql_release	6
+%define		postgresql_version	7.4.7
+%define		postgresql_release	1
 %define		slony1_version	1.0.5
 %define		slony1_release	1
 
@@ -37,7 +37,7 @@ Release:	%{postgresql_release}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{postgresql_version}/%{name}-%{postgresql_version}.tar.bz2
-# Source0-md5:	f0ea2b372a7bdaf2613e92176ebf5e0f
+# Source0-md5:	32dac2916d16287d95e0c958a75161fa
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -56,7 +56,7 @@ Patch8:		%{name}-ecpg-includedir.patch
 Patch9:		%{name}-contrib_install.patch
 Patch10:	%{name}-tsearch2-compound_word_support_20031210.patch
 Patch11:	%{name}-python-configdir.patch
-Patch12:	%{name}-gram-7.patch
+Patch12:	%{name}-gram.y.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -858,6 +858,7 @@ install /usr/share/automake/config.* config
 %{__make} -C contrib/pg_autovacuum
 %{__make} -C contrib/pgcrypto
 %{__make} -C contrib/tsearch2
+%{__make} -C src/tutorial
 %ifnarch sparc sparcv9 sparc64 alpha ppc
 %{?with_tests:%{__make} check}
 %endif
@@ -876,8 +877,11 @@ cd ..
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 	$RPM_BUILD_ROOT{/var/{lib/pgsql,log},%{_pgsqldir}} \
+	$RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version} \
 	$RPM_BUILD_ROOT%{_mandir} \
 	$RPM_BUILD_ROOT/home/services/postgres
+
+install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %{__make} install install-all-headers \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -914,7 +918,7 @@ mv	$RPM_BUILD_ROOT%{_datadir}/postgresql/java/*.jar \
 
 install -d howto
 ( cd howto
-	tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
+	tar xzf %{SOURCE2}
 )
 
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
@@ -966,7 +970,7 @@ if [ "$foundold" = "1" ]; then
 	exit 1
 fi
 
-getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
+getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r postgres
 if id postgres >/dev/null 2>&1 ; then
 	/usr/sbin/usermod -d /home/services/postgres postgres
 else
@@ -1068,6 +1072,7 @@ fi
 %files doc
 %defattr(644,root,root,755)
 %doc doc/unpacked/* doc/src/FAQ howto
+%{_examplesdir}/%{name}-%{version}
 
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
