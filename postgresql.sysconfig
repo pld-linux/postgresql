@@ -1,0 +1,8 @@
+# $Revision$
+
+# Enable listening on TCP port. Without this postmaster responds
+# only on unix socket
+ALLOW_TCP_CONNECTIONS=no
+
+# Optional parameters
+OPTIONS=
