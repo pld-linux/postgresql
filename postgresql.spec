@@ -29,6 +29,7 @@ BuildRequires:	rpm-perlprov
 BuildRequires:	XFree86-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Requires:	%{name}-libs = %{version}
+Obsoletes:	postgresql-server
 
 %define		_sysconfdir	/etc
 
@@ -594,7 +595,7 @@ rm -f /tmp/tmp_perl_info
 %defattr(644,root,root,755)
 %doc src/interfaces/odbc/readme.txt src/interfaces/odbc/notice.txt
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/odbc*
-%{_libdir}/libpsqlodbc.so.*.*
+%attr(755,root,root) %{_libdir}/libpsqlodbc.so.*.*
 
 %files odbc-devel
 %defattr(644,root,root,755)
