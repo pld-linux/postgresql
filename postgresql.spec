@@ -11,8 +11,9 @@ Copyright:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy Danych
 Source0:	ftp://ftp.postgresql.org/pub/%{name}-%{version}.tar.gz
-Source1:	postgresql.init
+Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
+Source3:	%{name}.sysconfig
 Patch0:		postgresql-opt.patch
 Patch1:		postgresql-DESTDIR.patch
 Patch2:		postgresql-perl.patch
@@ -396,7 +397,7 @@ make all PGDOCS=unpacked -C doc
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d \
+install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig} \
         $RPM_BUILD_ROOT{%{_bindir},%{_libdir}/pgsql,%{_mandir},%{_includedir}/pgsql} \
         $RPM_BUILD_ROOT/var/state/pgsql
 		
@@ -445,6 +446,7 @@ install -d $RPM_BUILD_ROOT/etc/rc.d/init.d \
 mv -f $RPM_BUILD_ROOT/usr/*.ini $RPM_BUILD_ROOT/etc
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
 
 install -d howto
 ( cd howto
@@ -480,10 +482,11 @@ chmod +x $RPM_BUILD_ROOT%{_libdir}/*.so*
 /sbin/chkconfig --add postgresql
 
 # Create sample database
-su postgres -c "LD_LIBRARY_PATH=%{_libdir} \
-    %{_bindir}/initdb --pgdata=/var/state/pgsql \
-    --pglib=%{_libdir}/pgsql"
-
+if [ ! -f /var/state/psql/PG_VERSION ]; then
+    su postgres -c "LD_LIBRARY_PATH=%{_libdir} \
+	%{_bindir}/initdb --pgdata=/var/state/pgsql \
+	--pglib=%{_libdir}/pgsql"
+fi
 
 %preun
 if [ $1 = 0 ]; then
@@ -534,6 +537,7 @@ rm -f /tmp/tmp_perl_info
 %doc doc/*.ps.gz
 
 %attr(754,root,root) /etc/rc.d/init.d/*
+%attr(640,root,root) /etc/sysconfig/*
 
 %attr(755,root,root) %{_bindir}/cleardbdir
 %attr(755,root,root) %{_bindir}/createdb
