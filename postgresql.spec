@@ -539,10 +539,8 @@ rm -fR `find contrib/ -type d -name CVS`
 PATH=$PATH:. ; export PATH
 cd src
 
-
-# NOTE: this doesn't work. 
-#CONFIGURE_OPT=%{pgsql_with_locale?: "--enable-locale"}
-#CONFIGURE_OPT="$CONFIGURE_FLAGS %{pgsql_with_unicode?: --with-mulitbyte=UNICODE}"
+ENABLE_LOCALE="%{!?pgsql_disable_locale:--enable-locale}"
+ENABLE_MULTIBYTE="%{!?pgsql_disable_multibyte:--enable-multibyte}"
 
 aclocal
 autoconf
@@ -552,9 +550,6 @@ autoconf
 %else
 	--with-template=linux_%{_target_cpu} \
 %endif
-  --enable-locale \
-  --enable-multibyte \
-  --enable-unicode-conversion \
 	--enable-hba \
 	--with-odbc \
 	--with-odbcinst=%{_sysconfdir} \
@@ -562,7 +557,7 @@ autoconf
 	--with-tk \
 	--with-python \
 	--with-x \
-	--with-perl $CONFIGURE_OPT
+	--with-perl $ENABLE_LOCALE $ENABLE_MULTIBYTE
 
 %{__make} OPT="%{!?debug:$RPM_OPT_FLAGS}%{?debug:-O -g}" \
 	  TEMPLATEDIR=%{_libdir}/pgsql
