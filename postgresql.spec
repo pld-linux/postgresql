@@ -16,14 +16,10 @@ Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
 Source4:	pgaccess.desktop
 Source5:	pgaccess.png
-#Patch0:		%{name}-opt.patch
-Patch1:		%{name}-DESTDIR.patch
-#Patch2:		%{name}-perl.patch
-#Patch3:		%{name}-python.patch
-Patch4:		%{name}-no_libnsl.patch
-#Patch5:		%{name}-pgaccess-typo.patch
-Patch6:		%{name}-readline.patch
-Patch7:		%{name}-configure.patch
+Patch0:		%{name}-DESTDIR.patch
+Patch1:		%{name}-no_libnsl.patch
+Patch2:		%{name}-readline.patch
+Patch3:		%{name}-configure.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
@@ -537,14 +533,12 @@ proceduralnego PL/TCL dla swojej bazy danych.
 
 %prep
 %setup  -q
-#%patch0 -p1
+%patch0 -p1
 %patch1 -p1
-#%patch2 -p1
-#%patch3 -p1
-%patch4 -p1
-#%patch5 -p1
-%patch6 -p1
-%patch7 -p1
+%patch2 -p1
+%patch3 -p1
+
+tar xzf doc/man*.tar.gz
 
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
@@ -569,25 +563,24 @@ autoconf
 
 %{__make}
 
-# remake pgaccess
-make -C src/bin/pgaccess clean pgaccess POSTGRESDIR=/usr/lib
-
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
         $RPM_BUILD_ROOT/var/{lib/pgsql,log} \
 	$RPM_BUILD_ROOT%{_libdir}/pgsql/{modules,sql} \
-	$RPM_BUILD_ROOT{%{_applnkdir}/System,%{_pixmapsdir}}
+	$RPM_BUILD_ROOT{%{_applnkdir}/System,%{_pixmapsdir}} \
+	$RPM_BUILD_ROOT%{_mandir}
 
 %{__make} -C src install \
 	DESTDIR=$RPM_BUILD_ROOT
+	
+%{__make} -C src/interfaces/python install \
+	LIBDIR=$RPM_BUILD_ROOT%{_libdir}
+	
 
 #%{__make} -C doc install DESTDIR=$RPM_BUILD_ROOT
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
-
-# pgaccess 
-ln -sf . $RPM_BUILD_ROOT%{_libdir}/pgaccess/lib
 
 # Move PL/pgSQL procedural language to %{pgmoduledir}
 ( cd $RPM_BUILD_ROOT%{_libdir}
@@ -611,6 +604,8 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
 install %{SOURCE4} $RPM_BUILD_ROOT%{_applnkdir}/System
 install %{SOURCE5} $RPM_BUILD_ROOT%{_pixmapsdir}
 
+cp -a man?	   $RPM_BUILD_ROOT%{_mandir}
+
 install -d howto
 ( cd howto
   tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
@@ -623,11 +618,11 @@ install -d howto
   cp -Lrf * $RPM_BUILD_ROOT%{_includedir}/pgsql
 )
 
-for f in `find $RPM_BUILD_ROOT -type f`; do
-	if (file $f | grep -q "script"); then
-		perl -pi -e 's@#\!.*python@#\!%{_bindir}/python@' $f;
-	fi
-done
+#for f in `find $RPM_BUILD_ROOT -type f`; do
+#	if (file $f | grep -q "script"); then
+#		perl -pi -e 's@#\!.*python@#\!%{_bindir}/python@' $f;
+#	fi
+#done
 
 %pre
 getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
