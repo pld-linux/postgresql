@@ -70,7 +70,6 @@ BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
 %if %{with php}
-BuildRequires:	php
 BuildRequires:	php-devel
 %endif
 %if %{with python}
@@ -750,7 +749,7 @@ wymaga aby zarówno serwer g³ówny jak i wszystkie serwery pomocnicze
 by³y ca³y czas operacyjne.
 
 %prep
-%setup -q -a4 -a7
+%setup -q -a4 -a8
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
 %patch2 -p1
@@ -791,7 +790,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	--with-openssl \
 	--with-pam \
 	%{?with_perl:--with-perl} \
-	%{?with_php:--with-php} \
+	%{?with_php:--with-php=/usr/include/php} \
 	%{?with_python:--with-python} \
 	%{?with_tcl:--with-tcl} \
 	--with-x \
@@ -815,6 +814,12 @@ install /usr/share/automake/config.* config
 	--with-pgsourcetree=`pwd`/..
 %{__make}
 cd ..
+%endif
+
+%if %{with php}
+cd src/pl/plphp
+%{__make}
+cd ../../../
 %endif
 
 %install
@@ -851,6 +856,13 @@ mkdir $RPM_BUILD_ROOT/home/services/slony1
 install %{SOURCE7} $RPM_BUILD_ROOT/etc/sysconfig/slony1
 install %{SOURCE6} $RPM_BUILD_ROOT/home/services/slony1/.pgpass
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/slony1
+%endif
+
+%if %{with php}
+cd src/pl/plphp
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
+cd ../../../
 %endif
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
