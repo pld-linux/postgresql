@@ -875,11 +875,11 @@ cd ..
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 	$RPM_BUILD_ROOT{/var/{lib/pgsql,log},%{_pgsqldir}} \
-	$RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}/ \
+	$RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version} \
 	$RPM_BUILD_ROOT%{_mandir} \
 	$RPM_BUILD_ROOT/home/services/postgres
 
-mv -f src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %{__make} install install-all-headers \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -916,7 +916,7 @@ mv	$RPM_BUILD_ROOT%{_datadir}/postgresql/java/*.jar \
 
 install -d howto
 ( cd howto
-	tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
+	tar xzf %{SOURCE2}
 )
 
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
