@@ -38,6 +38,7 @@ Patch3:		%{name}-conf.patch
 Patch4:		%{name}-absolute_dbpaths.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
+BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	ncurses-devel >= 5.0
@@ -49,18 +50,17 @@ BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-pythonprov
 BuildRequires:	tcl-devel >= 8.3.2
 BuildRequires:	tk-devel >= 8.3.2
-BuildRequires:	XFree86-devel
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-Prereq:		/sbin/chkconfig
-Prereq:		rc-scripts
-Prereq:		%{name}-clients = %{version}
-Prereq:		%{name}-libs = %{version}
+PreReq:		rc-scripts
+PreReq:		%{name}-clients = %{version}
+PreReq:		%{name}-libs = %{version}
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires(pre):	/usr/sbin/usermod
+Requires(post,preun):	/sbin/chkconfig
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
 
@@ -871,6 +871,7 @@ fi
 
 %dir %{_pgsqldir}
 %dir %{_pgmoduledir}
+%dir %{_datadir}/postgresql
 %{_datadir}/postgresql/*.bki
 %{_datadir}/postgresql/*.sample
 %{_datadir}/postgresql/*.description
