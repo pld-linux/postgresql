@@ -2,7 +2,9 @@
 # - pg_autovacuum init support? look at its readme file, please
 # - put pgcrypto docs into docdir
 # - put pgcrypto sql files in %{_datadir}/postgresql
-# - look at libpq locales
+# - look at locales (libpq and others - --enable-nls for configure should
+#   suffice)
+# - pg_ctl uses psql again, current patch2 doesn't eliminate this
 # - remove postgresql-configure patch and create postgresql-doc patch,
 #   which will prevent documentation and manuals installation (the routine
 #   is bad and we install docs and mans manually, at all) or create good
@@ -786,12 +788,10 @@ rm -f config/libtool.m4
 
 %{__make}
 %{__make} -C contrib/pg_autovacuum
+%{__make} -C contrib/pgcrypto
 %ifnarch sparc sparcv9 sparc64 alpha ppc
-%{!?_without_tests: %{__make} check }
+%{?with_tests:%{__make} check}
 %endif
-
-cd contrib/pgcrypto/
-%{__make} 
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -806,7 +806,11 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 %{__make} install -C src/pl/plperl \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%{__make} -C contrib/pg_autovacuum install DESTDIR=$RPM_BUILD_ROOT
+%{__make} -C contrib/pg_autovacuum install \
+	DESTDIR=$RPM_BUILD_ROOT
+
+%{__make} -C contrib/pgcrypto install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
 
@@ -825,10 +829,6 @@ install -d howto
 
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
-
-cd contrib/pgcrypto
-%{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
