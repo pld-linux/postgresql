@@ -69,7 +69,7 @@ fi
 pgstatus() {
 	PG_STATUS="unknown"
 	PG_PID="unknown"
-	status=`/usr/bin/pg_ctl -D $1 status`
+	status=`TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $1 status"`
 
 	if echo "$status" | grep -q 'pg_ctl: postmaster or postgres not running'; then
 		PG_STATUS="not running"
