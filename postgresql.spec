@@ -856,6 +856,7 @@ install /usr/share/automake/config.* config
 %{__make} -C contrib/pg_autovacuum
 %{__make} -C contrib/pgcrypto
 %{__make} -C contrib/tsearch2
+%{__make} -C src/tutorial
 %ifnarch sparc sparcv9 sparc64 alpha ppc
 %{?with_tests:%{__make} check}
 %endif
@@ -874,8 +875,11 @@ cd ..
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 	$RPM_BUILD_ROOT{/var/{lib/pgsql,log},%{_pgsqldir}} \
+	$RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}/ \
 	$RPM_BUILD_ROOT%{_mandir} \
 	$RPM_BUILD_ROOT/home/services/postgres
+
+mv -f src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %{__make} install install-all-headers \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -1066,6 +1070,7 @@ fi
 %files doc
 %defattr(644,root,root,755)
 %doc doc/unpacked/* doc/src/FAQ howto
+%{_examplesdir}/%{name}-%{version}
 
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
