@@ -531,12 +531,12 @@ PostgreSQL.
 
 %package module-plpgsql
 Summary:	PL/pgSQL - PostgreSQL procedural language
-Summary(pl):	PL/pgSQL jêzyk proceduralny bazy danych PostgreSQL
+Summary(pl):	PL/pgSQL - jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
 
 %description module-plpgsql
-From PostgreSQL documentation.
+From PostgreSQL documentation:
 
 Postgres supports the definition of procedural languages. In the case
 of a function or trigger procedure defined in a procedural language,
@@ -550,7 +550,7 @@ To enable PL/pgSQL procedural language for your database you have to
 run createlang command.
 
 %description module-plpgsql -l pl
-Z dokumentacji PostgreSQL.
+Z dokumentacji PostgreSQL:
 
 Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy
 programista zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku
@@ -560,18 +560,18 @@ który wie jak j± wykonaæ. Interpreter jest odpowiedni±, specjaln±
 funkcj±, która jest skompilowana w obiekt dzielony i ³adowany w razie
 potrzeby.
 
-Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka
+Za pomoc± polecenia createlang mo¿na dodaæ obs³ugê jêzyka
 proceduralnego PL/pgSQL dla swojej bazy danych.
 
 %package module-plperl
 Summary:	PL/perl - PostgreSQL procedural language
-Summary(pl):	PL/perl jêzyk proceduralny bazy danych PostgreSQL
+Summary(pl):	PL/perl - jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 
 %description module-plperl
-From PostgreSQL documentation.
+From PostgreSQL documentation:
 
 Postgres supports the definition of procedural languages. In the case
 of a function or trigger procedure defined in a procedural language,
@@ -585,7 +585,7 @@ To enable PL/Perl procedural language for your database you have to
 run createlang command.
 
 %description module-plperl -l pl
-Z dokumentacji PostgreSQL.
+Z dokumentacji PostgreSQL:
 
 Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy
 programista zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku
@@ -595,17 +595,17 @@ który wie jak j± wykonaæ. Interpreter jest odpowiedni±, specjaln±
 funkcj±, która jest skompilowana w obiekt dzielony i ³adowany w razie
 potrzeby.
 
-Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka
+Za pomoc± polecenia createlang mo¿na dodaæ obs³ugê jêzyka
 proceduralnego PL/Perl dla swojej bazy danych.
 
 %package module-plphp
 Summary:	PL/PHP - PostgreSQL procedural language
-Summary(pl):	PL/PHP jêzyk proceduralny bazy danych PostgreSQL
+Summary(pl):	PL/PHP - jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
 
 %description module-plphp
-From PostgreSQL documentation.
+From PostgreSQL documentation:
 
 Postgres supports the definition of procedural languages. In the case
 of a function or trigger procedure defined in a procedural language,
@@ -618,15 +618,29 @@ on demand.
 To enable PL/PHP procedural language for your database you have to
 run createlang command.
 
+%description module-plphp -l pl
+Z dokumentacji PostgreSQL:
+
+Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy
+programista zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku
+proceduralnym, baza danych nie ma pojêcia jak interpretowaæ tego typu
+funkcjê. Funkcja lub procedura ta jest przekazywana do interpretera,
+który wie jak j± wykonaæ. Interpreter jest odpowiedni±, specjaln±
+funkcj±, która jest skompilowana w obiekt dzielony i ³adowany w razie
+potrzeby.
+
+Za pomoc± polecenia createlang mo¿na dodaæ obs³ugê jêzyka
+proceduralnego PL/PHP dla swojej bazy danych.
+
 %package module-plpython
 Summary:	PL/Python - PostgreSQL procedural language
-Summary(pl):	PL/Python jêzyk proceduralny bazy danych PostgreSQL
+Summary(pl):	PL/Python - jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
 %pyrequires_eq	python
 
 %description module-plpython
-From PostgreSQL documentation.
+From PostgreSQL documentation:
 
 Postgres supports the definition of procedural languages. In the case
 of a function or trigger procedure defined in a procedural language,
@@ -640,7 +654,7 @@ To enable PL/Python procedural language for your database you have to
 run createlang command.
 
 %description module-plpython -l pl
-Z dokumentacji PostgreSQL.
+Z dokumentacji PostgreSQL:
 
 Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy
 programista zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku
@@ -650,7 +664,7 @@ który wie jak j± wykonaæ. Interpreter jest odpowiedni±, specjaln±
 funkcj±, która jest skompilowana w obiekt dzielony i ³adowany w razie
 potrzeby.
 
-Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka
+Za pomoc± polecenia createlang mo¿na dodaæ obs³ugê jêzyka
 proceduralnego PL/Python dla swojej bazy danych.
 
 %package module-pltcl
@@ -660,7 +674,7 @@ Group:		Applications/Databases
 Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
 
 %description module-pltcl
-From PostgreSQL documentation.
+From PostgreSQL documentation:
 
 Postgres supports the definition of procedural languages. In the case
 of a function or trigger procedure defined in a procedural language,
@@ -674,7 +688,7 @@ To enable PL/Tcl procedural language for your database you have to run
 createlang command.
 
 %description module-pltcl -l pl
-Z dokumentacji PostgreSQL.
+Z dokumentacji PostgreSQL:
 
 Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy
 programista zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku
@@ -684,7 +698,7 @@ który wie jak j± wykonaæ. Interpreter jest odpowiedni±, specjaln±
 funkcj±, która jest skompilowana w obiekt dzielony i ³adowany w razie
 potrzeby.
 
-Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka
+Za pomoc± polecenia createlang mo¿na dodaæ obs³ugê jêzyka
 proceduralnego PL/Tcl dla swojej bazy danych.
 
 %package module-pgcrypto
