@@ -1,3 +1,4 @@
+%include	/usr/lib/rpm/macros.perl
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
 Summary(fr):	Sysème de gestion de base de données PostgreSQL.
@@ -19,9 +20,7 @@ URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
 Requires:	rc-scripts
 Buildroot:	/tmp/%{name}-%{version}-root
-#Requires:	%{name}-clients = %{version}
-
-%define		_prefix		/usr
+Requires:	%{name}-libs = %{version}
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres, then as
@@ -402,7 +401,7 @@ install -d $RPM_BUILD_ROOT/etc/rc.d/init.d \
         $RPM_BUILD_ROOT/var/state/pgsql
 		
 ( cd src
-  make DESTDIR=$RPM_BUILD_ROOT PREFIX=$RPM_BUILD_ROOT%{_prefix} install
+  make DESTDIR=$RPM_BUILD_ROOT install
   make DESTDIR=$RPM_BUILD_ROOT install-man
 )
 
@@ -446,7 +445,7 @@ install -d $RPM_BUILD_ROOT/etc/rc.d/init.d \
 # Move odbc.ini file to etc
 mv -f $RPM_BUILD_ROOT/usr/*.ini $RPM_BUILD_ROOT/etc
 
-install $RPM_SOURCE_DIR/postgresql.init $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 
 install -d howto
 ( cd howto
@@ -546,6 +545,7 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_bindir}/initlocation
 %attr(755,root,root) %{_bindir}/pg_passwd
 %attr(755,root,root) %{_bindir}/pg_version
+%attr(755,root,root) %{_bindir}/pg_encoding
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
 %attr(755,root,root) %{_bindir}/ipcclean
@@ -565,7 +565,7 @@ rm -f /tmp/tmp_perl_info
 %{_mandir}/man1/ipcclean.1*
 %{_mandir}/man5/*.5*
 
-%attr(644,postgres,postgres) /var/state/pgsql
+%attr(755,postgres,postgres) %dir /var/state/pgsql
 
 %files libs
 %defattr(644,root,root,755)
@@ -620,7 +620,7 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_libdir}/libec*.so.*.*
 %attr(755,root,root) %{_libdir}/libpq*.so.*.*
 %attr(755,root,root) %{_bindir}/pg_dump
-%attr(756,root,root) %{_bindir}/pg_dumpall
+%attr(755,root,root) %{_bindir}/pg_dumpall
 %attr(755,root,root) %{_bindir}/pg_upgrade
 %attr(755,root,root) %{_bindir}/psql
 %attr(755,root,root) %{_bindir}/vacuumdb
