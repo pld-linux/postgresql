@@ -368,7 +368,7 @@ PostgreSQL.
 %description -l pt_BR perl
 Módulo Perl para acesso ao servidor PostgreSQL.
 
-%package python
+%package -n python-postgresql
 Summary:	The python-based client programs needed for accessing a PostgreSQL server
 Summary(es):	Módulo Python para acceder un servidor PostgreSQL
 Summary(pl):	Programy klienckie do dostêpu do serwera PostgreSQL napisane w Pythonie
@@ -389,20 +389,21 @@ Group(sv):	Utveckling/Språk/Python
 Requires:	python >= 2.0
 Requires:	%{name}-libs = %{version}
 Obsoletes:	python-PyGreSQL
+Obsoletes:	postgresql-python
 
-%description python
+%description -n python-postgresql
 postgresql-python includes the python-based client programs and client
 libraries that you'll need to access a PostgreSQL database management
 system server.
 
-%description -l es python
+%description -l es -n python-postgresql
 Módulo Python para acceder un servidor PostgreSQL
 
-%description python -l pl
+%description -n python-postgresql -l pl
 Pakiet ten zawiera napisane w Pythonie programy i biblioteki klienckie
 do dostêpu do serwera baz danych PostgreSQL.
 
-%description -l pt_BR python
+%description -l pt_BR -n python-postgresql
 Módulo Python para acesso ao servidor PostgreSQL.
 
 %package doc
@@ -1280,7 +1281,7 @@ fi
 %{_mandir}/man3/*
 
 
-%files python
+%files -n python-postgresql
 %defattr(644,root,root,755)
 %{py_sitedir}/*.pyc
 %{py_sitedir}/*.pyo
