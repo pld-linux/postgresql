@@ -4,10 +4,7 @@
 #
 
 # todo:
-# 1. pam_xauth problem
-#    - change pam_xauth behaviour?
-#    - change postgres user home directory?
-# 2. dump is required before upgrade
+# dump is required before upgrade
 #    if [ -f /etc/sysconfig/postgresql ]; then
 #      POSTGRES_DATA_DIR=/var/lib/pgsql
 #      . /etc/sysconfig/postgresql
@@ -84,6 +81,11 @@ Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
 Prereq:		%{name}-clients = %{version}
 Prereq:		%{name}-libs = %{version}
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
+Requires(pre):	/usr/sbin/usermod
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
 
@@ -1120,6 +1122,7 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
         $RPM_BUILD_ROOT{/var/{lib/pgsql,log},%{_pgsqldir}} \
 	$RPM_BUILD_ROOT{%{_applnkdir}/System,%{_pixmapsdir}} \
+	$RPM_BUILD_ROOT/home/services/postgres
 
 %{__make} install install-all-headers \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -1167,9 +1170,13 @@ rm -f /tmp/tmp_perl_info
 
 %pre
 getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
-id postgres >/dev/null 2>&1 || /usr/sbin/useradd -M -o -r -u 88 \
-	-d /var/lib/pgsql -s /bin/sh -g postgres \
-	-c "PostgreSQL Server" postgres
+if id postgres >/dev/null 2>&1 ; then
+	/usr/sbin/usermod -d /home/services/postgres postgres
+else
+	/usr/sbin/useradd -M -o -r -u 88 \
+		-d /home/services/postgres -s /bin/sh -g postgres \
+		-c "PostgreSQL Server" postgres
+fi
 
 %post
 /sbin/chkconfig --add postgresql
@@ -1230,6 +1237,7 @@ fi
 %{_datadir}/postgresql/*.sample
 %{_datadir}/postgresql/*.description
 
+%attr(700,postgres,postgres) /home/services/postgres
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
 %attr(640,postgres,postgres) %config(noreplace) %verify(not md5 size mtime) /var/log/pgsql
 
