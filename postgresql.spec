@@ -5,7 +5,7 @@ Summary(pl): PostgreSQL system bazodanowy
 Summary(tr): Veri Tabaný Yönetim Sistemi
 Name:        postgresql
 Version:     6.4.2
-Release:     2
+Release:     3d
 Copyright:   BSD
 Group:       Applications/Databases
 URL:         http://www.postgresql.org/
@@ -346,6 +346,9 @@ install -d howto
 # Strip 'em all
 strip -s $RPM_BUILD_ROOT/usr/bin/* || :
 
+# gzip all man pages
+gzip -9nf $RPM_BUILD_ROOT/usr/man/man*/*
+
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
 
@@ -417,17 +420,17 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755, root, root) /usr/bin/pg_version
 %attr(755, root, root) /usr/bin/postgres
 %attr(755, root, root) /usr/bin/postmaster
-%attr(644, root,  man) /usr/man/man1/cleardbdir.1    
-%attr(644, root,  man) /usr/man/man1/createdb.1
-%attr(644, root,  man) /usr/man/man1/createuser.1
-%attr(644, root,  man) /usr/man/man1/destroydb.1
-%attr(644, root,  man) /usr/man/man1/destroyuser.1
-%attr(644, root,  man) /usr/man/man1/initdb.1
-%attr(644, root,  man) /usr/man/man1/initlocation.1
-%attr(644, root,  man) /usr/man/man1/pg_passwd.1
-%attr(644, root,  man) /usr/man/man1/postgres.1
-%attr(644, root,  man) /usr/man/man1/postmaster.1
-%attr(644, root,  man) /usr/man/man5/*.5
+%attr(644, root,  man) /usr/man/man1/cleardbdir.1.gz
+%attr(644, root,  man) /usr/man/man1/createdb.1.gz
+%attr(644, root,  man) /usr/man/man1/createuser.1.gz
+%attr(644, root,  man) /usr/man/man1/destroydb.1.gz
+%attr(644, root,  man) /usr/man/man1/destroyuser.1.gz
+%attr(644, root,  man) /usr/man/man1/initdb.1.gz
+%attr(644, root,  man) /usr/man/man1/initlocation.1.gz
+%attr(644, root,  man) /usr/man/man1/pg_passwd.1.gz
+%attr(644, root,  man) /usr/man/man1/postgres.1.gz
+%attr(644, root,  man) /usr/man/man1/postmaster.1.gz
+%attr(644, root,  man) /usr/man/man5/*.5.gz
 
 %files devel
 %defattr(644, root, root, 755)
@@ -436,9 +439,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/libec*.so
 /usr/lib/libpq*.so
 /usr/include/pgsql
-%attr(644, root,  man) /usr/man/man3/*
+%attr(644, root,  man) /usr/man/man3/*.gz
 %attr(755, root, root) /usr/bin/ecpg
-%attr(644, root,  man) /usr/man/man1/ecpg.1
+%attr(644, root,  man) /usr/man/man1/ecpg.1.gz
 
 %files data
 %defattr(-,postgres,postgres)
@@ -453,11 +456,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755, root, root) /usr/bin/pg_id
 %attr(755, root, root) /usr/bin/pg_upgrade
 %attr(755, root, root) /usr/bin/psql
-%attr(644, root,  man) /usr/man/man1/pg_dump.1
-%attr(644, root,  man) /usr/man/man1/pg_dumpall.1
-%attr(644, root,  man) /usr/man/man1/pg_upgrade.1
-%attr(644, root,  man) /usr/man/man1/psql.1
-%attr(644, root,  man) /usr/man/manl/*
+%attr(644, root,  man) /usr/man/man1/pg_dump.1.gz
+%attr(644, root,  man) /usr/man/man1/pg_dumpall.1.gz
+%attr(644, root,  man) /usr/man/man1/pg_upgrade.1.gz
+%attr(644, root,  man) /usr/man/man1/psql.1.gz
+%attr(644, root,  man) /usr/man/manl/*.gz
 
 %files -f perlfiles.list perl
 %defattr(-, root, root)
@@ -470,6 +473,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/include/iodbc
 
 %changelog
+* Thu Feb 25 1999 Jacek Smyda <smyda@posexperts.com.pl>
+- gzip man pages
+
 * Thu Feb 18 1999 Jacek Smyda <smyda@posexperts.com.pl>
 - Remove template database from data package and init after install
 
