@@ -16,7 +16,10 @@
 					# (disabled by default because it is a security risk)
 %bcond_without	slony1			# disable Slony-I replication system
 
+%define		postgresql_version	7.4.6
+%define		postgresql_release	3
 %define		slony1_version	1.0.5
+%define		slony1_release	1
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
@@ -29,11 +32,11 @@ Summary(tr):	Veri TabanЩ YЖnetim Sistemi
 Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
-Version:	7.4.6
-Release:	3
+Version:	%{postgresql_version}
+Release:	%{postgresql_release}
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{postgresql_version}/%{name}-%{postgresql_version}.tar.bz2
 # Source0-md5:	f0ea2b372a7bdaf2613e92176ebf5e0f
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
@@ -74,8 +77,8 @@ BuildRequires:	rpm-pythonprov
 %{?with_tcl:BuildRequires:	tk-devel >= 8.4.3}
 BuildRequires:	zlib-devel
 PreReq:		rc-scripts
-PreReq:		%{name}-clients = %{version}-%{release}
-PreReq:		%{name}-libs = %{version}-%{release}
+PreReq:		%{name}-clients = %{postgresql_version}-%{postgresql_release}
+PreReq:		%{name}-libs = %{postgresql_version}-%{postgresql_release}
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
@@ -84,7 +87,7 @@ Requires(pre):	/usr/sbin/usermod
 Requires(post,preun):	/sbin/chkconfig
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+BuildRoot:	%{tmpdir}/%{name}-%{posgresql_version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
 %define		_pgsqldir	%{_pgmoduledir}/sql
@@ -322,7 +325,7 @@ Summary(ru):	PostgreSQL - хедеры и библиотеки разработчика
 Summary(tr):	PostgreSQL baЧlЩk dosyalarЩ ve kitaplЩklar
 Summary(uk):	PostgreSQL - хедери та б╕бл╕отеки програм╕ста
 Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}-%{release}
+Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
 
 %description devel
 This package contains header files and libraries required to compile
@@ -369,7 +372,7 @@ gereken baЧlЩk dosyalarЩnЩ ve kitaplЩklarЩ iГerir.
 Summary:	PostgreSQL backend development header files
 Summary(pl):	PostgreSQL - pliki nagЁСwkowe dla backendu
 Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}-%{release}
+Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
 
 %description backend-devel
 This package contains header files required to compile functions that
@@ -387,7 +390,7 @@ Summary(pt_BR):	Clientes necessАrios para acessar o servidor PostgreSQL
 Summary(ru):	Клиентские программы, необходимые для доступа к серверу PostgreSQL
 Summary(uk):	Кл╕╓нтськ╕ програми, необх╕дн╕ для доступу до сервера PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name}-libs = %{version}-%{release}
+Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
 
 %description clients
 This package includes only the clients needed to access an PostgreSQL
@@ -467,7 +470,7 @@ PostgreSQL.
 Summary:	Embedded SQL in C interface
 Summary(pl):	Interfejs wbudowanego SQL-a w jЙzyk C
 Group:		Libraries
-Requires:	%{name}-libs = %{version}-%{release}
+Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
 
 %description ecpg
 Embedded SQL in C interface.
@@ -479,8 +482,8 @@ Interfejs wbudowanego SQL-a w jЙzyk C.
 Summary:	Embedded SQL in C interface files
 Summary(pl):	Pliki programistyczne interfejsu wbudowanego SQL-a w jЙzyk C
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
-Requires:	%{name}-ecpg = %{version}-%{release}
+Requires:	%{name}-devel = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name}-ecpg = %{postgresql_version}-%{postgresql_release}
 
 %description ecpg-devel
 Embedded SQL in C interface files.
@@ -496,7 +499,7 @@ Summary(pt_BR):	Bibliotecas estАticas PostgreSQL
 Summary(ru):	Статические библиотеки для программирования с PostgreSQL
 Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з PostgreSQL
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name}-devel = %{postgresql_version}-%{postgresql_release}
 
 %description static
 PostgreSQL static libraries.
@@ -531,7 +534,7 @@ Summary(ru):	Библиотеки для доступа к PostgreSQL из Tcl
 Summary(uk):	Б╕бл╕отеки для доступу до PostgreSQL з Tcl
 Summary(zh_CN):	р╩╦Ж Tcl ©Б╨м PostgreSQL ╣д PL/Tcl ╠ЮЁлсОят
 Group:		Development/Languages/Tcl
-Requires:	%{name}-libs = %{version}-%{release}
+Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
 
 %description tcl
 Tcl interface for PostgreSQL.
@@ -558,8 +561,8 @@ Summary(pl):	CzЙ╤Ф dla programistСw interfejsu Tcl dla PostgreSQL
 Summary(ru):	Хедеры и библиотеки для разработок с использованием libpgtcl (Tcl интерфейс для PostgreSQL)
 Summary(uk):	Хедери та б╕бл╕отеки для розробок з використанням libpgtcl (Tcl-╕нтерфейс для PostgreSQL)
 Group:		Development/Languages/Tcl
-Requires:	%{name}-tcl = %{version}-%{release}
-Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name}-tcl = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name}-devel = %{postgresql_version}-%{postgresql_release}
 
 %description tcl-devel
 Development part of Tcl interface for PostgreSQL.
@@ -583,7 +586,7 @@ Summary(pl):	Biblioteki statyczne interfejsu Tcl dla PostgreSQL
 Summary(ru):	Статические библиотеки для программирования с libpgtcl
 Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з libpgtcl
 Group:		Development/Languages/Tcl
-Requires:	%{name}-tcl-devel = %{version}-%{release}
+Requires:	%{name}-tcl-devel = %{postgresql_version}-%{postgresql_release}
 
 %description tcl-static
 Static libraries of Tcl interface for PostgreSQL.
@@ -603,7 +606,7 @@ postgresql-tcl-devel.
 Summary:	PL/pgSQL - PostgreSQL procedural language
 Summary(pl):	PL/pgSQL jЙzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
 
 %description module-plpgsql
 From PostgreSQL documentation.
@@ -637,7 +640,7 @@ proceduralnego PL/pgSQL dla swojej bazy danych.
 Summary:	PL/perl - PostgreSQL procedural language
 Summary(pl):	PL/perl jЙzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
 %requires_eq	perl-base
 
 %description module-plperl
@@ -672,7 +675,7 @@ proceduralnego PL/Perl dla swojej bazy danych.
 Summary:	PL/Python - PostgreSQL procedural language
 Summary(pl):	PL/Python jЙzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
 %pyrequires_eq	python
 
 %description module-plpython
@@ -707,7 +710,7 @@ proceduralnego PL/Python dla swojej bazy danych.
 Summary:	PL/Tcl - PostgreSQL procedural language
 Summary(pl):	PL/Tcl - jЙzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
 
 %description module-pltcl
 From PostgreSQL documentation.
@@ -741,7 +744,7 @@ proceduralnego PL/Tcl dla swojej bazy danych.
 Summary:	Cryptographic functions for PostgreSQL
 Summary(pl):	Funkcje kryptograficzne dla PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
 
 %description module-pgcrypto
 Cryptographic functions for PostgreSQL.
@@ -753,7 +756,7 @@ Funkcje kryptograficzne dla PostgreSQL.
 Summary:	Full text extension for PostgreSQL
 Summary(pl):	Rozszerzenie peЁnotekstowe dla PostgreSQL-a
 Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
 
 %description module-tsearch2
 Implementation of a new data type tsvector - a searchable data type
@@ -768,9 +771,12 @@ http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 %package -n slony1
 Summary:	Slony-I -- a "master to multiple slaves" replication system for PostgreSQL
 Summary(pl):	Slony-I -- system replikacji dla PostgreSQL
+Version:	%{slony1_version}
+Release:	%{slony1_release}@%{postgresql_version}_%{postgresql_release}
 URL:		http://slony.info/
 Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
 
 %description -n slony1
 Slony-I is a "master to multiple slaves" replication system with cascading and
@@ -782,6 +788,18 @@ reasonably limited number of slave systems.
 
 Slony-I is a system for data centers and backup sites, where the normal mode of
 operation is that all nodes are available. 
+
+%description -n slony1 -l pl
+Slony-I jest systemem replikacji dla PostgreSQL. Pozwala na replikacjЙ typu
+"jeden serwer gЁowny, wiele serwerСw pomocniczych".
+
+GЁСwn╠ zalet╠ Slony-I jest system "master-slave". Zawiera on wszelk╠
+funkcjonalno╤Ф potrzebn╠ do replikowania du©ych baz danych na okre╤lon╠
+ilo╤Ф serwerСw pomocniczych lub zastЙpczych.
+
+Slony-I jest przeznaczony dla systemСw, gdzie normalny tryb pracy wymaga aby
+zarСwno serwer gЁСwny jak i wszystkie serwery pomocnicze byЁy caЁy czas
+operacyjne.
 
 %prep
 %setup -q -a4
