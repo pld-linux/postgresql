@@ -183,7 +183,7 @@ case "$1" in
 	ENCODING=${new_encoding:-$ENCODING}
 
 	show "Creating initial postgresql database using $ENCODING encoding"
-	busy
+	started
 
         # Create sample database
 	if [ ! -d $POSTGRES_DATA_DIR ]; then
@@ -196,6 +196,8 @@ case "$1" in
 	TMPDIR=/tmp su - postgres -s /bin/sh -c "LD_LIBRARY_PATH=/usr/lib \
 			initdb --pgdata=$POSTGRES_DATA_DIR \
 			-L /usr/share/postgresql -E $ENCODING"
+
+	echo "REMEMBER to setup password for user \"postgres\"!"
 	;;
   *)
 	msg_usage "$0 {start|stop|status|restart|reload}"
