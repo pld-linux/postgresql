@@ -4,13 +4,15 @@
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
-%bcond_without	tcl				# disables Tcl support
+%bcond_without	tcl			# disables Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
 %bcond_without	perl			# disable perl support
+%bcond_without	pgsql_locale		# disable PostgreSQL locale
+%bcond_without	pgsql_multibyte		# disable PostgreSQL multibyte
 %bcond_without	python			# disable python support
-%bcond_with		jdbc			# enable JDBC driver
+%bcond_with	jdbc			# enable JDBC driver
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
-								# (disabled by default because it is a security risk)
+					# (disabled by default because it is a security risk)
 
 %include	/usr/lib/rpm/macros.python
  
@@ -739,15 +741,22 @@ Funkcje kryptograficzne dla PostgreSQL.
 
 %package module-tsearch2
 Summary:	Full text extension for PostgreSQL
+Summary(pl):	Rozszerzenie pe³notekstowe dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}
 
 %description module-tsearch2
-Implementation of a new data type tsvector - a searchable data type with
-indexed access: http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
+Implementation of a new data type tsvector - a searchable data type
+with indexed access:
+http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
+
+%description module-tsearch2 -l pl
+Implementacja nowego typu danych tsvector - typu danych podlegaj±cego
+przeszukiwaniu z dostêpem poprzez indeksy:
+http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 
 %prep
-%setup  -q
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p0
@@ -773,8 +782,8 @@ rm -f config/libtool.m4
 %{__aclocal} -I config
 %{__autoconf}
 %configure CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS"\
-	%{!?_without_pgsql_locale:--enable-locale} \
-	%{!?_without_pgsql_multibyte:--enable-multibyte} \
+	%{?with_pgsql_locale:--enable-locale} \
+	%{?with_pgsql_multibyte:--enable-multibyte} \
 	--disable-rpath \
 	--enable-nls \
 	--enable-thread-safety \
@@ -792,7 +801,7 @@ rm -f config/libtool.m4
 	%{?with_kerberos5:--with-krb5=%{_prefix}} \
 	--with-openssl \
 	--with-x \
-%{?_with_jdbc:	--with-java}
+	%{?with_jdbc:--with-java}
 
 %{__make}
 %{__make} -C contrib/pg_autovacuum
