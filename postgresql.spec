@@ -49,7 +49,10 @@ Patch4:		%{name}-7.2-tighten.patch
 Patch5:		%{name}-7.2.1-mktime.patch
 Patch6:		%{name}-aurox.patch
 Patch7:		%{name}-DESTDIR.patch
-Buildrequires:	perl glibc-devel bison flex
+BuildRequires:	perl glibc-devel bison flex
+BuildRequires:	libstdc++-devel
+BuildRequires:	tcl-devel
+BuildRequires:	gettext-devel
 Prereq:		/sbin/ldconfig initscripts
 BuildPrereq:	perl
 BuildPrereq:	readline-devel >= 4.0
