@@ -14,7 +14,7 @@
 
 %include	/usr/lib/rpm/macros.python
  
-%define _rc RC1 
+%define _rc RC2 
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
@@ -28,11 +28,11 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.4
-Release:	0.3.%{_rc}
+Release:	0.1.%{_rc}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{_rc}.tar.bz2
-# Source0-md5:	ac449e3b83f226476cedfc09bef30ead
+# Source0-md5:	a1ea58e97dd7849a4fb4721752d3ed41
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
