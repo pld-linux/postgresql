@@ -560,7 +560,7 @@ autoconf
 	--with-x \
 	--with-perl $ENABLE_LOCALE $ENABLE_MULTIBYTE
 
-%{__make} OPT="%{?debug:-O -g}%{!?debug:$RPM_OPT_FLAGS}" \
+%{__make} OPT="%{?debug:-O0 -g}%{!?debug:$RPM_OPT_FLAGS}" \
 	  TEMPLATEDIR=%{_libdir}/pgsql
 
 cd ..
