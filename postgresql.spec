@@ -276,7 +276,7 @@ Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interface'u ODBC.
 cd src
 
 CFLAGS="$RPM_OPT_FLAGS" \
-./configure \
+./configure %{_target} \
 	--prefix=/usr \
 	--enable-hba \
 	--enable-locale \
