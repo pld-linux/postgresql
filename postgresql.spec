@@ -28,7 +28,7 @@ Summary(uk):	PostgreSQL - ”…”‘≈Õ¡ À≈“’◊¡ŒŒ— ¬¡⁄¡Õ… ƒ¡Œ…»
 Summary(zh_CN):	PostgreSQL øÕªß∂À≥Ã–Ú∫Õø‚Œƒº˛
 Name:		postgresql
 Version:	7.4
-Release:	0.2.%{_rc}
+Release:	0.3.%{_rc}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{_rc}.tar.bz2
@@ -44,6 +44,7 @@ Patch3:		%{name}-conf.patch
 Patch4:		%{name}-absolute_dbpaths.patch
 Patch5:		%{name}-link.patch
 Patch6:		%{name}-com_err.patch
+Patch7:		%{name}-ecpg_link.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -450,6 +451,29 @@ Biblioteki dzielone programu PostgreSQL.
 Este pacote contÈm a biblioteca compartilhada para acesso ao
 PostgreSQL.
 
+%package ecpg
+Summary:	Embedded SQL in C interface
+Summary(pl):	Interfejs wbudowanego SQL-a w jÍzyk C
+Group:		Libraries
+
+%description ecpg
+Embedded SQL in C interface.
+
+%description ecpg -l pl
+Interfejs wbudowanego SQL-a w jÍzyk C.
+
+%package ecpg-devel
+Summary:	Embedded SQL in C interface files
+Summary(pl):	Pliki programistyczne interfejsu wbudowanego SQL-a w jÍzyk C
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}
+
+%description ecpg-devel
+Embedded SQL in C interface files.
+
+%description ecpg-devel -l pl
+Pliki programistyczne interfejsu wbudowanego SQL-a w jÍzyk C.
+
 %package static
 Summary:	PostgreSQL static libraries
 Summary(es):	Bibliotecas estaticas PostgreSQL
@@ -720,6 +744,7 @@ Funkcje kryptograficzne dla PostgreSQL.
 %{?_with_absolute_dbpaths:%patch4 -p1}
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -863,6 +888,9 @@ fi
 %post   libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
 
+%post   ecpg -p /sbin/ldconfig
+%postun ecpg -p /sbin/ldconfig
+
 %post   tcl -p /sbin/ldconfig
 %postun tcl -p /sbin/ldconfig
 
@@ -936,36 +964,43 @@ fi
 
 %files libs
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libecpg.so.*.*
-%attr(755,root,root) %{_libdir}/libecpg_compat.so.*.*
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
-%attr(755,root,root) %{_libdir}/libpgtypes.so.*.*
 %attr(755,root,root) %{_bindir}/pg_id
 
-%files devel
+%files ecpg
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/ecpg
-%attr(755,root,root) %{_bindir}/pg_config
+%attr(755,root,root) %{_libdir}/libecpg.so.*.*
+%attr(755,root,root) %{_libdir}/libecpg_compat.so.*.*
+%attr(755,root,root) %{_libdir}/libpgtypes.so.*.*
+%{_mandir}/man1/ecpg.1*
+
+%files ecpg-devel
+%defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libecpg.so
 %attr(755,root,root) %{_libdir}/libecpg_compat.so
-%attr(755,root,root) %{_libdir}/libpq.so
 %attr(755,root,root) %{_libdir}/libpgtypes.so
-%dir %{_includedir}/postgresql
-%{_includedir}/compatlib.h
-%{_includedir}/datetime.h
-%{_includedir}/decimal.h
 %{_includedir}/ecpgerrno.h
 %{_includedir}/ecpg_informix.h
 %{_includedir}/ecpglib.h
 %{_includedir}/ecpgtype.h
-%{_includedir}/libpq-fe.h
-%{_includedir}/pg_config.h
-%{_includedir}/pg_config_os.h
 %{_includedir}/pgtypes_date.h
 %{_includedir}/pgtypes_error.h
 %{_includedir}/pgtypes_interval.h
 %{_includedir}/pgtypes_numeric.h
 %{_includedir}/pgtypes_timestamp.h
+
+%files devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pg_config
+%attr(755,root,root) %{_libdir}/libpq.so
+%dir %{_includedir}/postgresql
+%{_includedir}/compatlib.h
+%{_includedir}/datetime.h
+%{_includedir}/decimal.h
+%{_includedir}/libpq-fe.h
+%{_includedir}/pg_config.h
+%{_includedir}/pg_config_os.h
 %{_includedir}/postgres_ext.h
 %{_includedir}/sql3types.h
 %{_includedir}/sqlca.h
@@ -979,7 +1014,6 @@ fi
 %{_includedir}/postgresql/internal/lib
 %{_includedir}/postgresql/internal/libpq
 %{_includedir}/libpq
-%{_mandir}/man1/ecpg.1*
 %{_mandir}/man1/pg_config.1*
 
 %files backend-devel
