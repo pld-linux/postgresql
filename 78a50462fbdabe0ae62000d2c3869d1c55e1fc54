@@ -1,0 +1,2 @@
+- Release: 3
+- Slony-I added ("slony1" package). Built from this spec as it requires compiled PostgreSQL sources.
