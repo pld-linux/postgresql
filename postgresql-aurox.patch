@@ -1,0 +1,17 @@
+*** postgresql-7.2.3/src/include/postgres_ext.h.orig	2001-10-28 07:25:59.000000000 +0100
+--- postgresql-7.2.3/src/include/postgres_ext.h	2002-11-26 11:01:05.000000000 +0100
+***************
+*** 40,45 ****
+   *
+   * NOTE that databases with different NAMEDATALEN's cannot interoperate!
+   */
+! #define NAMEDATALEN 32
+  
+  #endif
+--- 40,45 ----
+   *
+   * NOTE that databases with different NAMEDATALEN's cannot interoperate!
+   */
+! #define NAMEDATALEN 128
+  
+  #endif
