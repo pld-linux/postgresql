@@ -17,10 +17,16 @@
 . /etc/sysconfig/network
 
 # Get service config
-if [ -f /etc/sysconfig/postgresql ] ; then
+if [ -f /etc/sysconfig/postgresql ]; then
 	. /etc/sysconfig/postgresql
 else
 	echo "Error: /etc/sysconfig/postgresql not found"
+	echo " PostgreSQL can't be run."
+	exit 1
+fi
+
+if [ ! "$PG_DB_CLUSTERS" ]; then
+	echo "Error: PG_DB_CLUSTERS not found or is empty"
 	echo " PostgreSQL can't be run."
 	exit 1
 fi
