@@ -945,20 +945,26 @@ fi
 %attr(755,root,root) %{_libdir}/libpq.so
 %attr(755,root,root) %{_libdir}/libpgtypes.so
 %dir %{_includedir}/postgresql
-%{_includedir}/pg_config.h
-%{_includedir}/pg_config_os.h
+%{_includedir}/compatlib.h
+%{_includedir}/datetime.h
+%{_includedir}/decimal.h
 %{_includedir}/ecpgerrno.h
+%{_includedir}/ecpg_informix.h
 %{_includedir}/ecpglib.h
 %{_includedir}/ecpgtype.h
 %{_includedir}/libpq-fe.h
-%{_includedir}/postgres_ext.h
-%{_includedir}/sql3types.h
-%{_includedir}/sqlca.h
+%{_includedir}/pg_config.h
+%{_includedir}/pg_config_os.h
 %{_includedir}/pgtypes_date.h
 %{_includedir}/pgtypes_error.h
 %{_includedir}/pgtypes_interval.h
 %{_includedir}/pgtypes_numeric.h
 %{_includedir}/pgtypes_timestamp.h
+%{_includedir}/postgres_ext.h
+%{_includedir}/sql3types.h
+%{_includedir}/sqlca.h
+%{_includedir}/sqlda.h
+%{_includedir}/sqltypes.h
 %dir %{_includedir}/postgresql/internal
 %{_includedir}/postgresql/internal/c.h
 %{_includedir}/postgresql/internal/libpq-int.h
