@@ -36,16 +36,17 @@ Patch1:		%{name}-pg_ctl-silent.patch
 Patch2:		%{name}-pg_ctl-nopsql.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
-BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	tcl-devel >= 8.3.2
-BuildRequires:	tk-devel >= 8.3.2
-BuildRequires:	readline-devel >= 4.2
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.6a
+BuildRequires:	perl-devel
 BuildRequires:	python-devel >= 2.2.1
+BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-pythonprov
+BuildRequires:	tcl-devel >= 8.3.2
+BuildRequires:	tk-devel >= 8.3.2
+BuildRequires:	XFree86-devel
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Prereq:		/sbin/chkconfig
@@ -774,6 +775,9 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
 
 cp -a man?	   $RPM_BUILD_ROOT%{_mandir}
+
+# there are html installed, remove them
+rm -rf $RPM_BUILD_ROOT%{_infodir}
 
 install -d howto
 ( cd howto
