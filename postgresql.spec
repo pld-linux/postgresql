@@ -10,8 +10,8 @@ Summary(fr):	Sysème de gestion de base de données PostgreSQL
 Summary(pl):	PostgreSQL - system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
-Version:	7.1.2
-Release:	7
+Version:	7.1.3
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -25,6 +25,7 @@ Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-no_libnsl.patch
 Patch2:		%{name}-configure.patch
 Patch3:		%{name}-install.patch
+Patch4:		%{name}-ac_fixes.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
@@ -544,6 +545,7 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -554,6 +556,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 rm -fR `find contrib/ -type d -name CVS`
 
 %build
+rm -f config/libtool.m4
 aclocal -I config
 autoconf
 %configure \
