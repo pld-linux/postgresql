@@ -1,0 +1,38 @@
+--- postgresql-7.0.3/src/bin/psql/tab-complete.c.wiget	Fri Apr 13 17:05:43 2001
++++ postgresql-7.0.3/src/bin/psql/tab-complete.c	Fri Apr 13 17:07:31 2001
+@@ -152,13 +152,13 @@
+    4) The list of attributes to the given table.
+ */
+ #define COMPLETE_WITH_QUERY(query) \
+-do { completion_charp = query; matches = completion_matches(text, complete_from_query); } while(0)
++do { completion_charp = query; matches = rl_completion_matches(text, complete_from_query); } while(0)
+ #define COMPLETE_WITH_LIST(list) \
+-do { completion_charpp = list; matches = completion_matches(text, complete_from_list); } while(0)
++do { completion_charpp = list; matches = rl_completion_matches(text, complete_from_list); } while(0)
+ #define COMPLETE_WITH_CONST(string) \
+-do { completion_charp = string; matches = completion_matches(text, complete_from_const); } while(0)
++do { completion_charp = string; matches = rl_completion_matches(text, complete_from_const); } while(0)
+ #define COMPLETE_WITH_ATTR(table) \
+-do {completion_charp = Query_for_list_of_attributes; completion_info_charp = table; matches = completion_matches(text, complete_from_query); } while(0)
++do {completion_charp = Query_for_list_of_attributes; completion_info_charp = table; matches = rl_completion_matches(text, complete_from_query); } while(0)
+ 
+ 
+ /* The completion function. Acc. to readline spec this gets passed the text
+@@ -257,7 +257,7 @@
+ /* CREATE or DROP */
+ 	/* complete with something you can create or drop */
+ 	else if (strcasecmp(prev_wd, "CREATE") == 0 || strcasecmp(prev_wd, "DROP") == 0)
+-		matches = completion_matches(text, create_command_generator);
++		matches = rl_completion_matches(text, create_command_generator);
+ 
+ /* ALTER */
+ 	/* complete with what you can alter (TABLE or USER) */
+@@ -620,7 +620,7 @@
+ 		)
+ 	{
+ #ifdef HAVE_FILENAME_COMPLETION_FUNCTION
+-		matches = completion_matches(text, filename_completion_function);
++		matches = rl_completion_matches(text, filename_completion_function);
+ #else
+ 
+ 		/*
