@@ -58,7 +58,13 @@ case "$action" in
 		for pgdir in $POSTGRES_DB_CLUSTERS; do
 			pgstatus "$pgdir"
 			if [ "$PG_STATUS" = "running" ]; then
-				msg_already_running "PostgreSQL $pgdir"
+				if ps ax | grep -v grep | grep -q "$PG_PID"; then
+					msg_already_running "PostgreSQL $pgdir"
+				else
+					msg_not_running "PostgreSQL $pgdir"
+					rm -f $pgdir/postmaster.pid
+					$0 start "$pgdir"
+				fi
 			else
 				msg_starting "PostgreSQL $pgdir"
 				busy
@@ -101,11 +107,11 @@ case "$action" in
 	status)
 		for pgdir in $POSTGRES_DB_CLUSTERS; do
 			TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir status"
-    	done
+ 	  	done
 	;;
 	restart)
-		$0 stop
-		$0 start
+		$0 stop "$POSTGRES_DB_CLUSTERS"
+		$0 start "$POSTGRES_DB_CLUSTERS"
 	;;
 	reload)
 		for pgdir in $POSTGRES_DB_CLUSTERS; do
