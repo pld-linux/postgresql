@@ -71,11 +71,11 @@ pgstatus() {
 	PG_PID="unknown"
 	status=`/usr/bin/pg_ctl -D $1 status`
 
-	if echo "$status" | grep -q 'pg_ctl: postmaster or postgres is not running'; then
+	if echo "$status" | grep -q 'pg_ctl: postmaster or postgres not running'; then
 		PG_STATUS="not running"
 	elif echo "$status" | grep -q 'pg_ctl: postmaster is running'; then
 		PG_STATUS="running"
-		PG_PID=`echo "$status" | sed 's/^pg_ctl:.*pid: \([0-9]\+\).*/\1/' | head -1`
+		PG_PID=`echo "$status" | sed 's/^pg_ctl:.*PID: \([0-9]\+\).*/\1/' | head -1`
 	fi
 }
 
