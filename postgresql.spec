@@ -578,7 +578,7 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
         $RPM_BUILD_ROOT/var/{lib/pgsql,log} \
 	$RPM_BUILD_ROOT%{_libdir}/pgsql/{modules,sql} \
-	$RPM_BUILD_ROOT{%{_applnkdir_}/System,%{_pixmapsdir}}
+	$RPM_BUILD_ROOT{%{_applnkdir}/System,%{_pixmapsdir}}
 
 %{__make} -C src install \
 	DESTDIR=$RPM_BUILD_ROOT \
