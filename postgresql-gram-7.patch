@@ -1,9 +1,9 @@
 --- postgresql-7.4.6/src/pl/plpgsql/src/gram.y.orig	2003-10-30 18:18:55.000000000 +0100
 +++ postgresql-7.4.6/src/pl/plpgsql/src/gram.y	2005-02-10 11:52:50.896826968 +0100
-@@ -1707,6 +1707,15 @@
- 				plpgsql_dstring_append(&ds, yytext);
- 				break;
+@@ -1699,6 +1699,16 @@ read_sql_construct(int until,
  		}
+ 		if (plpgsql_SpaceScanned)
+ 			plpgsql_dstring_append(&ds, " ");
 +
 +		/* Check for array overflow */
 +		if (nparams >= 1024)
@@ -13,9 +13,10 @@
 +					(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 +					 errmsg("too many variables specified in SQL statement")));
 +		}
- 	}
- 
- 	expr = malloc(sizeof(PLpgSQL_expr) + sizeof(int) * nparams - sizeof(int));
++
+ 		switch (tok)
+ 		{
+ 			case T_VARIABLE:
 @@ -1852,6 +1861,15 @@
  
  					while ((tok = yylex()) == ',')
@@ -32,10 +33,10 @@
  						tok = yylex();
  						switch(tok)
  						{
-@@ -1914,6 +1932,15 @@
- 				plpgsql_dstring_append(&ds, yytext);
- 				break;
- 		}
+@@ -1924,6 +1925,16 @@ make_select_stmt(void)
+ 
+ 		if (plpgsql_SpaceScanned)
+ 			plpgsql_dstring_append(&ds, " ");
 +
 +		/* Check for array overflow */
 +		if (nparams >= 1024)
@@ -45,9 +46,10 @@
 +					(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 +					 errmsg("too many variables specified in SQL statement")));
 +		}
- 	}
- 
- 	expr = malloc(sizeof(PLpgSQL_expr) + sizeof(int) * nparams - sizeof(int));
++
+ 		switch (tok)
+ 		{
+ 			case T_VARIABLE:
 @@ -1985,6 +2012,15 @@
  
  				while ((tok = yylex()) == ',')
