@@ -28,7 +28,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.4.2
-Release:	0.2
+Release:	0.3
 License:	BSD
 Group:		Applications/Databases
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -762,7 +762,7 @@ http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p0
+%patch2 -p1
 %patch3 -p1
 %{?with_absolute_dbpaths:%patch4 -p1}
 %patch5 -p1
