@@ -10,9 +10,11 @@
 #
 # Conditional build:
 %bcond_without  tests			# disable testing
-%bcond_without	tcl				# disables Tcl support
+%bcond_without	tcl			# disables Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
-%bcond_with	jdbc				# enable JDBC driver
+%bcond_without	perl			# disable perl support
+%bcond_without	python			# disable python support
+%bcond_with	jdbc			# enable JDBC driver
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 
@@ -58,8 +60,8 @@ BuildRequires:	bison >= 1.875
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7c
 BuildRequires:	pam-devel
-BuildRequires:	perl-devel
-BuildRequires:	python-devel >= 2.3
+%{?with_perl:BuildRequires:	perl-devel}
+%{?with_python:BuildRequires:	python-devel >= 2.3}
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-pythonprov
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
@@ -778,8 +780,8 @@ rm -f config/libtool.m4
 	--with-CXX \
 	%{?with_tcl:--with-tcl} \
 	%{?with_tcl:--with-tk} \
-	--with-perl \
-	--with-python \
+	%{?with_perl:--with-perl} \
+	%{?with_python:--with-python} \
 	%{?with_kerberos5:--with-krb5=%{_prefix}} \
 	--with-openssl \
 	--with-x \
@@ -802,8 +804,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 %{__make} install install-all-headers \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%{__make} install -C src/pl/plperl \
-	DESTDIR=$RPM_BUILD_ROOT
+%{?with_perl:%{__make} install -C src/pl/plperl DESTDIR=$RPM_BUILD_ROOT}
 
 %{__make} -C contrib/pg_autovacuum install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -1067,13 +1068,17 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/plpgsql.so
 
+%if %{with perl}
 %files module-plperl
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/plperl.so
+%endif
 
+%if %{with python}
 %files module-plpython
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/plpython.so
+%endif
 
 %if %{with tcl}
 %files module-pltcl
