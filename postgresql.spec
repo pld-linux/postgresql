@@ -618,27 +618,19 @@ gzip -9nf doc/FAQ doc/README* COPYRIGHT README HISTORY doc/bug.template \
 	src/interfaces/odbc/notice.txt
 
 %pre
-getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
-id postgres >/dev/null 2>&1 || /usr/sbin/useradd -M -o -r -u 88 \
-	-d /var/lib/pgsql -s /bin/sh -g postgres \
-	-c "PostgreSQL Server" postgres
+GROUP=postgres; GID=88; %groupadd
+USER=postgres; UID=88; HOMEDIR=/var/lib/pgsql; SHELL=/bin/sh
+COMMENT="PostgreSQL Server"; %useradd
 
 %post
-/sbin/chkconfig --add postgresql
-
-if [ -r /var/lock/subsys/postmaster ]; then
-	/etc/rc.d/init.d/postgresql restart >&2
-else
-	echo "Run \"/etc/rc.d/init.d/postgresql start\" to start postgresql server."
-fi
+%chkconfig_add
 
 %preun
-if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/postmaster ]; then
-		/etc/rc.d/init.d/postgresql stop
-	fi
-	/sbin/chkconfig --del postgresql
-fi
+%chkconfig_del
+
+%postun
+USER=postgres; %userdel
+GROUP=postgres; %groupdel
 
 %post   libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
