@@ -20,3 +20,15 @@ diff -Nur postgresql-7.3.2.orig/configure.in postgresql-7.3.2/configure.in
  
  AC_CANONICAL_HOST
  
+--- postgresql-7.4/doc/Makefile.orig	2003-12-18 09:05:55.000000000 +0100
++++ postgresql-7.4/doc/Makefile	2003-12-18 09:07:05.000000000 +0100
+@@ -25,9 +25,6 @@
+ 
+ .NOTPARALLEL:
+ 
+-ifneq ($(wildcard $(srcdir)/postgres.tar.gz),)
+-found_html := yes
+-endif
+ 
+ ifneq ($(wildcard $(srcdir)/man.tar.gz),)
+ # SCO OpenServer's man system is sufficiently different to not bother.
