@@ -1,52 +1,15 @@
-diff -urN postgresql-7.1.org/src/interfaces/perl5/GNUmakefile postgresql-7.1/src/interfaces/perl5/GNUmakefile
---- postgresql-7.1.org/src/interfaces/perl5/GNUmakefile	Thu Apr 19 21:50:23 2001
-+++ postgresql-7.1/src/interfaces/perl5/GNUmakefile	Thu Apr 19 22:49:37 2001
-@@ -40,8 +40,8 @@
- 	  POSTGRES_INCLUDE="$(includedir)" \
- 	  $(PERL) $(srcdir)/Makefile.PL
- 	$(MAKE) -f Makefile all
--	-@if [ -w "`$(MAKE) --quiet -f Makefile echo-installdir`" ]; then \
--		$(MAKE) -f Makefile install; \
-+	-@if [ -w "`$(MAKE) --quiet -f Makefile DESTDIR=\"$(DESTDIR)\" echo-installdir`" ]; then \
-+		$(MAKE) -f Makefile DESTDIR=\"$(DESTDIR)\" install; \
- 		$(MAKE) clean; \
- 	else \
- 		echo "*****" ;\
-diff -urN postgresql-7.1.org/src/interfaces/python/GNUmakefile postgresql-7.1/src/interfaces/python/GNUmakefile
---- postgresql-7.1.org/src/interfaces/python/GNUmakefile	Thu Apr 19 21:50:23 2001
-+++ postgresql-7.1/src/interfaces/python/GNUmakefile	Thu Apr 19 23:24:36 2001
-@@ -34,8 +34,8 @@
+--- postgresql-7.2/src/interfaces/perl5/GNUmakefile~	Sun Feb 10 23:50:38 2002
++++ postgresql-7.2/src/interfaces/perl5/GNUmakefile	Sun Feb 10 23:50:38 2002
+@@ -36,9 +36,9 @@
+ 	$(PERL) $< \
+ 	  INC='-I$(srcdir) -I$(libpq_srcdir) $(filter -I%, $(CPPFLAGS))' \
+ 	  LIBS="-L$$abs_libpq_builddir -lpq" \
+-	  INSTALLSITEARCH='$$(DESTDIR)$(perl_installsitearch)' \
+-	  INSTALLSITELIB='$$(DESTDIR)$(perl_installsitelib)' \
+-	  INSTALLMAN3DIR='$$(DESTDIR)$(perl_installman3dir)' \
++	  INSTALLSITEARCH='$(perl_installsitearch)' \
++	  INSTALLSITELIB='$(perl_installsitelib)' \
++	  INSTALLMAN3DIR='$(perl_installman3dir)' \
+ 	  MAKEFILE="$$abs_builddir/Makefile"
  
- install: all
- 	@echo "Installing Python module"
--	@if ( $(INSTALL_DATA) pg.py $(python_moduledir) && \
--	    $(MAKE) -f Makefile install ); then : ; else \
-+	@if ( $(INSTALL_DATA) pg.py $(DESTDIR)$(python_moduledir) && \
-+	    $(MAKE) -f Makefile LIBDIR=\"$(LIBDIR)\" install ); then : ; else \
- 		echo "*****" ;\
- 		echo "* Skipping the installation of the Python interface module for lack"; \
- 		echo "* of permissions. To install it, change to the directory"; \
-diff -urN postgresql-7.1.org/src/pl/plperl/GNUmakefile postgresql-7.1/src/pl/plperl/GNUmakefile
---- postgresql-7.1.org/src/pl/plperl/GNUmakefile	Thu Apr 19 21:50:23 2001
-+++ postgresql-7.1/src/pl/plperl/GNUmakefile	Thu Apr 19 21:50:33 2001
-@@ -16,7 +16,7 @@
- 	$(PERL) $<
- 
- install: all installdirs
--	$(MAKE) -f Makefile install
-+	$(MAKE) -f Makefile install DESTDIR=\"$(DESTDIR)\"
- 
- installdirs:
- 	$(mkinstalldirs) $(DESTDIR)$(plperl_installdir)
-diff -urN postgresql-7.1.org/src/pl/plperl/Makefile.PL postgresql-7.1/src/pl/plperl/Makefile.PL
---- postgresql-7.1.org/src/pl/plperl/Makefile.PL	Thu Apr 19 21:50:23 2001
-+++ postgresql-7.1/src/pl/plperl/Makefile.PL	Thu Apr 19 21:50:53 2001
-@@ -84,7 +84,7 @@
- 
- qq[
- install :: all
--	cp \$(INST_DYNAMIC) $ENV{plperl_installdir}
-+	cp \$(INST_DYNAMIC) \$(DESTDIR)$ENV{plperl_installdir}
- ];
- 
- }
+ .PHONY: libpq-all
