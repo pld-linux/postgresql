@@ -1,22 +1,22 @@
-Summary:     PostgreSQL Data Base Management System
-Summary(de): PostgreSQL Datenbankverwaltungssystem
-Summary(fr): Sysème de gestion de base de données PostgreSQL.
-Summary(pl): PostgreSQL system bazodanowy
-Summary(tr): Veri Tabaný Yönetim Sistemi
-Name:        postgresql
-Version:     6.4.2
-Release:     5d
-Copyright:   BSD
-Group:       Applications/Databases
-Group(pl):   Aplikacje/Bazy danych
-URL:         http://www.postgresql.org/
-Source:      ftp://ftp.postgresql.org/pub/%{name}-%{version}.tar.gz
-Source1:     postgresql.init
-Source2:     pgsql-Database-HOWTO-html.tar.gz
-Patch:       postgresql-6.4.2-opt.patch
-Buildroot:   /tmp/%{name}-%{version}-root
-Prereq:      /sbin/chkconfig /sbin/ldconfig
-Requires:    postgresql-clients
+Summary:	PostgreSQL Data Base Management System
+Summary(de):	PostgreSQL Datenbankverwaltungssystem
+Summary(fr):	Sysème de gestion de base de données PostgreSQL.
+Summary(pl):	PostgreSQL system bazodanowy
+Summary(tr):	Veri Tabaný Yönetim Sistemi
+Name:		postgresql
+Version:	6.4.2
+Release:	6
+Copyright:	BSD
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy danych
+Source0:	ftp://ftp.postgresql.org/pub/%{name}-%{version}.tar.gz
+Source1:	postgresql.init
+Source2:	pgsql-Database-HOWTO-html.tar.gz
+Patch:		postgresql-6.4.2-opt.patch
+URL:		http://www.postgresql.org/
+Prereq:		/sbin/chkconfig
+Buildroot:	/tmp/%{name}-%{version}-root
+Requires:	%{name}-clients = %{version}
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres, then as
@@ -117,14 +117,14 @@ Güçlü veri modeli ve zengin POSTGRES veri tiplerini desteklerken SQL'in
 geniþletilmiþ bir altkümesi yerine PostQuel sorgulama dilini koyar.
 
 %package devel
-Requires:    postgresql-clients
-Summary:     PostgreSQL development header files and libraries
-Summary(de): PostgreSQL-Entwicklungs-Header-Dateien und Libraries 
-Summary(fr): En-têtes et bibliothèques de développement PostgreSQL
-Summary(pl): PostgreSQL - nag³owki i biblioteki
-Summary(tr): PostgreSQL baþlýk dosyalarý ve kitaplýklar
-Group:       Development/Libraries
-Group(pl):   Programowanie/Biblioteki
+Summary:	PostgreSQL development header files and libraries
+Summary(de):	PostgreSQL-Entwicklungs-Header-Dateien und Libraries 
+Summary(fr):	En-têtes et bibliothèques de développement PostgreSQL
+Summary(pl):	PostgreSQL - nag³owki i biblioteki
+Summary(tr):	PostgreSQL baþlýk dosyalarý ve kitaplýklar
+Group:		Development/Libraries
+Group(pl):	Programowanie/Biblioteki
+Requires:	%{name}-clients = %{version}
 
 %description devel
 This package contains header files and libraries required to compile
@@ -149,15 +149,16 @@ Bu paket, PostgreSQL sunucusuyla konuþacak yazýlýmlar geliþtirmek için
 gereken baþlýk dosyalarýný ve kitaplýklarý içerir.
 
 %package data
-Summary:     PostgreSQL initial database structure
-Summary(de): PostgreSQL-Ausgangs-Datenbankstruktur 
-Summary(fr): Structure initiale de base de données PostgreSQL 
-Summary(pl): PostgreSQL - inicjuj±ca struktura bazy danych
-Summary(tr): PostgreSQL baþlangýç veritabaný yapýsý
-Group:       Applications/Databases
-Group(pl):   Aplikacje/Bazy danych
-Requires:    postgresql postgresql-clients
-Conflicts:   postgresql-data <= 6.2.1
+Summary:	PostgreSQL initial database structure
+Summary(de):	PostgreSQL-Ausgangs-Datenbankstruktur 
+Summary(fr):	Structure initiale de base de données PostgreSQL 
+Summary(pl):	PostgreSQL - inicjuj±ca struktura bazy danych
+Summary(tr):	PostgreSQL baþlangýç veritabaný yapýsý
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy danych
+Requires:	%{name}  = %{version}
+Requires:	%{name}-clients = %{version}
+Conflicts:	postgresql-data <= 6.2.1
 
 %description data
 This packages includes an initial database structure directory for PostgreSQL.
@@ -206,10 +207,10 @@ PostgreSQL'e hýzlý baþlangýç için bu paketin PostgreSQL sunucusuna yüklenmesi
 komutunu kullanarak kendiniz yaratmanýz gerekir.
 
 %package clients
-Summary:     clients needed to access a PostgreSQL server
-Summary(pl): klienci wymagani do dostêpu do serwera PostgreSQL
-Group:       Applications/Databases
-Group(pl):   Aplikacje/Bazy danych
+Summary:	clients needed to access a PostgreSQL server
+Summary(pl):	klienci wymagani do dostêpu do serwera PostgreSQL
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy danych
 
 %description clients
 This package includes only the clients and client libraries needed to access
@@ -226,11 +227,11 @@ Pakiet zawiera klientów oraz biblioteki niezbêdne dla dostêpu do serwera
 PostgreSQL. Serwer znajduje siê w g³ównym pakiecie.
 
 %package perl
-Summary:     Perl interface to PostgreSQL database
-Summary(pl): Interface dla Perl'a umo¿liwiaj±cy dostêp do baz PostgreSQL
-Group:       Applications/Databases
-Group(pl):   Aplikacje/Bazy danych
-Requires:    postgresql, perl >= 5.004
+Summary:	Perl interface to PostgreSQL database
+Summary(pl):	Interface dla Perl'a umo¿liwiaj±cy dostêp do baz PostgreSQL
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy danych
+Requires:	postgresql, perl >= 5.004
 
 %description perl
 This package includes only perl modules needed to access an PostgreSQL server.
@@ -240,11 +241,11 @@ Pakiet ten zawiera tylko modu³y Perl'a wymagane dla dostêpu do serwera
 PostgreSQL.
 
 %package doc
-Summary:     Documentation for PostgreSQL
-Summary(pl): Dodatkowa dokumantacja dla PostgreSQL
-Group:       Applications/Databases
-Group(pl):   Aplikacje/Bazy danych
-Requires:    postgresql
+Summary:	Documentation for PostgreSQL
+Summary(pl):	Dodatkowa dokumantacja dla PostgreSQL
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy danych
+Requires:	%{name} = %{version}
 
 %description doc
 This package includes documentation and HOWTO for programmer, admin etc., in
@@ -255,11 +256,11 @@ Pakiet ten zawiera dokumentacjê oraz HOWTO m.in. dla programistów,
 administratorów w formacie HTML.
 
 %package odbc
-Summary:     ODBC interface to PostgreSQL
-Summary(pl): Interface ODBC do PostgreSQL
-Group:       Applications/Databases
-Group(pl):   Aplikacje/Bazy danych
-Requires:    postgresql
+Summary:	ODBC interface to PostgreSQL
+Summary(pl):	Interface ODBC do PostgreSQL
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy danych
+Requires:	%{name} = %{version}
 
 %description odbc
 This package includes library and header files for interface ODBC.
@@ -268,24 +269,25 @@ This package includes library and header files for interface ODBC.
 Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interface'u ODBC.
 
 %prep
-rm -rf $RPM_BUILD_ROOT
-
 %setup -q
 %patch -p1 -b .opt
 
 %build
 cd src
-autoconf
 
-%ifarch alpha
-EXTRA_configure="--with-template=linuxalpha"
-%endif
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=/usr \
-	--enable-hba --enable-locale \
-	--with-odbc --with-odbcinst=/etc \
+CFLAGS="$RPM_OPT_FLAGS" \
+./configure \
+	--prefix=/usr \
+	--enable-hba \
+	--enable-locale \
+	--with-odbc \
+	--with-odbcinst=/etc \
 	--without-tcl \
 	--with-x \
-	--with-perl $EXTRA_configure
+%ifarch alpha
+	--with-template=linuxalpha \
+%endif
+	--with-perl
 
 gmake OPT_FLAGS="$RPM_OPT_FLAGS"
 
@@ -343,7 +345,7 @@ find $RPM_BUILD_ROOT/usr/lib/perl5 -type d -name Pg -print | \
 # Move odbc.ini file to etc
 mv -f $RPM_BUILD_ROOT/usr/*.ini $RPM_BUILD_ROOT/etc
 
-install -m 755 $RPM_SOURCE_DIR/postgresql.init $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
+install $RPM_SOURCE_DIR/postgresql.init $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 
 install -d howto
 ( cd howto
@@ -368,49 +370,45 @@ fi
 %post
 /sbin/chkconfig --add postgresql
 
+%preun
+if [ $1 = 0 ]; then
+	if [ -f /var/lock/subsys/postmaster ]; then
+		/etc/rc.d/init.d/postgresql stop
+	fi
+	/sbin/chkconfig --del postgresql
+fi
+
 %post data
 # Create sample database
 su postgres -c "LD_LIBRARY_PATH=/usr/lib \
     /usr/bin/initdb --pgdata=/var/lib/pgsql \
     --pglib=/usr/lib/pgsql"
 
-%post -p /sbin/ldconfig clients
+%post   -p /sbin/ldconfig clients
+%postun -p /sbin/ldconfig clients
 
-%post -p /sbin/ldconfig devel
+%post   -p /sbin/ldconfig devel
+%postun -p /sbin/ldconfig devel
 
-%post -p /sbin/ldconfig odbc
+%post   -p /sbin/ldconfig odbc
+%postun -p /sbin/ldconfig odbc
 
 %post perl
 POD=`find /usr/lib -name perllocal.pod.pg`
 DIR=`dirname $POD`
 if [ -f $DIR/perllocal.pod ]; then
-    mv $DIR/perllocal.pod $DIR/perllocal.pod.prepg
-    cat $DIR/perllocal.pod.pg $DIR/perllocal.pod.prepg > $DIR/perllocal.pod
+	mv $DIR/perllocal.pod $DIR/perllocal.pod.prepg
+	cat $DIR/perllocal.pod.pg $DIR/perllocal.pod.prepg > $DIR/perllocal.pod
 else
-    cp $DIR/perllocal.pod.pg $DIR/perllocal.pod
+	cp $DIR/perllocal.pod.pg $DIR/perllocal.pod
 fi
 rm -f $DIR/perllocal.pod.pg
-
-%preun
-if [ $1 = 0 ]; then
-   if [ -f /var/lock/subsys/postmaster ]; then
-       /etc/rc.d/init.d/postgresql stop
-   fi
-   /sbin/chkconfig --del postgresql
-fi
-
-%postun -p /sbin/ldconfig clients
-
-%postun -p /sbin/ldconfig devel
-
-%postun -p /sbin/ldconfig odbc
-
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files doc
-%defattr(644, root, root, 755)
+%defattr(644,root,root,755)
 %doc doc/unpacked/*
 %doc howto
 
@@ -421,42 +419,42 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYRIGHT README HISTORY doc/bug.template
 %doc doc/*.ps.gz
 
-%attr(755, root, root) /etc/rc.d/init.d/*
+%attr(754, root, root) /etc/rc.d/init.d/*
 
 %attr(644, postgres, postgres, 755) /usr/lib/pgsql
-%attr(755, root, root) /usr/bin/cleardbdir
-%attr(755, root, root) /usr/bin/createdb
-%attr(755, root, root) /usr/bin/createuser
-%attr(755, root, root) /usr/bin/destroydb
-%attr(755, root, root) /usr/bin/destroyuser
-%attr(755, root, root) /usr/bin/initdb
-%attr(755, root, root) /usr/bin/initlocation
-%attr(755, root, root) /usr/bin/pg_passwd
-%attr(755, root, root) /usr/bin/pg_version
-%attr(755, root, root) /usr/bin/postgres
-%attr(755, root, root) /usr/bin/postmaster
-%attr(644, root,  man) /usr/man/man1/cleardbdir.1.gz
-%attr(644, root,  man) /usr/man/man1/createdb.1.gz
-%attr(644, root,  man) /usr/man/man1/createuser.1.gz
-%attr(644, root,  man) /usr/man/man1/destroydb.1.gz
-%attr(644, root,  man) /usr/man/man1/destroyuser.1.gz
-%attr(644, root,  man) /usr/man/man1/initdb.1.gz
-%attr(644, root,  man) /usr/man/man1/initlocation.1.gz
-%attr(644, root,  man) /usr/man/man1/pg_passwd.1.gz
-%attr(644, root,  man) /usr/man/man1/postgres.1.gz
-%attr(644, root,  man) /usr/man/man1/postmaster.1.gz
-%attr(644, root,  man) /usr/man/man5/*.5.gz
+%attr(755,root,root) /usr/bin/cleardbdir
+%attr(755,root,root) /usr/bin/createdb
+%attr(755,root,root) /usr/bin/createuser
+%attr(755,root,root) /usr/bin/destroydb
+%attr(755,root,root) /usr/bin/destroyuser
+%attr(755,root,root) /usr/bin/initdb
+%attr(755,root,root) /usr/bin/initlocation
+%attr(755,root,root) /usr/bin/pg_passwd
+%attr(755,root,root) /usr/bin/pg_version
+%attr(755,root,root) /usr/bin/postgres
+%attr(755,root,root) /usr/bin/postmaster
+/usr/man/man1/cleardbdir.1.gz
+/usr/man/man1/createdb.1.gz
+/usr/man/man1/createuser.1.gz
+/usr/man/man1/destroydb.1.gz
+/usr/man/man1/destroyuser.1.gz
+/usr/man/man1/initdb.1.gz
+/usr/man/man1/initlocation.1.gz
+/usr/man/man1/pg_passwd.1.gz
+/usr/man/man1/postgres.1.gz
+/usr/man/man1/postmaster.1.gz
+/usr/man/man5/*.5.gz
 
 %files devel
-%defattr(644, root, root, 755)
+%defattr(644,root,root,755)
 /usr/lib/libec*.a
 /usr/lib/libpq*.a
-/usr/lib/libec*.so
-/usr/lib/libpq*.so
+%attr(755,root,root) /usr/lib/libec*.so
+%attr(755,root,root) /usr/lib/libpq*.so
 /usr/include/pgsql
-%attr(644, root,  man) /usr/man/man3/*.gz
-%attr(755, root, root) /usr/bin/ecpg
-%attr(644, root,  man) /usr/man/man1/ecpg.1.gz
+/usr/man/man3/*.gz
+%attr(755,root,root) /usr/bin/ecpg
+/usr/man/man1/ecpg.1.gz
 
 %files data
 %defattr(-,postgres,postgres)
@@ -464,18 +462,18 @@ rm -rf $RPM_BUILD_ROOT
 
 %files clients
 %defattr(644, root, root, 755)
-/usr/lib/libec*.so.*
-/usr/lib/libpq*.so.*
-%attr(755, root, root) /usr/bin/pg_dump
-%attr(755, root, root) /usr/bin/pg_dumpall
-%attr(755, root, root) /usr/bin/pg_id
-%attr(755, root, root) /usr/bin/pg_upgrade
-%attr(755, root, root) /usr/bin/psql
-%attr(644, root,  man) /usr/man/man1/pg_dump.1.gz
-%attr(644, root,  man) /usr/man/man1/pg_dumpall.1.gz
-%attr(644, root,  man) /usr/man/man1/pg_upgrade.1.gz
-%attr(644, root,  man) /usr/man/man1/psql.1.gz
-%attr(644, root,  man) /usr/man/manl/*.gz
+%attr(755,root,root) /usr/lib/libec*.so.*
+%attr(755,root,root) /usr/lib/libpq*.so.*
+%attr(755,root,root) /usr/bin/pg_dump
+%attr(755,root,root) /usr/bin/pg_dumpall
+%attr(755,root,root) /usr/bin/pg_id
+%attr(755,root,root) /usr/bin/pg_upgrade
+%attr(755,root,root) /usr/bin/psql
+/usr/man/man1/pg_dump.1.gz
+/usr/man/man1/pg_dumpall.1.gz
+/usr/man/man1/pg_upgrade.1.gz
+/usr/man/man1/psql.1.gz
+/usr/man/manl/*.gz
 
 %files -f perlfiles.list perl
 %defattr(-, root, root)
@@ -488,6 +486,12 @@ rm -rf $RPM_BUILD_ROOT
 /usr/include/iodbc
 
 %changelog
+* Fri Mar  5 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
+  [6.4.2-6]
+- changed ermission on rc script to 754,
+- /sbin/ldconfig emoved from Prereq list,
+- removed man group from man pages.
+
 * Fri Mar  5 1999 Jacek Smyda <smyda@posexperts.com.pl>
 - add polish group names
 - correct install perllocal.pod
