@@ -31,15 +31,39 @@ if [ "${NETWORKING}" = "no" ]; then
 	exit 1
 fi
 
-# Sanity check
-[ -f /tmp/.s.PGSQL.5432 ] || rm -f /tmp/.s.PGSQL.5432
-
 # See how we were called.
 case "$1" in
   start)
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/postgresql ]; then
-		show Starting postgresql
+
+		# Sanity check
+		[ -f /tmp/.s.PGSQL.5432 ] || rm -f /tmp/.s.PGSQL.5432
+		STARTTEXT="Starting postgresql"
+		
+		# Check for the PGDATA structure
+		if [ -f $POSTGRES_DATA_DIR/PG_VERSION ] && [ -d $POSTGRES_DATA_DIR/base/template1 ]; then
+		    # Check version of existing PGDATA
+		    if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '6.5' ]; then
+			STARTTEXT="$STARTTEXT [Old version. Need to Upgrade]"
+			show "$STARTTEXT"; fail
+			exit 1
+		    fi
+		else
+		    # Create sample database
+            	    if [ ! -d $POSTGRES_DATA_DIR ]; then
+			mkdir -p $POSTGRES_DATA_DIR
+			chown postgres.postgres $POSTGRES_DATA_DIR
+		    fi
+		    show Creating postgresql init database
+		    busy
+		    su postgres -c "LD_LIBRARY_PATH=/usr/lib \
+			initdb --pgdata=$POSTGRES_DATA_DIR \
+			--pglib=/usr/lib/pgsql &>/tmp/initdb.pgsql"
+		    deltext; ok
+		fi
+		
+		show "$STARTTEXT"
 		busy
 		su postgres -c "/usr/bin/postmaster \
 			$([ "$ALLOW_TCP_CONNECTIONS" = yes ] && echo "-i") \
@@ -50,9 +74,9 @@ case "$1" in
 			$([ "$POSTGRES_DIABLE_FSYNC" = yes ] && echo "-F") &"
 		sleep 2
 		if ps ax | grep -v grep | grep -q postmaster; then
-			deltext;ok
+			deltext; ok
 		else
-			deltext;fail
+			deltext; fail
 		fi
 	else
 		echo "Postgresql already is running"
