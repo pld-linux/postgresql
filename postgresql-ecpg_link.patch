@@ -1,0 +1,11 @@
+--- postgresql-7.4RC1.orig/src/interfaces/ecpg/compatlib/Makefile	2003-10-28 22:55:58.000000000 +0100
++++ postgresql-7.4RC1/src/interfaces/ecpg/compatlib/Makefile	2003-11-10 02:32:13.000000000 +0100
+@@ -17,7 +17,7 @@
+ SO_MINOR_VERSION= 0
+ 
+ override CPPFLAGS := -I$(top_srcdir)/src/interfaces/ecpg/include -I$(libpq_srcdir) -I$(top_srcdir)/src/include/utils $(CPPFLAGS) $(THREAD_CPPFLAGS)
+-SHLIB_LINK = -L../ecpglib -lecpg -L../pgtypeslib -lpgtypes $(libpq) \
++SHLIB_LINK = ../ecpglib/libecpg.so -L../pgtypeslib -lpgtypes $(libpq) \
+ 	$(filter -lssl -lcrypto -lkrb5 -lcrypt -lm, $(LIBS)) $(THREAD_LIBS)
+ 
+ OBJS= informix.o
