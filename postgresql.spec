@@ -15,7 +15,7 @@ Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.2
-Release:	7
+Release:	8
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -30,6 +30,7 @@ Patch2:		%{name}-ac_fixes.patch
 Patch3:		%{name}-pg_ctl-silent.patch
 Patch4:		%{name}-DESTDIR.patch
 Patch5:		%{name}-contribfixes.patch
+Patch6:		%{name}-pg_ctl-nopsql.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	XFree86-devel
@@ -701,6 +702,7 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p0
 
 tar xzf doc/man*.tar.gz
 
