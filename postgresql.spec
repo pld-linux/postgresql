@@ -1,9 +1,12 @@
 #
+# todo:
+# - fix postgresql-configure.patch (it puts html doc into /usr/share/info
+# - add missing files
+#
 # Conditional build:
 # _with_jdbc		- with JDBC driver
 #
 
-%include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.python
 
 %define relc rc2
@@ -27,8 +30,6 @@ Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{rel
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
-Source4:	pgaccess.desktop
-Source5:	pgaccess.png
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-pg_ctl-silent.patch
 Patch2:		%{name}-pg_ctl-nopsql.patch
@@ -42,9 +43,7 @@ BuildRequires:	tk-devel >= 8.3.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.6a
-BuildRequires:	perl-devel >= 5.6
 BuildRequires:	python-devel >= 2.2.1
-BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -402,46 +401,6 @@ C++, PERL и TCL) разделены. Этот пакет включает только библиотеки для
 Тепер пакети з б╕бл╕отеками для р╕зних мов програмування (C, C++, PERL
 ╕ TCL) розд╕лен╕. Цей пакет м╕стить т╕льки б╕бл╕отеки для мови C.
 
-%package perl
-Summary:	Perl interface to PostgreSQL database
-Summary(es):	MСdulo Perl para acceder un servidor PostgreSQL
-Summary(pl):	Interfejs dla Perla umo©liwiaj╠cy dostЙp do baz PostgreSQL
-Summary(pt_BR):	MСdulo Perl para acesso ao servidor PostgreSQL
-Summary(ru):	Библиотеки и модули для доступа к postgresql из perl
-Summary(uk):	Б╕бл╕отеки та модул╕ для доступу до postgresql з Perl
-Summary(zh_CN):	PostgreSQL ╣д PL/Perl ЁлпРсОят
-Group:		Applications/Databases
-Requires:	perl >= 5.004
-Requires:	%{name}-libs = %{version}
-
-%description perl
-This package includes only perl modules needed to access an PostgreSQL
-server.
-
-%description perl -l es
-MСdulo Perl para acceder un servidor PostgreSQL
-
-%description perl -l pl
-Pakiet ten zawiera tylko moduЁy Perla wymagane dla dostЙpu do serwera
-PostgreSQL.
-
-%description perl -l pt_BR
-MСdulo Perl para acesso ao servidor PostgreSQL.
-
-%description perl -l ru
-Это пакет postgresql для поддержки perl. Он включает модули perl и
-вспомогательные файлы для доступа к postgresql из perl. Включен только
-для поддержки существующих программ с использованием этого устаревшего
-интерфейса. Не используйте во вновь создаваемых программах -
-используйте perl-DBD-%{name} !
-
-%description perl -l uk
-Це пакет postgresql для п╕дтримки perl. В╕н м╕стить модул╕ perl та
-допом╕жн╕ файли для доступу до postgresql з perl. Включений т╕льки для
-п╕дтримки ╕снуючих програм з використанням цього застар╕лого
-╕нтерфейсу. Не використовуйте його в нових програмах, використовуйте
-perl-DBD-%{name} !
-
 %package -n python-postgresql
 Summary:	The python-based client programs needed for accessing a PostgreSQL server
 Summary(es):	MСdulo Python para acceder un servidor PostgreSQL
@@ -538,133 +497,6 @@ PostgreSQL.
 %description static -l uk
 Це окремий пакет з╕ статичними б╕бл╕отеками, як╕ б╕льш не входять в
 %{name}-devel.
-
-%package c++
-Summary:	C++ interface to PostgreSQL
-Summary(pl):	Interfejs C++ do PostgreSQL
-Summary(ru):	Клиентские библиотеки для поддержки клиентов PostgreSQL, написанных на C++
-Summary(uk):	Кл╕╓нтськ╕ б╕бл╕отеки  для п╕дтримки кл╕╓нт╕в PostgreSQL, написаних на C++
-Group:		Applications/Databases
-Requires:	%{name}-libs = %{version}
-
-%description c++
-This package includes library for C++ interface to PostgreSQL.
-
-%description c++ -l pl
-Pakiet ten zawiera biblioteki dla interfejsu C++ do PostgreSQL.
-
-%description c++ -l ru
-libpq++ -- объектно-ориентированная библиотека для доступа к базе
-данных PostgreSQL.
-
-%description c++ -l uk
-libpq++ -- об'╓ктно-ор╕╓нтована б╕бл╕отека для доступу до бази даних
-PostgreSQL.
-
-%package c++-devel
-Summary:	C++ interface to PostgreSQL - development part
-Summary(pl):	Interfejs C++ do PostgreSQL - cze╤Ф programistyczna
-Summary(ru):	Хедеры и библиотеки для разработок с использованием libpq++ (C++ интерфейс для postgresql)
-Summary(uk):	Хедери та б╕бл╕отеки для розробок з використанням libpq++ (╕нтерфейс C++ для postgresql)
-Group:		Applications/Databases
-Requires:	%{name}-c++ = %{version}
-Requires:	%{name}-devel = %{version}
-
-%description c++-devel
-This package includes library and header files for C++ interface.
-
-%description c++-devel -l pl
-Pakiet ten zawiera biblioteki i pliki nagЁСwkowe dla interfejsu C++.
-
-%description c++-devel -l ru
-Это пакет разработчика для программирования с libpq++. Он включает
-хедеры и библиотеки для использования в программах, которые используют
-код или API libpq++ (C++ интерфейс для postgresql).
-
-%description c++-devel -l uk
-Це пакет програм╕ста для програмування з libpq++. В╕н м╕стить хедери
-та б╕бл╕отеки для використання в програмах, як╕ використовують код або
-API libpq++ (╕нтерфейсу C++ для postgresql).
-
-%package c++-static
-Summary:	C++ interface to PostgreSQL - static libraries
-Summary(pl):	Interfejs C++ do PostgreSQL - biblioteki statyczne
-Summary(ru):	Статические библиотеки для программирования с libpq++
-Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з libpq++
-Group:		Applications/Databases
-Requires:	%{name}-c++-devel = %{version}
-
-%description c++-static
-This package includes static library for interface C++.
-
-%description c++-static -l pl
-Pakiet ten zawiera biblioteki statyczne dla interfejsu C++.
-
-%description c++-static -l ru
-Это отдельный пакет со статическими библиотеками, которые больше не
-входят в %{name}-c++-devel.
-
-%description c++-static -l uk
-Це окремий пакет з╕ статичними б╕бл╕отеками, як╕ б╕льше не входять в
-%{pkg_name}-c++-devel.
-
-%package odbc
-Summary:	ODBC interface to PostgreSQL
-Summary(es):	Driver ODBC para acceder un servidor PostgreSQL
-Summary(pl):	Interfejs ODBC do PostgreSQL
-Summary(pt_BR):	Driver ODBC necessАrio para acessar um servidor PostgreSQL
-Summary(zh_CN):	сц ODBC ╥цнй р╩╦Ж PostgreSQL йЩ╬щ©Б╣д ODBC гЩ╤╞
-Group:		Applications/Databases
-Requires:	%{name}-libs = %{version}
-
-%description odbc
-This package includes library for interface ODBC.
-
-%description odbc -l es
-Driver para acceder un servidor PostgreSQL, a travИs de ODBC.
-
-%description odbc -l pl
-Pakiet ten zawiera biblioteki dla interfejsu ODBC.
-
-%description odbc -l pt_BR
-Driver ODBC necessАrio para acessar um servidor PostgreSQL.
-
-%package odbc-devel
-Summary:	ODBC interface to PostgreSQL - development part
-Summary(pl):	Interfejs ODBC do PostgreSQL - cze╤Ф programistyczna
-Group:		Applications/Databases
-Requires:	%{name}-odbc = %{version}
-Requires:	%{name}-devel = %{version}
-
-%description odbc-devel
-This package includes library and header files for interface ODBC.
-
-%description odbc-devel -l pl
-Pakiet ten zawiera biblioteki i pliki nagЁСwkowe dla interfejsu ODBC.
-
-%package odbc-static
-Summary:	ODBC interface to PostgreSQL - static libraries
-Summary(pl):	Interfejs ODBC do PostgreSQL - biblioteki statyczne
-Group:		Applications/Databases
-Requires:	%{name}-odbc-devel = %{version}
-
-%description odbc-static
-This package includes static library for interface ODBC.
-
-%description odbc-static -l pl
-Pakiet ten zawiera biblioteki statyczne dla interfejsu ODBC.
-
-%package -n pgaccess
-Summary:	A free graphical database management tool for PostgreSQL
-Summary(pl):	Graficzne narzЙdzie do obsЁugi baz danych PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name}-tcl = %{version}
-
-%description -n pgaccess
-A free graphical database management tool for PostgreSQL.
-
-%description -n pgaccess -l pl
-Graficzne narzЙdzie do obsЁugi baz danych PostgreSQL.
 
 %package tcl
 Summary:	tcl interface for PostgreSQL
@@ -904,7 +736,6 @@ rm -f config/libtool.m4
 	%{!?_without_pgsql_multibyte:--enable-multibyte} \
 	--disable-rpath \
 	--enable-depend \
-	--enable-odbc \
 	--enable-recode \
 	--enable-syslog \
 	--enable-unicode-conversion \
@@ -915,8 +746,6 @@ rm -f config/libtool.m4
 	--with-perl \
 	--with-python \
 	--with-openssl \
-	--enable-odbc \
-	--with-odbcinst=%{_sysconfdir} \
 	--with-x \
 %{?_with_jdbc:	--with-java}
 
@@ -940,23 +769,8 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
 
-# Move PL/pgSQL procedural language to %{_pgmoduledir}
-( cd $RPM_BUILD_ROOT%{_libdir}
-  mv -f plpgsql.so $RPM_BUILD_ROOT%{_pgmoduledir}
-)
-
-# Move PL/TCL procedural language to %{_pgmoduledir}
-( cd $RPM_BUILD_ROOT%{_libdir}
-  mv -f pltcl.so $RPM_BUILD_ROOT%{_pgmoduledir}
-)
-
-# odbc
-install src/interfaces/odbc/odbcinst.ini $RPM_BUILD_ROOT%{_sysconfdir}
-
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
-install %{SOURCE4} $RPM_BUILD_ROOT%{_applnkdir}/System
-install %{SOURCE5} $RPM_BUILD_ROOT%{_pixmapsdir}
 
 cp -a man?	   $RPM_BUILD_ROOT%{_mandir}
 
@@ -977,7 +791,7 @@ if [ -f /etc/sysconfig/postgresql ]; then
     POSTGRES_DATA_DIR=/var/lib/pgsql
     . /etc/sysconfig/postgresql
     if [ -f $POSTGRES_DATA_DIR/PG_VERSION ]; then
-	if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.2' ]; then
+	if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.3' ]; then
 	    echo "Database(s) in older, incompatible format exist in $POSTGRES_DATA_DIR."
 	    echo "Dump them and clean $POSTGRES_DATA_DIR, then upgrade postgresql and"
 	    echo "restore database(s)."
@@ -986,6 +800,10 @@ if [ -f /etc/sysconfig/postgresql ]; then
         echo "Please note, that postgresql module path changed from"
         echo "/usr/lib/pgsql/module to /usr/lib/postgresql. Change the path"
         echo "in dump file before restore."
+        echo
+        echo "Reading following webpage is encouraged:"
+        echo "http://www.ca.postgresql.org/docs/momjian/upgrade_tips_7.3."
+
 	    exit 1
 	fi
     fi
@@ -1023,12 +841,6 @@ fi
 %post   tcl -p /sbin/ldconfig
 %postun tcl -p /sbin/ldconfig
 
-%post   c++ -p /sbin/ldconfig
-%postun c++ -p /sbin/ldconfig
-
-%post   odbc -p /sbin/ldconfig
-%postun odbc -p /sbin/ldconfig
-
 %files
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/*
@@ -1043,7 +855,6 @@ fi
 %attr(755,root,root) %{_bindir}/pg_ctl
 %attr(755,root,root) %{_bindir}/pg_config
 %attr(755,root,root) %{_bindir}/pg_encoding
-%attr(755,root,root) %{_bindir}/pg_passwd
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
 %attr(755,root,root) %{_bindir}/ipcclean
@@ -1068,7 +879,6 @@ fi
 %{_mandir}/man1/dropuser.1*
 %{_mandir}/man1/initdb.1*
 %{_mandir}/man1/initlocation.1*
-%{_mandir}/man1/pg_passwd.1*
 %{_mandir}/man1/pg_ctl.1*
 %{_mandir}/man1/pg_config.1*
 %{_mandir}/man1/postgres.1*
@@ -1087,7 +897,6 @@ fi
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
-%attr(755,root,root) %{_libdir}/libpgeasy.so.*.*
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
 %attr(755,root,root) %{_bindir}/pg_id
 
@@ -1095,7 +904,6 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/ecpg
 %attr(755,root,root) %{_libdir}/libecpg.so
-%attr(755,root,root) %{_libdir}/libpgeasy.so
 %attr(755,root,root) %{_libdir}/libpq.so
 %dir %{_includedir}/postgresql
 %{_includedir}/pg_config.h
@@ -1103,7 +911,6 @@ fi
 %{_includedir}/ecpgerrno.h
 %{_includedir}/ecpglib.h
 %{_includedir}/ecpgtype.h
-%{_includedir}/libpgeasy.h
 %{_includedir}/libpq-fe.h
 %{_includedir}/postgres_ext.h
 %{_includedir}/sql3types.h
@@ -1124,7 +931,6 @@ fi
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libecpg.a
-%{_libdir}/libpgeasy.a
 %{_libdir}/libpq.a
 
 %files clients
@@ -1142,48 +948,12 @@ fi
 %{_mandir}/man1/vacuumdb.1*
 %{_mandir}/manl/*.l*
 
-%files c++
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpq++.so.*.*
-
-%files c++-devel
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpq++.so
-%{_includedir}/libpq++.h
-%{_includedir}/libpq++
-
-%files c++-static
-%defattr(644,root,root,755)
-%{_libdir}/libpq++.a
-
-%files perl
-%defattr(644,root,root,755)
-%dir %{perl_sitearch}/auto/Pg
-%{perl_sitearch}/auto/Pg/Pg.bs
-%attr(755,root,root) %{perl_sitearch}/auto/Pg/Pg.so
-%{perl_sitearch}/auto/Pg/autosplit.ix
-%{perl_sitearch}/Pg.pm
-%{_mandir}/man3/*
-
-
 %files -n python-postgresql
 %defattr(644,root,root,755)
 %doc src/interfaces/python/{README*,ChangeLog}
 %{py_sitedir}/*.pyc
 %{py_sitedir}/*.pyo
 %attr(755,root,root) %{py_sitedir}/*.so
-
-%files -n pgaccess
-%defattr(644,root,root,755)
-%doc src/bin/pgaccess/doc/html/*
-%attr(755,root,root) %{_bindir}/pgaccess
-%dir %{_datadir}/postgresql/pgaccess
-%attr(755, root, root) %{_datadir}/postgresql/pgaccess/main.tcl
-%{_datadir}/postgresql/pgaccess/images
-%{_datadir}/postgresql/pgaccess/lib
-%{_applnkdir}/System/pgaccess.desktop
-%{_pixmapsdir}/pgaccess.png
-%{_mandir}/man1/pgaccess.1*
 
 %files tcl
 %defattr(644,root,root,755)
@@ -1201,22 +971,6 @@ fi
 %files tcl-static
 %defattr(644,root,root,755)
 %{_libdir}/libpgtcl.a
-
-%files odbc
-%defattr(644,root,root,755)
-%doc src/interfaces/odbc/readme.txt src/interfaces/odbc/notice.txt
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/odbc*
-%attr(755,root,root) %{_libdir}/libpsqlodbc.so.*.*
-%{_datadir}/postgresql/odbc.sql
-
-%files odbc-devel
-%defattr(644,root,root,755)
-#%{_includedir}/postgresql/iodbc
-%attr(755,root,root) %{_libdir}/libpsqlodbc.so
-
-%files odbc-static
-%defattr(644,root,root,755)
-%{_libdir}/libpsqlodbc.a
 
 %files module-plpgsql
 %defattr(644,root,root,755)
