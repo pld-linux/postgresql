@@ -9,6 +9,10 @@ POSTGRES_DATA_DIR=/var/lib/pgsql
 # run postgres(1) bacend in quiet mode
 POSTGRES_QUIET=yes
 
+# Enable listening on TCP port. Without this postmaster responds
+# only on unix socket
+ALLOW_TCP_CONNECTIONS=yes
+
 # Disable automatic fsync() call after each transac tion. This option
 # improves performance, but an operating system crash while a transaction is
 # in progress will probably cause data loss.
