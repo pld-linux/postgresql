@@ -1112,7 +1112,7 @@ fi
 %attr(755,root,root) %{_bindir}/slon
 %attr(755,root,root) %{_bindir}/slonik
 %attr(750,slony1,slony1) %dir /home/services/slony1
-%attr(600,root,root) /home/services/slony1/.pgpass
+%attr(600,slony1,slony1) /home/services/slony1/.pgpass
 %{_pgmoduledir}/slony1_funcs.so
 %{_pgmoduledir}/xxid.so
 %endif
