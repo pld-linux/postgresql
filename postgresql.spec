@@ -423,7 +423,6 @@ getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
 id postgres >/dev/null 2>&1 || /usr/sbin/useradd -M -o -r -u 88 \
 	-d /var/lib/pgsql -s /bin/sh -g postgres \
 	-c "PostgreSQL Server" postgres
-)
 
 %post
 /sbin/chkconfig --add postgresql
