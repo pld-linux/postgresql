@@ -23,6 +23,7 @@ ALLOW_USE_SSL=no
 POSTGRES_DATA_DIR=/var/lib/pgsql
 POSTGRES_LOG=/var/log/pgsql
 ENCODING=UNICODE
+LOCALE=${LANG:-C}
 
 # Get service config
 if [ -f /etc/sysconfig/postgresql ] ; then
@@ -181,8 +182,11 @@ case "$1" in
 	echo -n "Specify encoding for pgsql database (eg: LATIN2, KOI8) [$ENCODING]: "
 	read new_encoding
 	ENCODING=${new_encoding:-$ENCODING}
+	echo -n "Specify locale for pgsql database (eg: pl_PL, de_DE) [$LOCALE]: "
+	read new_locale
+	LOCALE=${new_locale:-$LOCALE}
 
-	show "Creating initial postgresql database using $ENCODING encoding"
+	show "Creating initial postgresql database using $ENCODING/$LOCALE encoding/locale"
 	started
 
         # Create sample database
@@ -193,6 +197,7 @@ case "$1" in
 	fi
 
 	
+	LC_ALL=$LOCALE; export LC_ALL
 	TMPDIR=/tmp su - postgres -s /bin/sh -c "LD_LIBRARY_PATH=/usr/lib \
 			initdb --pgdata=$POSTGRES_DATA_DIR \
 			-L /usr/share/postgresql -E $ENCODING"
