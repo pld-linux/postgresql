@@ -49,7 +49,7 @@ BuildRequires:	tcl-devel >= 8.3.4-10
 BuildRequires:	tk-devel >= 8.3.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openssl-devel >= 0.9.6a
+BuildRequires:	openssl-devel >= 0.9.6m
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel >= 5.6
 BuildRequires:	python-devel >= 2.2.1
