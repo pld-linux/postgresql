@@ -576,7 +576,11 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
         $RPM_BUILD_ROOT/var/{lib/pgsql,log} \
 	$RPM_BUILD_ROOT%{_libdir}/pgsql/{modules,sql}
 
-%{__make} -C src install DESTDIR=$RPM_BUILD_ROOT TEMPLATEDIR=%{_libdir}/pgsql
+%{__make} -C src install \
+	DESTDIR=$RPM_BUILD_ROOT \
+	TEMPLATEDIR=%{_libdir}/pgsql \
+	INSTALLMAN3DIR=$RPM_BUILD_ROOT%{_mandir}/man3
+
 %{__make} -C doc install DESTDIR=$RPM_BUILD_ROOT
 touch $RPM_BUILD_ROOT/var/log/pgsql
 
