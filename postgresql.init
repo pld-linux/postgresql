@@ -41,7 +41,7 @@ fi
 # PG_STATUS = running | not running
 # PG_PID    = pid of postmaster process
 #
-pgstatus () {
+pgstatus() {
 	PG_STATUS="unknown"
 	PG_PID="unknown"
 	status=`/usr/bin/pg_ctl -D $1 status`
@@ -56,8 +56,13 @@ pgstatus () {
 
 #
 # start postgresql and display appropriate messages
+#
 # arguments:
 # $1 - db cluster
+#
+# sets variables:
+# PG_STARTED = 1 if instance has started up; please note, that function
+#              will not set to other value
 #
 pgstart() {
     msg_starting "PostgreSQL $1"
@@ -66,6 +71,7 @@ pgstart() {
 
     pgstatus "$1"
     if [ "$PG_STATUS" != "unknown" -a "$PG_PID" != "unknown" ]; then
+        PG_STARTED=1
         deltext; ok
     else
         deltext; fail 
@@ -77,14 +83,18 @@ action="$1"
 # any db cluster as command line argument?
 if [ $# -gt 1 ]; then
 	shift
-	POSTGRES_DB_CLUSTERS="$@"
+	DB_CLUSTERS="$@"
+else
+    DB_CLUSTERS="$PG_DB_CLUSTERS"
 fi
 
 # See how we were called.
-# Every action is performed for all given (default all configured) db clusters.
+# Every action is performed for all given (all configured by default)
+# db clusters.
 case "$action" in
 	start)
-		for pgdir in $POSTGRES_DB_CLUSTERS; do
+		PG_STARTED=0
+		for pgdir in $DB_CLUSTERS; do
 			pgstatus "$pgdir"
 			if [ "$PG_STATUS" = "running" ]; then
                 # pg_ctl status can misinform us about postgresql status
@@ -102,9 +112,11 @@ case "$action" in
                 pgstart "$pgdir"
 			fi
 		done
+        # one of instances has started, so create the lock
+        [ $PG_STARTED -eq 1 ] && touch /var/lock/subsys/postgresql
 	;;
 	stop)
-		for pgdir in $POSTGRES_DB_CLUSTERS; do
+		for pgdir in $DB_CLUSTERS; do
 			pgstatus "$pgdir"
 			if [ "$PG_STATUS" = "not running" ]; then
 				msg_not_running "PostgreSQL $pgdir"
@@ -132,16 +144,16 @@ case "$action" in
 		done
 	;;
 	status)
-		for pgdir in $POSTGRES_DB_CLUSTERS; do
+		for pgdir in $DB_CLUSTERS; do
 			TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir status"
  	  	done
 	;;
 	restart)
-		$0 stop "$POSTGRES_DB_CLUSTERS"
-		$0 start "$POSTGRES_DB_CLUSTERS"
+		$0 stop "$DB_CLUSTERS"
+		$0 start "$DB_CLUSTERS"
 	;;
 	reload)
-		for pgdir in $POSTGRES_DB_CLUSTERS; do
+		for pgdir in $DB_CLUSTERS; do
 			pgstatus "$pgdir"
 			if [ "$PG_STATUS" = "not running" ]; then
 				msg_not_running "PostgreSQL $pgdir"
