@@ -16,8 +16,8 @@
 					# (disabled by default because it is a security risk)
 %bcond_without	slony1			# disable Slony-I replication system
 
-%define		postgresql_version	7.4.6
-%define		postgresql_release	5
+%define		postgresql_version	8.0.0
+%define		postgresql_release	0.1
 %define		slony1_version	1.0.5
 %define		slony1_release	1
 
@@ -37,25 +37,19 @@ Release:	%{postgresql_release}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{postgresql_version}/%{name}-%{postgresql_version}.tar.bz2
-# Source0-md5:	f0ea2b372a7bdaf2613e92176ebf5e0f
+# Source0-md5:	3fe6bb504a6457daa80bc32daf10122e
+##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}beta/%{name}-%{version}%{beta}.tar.bz2
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
 Source4:	http://developer.postgresql.org/~wieck/slony1/download/slony1-%{slony1_version}.tar.gz
 # Source4-md5:	66fcc0f53028101e4e0f969e5f47fe43
-Patch0:		%{name}-doc.patch
-Patch1:		%{name}-pg_ctl-silent.patch
-Patch2:		%{name}-pg_ctl-nopsql.patch
-Patch3:		%{name}-conf.patch
-Patch4:		%{name}-absolute_dbpaths.patch
-Patch5:		%{name}-link.patch
-Patch6:		%{name}-com_err.patch
-Patch7:		%{name}-ecpg_link.patch
-Patch8:		%{name}-ecpg-includedir.patch
-Patch9:		%{name}-contrib_install.patch
-Patch10:	%{name}-tsearch2-compound_word_support_20031210.patch
-Patch11:	%{name}-python-configdir.patch
+Patch0:		%{name}-conf.patch
+Patch1:		%{name}-absolute_dbpaths.patch
+Patch2:		%{name}-link.patch
+Patch3:		%{name}-ecpg_link.patch
+Patch4:		%{name}-ecpg-includedir.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -74,7 +68,6 @@ BuildRequires:	pam-devel
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-pythonprov
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
-%{?with_tcl:BuildRequires:	tk-devel >= 8.4.3}
 BuildRequires:	zlib-devel
 PreReq:		rc-scripts
 PreReq:		%{name}-clients = %{postgresql_version}-%{postgresql_release}
@@ -90,7 +83,7 @@ Obsoletes:	postgresql-test
 BuildRoot:	%{tmpdir}/%{name}-%{postgresql_version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
-%define		_pgsqldir	%{_pgmoduledir}/sql
+%define		_pgsqldir	%{_datadir}/postgresql/contrib
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -525,83 +518,6 @@ PostgreSQL.
 Це окремий пакет з╕ статичними б╕бл╕отеками, як╕ б╕льш не входять в
 %{name}-devel.
 
-%package tcl
-Summary:	Tcl interface for PostgreSQL
-Summary(es):	Bibliotecas y shell Tcl para acceder un servidor PostgreSQL
-Summary(pl):	Interfejs Tcl dla PostgreSQL
-Summary(pt_BR):	Bibliotecas e shell para programas em Tcl acessarem o servidor PostgreSQL
-Summary(ru):	Библиотеки для доступа к PostgreSQL из Tcl
-Summary(uk):	Б╕бл╕отеки для доступу до PostgreSQL з Tcl
-Summary(zh_CN):	р╩╦Ж Tcl ©Б╨м PostgreSQL ╣д PL/Tcl ╠ЮЁлсОят
-Group:		Development/Languages/Tcl
-Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
-
-%description tcl
-Tcl interface for PostgreSQL.
-
-%description tcl -l es
-Bibliotecas y shell Tcl para acceder un servidor PostgreSQL
-
-%description tcl -l pl
-Interfejs Tcl dla PostgreSQL.
-
-%description tcl -l pt_BR
-Bibliotecas e shell para programas em Tcl acessarem o servidor
-PostgreSQL.
-
-%description tcl -l ru
-libpgtcl - API для доступа к базе данных PostgreSQL из языка Tcl.
-
-%description tcl -l uk
-libpgtcl - API для доступу до бази даних PostgreSQL з мови Tcl.
-
-%package tcl-devel
-Summary:	Development part of Tcl interface for PostgreSQL
-Summary(pl):	CzЙ╤Ф dla programistСw interfejsu Tcl dla PostgreSQL
-Summary(ru):	Хедеры и библиотеки для разработок с использованием libpgtcl (Tcl интерфейс для PostgreSQL)
-Summary(uk):	Хедери та б╕бл╕отеки для розробок з використанням libpgtcl (Tcl-╕нтерфейс для PostgreSQL)
-Group:		Development/Languages/Tcl
-Requires:	%{name}-tcl = %{postgresql_version}-%{postgresql_release}
-Requires:	%{name}-devel = %{postgresql_version}-%{postgresql_release}
-
-%description tcl-devel
-Development part of Tcl interface for PostgreSQL.
-
-%description tcl-devel -l pl
-CzЙ╤Ф interfejsu Tcl dla PostgreSQL przeznaczona dla programistСw.
-
-%description tcl-devel -l ru
-Это пакет разработчика для программирования с libpgtcl. Он включает
-хедеры и библиотеки для использования в программах, которые используют
-код или API libtcl (Tcl интерфейс для PostgreSQL).
-
-%description tcl-devel -l uk
-Це пакет програм╕ста для програмування з libpgtcl. В╕н м╕стить хедери
-та б╕бл╕отеки для використання в програмах, як╕ використовують код або
-API libtcl (Tcl-╕нтерфейсу для PostgreSQL).
-
-%package tcl-static
-Summary:	Static libraries of Tcl interface for PostgreSQL
-Summary(pl):	Biblioteki statyczne interfejsu Tcl dla PostgreSQL
-Summary(ru):	Статические библиотеки для программирования с libpgtcl
-Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з libpgtcl
-Group:		Development/Languages/Tcl
-Requires:	%{name}-tcl-devel = %{postgresql_version}-%{postgresql_release}
-
-%description tcl-static
-Static libraries of Tcl interface for PostgreSQL.
-
-%description tcl-static -l pl
-Biblioteki statyczne interfejsu Tcl dla PostgreSQL.
-
-%description tcl-static -l ru
-Это отдельный пакет со статическими библиотеками, которые больше не
-входят в postgresql-tcl-devel.
-
-%description tcl-static -l uk
-Це окремий пакет з╕ статичними б╕бл╕отеками, що б╕льше не входять до
-postgresql-tcl-devel.
-
 %package module-plpgsql
 Summary:	PL/pgSQL - PostgreSQL procedural language
 Summary(pl):	PL/pgSQL jЙzyk proceduralny bazy danych PostgreSQL
@@ -803,18 +719,12 @@ byЁy caЁy czas operacyjne.
 
 %prep
 %setup -q -a4
+#%setup -q -n %{name}-%{version}%{beta}
 %patch0 -p1
-%patch1 -p1
+%{?with_absolute_dbpaths:%patch1 -p1}
 %patch2 -p1
 %patch3 -p1
-%{?with_absolute_dbpaths:%patch4 -p1}
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
+%patch4 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -822,11 +732,11 @@ mkdir doc/unpacked
 tar zxf doc/postgres.tar.gz -C doc/unpacked
 
 # Erase all CVS dirs
-find contrib -type d -name CVS -exec rm -rf {} \;
+#find contrib -type d -name CVS -exec rm -rf {} \;
 
 %build
-rm -f config/libtool.m4
-install /usr/share/automake/config.* config
+#rm -f config/libtool.m4
+#install /usr/share/automake/config.* config
 %{__aclocal} -I config
 %{__autoconf}
 %configure \
@@ -844,13 +754,12 @@ install /usr/share/automake/config.* config
 	--enable-unicode-conversion \
 	--with-CXX \
 	%{?with_tcl:--with-tcl} \
-	%{?with_tcl:--with-tk} \
 	%{?with_perl:--with-perl} \
 	%{?with_python:--with-python} \
-	%{?with_kerberos5:--with-krb5=%{_prefix}} \
+	%{?with_kerberos5:--with-krb5} \
 	--with-openssl \
 	--with-x \
-	%{?with_jdbc:--with-java}
+	--without-docdir 
 
 %{__make}
 %{__make} -C contrib/pg_autovacuum
@@ -881,7 +790,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 
 install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
-%{__make} install install-all-headers \
+%{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %if %{with perl}
@@ -923,12 +832,15 @@ install -d howto
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
 
 # find locales
-for f in libpq pg_controldata pg_dump pg_resetxlog pgscripts postgres psql; do
+for f in libpq pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl; do
 	%find_lang $f
 done
 # merge locales
 cat pgscripts.lang pg_resetxlog.lang postgres.lang pg_controldata.lang > main.lang
-cat pg_dump.lang psql.lang > clients.lang
+cat pg_dump.lang psql.lang initdb.lang pg_ctl.lang > clients.lang
+
+# Remove Contrib documentation. We use macro %doc
+rm -rf $RPM_BUILD_ROOT/contrib
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -944,7 +856,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ `cat $pgdir/PG_VERSION` != '7.4' ]; then
+		if [ `cat $pgdir/PG_VERSION` != '8.0' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
@@ -999,9 +911,6 @@ fi
 %post	ecpg -p /sbin/ldconfig
 %postun	ecpg -p /sbin/ldconfig
 
-%post	tcl -p /sbin/ldconfig
-%postun	tcl -p /sbin/ldconfig
-
 %files -f main.lang
 %defattr(644,root,root,755)
 %doc COPYRIGHT README HISTORY doc/{FAQ*,README*,bug.template}
@@ -1017,12 +926,10 @@ fi
 %attr(755,root,root) %{_bindir}/droplang
 %attr(755,root,root) %{_bindir}/dropuser
 %attr(755,root,root) %{_bindir}/initdb
-%attr(755,root,root) %{_bindir}/initlocation
 %attr(755,root,root) %{_bindir}/ipcclean
 %attr(755,root,root) %{_bindir}/pg_autovacuum
 %attr(755,root,root) %{_bindir}/pg_controldata
 %attr(755,root,root) %{_bindir}/pg_ctl
-%attr(755,root,root) %{_bindir}/pg_encoding
 %attr(755,root,root) %{_bindir}/pg_resetxlog
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
@@ -1036,16 +943,13 @@ fi
 %dir %{_pgsqldir}
 %dir %{_pgmoduledir}
 %dir %{_datadir}/postgresql
+%dir %{_datadir}/postgresql/timezone
 %{_datadir}/postgresql/*.bki
 %{_datadir}/postgresql/*.sample
 %{_datadir}/postgresql/*.description
 %{_datadir}/postgresql/*.sql
 %{_datadir}/postgresql/*.txt
-
-%if %{with jdbc}
-#{_javadir}/postgresql-exmaples.jar
-%{_javadir}/postgresql.jar
-%endif
+%{_datadir}/postgresql/timezone/*
 
 %attr(700,postgres,postgres) /home/services/postgres
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
@@ -1059,7 +963,6 @@ fi
 %{_mandir}/man1/droplang.1*
 %{_mandir}/man1/dropuser.1*
 %{_mandir}/man1/initdb.1*
-%{_mandir}/man1/initlocation.1*
 %{_mandir}/man1/ipcclean.1*
 %{_mandir}/man1/pg_controldata.1*
 %{_mandir}/man1/pg_ctl.1*
@@ -1075,7 +978,6 @@ fi
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
-%attr(755,root,root) %{_bindir}/pg_id
 
 %files ecpg
 %defattr(644,root,root,755)
@@ -1108,7 +1010,6 @@ fi
 %{_includedir}/postgresql/internal/port.h
 %{_includedir}/postgresql/internal/postgres_fe.h
 %{_includedir}/postgresql/internal/pqexpbuffer.h
-%{_includedir}/postgresql/internal/lib
 %{_includedir}/postgresql/internal/libpq
 %{_includedir}/libpq
 %{_mandir}/man1/pg_config.1*
@@ -1123,6 +1024,7 @@ fi
 %{_libdir}/libecpg_compat.a
 %{_libdir}/libpq.a
 %{_libdir}/libpgtypes.a
+%{_libdir}/libpgport.a
 
 %files clients -f clients.lang
 %defattr(644,root,root,755)
@@ -1138,25 +1040,6 @@ fi
 %{_mandir}/man1/psql.1*
 %{_mandir}/man1/vacuumdb.1*
 %{_mandir}/man7/*.7*
-
-%if %{with tcl}
-%files tcl
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpgtcl.so
-%attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
-%attr(755,root,root) %{_bindir}/pgtclsh
-%attr(755,root,root) %{_bindir}/pgtksh
-%{_mandir}/man1/pgtclsh.1*
-%{_mandir}/man1/pgtksh.1*
-
-%files tcl-devel
-%defattr(644,root,root,755)
-%{_includedir}/libpgtcl.h
-
-%files tcl-static
-%defattr(644,root,root,755)
-%{_libdir}/libpgtcl.a
-%endif
 
 %files module-plpgsql
 %defattr(644,root,root,755)
@@ -1185,14 +1068,15 @@ fi
 %defattr(644,root,root,755)
 %doc contrib/pgcrypto/README*
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
-%{_datadir}/%{name}/pgcrypto.sql
+%{_pgsqldir}/pgcrypto.sql
 
 %files module-tsearch2
 %defattr(644,root,root,755)
+%doc contrib/tsearch2/README*
 %attr(755,root,root) %{_pgmoduledir}/tsearch2.so
-%{_datadir}/%{name}/tsearch2.sql
-%{_datadir}/%{name}/untsearch2.sql
-%{_datadir}/%{name}/*.stop
+%{_pgsqldir}/tsearch2.sql
+%{_pgsqldir}/untsearch2.sql
+%{_pgsqldir}/*.stop
 
 %if %{with slony1}
 %files -n slony1
