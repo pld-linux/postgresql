@@ -327,9 +327,9 @@ perl -V:installsitearch >> /tmp/tmp_perl_info
   sed -e "s|$RPM_BUILD_ROOT/|/|g" < $LOCAL.old > $LOCAL.pg
   rm -f $LOCAL.old
 )
-find $RPM_BUILD_ROOT/usr/lib/perl5 -type f -print | \
+find $RPM_BUILD_ROOT%{_libdir}/perl5 -type f -print | \
 	sed -e "s|$RPM_BUILD_ROOT/|/|g" | grep -v "perllocal.pod$" > perlfiles.list
-find $RPM_BUILD_ROOT/usr/lib/perl5 -type d -name Pg -print | \
+find $RPM_BUILD_ROOT%{_libdir}/perl5 -type d -name Pg -print | \
 	sed -e "s|$RPM_BUILD_ROOT/|%dir /|g" >> perlfiles.list
 
 # Move all includes beneath /usr/include/pgsql.
@@ -341,8 +341,8 @@ find $RPM_BUILD_ROOT/usr/lib/perl5 -type d -name Pg -print | \
   done
 )
 
-# Move all templates/examples beneath /usr/lib/pgsql
-( cd $RPM_BUILD_ROOT/usr/lib
+# Move all templates/examples beneath %{_libdir}/pgsql
+( cd $RPM_BUILD_ROOT%{_libdir}
   install -d pgsql
   mv *source *sample pgsql
 )
@@ -385,9 +385,9 @@ fi
 
 %post data
 # Create sample database
-su postgres -c "LD_LIBRARY_PATH=/usr/lib \
+su postgres -c "LD_LIBRARY_PATH=%{_libdir} \
     /usr/bin/initdb --pgdata=/var/lib/pgsql \
-    --pglib=/usr/lib/pgsql"
+    --pglib=%{_libdir}/pgsql"
 
 %post   -p /sbin/ldconfig clients
 %postun -p /sbin/ldconfig clients
@@ -399,7 +399,7 @@ su postgres -c "LD_LIBRARY_PATH=/usr/lib \
 %postun -p /sbin/ldconfig odbc
 
 %post perl
-POD=`find /usr/lib -name perllocal.pod.pg`
+POD=`find %{_libdir} -name perllocal.pod.pg`
 DIR=`dirname $POD`
 if [ -f $DIR/perllocal.pod ]; then
 	mv $DIR/perllocal.pod $DIR/perllocal.pod.prepg
@@ -427,7 +427,7 @@ rm -f /tmp/tmp_perl_info
 
 %attr(754, root, root) /etc/rc.d/init.d/*
 
-%attr(644, postgres, postgres, 755) /usr/lib/pgsql
+%attr(644, postgres, postgres, 755) %{_libdir}/pgsql
 %attr(755,root,root) /usr/bin/cleardbdir
 %attr(755,root,root) /usr/bin/createdb
 %attr(755,root,root) /usr/bin/createuser
@@ -453,10 +453,10 @@ rm -f /tmp/tmp_perl_info
 
 %files devel
 %defattr(644,root,root,755)
-/usr/lib/libec*.a
-/usr/lib/libpq*.a
-%attr(755,root,root) /usr/lib/libec*.so
-%attr(755,root,root) /usr/lib/libpq*.so
+%{_libdir}/libec*.a
+%{_libdir}/libpq*.a
+%attr(755,root,root) %{_libdir}/libec*.so
+%attr(755,root,root) %{_libdir}/libpq*.so
 /usr/include/pgsql
 %{_mandir}/man3/*.gz
 %attr(755,root,root) /usr/bin/ecpg
@@ -468,8 +468,8 @@ rm -f /tmp/tmp_perl_info
 
 %files clients
 %defattr(644, root, root, 755)
-%attr(755,root,root) /usr/lib/libec*.so.*
-%attr(755,root,root) /usr/lib/libpq*.so.*
+%attr(755,root,root) %{_libdir}/libec*.so.*
+%attr(755,root,root) %{_libdir}/libpq*.so.*
 %attr(755,root,root) /usr/bin/pg_dump
 %attr(755,root,root) /usr/bin/pg_dumpall
 %attr(755,root,root) /usr/bin/pg_id
@@ -488,7 +488,7 @@ rm -f /tmp/tmp_perl_info
 %defattr(644, root, root, 755)
 %doc src/interfaces/odbc/readme.txt src/interfaces/odbc/notice.txt
 %config(noreplace) %verify(not size mtime md5) /etc/odbc*
-/usr/lib/libpsqlodbc*
+%{_libdir}/libpsqlodbc*
 /usr/include/iodbc
 
 %changelog
@@ -528,7 +528,7 @@ rm -f /tmp/tmp_perl_info
 - /var/lib/pgsql/pg_pwd should not be 666
 
 * Sun Jun 21 1998 Jeff Johnson <jbj@redhat.com>
-- create /usr/lib/pgsql (like /usr/include/pgsql)
+- create %{_libdir}/pgsql (like /usr/include/pgsql)
 - resurrect libpq++.so*
 - fix name problem in startup-script (problem #533)
 
