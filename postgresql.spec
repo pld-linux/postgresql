@@ -16,14 +16,11 @@ Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
 Source4:	pgaccess.desktop
 Source5:	pgaccess.png
-#Patch0:		%{name}-opt.patch
-Patch1:		%{name}-DESTDIR.patch
-#Patch2:		%{name}-perl.patch
-#Patch3:		%{name}-python.patch
-Patch4:		%{name}-no_libnsl.patch
-#Patch5:		%{name}-pgaccess-typo.patch
-Patch6:		%{name}-readline.patch
-Patch7:		%{name}-configure.patch
+Patch0:		%{name}-DESTDIR.patch
+Patch1:		%{name}-no_libnsl.patch
+Patch2:		%{name}-readline.patch
+Patch3:		%{name}-configure.patch
+Patch4:		%{name}-install.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
@@ -33,7 +30,7 @@ BuildRequires:	tcl-devel >= 8.3.2
 BuildRequires:	tk-devel >= 8.3.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	perl-lib-devel >= 5.6
+BuildRequires:	perl-devel >= 5.6
 BuildRequires:	python-devel
 BuildRequires:	rpm-perlprov
 BuildRequires:	zlib-devel
@@ -537,14 +534,16 @@ proceduralnego PL/TCL dla swojej bazy danych.
 
 %prep
 %setup  -q
-#%patch0 -p1
+%patch0 -p1
 %patch1 -p1
-#%patch2 -p1
-#%patch3 -p1
+%patch2 -p1
+%patch3 -p1
 %patch4 -p1
-#%patch5 -p1
-%patch6 -p1
-%patch7 -p1
+
+tar xzf doc/man*.tar.gz
+
+mkdir doc/unpacked
+tar zxf doc/postgres.tar.gz -C doc/unpacked
 
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
@@ -557,6 +556,7 @@ autoconf
 	%{!?bcond_off_pgsql_multibyte:--enable-multibyte} \
 	--enable-recode \
 	--enable-unicode-conversion \
+	--with-CXX \
 	--with-tcl \
 	--with-tk \
 	--with-perl \
@@ -565,29 +565,30 @@ autoconf
 	--enable-odbc \
 	--with-odbcinst=%{_sysconfdir} \
 	--with-template=%{_target_os} \
-	--with-x
+	--with-x \
+	--enable-syslog
 
 %{__make}
-
-# remake pgaccess
-make -C src/bin/pgaccess clean pgaccess POSTGRESDIR=/usr/lib
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
         $RPM_BUILD_ROOT/var/{lib/pgsql,log} \
 	$RPM_BUILD_ROOT%{_libdir}/pgsql/{modules,sql} \
-	$RPM_BUILD_ROOT{%{_applnkdir}/System,%{_pixmapsdir}}
+	$RPM_BUILD_ROOT%{_libdir}/python2.0 \
+	$RPM_BUILD_ROOT{%{_applnkdir}/System,%{_pixmapsdir}} \
+	$RPM_BUILD_ROOT%{_mandir}
 
 %{__make} -C src install \
 	DESTDIR=$RPM_BUILD_ROOT
+	
+#%{__make} -C src/interfaces/python install \
+#	DESTDIR=$RPM_BUILD_ROOT \
+#	LIBDIR=%{_libdir}
 
 #%{__make} -C doc install DESTDIR=$RPM_BUILD_ROOT
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
-
-# pgaccess 
-ln -sf . $RPM_BUILD_ROOT%{_libdir}/pgaccess/lib
 
 # Move PL/pgSQL procedural language to %{pgmoduledir}
 ( cd $RPM_BUILD_ROOT%{_libdir}
@@ -599,35 +600,27 @@ ln -sf . $RPM_BUILD_ROOT%{_libdir}/pgaccess/lib
   mv -f pltcl.so $RPM_BUILD_ROOT%{pgmoduledir}
 )
 
-# For Perl interface
-( cd $RPM_BUILD_ROOT%{perl_sitearch}/auto/Pg
-  mv -f .packlist .packlist.old
-  sed -e "s|$RPM_BUILD_ROOT/|/|g" -e "s|./||" < .packlist.old > .packlist
-  rm -f .packlist.old
-)
-
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
 install %{SOURCE4} $RPM_BUILD_ROOT%{_applnkdir}/System
 install %{SOURCE5} $RPM_BUILD_ROOT%{_pixmapsdir}
+
+cp -a man?	   $RPM_BUILD_ROOT%{_mandir}
 
 install -d howto
 ( cd howto
   tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
 )
 
-# Install all header files. They are required
-# by executor/spi.h and commands/trigger.h
+#for f in `find $RPM_BUILD_ROOT -type f`; do
+#	if (file $f | grep -q "script"); then
+#		perl -pi -e 's@#\!.*python@#\!%{_bindir}/python@' $f;
+#	fi
+#done
 
-( cd src/include
-  cp -Lrf * $RPM_BUILD_ROOT%{_includedir}/pgsql
-)
-
-for f in `find $RPM_BUILD_ROOT -type f`; do
-	if (file $f | grep -q "script"); then
-		perl -pi -e 's@#\!.*python@#\!%{_bindir}/python@' $f;
-	fi
-done
+gzip -9nf doc/FAQ doc/README* COPYRIGHT README HISTORY doc/bug.template \
+	doc/internals.ps* src/interfaces/odbc/readme.txt \
+	src/interfaces/odbc/notice.txt
 
 %pre
 getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
@@ -682,9 +675,10 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_bindir}/dropuser
 %attr(755,root,root) %{_bindir}/initdb
 %attr(755,root,root) %{_bindir}/initlocation
+%attr(755,root,root) %{_bindir}/pg_ctl
+%attr(755,root,root) %{_bindir}/pg_config
 %attr(755,root,root) %{_bindir}/pg_encoding
 %attr(755,root,root) %{_bindir}/pg_passwd
-%attr(755,root,root) %{_bindir}/pg_version
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
 %attr(755,root,root) %{_bindir}/ipcclean
@@ -694,9 +688,9 @@ rm -f /tmp/tmp_perl_info
 %dir %{_libdir}/pgsql
 %dir %{_libdir}/pgsql/modules
 %dir %{_libdir}/pgsql/sql
-%{_libdir}/pgsql/*.source 
-%{_libdir}/pgsql/*.sample
-%{_libdir}/pgsql/*.description
+%{_datadir}/postgresql/*.bki
+%{_datadir}/postgresql/*.sample
+%{_datadir}/postgresql/*.description
 
 %attr(770,root,postgres) %dir /var/lib/pgsql
 %attr(640,postgres,postgres) %config(noreplace) %verify(not md5 size mtime) /var/log/pgsql
@@ -710,13 +704,15 @@ rm -f /tmp/tmp_perl_info
 %{_mandir}/man1/initdb.1*
 %{_mandir}/man1/initlocation.1*
 %{_mandir}/man1/pg_passwd.1*
+%{_mandir}/man1/pg_ctl.1*
+%{_mandir}/man1/pg_config.1*
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
 %{_mandir}/man1/ipcclean.1*
 
 %doc contrib 
-%doc doc/FAQ doc/FAQ_Linux doc/README* 
-%doc COPYRIGHT README HISTORY doc/bug.template
+%doc doc/FAQ* doc/README* 
+%doc COPYRIGHT.gz README.gz HISTORY.gz doc/bug.template.gz
 
 %files doc
 %defattr(644,root,root,755)
@@ -726,74 +722,55 @@ rm -f /tmp/tmp_perl_info
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
+%attr(755,root,root) %{_libdir}/libpgeasy.so.*.*
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
 %attr(755,root,root) %{_bindir}/pg_id
 
 %files devel
 %defattr(644,root,root,755)
+%doc doc/internals.ps*
 %attr(755,root,root) %{_libdir}/libecpg.so
+%attr(755,root,root) %{_libdir}/libpgeasy.so
 %attr(755,root,root) %{_libdir}/libpq.so
-%dir %{_includedir}/pgsql
-%{_includedir}/pgsql/c.h
-%{_includedir}/pgsql/config.h
-%{_includedir}/pgsql/dynloader.h
-%{_includedir}/pgsql/ecpgerrno.h
-%{_includedir}/pgsql/ecpglib.h
-%{_includedir}/pgsql/ecpgtype.h
-%{_includedir}/pgsql/fmgr.h
-%{_includedir}/pgsql/libpgeasy.h
-%{_includedir}/pgsql/libpgtcl.h
-%{_includedir}/pgsql/libpq-fe.h
-%{_includedir}/pgsql/libpq-int.h
-%{_includedir}/pgsql/miscadmin.h
-%{_includedir}/pgsql/os.h
-%{_includedir}/pgsql/postgres.h
-%{_includedir}/pgsql/postgres_ext.h
-%{_includedir}/pgsql/pqexpbuffer.h
-%{_includedir}/pgsql/rusagestub.h
-%{_includedir}/pgsql/sql3types.h
-%{_includedir}/pgsql/sqlca.h
-%{_includedir}/pgsql/strdup.h
-%{_includedir}/pgsql/version.h
-%{_includedir}/pgsql/access
-%{_includedir}/pgsql/bootstrap
-%{_includedir}/pgsql/catalog
-%{_includedir}/pgsql/commands
-%{_includedir}/pgsql/executor
-%{_includedir}/pgsql/iodbc
-%{_includedir}/pgsql/lib
-%{_includedir}/pgsql/libpq
-%{_includedir}/pgsql/mb
-%{_includedir}/pgsql/nodes
-%{_includedir}/pgsql/optimizer
-%{_includedir}/pgsql/parser
-%{_includedir}/pgsql/regex
-%{_includedir}/pgsql/rewrite
-%{_includedir}/pgsql/storage
-%{_includedir}/pgsql/tcop
-%{_includedir}/pgsql/utils
+%dir %{_includedir}/postgresql
+%{_includedir}/postgresql/c.h
+%{_includedir}/postgresql/config.h
+%{_includedir}/postgresql/ecpgerrno.h
+%{_includedir}/postgresql/ecpglib.h
+%{_includedir}/postgresql/ecpgtype.h
+%{_includedir}/postgresql/libpgeasy.h
+%{_includedir}/postgresql/libpq-fe.h
+%{_includedir}/postgresql/libpq-int.h
+%{_includedir}/postgresql/os.h
+%{_includedir}/postgresql/postgres_ext.h
+%{_includedir}/postgresql/postgres_fe.h
+%{_includedir}/postgresql/pqexpbuffer.h
+%{_includedir}/postgresql/sql3types.h
+%{_includedir}/postgresql/sqlca.h
+%{_includedir}/postgresql/lib
+%{_includedir}/postgresql/libpq
 %attr(755,root,root) %{_bindir}/ecpg
 %{_mandir}/man1/ecpg.1*
 
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libecpg.a
+%{_libdir}/libpgeasy.a
 %{_libdir}/libpq.a
 
 %files clients
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libec*.so.*.*
-%attr(755,root,root) %{_libdir}/libpq*.so.*.*
 %attr(755,root,root) %{_bindir}/pg_dump
 %attr(755,root,root) %{_bindir}/pg_dumpall
-%attr(755,root,root) %{_bindir}/pg_upgrade
+%attr(755,root,root) %{_bindir}/pg_restore
 %attr(755,root,root) %{_bindir}/psql
 %attr(755,root,root) %{_bindir}/vacuumdb
 
 %{_mandir}/man1/pg_dump.1*
 %{_mandir}/man1/pg_dumpall.1*
-%{_mandir}/man1/pg_upgrade.1*
+%{_mandir}/man1/pg_restore.1*
 %{_mandir}/man1/psql.1*
+%{_mandir}/man1/vacuumdb.1*
 %{_mandir}/manl/*.l*
 
 %files c++
@@ -803,8 +780,8 @@ rm -f /tmp/tmp_perl_info
 %files c++-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq++.so
-%{_includedir}/pgsql/libpq++.h
-%{_includedir}/pgsql/libpq++
+%{_includedir}/postgresql/libpq++.h
+%{_includedir}/postgresql/libpq++
 
 %files c++-static
 %defattr(644,root,root,755)
@@ -813,10 +790,11 @@ rm -f /tmp/tmp_perl_info
 %files perl
 %defattr(644,root,root,755)
 %dir %{perl_sitearch}/auto/Pg
-%{perl_sitearch}/auto/Pg/Pg.so
-%attr(755,root,root) %{perl_sitearch}/auto/Pg/Pg.bs
+%{perl_sitearch}/auto/Pg/Pg.bs
+%{perl_sitearch}/auto/plperl/plperl.bs
+%attr(755,root,root) %{perl_sitearch}/auto/Pg/Pg.so
+%attr(755,root,root) %{perl_sitearch}/auto/plperl/plperl.so
 %{perl_sitearch}/auto/Pg/autosplit.ix
-%{perl_sitearch}/auto/Pg/.packlist
 %{perl_sitearch}/Pg.pm
 %{_mandir}/man3/*
 
@@ -824,20 +802,26 @@ rm -f /tmp/tmp_perl_info
 %defattr(644,root,root,755)
 %doc src/bin/pgaccess/doc/html/*
 %attr(755,root,root) %{_bindir}/pgaccess
-%{_libdir}/pgaccess
+%dir %{_datadir}/postgresql/pgaccess
+%attr(755, root, root) %{_datadir}/postgresql/pgaccess/main.tcl
+%{_datadir}/postgresql/pgaccess/images
+%{_datadir}/postgresql/pgaccess/lib
 %{_applnkdir}/System/pgaccess.desktop
 %{_pixmapsdir}/pgaccess.png
+%{_mandir}/man1/pgaccess.1*
 
 %files tcl
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
-%attr(755,root,root) %{_libdir}/libpgtcl.so
 %attr(755,root,root) %{_bindir}/pgtclsh
 %attr(755,root,root) %{_bindir}/pgtksh
+%{_mandir}/man1/pgtclsh.1*
+%{_mandir}/man1/pgtksh.1*
 
 %files tcl-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_includedir}/pgsql/libpgtcl.h
+%attr(755,root,root) %{_libdir}/libpgtcl.so
+%{_includedir}/postgresql/libpgtcl.h
 
 %files tcl-static
 %defattr(644,root,root,755)
@@ -845,23 +829,24 @@ rm -f /tmp/tmp_perl_info
 
 %files odbc
 %defattr(644,root,root,755)
-%doc src/interfaces/odbc/readme.txt src/interfaces/odbc/notice.txt
+%doc src/interfaces/odbc/readme.txt.gz src/interfaces/odbc/notice.txt.gz
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/odbc*
 %attr(755,root,root) %{_libdir}/libpsqlodbc.so.*.*
+%{_datadir}/postgresql/odbc.sql
 
 %files odbc-devel
 %defattr(644,root,root,755)
-%{_includedir}/pgsql/iodbc
+%{_includedir}/postgresql/iodbc
 %attr(755,root,root) %{_libdir}/libpsqlodbc.so
 
 %files odbc-static
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpsqlodbc.a
+%{_libdir}/libpsqlodbc.a
 
-%files module-datetime
-%defattr(644,root,root,755)
-%attr(755,root,root) %{pgmoduledir}/datetime_functions.so
-%attr(644,root,root) %{pgsqldir}/datetime_functions.sql
+#%files module-datetime
+#%defattr(644,root,root,755)
+#%attr(755,root,root) %{pgmoduledir}/datetime_functions.so
+#%attr(644,root,root) %{pgsqldir}/datetime_functions.sql
 
 %files module-plpgsql
 %defattr(644,root,root,755)
