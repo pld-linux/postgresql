@@ -1057,6 +1057,7 @@ fi
 
 %dir %{_pgsqldir}
 %dir %{_pgmoduledir}
+%dir %{_datadir}/postgresql
 %{_datadir}/postgresql/*.bki
 %{_datadir}/postgresql/*.sample
 %{_datadir}/postgresql/*.description
