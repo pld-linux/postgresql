@@ -71,7 +71,7 @@ case "$1" in
 			$([ -n "POSTGRES_$DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
 			-o \
 			$([ "$POSTGRES_QUIET" = yes ] && echo "-Q") \
-			$([ "$POSTGRES_DIABLE_FSYNC" = yes ] && echo "-F") &"
+			$([ "$POSTGRES_DIABLE_FSYNC" = yes ] && echo "-F") 2> /dev/null &"
 		sleep 2
 		if ps ax | grep -v grep | grep -q postmaster; then
 			deltext; ok
