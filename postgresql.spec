@@ -14,7 +14,6 @@
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 
-
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
 Summary(es):	Gestor de Banco de Datos PostgreSQL
@@ -53,7 +52,7 @@ Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	bison >= 1.875
+#BuildRequires:	bison >= 1.875	not needed for releases
 BuildRequires:	flex
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
@@ -67,7 +66,6 @@ BuildRequires:	rpm-pythonprov
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
 %{?with_tcl:BuildRequires:	tk-devel >= 8.4.3}
 BuildRequires:	zlib-devel
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 PreReq:		rc-scripts
 PreReq:		%{name}-clients = %{version}-%{release}
 PreReq:		%{name}-libs = %{version}-%{release}
@@ -79,6 +77,7 @@ Requires(pre):	/usr/sbin/usermod
 Requires(post,preun):	/sbin/chkconfig
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
 %define		_pgsqldir	%{_pgmoduledir}/sql
@@ -788,7 +787,7 @@ install /usr/share/automake/config.* config
 %{__aclocal} -I config
 %{__autoconf}
 %configure \
-	CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS"\
+	CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS" \
 	%{?with_pgsql_locale:--enable-locale} \
 	%{?with_pgsql_multibyte:--enable-multibyte} \
 	--disable-rpath \
