@@ -87,7 +87,7 @@ case "$1" in
 			chown postgres.postgres $POSTGRES_DATA_DIR
 			chmod 700 $POSTGRES_DATA_DIR
 		    fi
-		    TMPDIR=/tmp su postgres -c "LD_LIBRARY_PATH=/usr/lib \
+		    TMPDIR=/tmp su - postgres -c "LD_LIBRARY_PATH=/usr/lib \
 			initdb --pgdata=$POSTGRES_DATA_DIR \
 			-L /usr/share/postgresql -E $ENCODING"
 		fi
