@@ -48,6 +48,7 @@ URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison >= 1.875
+BuildRequires:	heimdal-devel
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7c
 BuildRequires:	pam-devel
@@ -727,6 +728,8 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 find contrib -type d -name CVS -exec rm -rf {} \;
 
 %build
+CPPFLAGS="-I%{_includedir}/et"
+export CPPFLAGS
 rm -f config/libtool.m4
 %{__aclocal} -I config
 %{__autoconf}
@@ -734,16 +737,19 @@ rm -f config/libtool.m4
 	%{!?_without_pgsql_locale:--enable-locale} \
 	%{!?_without_pgsql_multibyte:--enable-multibyte} \
 	--disable-rpath \
+	--enable-thread-safety \
+	--enable-integer-datetimes \
 	--enable-depend \
 	--enable-recode \
 	--enable-syslog \
+	--with-pam \
 	--enable-unicode-conversion \
 	--with-CXX \
 	%{?with_tcl:--with-tcl} \
 	%{?with_tcl:--with-tk} \
-	--with-pam \
 	--with-perl \
 	--with-python \
+	--with-krb5=%{_prefix} \
 	--with-openssl \
 	--with-x \
 %{?_with_jdbc:	--with-java}
@@ -805,7 +811,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ `cat $pgdir/PG_VERSION` != '7.3' ]; then
+		if [ `cat $pgdir/PG_VERSION` != '7.4' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
