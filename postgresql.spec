@@ -5,6 +5,8 @@
 #   which will prevent documentation and manuals installation (the routine
 #   is bad and we install docs and mans manually, at all) or create good
 #   routine and send it to postgresql team...
+# - look at libpq locales
+# - move ecpg headers to includedir subdir? (conflict with unixODBC-devel)
 #
 # Conditional build:
 %bcond_without	tcl			# disables Tcl support
@@ -981,8 +983,11 @@ fi
 %attr(755,root,root) %{_libdir}/libecpg.so
 %attr(755,root,root) %{_libdir}/libecpg_compat.so
 %attr(755,root,root) %{_libdir}/libpgtypes.so
-%{_includedir}/ecpgerrno.h
+%{_includedir}/compatlib.h
+%{_includedir}/datetime.h
+%{_includedir}/decimal.h
 %{_includedir}/ecpg_informix.h
+%{_includedir}/ecpgerrno.h
 %{_includedir}/ecpglib.h
 %{_includedir}/ecpgtype.h
 %{_includedir}/pgtypes_date.h
@@ -990,23 +995,20 @@ fi
 %{_includedir}/pgtypes_interval.h
 %{_includedir}/pgtypes_numeric.h
 %{_includedir}/pgtypes_timestamp.h
+%{_includedir}/sql3types.h
+%{_includedir}/sqlca.h
+%{_includedir}/sqlda.h
+%{_includedir}/sqltypes.h
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pg_config
 %attr(755,root,root) %{_libdir}/libpq.so
 %dir %{_includedir}/postgresql
-%{_includedir}/compatlib.h
-%{_includedir}/datetime.h
-%{_includedir}/decimal.h
 %{_includedir}/libpq-fe.h
 %{_includedir}/pg_config.h
 %{_includedir}/pg_config_os.h
 %{_includedir}/postgres_ext.h
-%{_includedir}/sql3types.h
-%{_includedir}/sqlca.h
-%{_includedir}/sqlda.h
-%{_includedir}/sqltypes.h
 %dir %{_includedir}/postgresql/internal
 %{_includedir}/postgresql/internal/c.h
 %{_includedir}/postgresql/internal/libpq-int.h
