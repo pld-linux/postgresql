@@ -409,10 +409,10 @@ strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so*
 gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man*/*
 
 %pre
-grep -l postgres /etc/group &>/dev/null || (
+grep -l postgres /etc/group >/dev/null 2>&1 || (
     /usr/sbin/groupadd -g 88 -r -f postgres 1>&2 || :
 )
-grep -l postgres /etc/passwd &>/dev/null || (
+grep -l postgres /etc/passwd >/dev/null 2>&1 || (
     /usr/sbin/useradd -M -o -r -u 88 -d /var/state/pgsql -s /bin/sh \
 	-g postgres -c "PostgreSQL Server" postgres 1>&2 || :
 )
