@@ -11,7 +11,7 @@ Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.0.2
-Release:	7
+Release:	8
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
