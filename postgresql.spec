@@ -11,7 +11,7 @@ Summary(pl):	PostgreSQL - system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.1.2
-Release:	4
+Release:	5
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -233,6 +233,7 @@ Group(de):	Entwicklung/Sprachen/Python
 Group(pl):	Programowanie/Jêzyki/Python
 Requires:	python >= 2.0
 Requires:	%{name}-libs = %{version}
+Obsoletes:	python-PyGreSQL
 
 %description python
 postgresql-python includes the python-based client programs and client
