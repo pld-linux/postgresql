@@ -765,7 +765,7 @@ http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-#%patch8 -p1
+%patch8 -p1
 %patch9 -p1
 %patch10 -p1
 
