@@ -1,3 +1,8 @@
+#
+# Conditional build:
+# _with_jdbc		- with JDBC driver
+#
+
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.python
 
@@ -743,7 +748,7 @@ autoconf
 	--with-template=%{_target_os} \
 	--with-x \
 	--enable-syslog \
-	--with-java
+%{?_with_jdbc:	--with-java}
 
 %{__make}
 %ifnarch sparc sparcv9 sparc64 alpha
@@ -1015,7 +1020,7 @@ fi
 
 %files tcl
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpgtcl.so
+%aettr(755,root,root) %{_libdir}/libpgtcl.so
 %attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
 %attr(755,root,root) %{_bindir}/pgtclsh
 %attr(755,root,root) %{_bindir}/pgtksh
