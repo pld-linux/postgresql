@@ -20,7 +20,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.2.4
-Release:	4
+Release:	5
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -55,7 +55,7 @@ BuildRequires:	python-devel >= 2.2.1
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	zlib-devel
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+BuildConflicts:	tcl >= 8.3.4-10
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
 Prereq:		%{name}-clients = %{version}
@@ -67,6 +67,7 @@ Requires(pre):	/usr/sbin/useradd
 Requires(pre):	/usr/sbin/usermod
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
 %define		_pgsqldir	%{_pgmoduledir}/sql
