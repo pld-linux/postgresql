@@ -1,4 +1,8 @@
+
 %include	/usr/lib/rpm/macros.perl
+%define pglibdir %{_libdir}/pgsql
+%define pgsqldir /usr/share/pgsql/sql
+
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
 Summary(fr):	Sysème de gestion de base de données PostgreSQL
@@ -340,13 +344,57 @@ Static libraries of tcl interface for PostgreSQL
 %description tcl-devel -l pl
 Biblioteki statyczne interafece tcl dla PostgreSQL
 
+%package module-datetime
+Summary:	Some useful datetime functions for PostgreSQL
+Summary(pl):	Kilka u¿ytecznych funkcji operuj±cych na dacie i czasie dla PostgreSQL
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy Danych
+
+%description module-datetime
+Some useful datetime function for PostgreSQL such as:
+- hhmm_in(opaque)
+- hhmm_out(opaque)
+- hhmm(time)
+- time_difference(time,time)
+- time_hours(time)
+- time_minutes(time)
+- time_seconds(time)
+- as_minutes(time)
+- as_seconds(time)
+- date_day(date)
+- date_month(date)
+- date_year(date)
+- currenttime()
+- currentdate()
+To enable them you need to execute datetime_function.sql script. You can
+found it in /usr/share/pgsql/sql directory.
+
+%description module-datetime -l pl
+Kilka u¿ytecznych funkcji operuj±cych na dacie i czasie dla PostgreSQL.
+- hhmm_in(opaque)
+- hhmm_out(opaque)
+- hhmm(time)
+- time_difference(time,time)
+- time_hours(time)
+- time_minutes(time)
+- time_seconds(time)
+- as_minutes(time)
+- as_seconds(time)
+- date_day(date)
+- date_month(date)
+- date_year(date)
+- currenttime()
+- currentdate()
+Po wykonaniu skryptu datetime_function.sql mo¿na u¿ywaæ tych funkcji
+z poziomu zapytañ SQL. Skrypt ten znajduje siê w katalogu
+/usr/share/pgsql/sql.
+
 %prep
 %setup  -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-#%patch4 -p1
 
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
@@ -380,6 +428,10 @@ LDFLAGS="-s"; export LDFLAGS
 cd ..
 %{__make} all PGDOCS=unpacked -C doc
 
+# for datetime functions
+make -C contrib/datetime LIBDIR=%{pglibdir}
+
+
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
@@ -388,6 +440,10 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
 
 make -C src install DESTDIR=$RPM_BUILD_ROOT
 make -C doc install DESTDIR=$RPM_BUILD_ROOT
+
+# for datetime functions
+make -C contrib/datetime install \
+  LIBDIR=$RPM_BUILD_ROOT%{pglibdir} SQLDIR=$RPM_BUILD_ROOT%{pgsqldir}
 
 # For Perl interface
 ( cd $RPM_BUILD_ROOT%{perl_sitearch}/auto/Pg
@@ -606,3 +662,8 @@ rm -f /tmp/tmp_perl_info
 %files odbc-static
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpsqlodbc.a
+
+%files module-datetime
+%defattr(644,root,root,755)
+%attr(755,root,root) %{pglibdir}/modules/datetime_functions.so
+%attr(644,root,root) %{pgsqldir}/datetime_functions.sql
