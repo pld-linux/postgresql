@@ -358,7 +358,7 @@ install -d howto
 )
 
 # Strip 'em all
-strip -s $RPM_BUILD_ROOT/usr/bin/* || :
+strip -s $RPM_BUILD_ROOT%{_bindir}/* || :
 
 # gzip all man pages
 gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man*/*
@@ -386,7 +386,7 @@ fi
 %post data
 # Create sample database
 su postgres -c "LD_LIBRARY_PATH=%{_libdir} \
-    /usr/bin/initdb --pgdata=/var/lib/pgsql \
+    %{_bindir}/initdb --pgdata=/var/lib/pgsql \
     --pglib=%{_libdir}/pgsql"
 
 %post   -p /sbin/ldconfig clients
@@ -428,17 +428,17 @@ rm -f /tmp/tmp_perl_info
 %attr(754, root, root) /etc/rc.d/init.d/*
 
 %attr(644, postgres, postgres, 755) %{_libdir}/pgsql
-%attr(755,root,root) /usr/bin/cleardbdir
-%attr(755,root,root) /usr/bin/createdb
-%attr(755,root,root) /usr/bin/createuser
-%attr(755,root,root) /usr/bin/destroydb
-%attr(755,root,root) /usr/bin/destroyuser
-%attr(755,root,root) /usr/bin/initdb
-%attr(755,root,root) /usr/bin/initlocation
-%attr(755,root,root) /usr/bin/pg_passwd
-%attr(755,root,root) /usr/bin/pg_version
-%attr(755,root,root) /usr/bin/postgres
-%attr(755,root,root) /usr/bin/postmaster
+%attr(755,root,root) %{_bindir}/cleardbdir
+%attr(755,root,root) %{_bindir}/createdb
+%attr(755,root,root) %{_bindir}/createuser
+%attr(755,root,root) %{_bindir}/destroydb
+%attr(755,root,root) %{_bindir}/destroyuser
+%attr(755,root,root) %{_bindir}/initdb
+%attr(755,root,root) %{_bindir}/initlocation
+%attr(755,root,root) %{_bindir}/pg_passwd
+%attr(755,root,root) %{_bindir}/pg_version
+%attr(755,root,root) %{_bindir}/postgres
+%attr(755,root,root) %{_bindir}/postmaster
 %{_mandir}/man1/cleardbdir.1.gz
 %{_mandir}/man1/createdb.1.gz
 %{_mandir}/man1/createuser.1.gz
@@ -459,7 +459,7 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_libdir}/libpq*.so
 /usr/include/pgsql
 %{_mandir}/man3/*.gz
-%attr(755,root,root) /usr/bin/ecpg
+%attr(755,root,root) %{_bindir}/ecpg
 %{_mandir}/man1/ecpg.1.gz
 
 %files data
@@ -470,11 +470,11 @@ rm -f /tmp/tmp_perl_info
 %defattr(644, root, root, 755)
 %attr(755,root,root) %{_libdir}/libec*.so.*
 %attr(755,root,root) %{_libdir}/libpq*.so.*
-%attr(755,root,root) /usr/bin/pg_dump
-%attr(755,root,root) /usr/bin/pg_dumpall
-%attr(755,root,root) /usr/bin/pg_id
-%attr(755,root,root) /usr/bin/pg_upgrade
-%attr(755,root,root) /usr/bin/psql
+%attr(755,root,root) %{_bindir}/pg_dump
+%attr(755,root,root) %{_bindir}/pg_dumpall
+%attr(755,root,root) %{_bindir}/pg_id
+%attr(755,root,root) %{_bindir}/pg_upgrade
+%attr(755,root,root) %{_bindir}/psql
 %{_mandir}/man1/pg_dump.1.gz
 %{_mandir}/man1/pg_dumpall.1.gz
 %{_mandir}/man1/pg_upgrade.1.gz
