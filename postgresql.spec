@@ -29,7 +29,7 @@ BuildRequires:	tcl-devel >= 8.3.2
 BuildRequires:	tk-devel >= 8.3.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	perl-lib-devel >= 5.6
+BuildRequires:	perl-devel >= 5.6
 BuildRequires:	python-devel
 BuildRequires:	rpm-perlprov
 BuildRequires:	zlib-devel
