@@ -431,7 +431,7 @@ libraries that you'll need to access a PostgreSQL database management
 system server.
 
 %description -n python-postgresql -l es
-MСdulo Python para acceder un servidor PostgreSQL
+MСdulo Python para acceder un servidor PostgreSQL.
 
 %description -n python-postgresql -l pl
 Pakiet ten zawiera napisane w Pythonie programy i biblioteki klienckie
@@ -466,22 +466,22 @@ PostgreSQL shared libraries.
 
 %description libs -l es
 Este paquete contiene la biblioteca compartida para acceso al
-postgresql.
+PostgreSQL.
 
 %description libs -l pl
 Biblioteki dzielone programu PostgreSQL.
 
 %description libs -l pt_BR
 Este pacote contИm a biblioteca compartilhada para acesso ao
-postgresql.
+PostgreSQL.
 
 %package static
 Summary:	PostgreSQL static libraries
 Summary(es):	Bibliotecas estaticas PostgreSQL
 Summary(pl):	Biblioteki statyczne programu PostgreSQL
 Summary(pt_BR):	Bibliotecas estАticas PostgreSQL
-Summary(ru):	Статические библиотеки для программирования с postgresql
-Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з postgresql
+Summary(ru):	Статические библиотеки для программирования с PostgreSQL
+Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з PostgreSQL
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}
 
@@ -514,8 +514,8 @@ Summary:	Tcl interface for PostgreSQL
 Summary(es):	Bibliotecas y shell Tcl para acceder un servidor PostgreSQL
 Summary(pl):	Interfejs Tcl dla PostgreSQL
 Summary(pt_BR):	Bibliotecas e shell para programas em Tcl acessarem o servidor PostgreSQL
-Summary(ru):	Библиотеки для доступа к postgresql из Tcl
-Summary(uk):	Б╕бл╕отеки для доступу до postgresql з Tcl
+Summary(ru):	Библиотеки для доступа к PostgreSQL из Tcl
+Summary(uk):	Б╕бл╕отеки для доступу до PostgreSQL з Tcl
 Summary(zh_CN):	р╩╦Ж Tcl ©Б╨м PostgreSQL ╣д PL/Tcl ╠ЮЁлсОят
 Group:		Development/Languages/Tcl
 Requires:	%{name}-libs = %{version}
@@ -531,7 +531,7 @@ Interfejs Tcl dla PostgreSQL.
 
 %description tcl -l pt_BR
 Bibliotecas e shell para programas em Tcl acessarem o servidor
-PostgreSQL
+PostgreSQL.
 
 %description tcl -l ru
 libpgtcl - API для доступа к базе данных PostgreSQL из языка Tcl.
@@ -542,8 +542,8 @@ libpgtcl - API для доступу до бази даних PostgreSQL з мови Tcl.
 %package tcl-devel
 Summary:	Development part of Tcl interface for PostgreSQL
 Summary(pl):	CzЙ╤Ф dla programistСw interfejsu Tcl dla PostgreSQL
-Summary(ru):	Хедеры и библиотеки для разработок с использованием libpgtcl (Tcl интерфейс для postgresql)
-Summary(uk):	Хедери та б╕бл╕отеки для розробок з використанням libpgtcl (Tcl-╕нтерфейс для postgresql)
+Summary(ru):	Хедеры и библиотеки для разработок с использованием libpgtcl (Tcl интерфейс для PostgreSQL)
+Summary(uk):	Хедери та б╕бл╕отеки для розробок з використанням libpgtcl (Tcl-╕нтерфейс для PostgreSQL)
 Group:		Development/Languages/Tcl
 Requires:	%{name}-tcl = %{version}
 Requires:	%{name}-devel = %{version}
@@ -557,12 +557,12 @@ CzЙ╤Ф interfejsu Tcl dla PostgreSQL przeznaczona dla programistСw.
 %description tcl-devel -l ru
 Это пакет разработчика для программирования с libpgtcl. Он включает
 хедеры и библиотеки для использования в программах, которые используют
-код или API libtcl (Tcl интерфейс для postgresql).
+код или API libtcl (Tcl интерфейс для PostgreSQL).
 
 %description tcl-devel -l uk
 Це пакет програм╕ста для програмування з libpgtcl. В╕н м╕стить хедери
 та б╕бл╕отеки для використання в програмах, як╕ використовують код або
-API libtcl (Tcl-╕нтерфейсу для postgresql).
+API libtcl (Tcl-╕нтерфейсу для PostgreSQL).
 
 %package tcl-static
 Summary:	Static libraries of Tcl interface for PostgreSQL
@@ -751,7 +751,7 @@ mkdir doc/unpacked
 tar zxf doc/postgres.tar.gz -C doc/unpacked
 
 # Erase all CVS dir
-rm -fR `find contrib/ -type d -name CVS`
+rm -fR `find contrib -type d -name CVS`
 
 %build
 rm -f config/libtool.m4
@@ -780,7 +780,7 @@ rm -f config/libtool.m4
 %{!?_without_tests: %{__make} check }
 %endif
 
-cd contrib/pgcrypto/
+cd contrib/pgcrypto
 %{__make}
 
 %install
@@ -814,8 +814,9 @@ install -d howto
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
 
-cd contrib/pgcrypto/
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
+cd contrib/pgcrypto
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
