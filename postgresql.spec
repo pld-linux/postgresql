@@ -844,6 +844,7 @@ install /usr/share/automake/config.* config
 
 %if %{with slony1}
 cd slony1-%{slony1_version}
+install /usr/share/automake/config.* config
 %configure \
 	--with-pgsourcetree=`pwd`/..
 %{__make}
