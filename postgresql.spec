@@ -14,18 +14,20 @@ Version:	7.0.2
 Release:	7
 License:	BSD
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 Source0:	ftp://ftp.postgresql.org/pub/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
-Patch0:		postgresql-opt.patch
-Patch1:		postgresql-DESTDIR.patch
-Patch2:		postgresql-perl.patch
-Patch3:		postgresql-python.patch
+Patch0:		%{name}-opt.patch
+Patch1:		%{name}-DESTDIR.patch
+Patch2:		%{name}-perl.patch
+Patch3:		%{name}-python.patch
+Patch4:		%{name}-no_libnsl.patch
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
 Requires:	rc-scripts
+BuildRequires:	autoconf
 BuildRequires:	tcl-devel
 BuildRequires:	tk-devel
 BuildRequires:	readline-devel
@@ -151,8 +153,8 @@ Summary(fr):	En-têtes et bibliothèques de développement PostgreSQL
 Summary(pl):	PostgreSQL - pliki nag³ówkowe i biblioteki
 Summary(tr):	PostgreSQL baþlýk dosyalarý ve kitaplýklar
 Group:		Development/Libraries
-Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
+Group(fr):	Development/Librairies
 Requires:	%{name}-libs = %{version}
 
 %description devel
@@ -182,7 +184,7 @@ gereken baþlýk dosyalarýný ve kitaplýklarý içerir.
 Summary:	clients needed to access a PostgreSQL server
 Summary(pl):	klienci wymagani do dostêpu do serwera PostgreSQL
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 Requires:	%{name}-libs = %{version}
 
 %description clients
@@ -203,7 +205,7 @@ serwera PostgreSQL. Serwer znajduje siê w g³ównym pakiecie.
 Summary:	Perl interface to PostgreSQL database
 Summary(pl):	Interface dla Perl'a umo¿liwiaj±cy dostêp do baz PostgreSQL
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 Requires:	perl >= 5.004
 Requires:	%{name}-libs = %{version}
 
@@ -218,19 +220,20 @@ PostgreSQL.
 %package python
 Summary:	The python-based client programs needed for accessing a PostgreSQL server
 Group:		Development/Databases
+######		Unknown group!
 Requires:	python >= 1.5
 Requires:	%{name}-libs = %{version}
 
 %description python
 postgresql-python includes the python-based client programs and client
-libraries that you'll need to access a PostgreSQL database management system
-server.
+libraries that you'll need to access a PostgreSQL database management
+system server.
 
 %package doc
 Summary:	Documentation for PostgreSQL
 Summary(pl):	Dodatkowa dokumantacja dla PostgreSQL
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 #Requires:	%{name} = %{version}
 
 %description doc
@@ -245,8 +248,8 @@ administratorów w formacie HTML.
 Summary:	PostgreSQL libraries
 Summary(pl):	Biblioteki dzielone programu PostgreSQL
 Group:		Libraries
-Group(fr):	Librairies
 Group(pl):	Biblioteki
+Group(fr):	Librairies
 
 %description libs
 PostgreSQL libraries.
@@ -258,8 +261,8 @@ Biblioteki dzielone programu PostgreSQL.
 Summary:	PostgreSQL static libraries
 Summary(pl):	Biblioteki statyczne programu PostgreSQL
 Group:		Development/Libraries
-Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
+Group(fr):	Development/Librairies
 Requires:	%{name}-devel = %{version}
 
 %description static
@@ -272,7 +275,7 @@ Biblioteki statyczne programu PostgreSQL.
 Summary:	C++ interface to PostgreSQL
 Summary(pl):	Interface C++ do PostgreSQL
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 Requires:	%{name}-libs = %{version}
 
 %description c++
@@ -285,7 +288,7 @@ Pakiet ten zawiera biblioteki dla interface'u C++ do PostgreSQL.
 Summary:	C++ interface to PostgreSQL - development part
 Summary(pl):	Interface C++ do PostgreSQL - cze¶æ programistyczna
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 Requires:	%{name}-c++ = %{version}
 Requires:	%{name}-devel = %{version}
 
@@ -299,7 +302,7 @@ Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interface'u C++.
 Summary:	C++ interface to PostgreSQL - static libraries
 Summary(pl):	Interface C++ do PostgreSQL - biblioteki statyczne
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 Requires:	%{name}-c++-devel = %{version}
 
 %description c++-static
@@ -312,7 +315,7 @@ Pakiet ten zawiera biblioteki statyczne dla interface'u C++.
 Summary:	ODBC interface to PostgreSQL
 Summary(pl):	Interface ODBC do PostgreSQL
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 Requires:	%{name}-libs = %{version}
 
 %description odbc
@@ -325,7 +328,7 @@ Pakiet ten zawiera biblioteki dla interface'u ODBC.
 Summary:	ODBC interface to PostgreSQL - development part
 Summary(pl):	Interface ODBC do PostgreSQL - cze¶æ programistyczna
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 Requires:	%{name}-odbc = %{version}
 Requires:	%{name}-devel = %{version}
 
@@ -339,7 +342,7 @@ Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interface'u ODBC.
 Summary:	ODBC interface to PostgreSQL - static libraries
 Summary(pl):	Interface ODBC do PostgreSQL - biblioteki statyczne
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 Requires:	%{name}-odbc-devel = %{version}
 
 %description odbc-static
@@ -392,7 +395,7 @@ Biblioteki statyczne interafece tcl dla PostgreSQL
 Summary:	Some useful datetime functions for PostgreSQL
 Summary(pl):	Kilka u¿ytecznych funkcji operuj±cych na dacie i czasie dla PostgreSQL
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 Requires:	%{name} = %{version}
 
 %description module-datetime
@@ -410,12 +413,13 @@ Some useful datetime function for PostgreSQL such as:
 - date_month(date)
 - date_year(date)
 - currenttime()
-- currentdate()
-To enable them you need to execute datetime_function.sql script. You can
-found it in /usr/share/pgsql/sql directory.
+- currentdate() To enable them you need to execute
+  datetime_function.sql script. You can found it in /usr/share/pgsql/sql
+  directory.
 
 %description module-datetime -l pl
-Kilka u¿ytecznych funkcji operuj±cych na dacie i czasie dla PostgreSQL.
+Kilka u¿ytecznych funkcji operuj±cych na dacie i czasie dla
+PostgreSQL.
 - hhmm_in(opaque)
 - hhmm_out(opaque)
 - hhmm(time)
@@ -429,58 +433,60 @@ Kilka u¿ytecznych funkcji operuj±cych na dacie i czasie dla PostgreSQL.
 - date_month(date)
 - date_year(date)
 - currenttime()
-- currentdate()
-Po wykonaniu skryptu datetime_function.sql mo¿na u¿ywaæ tych funkcji
-z poziomu zapytañ SQL. Skrypt ten znajduje siê w katalogu
-/usr/share/pgsql/sql.
+- currentdate() Po wykonaniu skryptu datetime_function.sql mo¿na
+  u¿ywaæ tych funkcji z poziomu zapytañ SQL. Skrypt ten znajduje siê w
+  katalogu /usr/share/pgsql/sql.
 
 %package module-plpgsql
 Summary:	PL/pgSQL - PostgreSQL procedural language
 Summary(pl):	PL/pgSQL jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 
 %description module-plpgsql
 From PostgreSQL documentation.
 
-Postgres supports the definition of procedural languages. In the case of a
-function or trigger procedure defined in a procedural language, the database
-has no built-in knowledge about how to interpret the function's source text.
-Instead, the task is passed to a handler that knows the details of the
-language. The handler itself is a special programming language function
-compiled into a shared object and loaded on demand.
+Postgres supports the definition of procedural languages. In the case
+of a function or trigger procedure defined in a procedural language,
+the database has no built-in knowledge about how to interpret the
+function's source text. Instead, the task is passed to a handler that
+knows the details of the language. The handler itself is a special
+programming language function compiled into a shared object and loaded
+on demand.
 
-To enable PL/pgSQL procedural language for your database you have to run
-createlang command.
+To enable PL/pgSQL procedural language for your database you have to
+run createlang command.
 
 %description module-plpgsql -l pl
 Z dokumentacji PostgreSQL.
 
-Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy programista
-zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku proceduralnym, baza danych
-nie ma pojêcia jak interpretowaæ tego typu funkcjê. Funkcja lub procedura ta
-jest przekazywana do interpretera, który wie jak j± wykonaæ. Interpreter jest
-odpowiedni±, specjaln± funkcj±, która jest skompilowana w obiekt dzielony
-i ³adowany w razie potrzeby.
+Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy
+programista zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku
+proceduralnym, baza danych nie ma pojêcia jak interpretowaæ tego typu
+funkcjê. Funkcja lub procedura ta jest przekazywana do interpretera,
+który wie jak j± wykonaæ. Interpreter jest odpowiedni±, specjaln±
+funkcj±, która jest skompilowana w obiekt dzielony i ³adowany w razie
+potrzeby.
 
-Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka proceduralnego
-PL/pgSQL dla swojej bazy danych.
+Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka
+proceduralnego PL/pgSQL dla swojej bazy danych.
 
 %package module-pltcl
 Summary:	PL/TCL - PostgreSQL procedural language
 Summary(pl):	PL/TCL jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
+Group(pl):	Aplikacje/Bazy danych
 
 %description module-pltcl
 From PostgreSQL documentation.
 
-Postgres supports the definition of procedural languages. In the case of a
-function or trigger procedure defined in a procedural language, the database
-has no built-in knowledge about how to interpret the function's source text.
-Instead, the task is passed to a handler that knows the details of the
-language. The handler itself is a special programming language function
-compiled into a shared object and loaded on demand.
+Postgres supports the definition of procedural languages. In the case
+of a function or trigger procedure defined in a procedural language,
+the database has no built-in knowledge about how to interpret the
+function's source text. Instead, the task is passed to a handler that
+knows the details of the language. The handler itself is a special
+programming language function compiled into a shared object and loaded
+on demand.
 
 To enable PL/TCL procedural language for your database you have to run
 createlang command.
@@ -488,15 +494,16 @@ createlang command.
 %description module-pltcl -l pl
 Z dokumentacji PostgreSQL.
 
-Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy programista
-zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku proceduralnym, baza danych
-nie ma pojêcia jak interpretowaæ tego typu funkcjê. Funkcja lub procedura ta
-jest przekazywana do interpretera, który wie jak j± wykonaæ. Interpreter jest
-odpowiedni±, specjaln± funkcj±, która jest skompilowana w obiekt dzielony
-i ³adowany w razie potrzeby.
+Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy
+programista zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku
+proceduralnym, baza danych nie ma pojêcia jak interpretowaæ tego typu
+funkcjê. Funkcja lub procedura ta jest przekazywana do interpretera,
+który wie jak j± wykonaæ. Interpreter jest odpowiedni±, specjaln±
+funkcj±, która jest skompilowana w obiekt dzielony i ³adowany w razie
+potrzeby.
 
-Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka proceduralnego
-PL/TCL dla swojej bazy danych.
+Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka
+proceduralnego PL/TCL dla swojej bazy danych.
 
 %prep
 %setup  -q
@@ -504,6 +511,7 @@ PL/TCL dla swojej bazy danych.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
@@ -547,11 +555,11 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
         $RPM_BUILD_ROOT/var/lib/pgsql \
 	$RPM_BUILD_ROOT%{_libdir}/pgsql
 
-make -C src install DESTDIR=$RPM_BUILD_ROOT
-make -C doc install DESTDIR=$RPM_BUILD_ROOT
+%{__make} -C src install DESTDIR=$RPM_BUILD_ROOT
+%{__make} -C doc install DESTDIR=$RPM_BUILD_ROOT
 
 # for datetime functions
-make -C contrib/datetime install \
+%{__make} -C contrib/datetime install \
 	LIBDIR=$RPM_BUILD_ROOT%{pglibdir} SQLDIR=$RPM_BUILD_ROOT%{pgsqldir}
 
 # Move PL/pgSQL procedural language to %{pgmoduledir}
