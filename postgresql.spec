@@ -70,7 +70,7 @@ BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
-%{?with_python:BuildRequires:	python-devel >= 2.3}
+%{?with_python:BuildRequires:	python-devel >= 1:2.3}
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-pythonprov
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
