@@ -419,15 +419,15 @@ rm -f /tmp/tmp_perl_info
 %doc howto
 
 %files
-%defattr(644, root, root, 755)
+%defattr(644,root,root,755)
 %doc contrib 
 %doc doc/FAQ doc/FAQ_Linux doc/README* 
 %doc COPYRIGHT README HISTORY doc/bug.template
 %doc doc/*.ps.gz
 
-%attr(754, root, root) /etc/rc.d/init.d/*
+%attr(754,root,root) /etc/rc.d/init.d/*
 
-%attr(644, postgres, postgres, 755) %{_libdir}/pgsql
+%attr(644, postgres, postgres,755) %{_libdir}/pgsql
 %attr(755,root,root) %{_bindir}/cleardbdir
 %attr(755,root,root) %{_bindir}/createdb
 %attr(755,root,root) %{_bindir}/createuser
@@ -467,7 +467,7 @@ rm -f /tmp/tmp_perl_info
 %attr(-,postgres,postgres) /var/lib/pgsql
 
 %files clients
-%defattr(644, root, root, 755)
+%defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libec*.so.*
 %attr(755,root,root) %{_libdir}/libpq*.so.*
 %attr(755,root,root) %{_bindir}/pg_dump
@@ -482,10 +482,10 @@ rm -f /tmp/tmp_perl_info
 %{_mandir}/manl/*.gz
 
 %files -f perlfiles.list perl
-%defattr(-, root, root)
+%defattr(-,root,root)
 
 %files odbc
-%defattr(644, root, root, 755)
+%defattr(644,root,root,755)
 %doc src/interfaces/odbc/readme.txt src/interfaces/odbc/notice.txt
 %config(noreplace) %verify(not size mtime md5) /etc/odbc*
 %{_libdir}/libpsqlodbc*
