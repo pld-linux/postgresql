@@ -13,6 +13,11 @@ POSTGRES_QUIET=no
 # only on unix socket
 ALLOW_TCP_CONNECTIONS=no
 
+# Allow using SSL on TCP connections. Requires ALLOW_TCP_CONNECTIONS to be
+# set to yes. Also, you must supply key and certificate files
+# ($POSTGRES_DATA_DIR/server.{key,crt})
+ALLOW_USE_SSL=no
+
 # Disable automatic fsync() call after each transac tion. This option
 # improves performance, but an operating system crash while a transaction is
 # in progress will probably cause data loss.

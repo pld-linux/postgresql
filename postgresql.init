@@ -22,7 +22,8 @@ if [ -f /etc/sysconfig/postgresql ] ; then
         . /etc/sysconfig/postgresql
 else
         ALLOW_TCP_CONNECTIONS=no
-	POSTGRES_DATA_DIR=/var/lib/psql
+	ALLOW_USE_SSL=no
+	POSTGRES_DATA_DIR=/var/lib/pgsql
 	POSTGRES_LOG=/var/log/pgsql
 fi
 
@@ -54,6 +55,19 @@ case "$1" in
 	if [ -f /var/lock/subsys/postgresql ]; then
   		msg_Already_Running PostgreSQL
 	else 	
+		if is_yes "$ALLOW_USE_SSL"; then
+			if is_no "$ALLOW_TCP_CONNECTIONS"; then
+				nls "You must enable ALLOW_TCP_CONNECTIONS in order to use SSL"
+				exit 1
+			elif [ ! -f "$POSTGRES_DATA_DIR/server.key" ]; then
+				nls "$POSTGRES_DATA_DIR/server.key not found!"
+				exit 1
+			elif [ ! -f "$POSTGRES_DATA_DIR/server.crt" ]; then
+				nls "$POSTGRES_DATA_DIR/server.crt not found!"
+				exit 1
+			fi
+		fi
+		
 		# Sanity check
 		[ -f /tmp/.s.PGSQL.5432 ] || rm -f /tmp/.s.PGSQL.5432
 		
@@ -79,11 +93,12 @@ case "$1" in
 		msg_starting PostgreSQL 
 		busy
 		PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
-		    $([ "$POSTGRES_QUIET". = yes. ] && echo '-s')";
+		    $(is_yes "$POSTGRES_QUIET" && echo '-s')";
 		POSTMASTER_OPTIONS=" \
-		    $([ "$POSTGRES_QUIET". = yes. ] && echo '-S') \
-		    $([ "$POSTGRES_DISABLE_FSYNC". = yes. ] && echo '-F') \
-		    $([ "$ALLOW_TCP_CONNECTIONS". = yes. ] && echo '-i')";
+		    $(is_yes "$POSTGRES_QUIET" && echo '-S') \
+		    $(is_yes "$POSTGRES_DISABLE_FSYNC" && echo '-F') \
+		    $(is_yes "$ALLOW_TCP_CONNECTIONS" && echo '-i') \
+		    $(is_yes "$ALLOW_USE_SSL" && echo '-l')";
 
 		TMPDIR=/tmp su postgres -c "\
 			$(echo "/usr/bin/pg_ctl start $PGSQL_CMDLINE -l $POSTGRES_LOG") \
