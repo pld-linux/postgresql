@@ -15,7 +15,7 @@ Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.1.3
-Release:	13
+Release:	14
 License:	BSD
 Group:		Applications/Databases
 Group(de):	Applikationen/Dateibanken
@@ -1020,7 +1020,7 @@ fi
 
 %files tcl
 %defattr(644,root,root,755)
-%aettr(755,root,root) %{_libdir}/libpgtcl.so
+%attr(755,root,root) %{_libdir}/libpgtcl.so
 %attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
 %attr(755,root,root) %{_bindir}/pgtclsh
 %attr(755,root,root) %{_bindir}/pgtksh
