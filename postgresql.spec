@@ -1,14 +1,10 @@
 #
 # - pg_autovacuum init support? look at its readme file, please
 # - pg_ctl uses psql again, current patch2 doesn't eliminate this
-# - remove postgresql-configure patch and create postgresql-doc patch,
-#   which will prevent documentation and manuals installation (the routine
-#   is bad and we install docs and mans manually, at all) or create good
-#   routine and send it to postgresql team...
 #
 # Conditional build:
-%bcond_without  tests			# disable testing
-%bcond_without	tcl	    		# disables Tcl support
+%bcond_without	tests			# disable testing
+%bcond_without	tcl				# disables Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
 %bcond_without	perl			# disable perl support
 %bcond_without	python			# disable python support
@@ -40,7 +36,7 @@ Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
-Patch0:		%{name}-configure.patch
+Patch0:		%{name}-doc.patch
 Patch1:		%{name}-pg_ctl-silent.patch
 Patch2:		%{name}-pg_ctl-nopsql.patch
 Patch3:		%{name}-conf.patch
@@ -797,8 +793,8 @@ rm -f config/libtool.m4
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
-        $RPM_BUILD_ROOT{/var/{lib/pgsql,log},%{_pgsqldir}} \
-	$RPM_BUILD_ROOT{%{_applnkdir}/System,%{_pixmapsdir}} \
+	$RPM_BUILD_ROOT{/var/{lib/pgsql,log},%{_pgsqldir}} \
+	$RPM_BUILD_ROOT%{_mandir} \
 	$RPM_BUILD_ROOT/home/services/postgres
 
 %{__make} install install-all-headers \
@@ -816,11 +812,6 @@ touch $RPM_BUILD_ROOT/var/log/pgsql
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
-
-cp -a man?	   $RPM_BUILD_ROOT%{_mandir}
-
-# there are html installed, remove them
-rm -rf $RPM_BUILD_ROOT%{_infodir}
 
 install -d howto
 ( cd howto
@@ -969,8 +960,6 @@ fi
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
 
-%{_mandir}/man7/*.7*
-
 %doc contrib
 %doc doc/FAQ* doc/README*
 %doc COPYRIGHT README HISTORY doc/bug.template
@@ -1043,7 +1032,7 @@ fi
 %{_mandir}/man1/pg_restore.1*
 %{_mandir}/man1/psql.1*
 %{_mandir}/man1/vacuumdb.1*
-%{_mandir}/manl/*.l*
+%{_mandir}/man7/*.7*
 
 %if %{with tcl}
 %files tcl
