@@ -26,7 +26,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.3.3
-Release:	0.1
+Release:	0.2
 License:	BSD
 Group:		Applications/Databases
 # Source0-md5:	60e1efa3a0f34dae06e017f72cd2dcc9
@@ -53,8 +53,8 @@ BuildRequires:	perl-devel
 BuildRequires:	python-devel >= 2.2.1
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-pythonprov
-BuildRequires:	tcl-devel >= 8.3.2
-BuildRequires:	tk-devel >= 8.3.2
+BuildRequires:	tcl-devel >= 8.4.3
+BuildRequires:	tk-devel >= 8.4.3
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 PreReq:		rc-scripts
