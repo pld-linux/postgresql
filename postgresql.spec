@@ -26,7 +26,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	8.0.0
-Release:	0.%{beta}.2
+Release:	0.%{beta}.3
 License:	BSD
 Group:		Applications/Databases
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -43,8 +43,6 @@ Patch3:		%{name}-link.patch
 Patch4:		%{name}-com_err.patch
 Patch5:		%{name}-ecpg_link.patch
 Patch6:		%{name}-ecpg-includedir.patch
-Patch7:		%{name}-contrib_install.patch
-Patch8:		%{name}-pg_ctl-silent.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -686,8 +684,6 @@ http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-#%patch7 -p1
-#%patch8 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -776,6 +772,9 @@ done
 # merge locales
 cat pgscripts.lang pg_resetxlog.lang postgres.lang pg_controldata.lang > main.lang
 cat pg_dump.lang psql.lang initdb.lang pg_ctl.lang > clients.lang
+
+# Remove Contrib documentation. We use macro %doc
+rm -rf $RPM_BUILD_ROOT/contrib
 
 %clean
 rm -rf $RPM_BUILD_ROOT
