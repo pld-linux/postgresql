@@ -1,8 +1,6 @@
 #
 # TODO:
 # - pg_autovacuum init support? look at its readme file, please
-# - better postmaster start check (taking care of multiple clusters) in
-#   pg_ctl-nopsql patch
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
@@ -30,7 +28,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.4.2
-Release:	0.3
+Release:	0.4
 License:	BSD
 Group:		Applications/Databases
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
