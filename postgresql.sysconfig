@@ -33,3 +33,25 @@ POSTGRES_DISABLE_FSYNC=no
 
 # Where postmaster output is redirected
 POSTGRES_LOG=/var/log/pgsql
+
+# Default database chcaracter encoding
+# Avaible character sets:
+#
+# Encoding 	| Description
+# --------------------------------------------------------------
+# SQL_ASCII	| ASCII
+# EUC_JP	| Japanese EUC
+# EUC_CN	| Chinese EUC
+# EUC_KR	| Korean EUC
+# EUC_TW 	| Taiwan EUC
+# UNICODE	| Unicode(UTF-8)
+# MULE_INTERNAL | Mule internal
+# LATIN1 	| ISO 8859-1 English and some European languages
+# LATIN2	| ISO 8859-2 English and some European languages
+# LATIN3	| ISO 8859-3 English and some European languages
+# LATIN4	| ISO 8859-4 English and some European languages
+# LATIN5	| ISO 8859-5 English and some European languages
+# KOI8		| KOI8-R
+# WIN		| Windows CP1251
+# ALT		| Windows CP866			
+ENCODING=UNICODE
