@@ -18,10 +18,11 @@
 . /etc/sysconfig/network
 
 # Get service config
-if [ -f /etc/sysconfig/syslog ] ; then
-        . /etc/sysconfig/syslog
+if [ -f /etc/sysconfig/postgresql ] ; then
+        . /etc/sysconfig/postgresql
 else
-        ALLOW_TCP=no
+        ALLOW_TCP_CONNECTIONS=no
+	POSTGRES_DATA_DIR=/var/state/psql
 fi
 
 # Check that networking is up.
@@ -41,7 +42,7 @@ case "$1" in
 		show Starting postgresql
 		busy
 		su postgres -c "/usr/bin/postmaster \
-			$([ "$ALLOW_TCP" = yes ] && echo "-i") \
+			$([ "$ALLOW_TCP_CONNECTIONS" = yes ] && echo "-i") \
 			$([ -n "$MAX_NUM_BACKENDS" ] && echo "-N $MAX_NUM_BACKENDS") \
 			$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
 			-o \
