@@ -771,6 +771,7 @@ rm -f /tmp/tmp_perl_info
 %{_mandir}/man1/ecpg.1*
 
 %files backend-devel
+%defattr(644,root,root,755)
 %{_includedir}/postgresql/access
 %{_includedir}/postgresql/bootstrap
 %{_includedir}/postgresql/catalog
