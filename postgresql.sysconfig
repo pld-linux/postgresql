@@ -7,10 +7,10 @@
 #
 
 # standard setting
-# POSTGRES_DB_CLUSTERS="/var/lib/pgsql"
+# PG_DB_CLUSTERS="/var/lib/pgsql"
 
 # predictable usage
-# POSTGRES_DB_CLUSTERS="/var/lib/pgsql/01 /var/lib/pgsql/02"
+# PG_DB_CLUSTERS="/var/lib/pgsql/01 /var/lib/pgsql/02"
 
 # new database disk arrived
-# POSTGRES_DB_CLUSTERS="/var/lib/pgsql/01 /var/lib/pgsql/02 /mnt/db/01"
+# PG_DB_CLUSTERS="/var/lib/pgsql/01 /var/lib/pgsql/02 /mnt/db/01"
