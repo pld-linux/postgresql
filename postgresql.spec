@@ -17,8 +17,6 @@
 
 %include	/usr/lib/rpm/macros.python
  
-%define _rc RC2 
-
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
 Summary(es):	Gestor de Banco de Datos PostgreSQL
@@ -31,12 +29,12 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.4
-Release:	0.5.%{_rc}
+Release:	0.6
 License:	BSD
 Group:		Applications/Databases
-##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{_rc}.tar.bz2
-Source0:	ftp://ftp2.pl.postgresql.org/mirrors/ftp.postgresql.org/source/v%{version}/%{name}-%{version}%{_rc}.tar.bz2
-# Source0-md5:	a1ea58e97dd7849a4fb4721752d3ed41
+##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
+Source0:	ftp://ftp2.pl.postgresql.org/mirrors/ftp.postgresql.org/source/v%{version}/%{name}-%{version}.tar.bz2
+# Source0-md5:	9db7432c431d1570b1f605727daf27bc
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -741,7 +739,7 @@ Cryptographic functions for PostgreSQL.
 Funkcje kryptograficzne dla PostgreSQL.
 
 %prep
-%setup  -q  -n %{name}-%{version}%{_rc}
+%setup  -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p0
