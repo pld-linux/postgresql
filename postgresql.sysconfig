@@ -1,5 +1,11 @@
 # $Revision$
 
+#
+# Edit postgresql.conf file in database cluster directory to configure
+# PostgreSQL. When you want to start more then one PostgreSQL instance,
+# than you should change TCP/IP port, at least.
+#
+
 # standard setting
 # POSTGRES_DB_CLUSTERS="/var/lib/pgsql"
 
