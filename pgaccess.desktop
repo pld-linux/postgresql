@@ -7,4 +7,5 @@ Icon=pgaccess.png
 Terminal=false
 Type=Application
 Encoding=UTF-8
+Categories=Office;X-Database;
 # vi: encoding=utf-8
