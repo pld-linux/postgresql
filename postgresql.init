@@ -45,7 +45,7 @@ case "$1" in
 		# Check for the PGDATA structure
 		if [ -f $POSTGRES_DATA_DIR/PG_VERSION ] && [ -d $POSTGRES_DATA_DIR/base/template1 ]; then
 		    # Check version of existing PGDATA
-		    if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.0' ]; then
+		    if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.1' ]; then
 			show "Databases created under incompatibile version. Migrate them first."; fail
 			exit 1
 		    fi
