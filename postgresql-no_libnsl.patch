@@ -1,0 +1,11 @@
+diff -Nru postgresql-7.0.2/src/configure.in postgresql-7.0.2.new/src/configure.in
+--- postgresql-7.0.2/src/configure.in	Thu May 25 00:43:59 2000
++++ postgresql-7.0.2.new/src/configure.in	Wed Aug 23 00:47:11 2000
+@@ -692,7 +692,6 @@
+ AC_CHECK_LIB(m,        main)
+ AC_CHECK_LIB(dl,       main)
+ AC_CHECK_LIB(socket,   main)
+-AC_CHECK_LIB(nsl,      main)
+ AC_CHECK_LIB(ipc,      main)
+ AC_CHECK_LIB(IPC,      main)
+ AC_CHECK_LIB(lc,       main)
