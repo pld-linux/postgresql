@@ -17,6 +17,7 @@ Patch1:		postgresql-DESTDIR.patch
 Patch2:		postgresql-perl.patch
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
+Requires:	rc-scripts
 Buildroot:	/tmp/%{name}-%{version}-root
 #Requires:	%{name}-clients = %{version}
 
