@@ -1,12 +1,12 @@
-diff -Nur postgresql-7.3.2.orig/configure.in postgresql-7.3.2/configure.in
---- postgresql-7.3.2.orig/configure.in	Sun Feb  2 20:56:45 2003
-+++ postgresql-7.3.2/configure.in	Wed Feb  5 11:25:49 2003
+diff -Nur postgresql-7.3.3.orig/configure.in postgresql-7.3.3/configure.in
+--- postgresql-7.3.3.orig/configure.in	Sun Feb  2 20:56:45 2003
++++ postgresql-7.3.3/configure.in	Wed Feb  5 11:25:49 2003
 @@ -20,9 +20,7 @@
  dnl The GNU folks apparently haven't heard that some people don't use
  dnl Texinfo. Use this sorcery to use "docdir" instead of "infodir".
  m4_define([info], [doc])
 -m4_define([infodir], [docdir])
- AC_INIT([PostgreSQL], [7.3.2], [pgsql-bugs@postgresql.org])
+ AC_INIT([PostgreSQL], [7.3.3], [pgsql-bugs@postgresql.org])
 -m4_undefine([infodir])
  m4_undefine([info])
  AC_SUBST(docdir)
