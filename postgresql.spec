@@ -66,24 +66,24 @@ Patch3:		%{name}-pg_ctl-silent.patch
 Patch4:		%{name}-DESTDIR.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
+BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	tcl-devel >= 8.3.2
 BuildRequires:	tk-devel >= 8.3.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	ncurses-devel >= 5.0
+BuildRequires:	openssl-devel >= 0.9.6a
 BuildRequires:	perl-devel >= 5.6
 BuildRequires:	python-devel >= 2.2
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
 BuildRequires:	zlib-devel
-BuildRequires:	openssl-devel >= 0.9.6a
-BuildRequires:	XFree86-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
 Prereq:		%{name}-clients = %{version}
-Requires:	%{name}-libs = %{version}
+Prereq:		%{name}-libs = %{version}
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
 
@@ -364,22 +364,21 @@ Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name}-libs = %{version}
 
 %description clients
-This package includes only the clients and client libraries needed to
-access an PostgreSQL server. The server is included in the main
-package. If all you need is to connect to another PostgreSQL server,
-the this is the only package you need to install.
-
-In this package there are client libraries available for C and C++, as
-well as several command-line utilities you can use to manage your
-databases on a remote PostgreSQL server.
+This package includes only the clients needed to access an PostgreSQL
+server. The server is included in the main package. If all you need
+is to connect to another PostgreSQL server, the this is the only
+package you need to install. Clients include several command-line
+utilities you can use to manage your databases on a remote PostgreSQL
+server.
 
 %description clients -l es
 Este paquete incluye solamente los clientes necesarios para acceder un
 servidor PostgreSQL. El servidor está en el paquete principal.
 
 %description clients -l pl
-Pakiet zawiera klientów oraz biblioteki niezbêdne dla dostêpu do
-serwera PostgreSQL. Serwer znajduje siê w g³ównym pakiecie.
+Pakiet zawiera programy klienckie potrzebne dla dostêpu do serwera
+PostgreSQL oraz narzêdzia do zarz±dzania bazami dzia³aj±ce z linii
+poleceñ. Serwer znajduje siê w g³ównym pakiecie.
 
 %description clients -l pt_BR
 Este pacote inclui somente os clientes necessários para acessar um
@@ -518,7 +517,7 @@ Group(sv):	Bibliotek
 Group(uk):	â¦ÂÌ¦ÏÔÅËÉ
 
 %description libs
-PostgreSQL libraries.
+PostgreSQL shared libraries.
 
 %description libs -l es
 Este paquete contiene la biblioteca compartida para acceso al
