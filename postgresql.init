@@ -6,10 +6,9 @@
 # chkconfig:	345 84 25
 #
 # description:	Starts and stops the PostgreSQL backend daemon that handles \
-#		all database requests.
+#				all database requests.
 #
 # processname:	postmaster
-# pidfile:	$POSTGRES_DATA_DIR/postmaster.pid
 
 # Source function library
 . /etc/rc.d/init.d/functions
@@ -17,17 +16,13 @@
 # Get network config
 . /etc/sysconfig/network
 
-# Service config defaults
-ALLOW_TCP_CONNECTIONS=no
-ALLOW_USE_SSL=no
-POSTGRES_DATA_DIR=/var/lib/pgsql
-POSTGRES_LOG=/var/log/pgsql
-ENCODING=UNICODE
-LOCALE=${LANG:-C}
-
 # Get service config
 if [ -f /etc/sysconfig/postgresql ] ; then
-        . /etc/sysconfig/postgresql
+	. /etc/sysconfig/postgresql
+else
+	echo "Error: /etc/sysconfig/postgresql not found"
+	echo " PostgreSQL can't be run."
+	exit 1
 fi
 
 # Check that networking is up.
@@ -36,177 +31,117 @@ if is_no "${NETWORKING}"; then
 	exit 1
 fi
 
-# check if postmaster is realy alive
-if [ -f $POSTGRES_DATA_DIR/postmaster.pid ]; then
-    if ps -p `head -1 $POSTGRES_DATA_DIR/postmaster.pid` > /dev/null ; then
-	# ok. it's alive
-	echo > /dev/null;
-    else
-	# oh, it has crashed
-	rm -f  /var/lock/subsys/postgresql
-    fi
-else
-	# it's stopped.
-	rm -f  /var/lock/subsys/postgresql
+pgstatus () {
+	PG_STATUS="unknown"
+	PG_PID="unknown"
+	status=`/usr/bin/pg_ctl -D $1 status`
+
+	if echo "$status" | grep -q 'pg_ctl: postmaster or postgres is not running'; then
+		PG_STATUS="not running"
+	elif echo "$status" | grep -q 'pg_ctl: postmaster is running'; then
+		PG_STATUS="running"
+		PG_PID=`echo "$status" | sed 's/^pg_ctl:.*pid: \([0-9]\+\).*/\1/' | head -1`
+	fi
+}
+
+action="$1"
+
+# any db cluster as command line argument?
+if [ $# -gt 1 ]; then
+	shift
+	POSTGRES_DB_CLUSTERS="$@"
 fi
 
-
 # See how we were called.
-case "$1" in
-  start)
-	# Check if the service is already running?
-	if [ -f /var/lock/subsys/postgresql ]; then
-  		msg_already_running PostgreSQL
-	else 	
-		if is_yes "$ALLOW_USE_SSL"; then
-			if is_no "$ALLOW_TCP_CONNECTIONS"; then
-				nls "You must enable ALLOW_TCP_CONNECTIONS in order to use SSL"
-				exit 1
-			elif [ ! -f "$POSTGRES_DATA_DIR/server.key" ]; then
-				nls "$POSTGRES_DATA_DIR/server.key not found!"
-				exit 1
-			elif [ ! -f "$POSTGRES_DATA_DIR/server.crt" ]; then
-				nls "$POSTGRES_DATA_DIR/server.crt not found!"
-				exit 1
+case "$action" in
+	start)
+		for pgdir in $POSTGRES_DB_CLUSTERS; do
+			pgstatus "$pgdir"
+			if [ "$PG_STATUS" = "running" ]; then
+				if ps ax | grep -v grep | grep -q "$PG_PID"; then
+					msg_already_running "PostgreSQL $pgdir"
+				else
+					msg_not_running "PostgreSQL $pgdir"
+					rm -f $pgdir/postmaster.pid
+					$0 start "$pgdir"
+				fi
+			else
+				msg_starting "PostgreSQL $pgdir"
+				busy
+				TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir start 2>&1 >/dev/null"
+				
+				pgstatus "$pgdir"
+				if [ "$PG_STATUS" != "unknown" -a "$PG_PID" != "unknown" ]; then
+					deltext; ok
+				else
+					deltext; fail 
+				fi
 			fi
-		fi
-		
-		# Sanity check
-		[ -e /tmp/.s.PGSQL.5432 ] || rm -f /tmp/.s.PGSQL.5432
-		[ -f /tmp/.s.PGSQL.5432.lock ] || rm -f /tmp/.s.PGSQL.5432.lock
-		
-		# Check for the PGDATA structure
-		if [ -f $POSTGRES_DATA_DIR/PG_VERSION ] && [ -f $POSTGRES_DATA_DIR/global/pg_control ]; then
-		    # Check version of existing PGDATA
-		    if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.2' ]; then
-			show "Databases created under incompatibile version. Migrate them first."; fail
-			exit 1
-		    fi
-		else
-		    echo "Postgresql database not initialized. Try \"$0 init\" before start."
-		    exit 1
-		fi
-		
-		msg_starting PostgreSQL 
-		busy
-		PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
-		    $(is_yes "$POSTGRES_QUIET" && echo '-s')";
-		POSTMASTER_OPTIONS=" \
-		    $(is_yes "$POSTGRES_QUIET" && echo '-S') \
-		    $(is_yes "$POSTGRES_DISABLE_FSYNC" && echo '-F') \
-		    $(is_yes "$ALLOW_TCP_CONNECTIONS" && echo '-i') \
-		    $(is_yes "$ALLOW_USE_SSL" && echo '-l') \
-		    $([ "$BUFFERS" ] && echo \-B $BUFFERS) \
-		    $([ "$MAXCONN" ] && echo \-N $MAXCONN)";
-
-		TMPDIR=/tmp su postgres -c "\
-			$(echo "/usr/bin/pg_ctl start -w $PGSQL_CMDLINE -l $POSTGRES_LOG") \
-			$([ "$POSTMASTER_OPTIONS". != . ] && echo "-o '$POSTMASTER_OPTIONS'") \
-			$(echo "2>&1 >/dev/null")";
-		
-		out=`status postmaster`
-		if [ $? -eq 0 ]; then 
-		    deltext; ok
-		else
-		    deltext; fail 
-		    exit 1	
-		fi
-	fi
-	touch /var/lock/subsys/postgresql
+		done
 	;;
-  stop)
+	stop)
+		for pgdir in $POSTGRES_DB_CLUSTERS; do
+			pgstatus "$pgdir"
+			if [ "$PG_STATUS" = "not running" ]; then
+				msg_not_running "PostgreSQL $pgdir"
+			else
+				msg_stopping "PostgreSQL $pgdir"
+				busy
 
-  	if [ ! -f /var/lock/subsys/postgresql ]; then
-		msg_not_running PostgreSQL
-		exit 0	
-	fi
-	msg_stopping PostgreSQL
-	busy
-	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR")";
-	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl stop $PGSQL_CMDLINE -m fast 2>&1 >/dev/null"
-	out=`status postmaster`
-	if [ $? -eq 0 ]; then
-		deltext; fail
-		echo -e "\n$out";
+				if ps ax | grep -v grep | grep -q "$PG_PID"; then
+					TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir stop -m fast 2>&1 >/dev/null"
+					pgstatus "$pgdir"
+					if [ "$PG_STATUS" != "not running" ]; then
+						deltext; fail
+					else
+						deltext; ok
+					fi
+				else
+					deltext; died
+				fi
+
+				rm -f $pgdir/postmaster.pid
+			fi
+		done
+	;;
+	status)
+		for pgdir in $POSTGRES_DB_CLUSTERS; do
+			TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir status"
+ 	  	done
+	;;
+	restart)
+		$0 stop "$POSTGRES_DB_CLUSTERS"
+		$0 start "$POSTGRES_DB_CLUSTERS"
+	;;
+	reload)
+		for pgdir in $POSTGRES_DB_CLUSTERS; do
+			pgstatus "$pgdir"
+			if [ "$PG_STATUS" = "not running" ]; then
+				msg_not_running "PostgreSQL $pgdir"
+			else
+				msg_reloading "PostgreSQL $pgdir"
+				busy
+
+				if ps ax | grep -v grep | grep -q "$PG_PID"; then
+					TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir restart 2>&1 >/dev/null"
+
+					pgstatus "$pgdir"
+					if [ "$PG_STATUS" = "running" ]; then
+						deltext; ok
+					else
+						deltext; fail
+					fi
+				else
+					deltext; died
+					rm -f $pgdir/postmaster.pid
+					$0 start
+				fi
+			fi
+		done
+	;;
+	*)
+		msg_usage "$0 {start|stop|status|restart|reload}"
 		exit 1
-	else
-		deltext; ok
-	fi
-	rm -f $POSTGRES_DATA_DIR/postmaster.pid
-	rm -f /var/lock/subsys/postgresql
-	;;
-  status)
-	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR")";
-	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl status $PGSQL_CMDLINE"
-	;;
-  restart)
-  	$0 stop
-	$0 start
-	;;
-  reload)
-  	if [ ! -f /var/lock/subsys/postgresql ]; then
-		msg_not_running PostgreSQL
-		exit 0	
-	fi
-	msg_reloading PostgreSQL
-	busy
-
-	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
-	    $([ "$POSTGRES_QUIET". = yes. ] && echo '-s')";
-	POSTMASTER_OPTIONS=" \
-	    $([ "$POSTGRES_QUIET". = yes. ] && echo '-S') \
-	    $([ "$POSTGRES_DISABLE_FSYNC". = yes. ] && echo '-F') \
-	    $([ "$ALLOW_TCP_CONNECTIONS". = yes. ] && echo '-i')";
-
-	TMPDIR=/tmp su postgres -c "\
-		$(echo "/usr/bin/pg_ctl restart $PGSQL_CMDLINE -l $POSTGRES_LOG") \
-		$([ "$POSTMASTER_OPTIONS". != . ] && echo "-o '$POSTMASTER_OPTIONS'") \
-		$(echo "2>&1 >/dev/null")";
-
-	out=`status postmaster`
-	if [ $? -eq 0 ]; then
-		deltext; ok
-	else
-		deltext; fail
-		echo -e "\n$out";
-		exit 1
-	fi
-	;;
-    init)
-	if [ -f "$POSTGRES_DATA_DIR/PG_VERSION" ]; then
-	    echo "Seems that database is initialized now. Remove by hand $POSTGRES_DATA_DIR"
-	    echo "before initialize database."
-	    exit 1
-	fi
-
-	echo -n "Specify encoding for pgsql database (eg: LATIN2, KOI8) [$ENCODING]: "
-	read new_encoding
-	ENCODING=${new_encoding:-$ENCODING}
-	echo -n "Specify locale for pgsql database (eg: pl_PL, de_DE) [$LOCALE]: "
-	read new_locale
-	LOCALE=${new_locale:-$LOCALE}
-
-	show "Creating initial postgresql database using $ENCODING/$LOCALE encoding/locale"
-	started
-
-        # Create sample database
-	if [ ! -d $POSTGRES_DATA_DIR ]; then
-	    mkdir -p $POSTGRES_DATA_DIR
-	    chown postgres.postgres $POSTGRES_DATA_DIR
-	    chmod 700 $POSTGRES_DATA_DIR
-	fi
-
-	
-	LC_ALL=$LOCALE; export LC_ALL
-	TMPDIR=/tmp su - postgres -s /bin/sh -c "LD_LIBRARY_PATH=/usr/lib \
-			initdb --pgdata=$POSTGRES_DATA_DIR \
-			-L /usr/share/postgresql -E $ENCODING"
-
-	echo "REMEMBER to setup password for user \"postgres\"!"
-	;;
-  *)
-	msg_usage "$0 {start|stop|status|restart|reload}"
-	exit 1
 esac
 
 exit 0
