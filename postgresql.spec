@@ -614,7 +614,7 @@ ln -sf . $RPM_BUILD_ROOT%{_libdir}/pgaccess/lib
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
 install %{SOURCE4} $RPM_BUILD_ROOT%{_applnkdir}/System
-install %{SOURCE4} $RPM_BUILD_ROOT%{_pixmapsdir}
+install %{SOURCE5} $RPM_BUILD_ROOT%{_pixmapsdir}
 
 install -d howto
 ( cd howto
