@@ -2,7 +2,7 @@
 # - put pgcrypto docs into docdir
 # - put pgcrypto sql files in %{_datadir}/postgresql
 # - remove postgresql-configure patch and create postgresql-doc patch,
-#   which will prevent documentation and manulas installation (the routine
+#   which will prevent documentation and manuals installation (the routine
 #   is bad and we install docs and mans manually, at all) or create good
 #   routine and send it to postgresql team...
 #
@@ -38,6 +38,7 @@ Patch1:		%{name}-pg_ctl-silent.patch
 Patch2:		%{name}-pg_ctl-nopsql.patch
 Patch3:		%{name}-conf.patch
 Patch4:		%{name}-absolute_dbpaths.patch
+Patch5:		%{name}-link.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	XFree86-devel
@@ -739,6 +740,7 @@ Funkcje kryptograficzne dla PostgreSQL.
 %patch2 -p0
 %patch3 -p1
 %{?_with_absolute_dbpaths:%patch4 -p1}
+%patch5 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -816,17 +818,39 @@ cd contrib/pgcrypto/
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-echo "If you are upgrading from *pre* 7.3 version,"
-echo "then please downgrade and dump your databases."
-echo
-echo "Warning for upgrade from version *before* 7.2."
-echo "Please note, that postgresql module path changed from"
-echo "/usr/lib/pgsql/module to /usr/lib/postgresql. Change the path"
-echo "in dump file before restore."
-echo
-echo "Warning for upgrade from version *before* 7.3."
-echo "Reading following webpage is encouraged:"
-echo "http://www.ca.postgresql.org/docs/momjian/upgrade_tips_7.3."
+PG_DB_CLUSTERS=""
+if [ -f /etc/sysconfig/postgresql ]; then
+	. /etc/sysconfig/postgresql
+	if [ -z "$PG_DB_CLUSTERS" -a -n "$POSTGRES_DATA_DIR" ]; then
+		PG_DB_CLUSTERS="$POSTGRES_DATA_DIR"
+	fi
+fi
+foundold=0
+for pgdir in $PG_DB_CLUSTERS; do
+	if [ -f $pgdir/PG_VERSION ]; then
+		if [ `cat $pgdir/PG_VERSION` != '7.3' ]; then
+			echo "Found database(s) in older, incompatible format in cluster $pgdir."
+			foundold=1
+		fi
+	fi
+done
+if [ "$foundold" = "1" ]; then
+	echo
+	echo "Dump all data from clusters mentioned above (using pg_dump or pg_dumpall)"
+	echo "and clean (or rename) those directories; then upgrade postgresql and"
+	echo "restore all data (using pg_restore or psql)."
+	echo "Remember to stop the daemon before upgrading!"
+	echo
+	echo "Warning for upgrade from version *before* 7.2."
+	echo "Please note, that postgresql module path changed from"
+	echo "/usr/lib/pgsql/module to /usr/lib/postgresql. Change the path"
+	echo "in dump file before restore."
+	echo
+	echo "Warning for upgrade from version *before* 7.3."
+	echo "Reading following webpage is encouraged:"
+	echo "http://www.ca.postgresql.org/docs/momjian/upgrade_tips_7.3."
+	exit 1
+fi
 
 getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
 if id postgres >/dev/null 2>&1 ; then
@@ -839,9 +863,8 @@ fi
 
 %post
 /sbin/chkconfig --add postgresql
-
 if [ -f /var/lock/subsys/postgresql ]; then
-	/etc/rc.d/init.d/postgresql restart >&2
+	/etc/rc.d/init.d/postgresql restart >&2 || :
 else
 	echo "Run \"/etc/rc.d/init.d/postgresql start\" to start postgresql server."
 fi

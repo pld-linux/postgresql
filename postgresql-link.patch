@@ -1,0 +1,34 @@
+--- postgresql-7.3.2/configure.in.orig	Wed Mar 12 00:19:05 2003
++++ postgresql-7.3.2/configure.in	Wed Mar 12 00:31:28 2003
+@@ -599,12 +599,13 @@
+ 
+ if test "$PORTNAME" != "aix" -a "$PORTNAME" != "alpha"
+ then
+-	AC_CHECK_LIB(bsd,      main)
++:
++dnl	AC_CHECK_LIB(bsd,      main)
+ fi
+ AC_CHECK_LIB(util,     setproctitle)
+ AC_CHECK_LIB(m,        main)
+ AC_CHECK_LIB(dl,       main)
+-AC_CHECK_LIB(nsl,      main)
++dnl AC_CHECK_LIB(nsl,      main)
+ AC_CHECK_LIB(socket,   main)
+ AC_CHECK_LIB(ipc,      main)
+ AC_CHECK_LIB(IPC,      main)
+@@ -615,13 +615,13 @@
+ AC_CHECK_LIB(BSD,      main)
+ AC_CHECK_LIB(gen,      main)
+ AC_CHECK_LIB(PW,       main)
+-AC_CHECK_LIB(resolv,   main)
++dnl AC_CHECK_LIB(resolv,   main)
+ AC_SEARCH_LIBS(getopt_long, [getopt gnugetopt])
+ # QNX:
+ AC_CHECK_LIB([[unix]], main)
+ AC_SEARCH_LIBS(crypt,  crypt)
+ # BeOS:
+-AC_CHECK_LIB(bind,     __inet_ntoa)
++AC_CHECK_FUNC(inet_ntoa, ,[AC_CHECK_LIB(bind,     __inet_ntoa)])
+ # Solaris:
+ AC_SEARCH_LIBS(fdatasync, [rt posix4])
+ # Cygwin:

@@ -207,6 +207,20 @@ case "$action" in
 		done
 		pgsubsys
 	;;
+	init)
+		echo "Note: this is only simple init action for convenience."
+		echo "If you want some non-standard options, consider using initdb(1)."
+		echo
+		for pgdir in $DB_CLUSTERS; do
+			if [ -f $pgdir/PG_VERSION ]; then
+				echo "Skipping existing cluster $pgdir"
+			else
+				echo "Initializing cluster $pgdir"
+				TMPDIR=/tmp su - postgres -s /bin/sh -c "initdb -D $pgdir"
+			fi
+		done
+		echo "REMEMBER to setup password for user \"postgres\"!"
+	;;
 	*)
 		msg_usage "$0 {start|stop|status|restart|reload}"
 		exit 1
