@@ -1,5 +1,9 @@
 %include	/usr/lib/rpm/macros.perl
-%define	_python_sitepkgsdir	%(echo `python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[:3] + '/site-packages/')"`)         
+%define	python_sitepkgsdir	%(echo `python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[:3] + '/site-packages/')"`)         
+%define	pythondir	%(echo `python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[:3] + '/')"`)         
+%define python_compile_opt python -O -c "import compileall; import sys; compileall.compile_dir(sys.argv[1])"
+%define python_compile python -c "import compileall; import sys; compileall.compile_dir(sys.argv[1])"
+
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
 Summary(fr):	Sysème de gestion de base de données PostgreSQL
@@ -7,7 +11,7 @@ Summary(pl):	PostgreSQL - system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.1.2
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -574,19 +578,13 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
         $RPM_BUILD_ROOT/var/{lib/pgsql,log} \
 	$RPM_BUILD_ROOT%{_libdir}/pgsql/{modules,sql} \
-	$RPM_BUILD_ROOT%{_libdir}/python2.0 \
+	$RPM_BUILD_ROOT%{python_sitepkgsdir} \
 	$RPM_BUILD_ROOT{%{_applnkdir}/System,%{_pixmapsdir}} \
 	$RPM_BUILD_ROOT%{_mandir}
 
 %{__make} -C src install \
 	DESTDIR=$RPM_BUILD_ROOT
 	
-#%{__make} -C src/interfaces/python install \
-#	DESTDIR=$RPM_BUILD_ROOT \
-#	LIBDIR=%{_libdir}
-
-#%{__make} -C doc install DESTDIR=$RPM_BUILD_ROOT
-
 touch $RPM_BUILD_ROOT/var/log/pgsql
 
 # Move PL/pgSQL procedural language to %{pgmoduledir}
@@ -611,11 +609,8 @@ install -d howto
   tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
 )
 
-#for f in `find $RPM_BUILD_ROOT -type f`; do
-#	if (file $f | grep -q "script"); then
-#		perl -pi -e 's@#\!.*python@#\!%{_bindir}/python@' $f;
-#	fi
-#done
+%python_compile_opt $RPM_BUILD_ROOT%{pythondir}
+%python_compile $RPM_BUILD_ROOT%{pythondir}
 
 gzip -9nf doc/FAQ doc/README* COPYRIGHT README HISTORY doc/bug.template \
 	doc/internals.ps* src/interfaces/odbc/readme.txt \
@@ -799,8 +794,9 @@ rm -f /tmp/tmp_perl_info
 
 %files python
 %defattr(644,root,root,755)
-%{_libdir}/python*/*.py
-%attr(755,root,root) %{_python_sitepkgsdir}/*.so
+%{pythondir}/*.pyc
+%{pythondir}/*.pyo
+%attr(755,root,root) %{python_sitepkgsdir}/*.so
 
 %files -n pgaccess
 %defattr(644,root,root,755)
