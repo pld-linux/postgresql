@@ -317,11 +317,11 @@ install -d $RPM_BUILD_ROOT/var/lib/pgsql
   
   LOCAL="$RPM_BUILD_ROOT/$PERLVER/perllocal.pod"
   mv $LOCAL $LOCAL.old
-  sed -e "s|$RPM_BUILD_ROOT/|/|g" < $LOCAL.old > $LOCAL
+  sed -e "s|$RPM_BUILD_ROOT/|/|g" < $LOCAL.old > $LOCAL.pg
   rm -f $LOCAL.old
 )
 find $RPM_BUILD_ROOT/usr/lib/perl5 -type f -print | \
-	sed -e "s|$RPM_BUILD_ROOT/|/|g" > perlfiles.list
+	sed -e "s|$RPM_BUILD_ROOT/|/|g" | grep -v "perllocal.pod$" > perlfiles.list
 find $RPM_BUILD_ROOT/usr/lib/perl5 -type d -name Pg -print | \
 	sed -e "s|$RPM_BUILD_ROOT/|%dir /|g" >> perlfiles.list
 
@@ -373,6 +373,17 @@ su postgres -c "LD_LIBRARY_PATH=/usr/lib \
 %post -p /sbin/ldconfig devel
 
 %post -p /sbin/ldconfig odbc
+
+%post perl
+POD=`find /usr/lib -name perllocal.pod.pg`
+DIR=`dirname $POD`
+if [ -f $DIR/perllocal.pod ]; then
+    mv $DIR/perllocal.pod $DIR/perllocal.pod.prepg
+    cat $DIR/perllocal.pod.pg $DIR/perllocal.pod.prepg > $DIR/perllocal.pod
+else
+    cp $DIR/perllocal.pod.pg $DIR/perllocal.pod
+fi
+rm -f $DIR/perllocal.pod.pg
 
 %preun
 if [ $1 = 0 ]; then
@@ -474,6 +485,7 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Mar  5 1999 Jacek Smyda <smyda@posexperts.com.pl>
 - remove adduser (standard user in passwd)
 - add polish group names
+- correct install perllocal.pod
 
 * Wed Mar  3 1999 Jacek Smyda <smyda@posexperts.com.pl>
 - correct group name
