@@ -20,6 +20,12 @@ Patch2:		postgresql-perl.patch
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
 Requires:	rc-scripts
+BuildRequires:	tcl-devel
+BuildRequires:	tk-devel
+BuildRequires:	readline-devel
+BuildRequires:	ncurses-devel >= 5.0
+BuildRequires:	rpm-perlprov
+BuildRequires:	XFree86-devel
 Buildroot:	/tmp/%{name}-%{version}-root
 Requires:	%{name}-libs = %{version}
 
@@ -134,7 +140,7 @@ Summary(pl):	PostgreSQL - pliki nag³ówkowe i biblioteki
 Summary(tr):	PostgreSQL baþlýk dosyalarý ve kitaplýklar
 Group:		Development/Libraries
 Group(pl):	Programowanie/Biblioteki
-#Requires:	%{name}-clients = %{version}
+Requires:	%{name}-libs = %{version}
 
 %description devel
 This package contains header files and libraries required to compile
