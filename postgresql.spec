@@ -5,7 +5,7 @@ Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	6.4.2
-Release:	6
+Release:	7
 Copyright:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -307,12 +307,17 @@ install -d $RPM_BUILD_ROOT/var/lib/pgsql
 
 # For Perl interface
 ( cd src/interfaces/perl5
-  PERLVER=`ls -d /usr/lib/perl5/${RPM_ARCH}-linux/5.*`
+
+perl -V:installarchlib  > /tmp/tmp_perl_info
+perl -V:installsitearch >> /tmp/tmp_perl_info
+. /tmp/tmp_perl_info
+
+  PERLVER=$installarchlib
   install -d $RPM_BUILD_ROOT/$PERLVER
   perl Makefile.PL
   make PREFIX=$RPM_BUILD_ROOT/usr install
 
-  PACK="$RPM_BUILD_ROOT/usr/lib/perl5/site_perl/${RPM_ARCH}-linux/auto/Pg/.packlist"
+  PACK="$RPM_BUILD_ROOT$installsitearch/auto/Pg/.packlist"
   mv $PACK $PACK.old
   sed -e "s|$RPM_BUILD_ROOT/|/|g" -e "s|./||" < $PACK.old > $PACK
   rm -f $PACK.old
@@ -406,6 +411,7 @@ rm -f $DIR/perllocal.pod.pg
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+rm -f /tmp/tmp_perl_info
 
 %files doc
 %defattr(644,root,root,755)
@@ -486,6 +492,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/include/iodbc
 
 %changelog
+* Wed Mar 24 1999 Jacek Smyda <smyda@posexperts.com.pl>
+  [6.4.2-7]
+- correct dir for perl
+
 * Fri Mar  5 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [6.4.2-6]
 - changed ermission on rc script to 754,
