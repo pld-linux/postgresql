@@ -1,0 +1,67 @@
+--- postgresql-7.1/src/pl/plperl/Makefile.PL~	Sun May  6 05:10:08 2001
++++ postgresql-7.1/src/pl/plperl/Makefile.PL	Sun May  6 16:07:33 2001
+@@ -80,11 +80,3 @@
+     $inherited;
+ }
+ 
+-sub MY::install {
+-
+-qq[
+-install :: all
+-	cp \$(INST_DYNAMIC) \$(DESTDIR)$ENV{plperl_installdir}
+-];
+-
+-}
+--- postgresql-7.1/src/interfaces/perl5/Makefile.PL~	Fri Mar 16 22:50:44 2001
++++ postgresql-7.1/src/interfaces/perl5/Makefile.PL	Sun May  6 16:25:44 2001
+@@ -53,14 +53,3 @@
+ 
+ WriteMakefile(%opts);
+ 
+-
+-sub MY::installbin { 
+-
+-q[
+-# Create a target that can be used to
+-# determine the Perl install directory.
+-echo-installdir:
+-	@echo $(INSTALLSITELIB)
+-];
+-
+-}
+--- postgresql-7.1/src/interfaces/perl5/GNUmakefile~	Sun May  6 16:26:11 2001
++++ postgresql-7.1/src/interfaces/perl5/GNUmakefile	Sun May  6 16:37:49 2001
+@@ -35,21 +35,7 @@
+ # installation directory somewhere.
+ 
+ install: Makefile
+-	$(MAKE) -f Makefile clean
+-	POSTGRES_LIB="$(libdir)" \
+-	  POSTGRES_INCLUDE="$(includedir)" \
+-	  $(PERL) $(srcdir)/Makefile.PL
+-	$(MAKE) -f Makefile all
+-	-@if [ -w "`$(MAKE) --quiet -f Makefile DESTDIR=\"$(DESTDIR)\" echo-installdir`" ]; then \
+-		$(MAKE) -f Makefile DESTDIR=\"$(DESTDIR)\" install; \
+-		$(MAKE) clean; \
+-	else \
+-		echo "*****" ;\
+-		echo "* Skipping the installation of the Perl module for lack of permissions."; \
+-		echo "* To install it, change to the directory "`pwd`","; \
+-		echo "* become the appropriate user, and do \`$(MAKE) install'."; \
+-		echo "*****"; \
+-	fi
++	$(MAKE) -f Makefile DESTDIR=\"$(DESTDIR)\" install
+ 
+ 
+ uninstall:
+--- postgresql-7.1/src/interfaces/python/GNUmakefile~	Sun May  6 16:26:11 2001
++++ postgresql-7.1/src/interfaces/python/GNUmakefile	Sun May  6 16:43:25 2001
+@@ -35,7 +35,7 @@
+ install: all
+ 	@echo "Installing Python module"
+ 	@if ( $(INSTALL_DATA) pg.py $(DESTDIR)$(python_moduledir) && \
+-	    $(MAKE) -f Makefile LIBDIR=\"$(LIBDIR)\" install ); then : ; else \
++	    $(MAKE) -f Makefile LIBDIR=\"$(DESTDIR)/$(prefix)/lib\" install ); then : ; else \
+ 		echo "*****" ;\
+ 		echo "* Skipping the installation of the Python interface module for lack"; \
+ 		echo "* of permissions. To install it, change to the directory"; \
