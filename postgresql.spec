@@ -27,6 +27,7 @@ Patch2:		%{name}-configure.patch
 Patch3:		%{name}-install.patch
 Patch4:		%{name}-ac_fixes.patch
 Patch5:		%{name}-python-install.patch
+Patch6:         %{name}-pg_ctl-silent.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
@@ -712,6 +713,7 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 tar xzf doc/man*.tar.gz
 
