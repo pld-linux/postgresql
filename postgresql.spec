@@ -6,7 +6,7 @@ Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.0.2
-Release:	2
+Release:	6
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy Danych
@@ -17,9 +17,7 @@ Source3:	%{name}.sysconfig
 Patch0:		postgresql-opt.patch
 Patch1:		postgresql-DESTDIR.patch
 Patch2:		postgresql-perl.patch
-#Patch3:		postgresql-alpha.patch
-#Patch4:		postgresql-sparc64.patch
-#Patch5:		postgresql-armlinux.patch
+Patch3:		postgresql-python.patch
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
 Requires:	rc-scripts
@@ -208,6 +206,17 @@ server.
 Pakiet ten zawiera tylko modu³y Perl'a wymagane dla dostêpu do serwera
 PostgreSQL.
 
+%package python
+Summary:	The python-based client programs needed for accessing a PostgreSQL server
+Group:		Development/Databases
+Requires:	python >= 1.5
+Requires:	postgresql = %{version}
+
+%description python
+postgresql-python includes the python-based client programs and client
+libraries that you'll need to access a PostgreSQL database management system
+server.
+
 %package doc
 Summary:	Documentation for PostgreSQL
 Summary(pl):	Dodatkowa dokumantacja dla PostgreSQL
@@ -254,7 +263,7 @@ Summary:	ODBC interface to PostgreSQL - static libraries
 Summary(pl):	Interface ODBC do PostgreSQL - biblioteki statyczne
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy Danych
-#Requires:	%{name}-odbc-devel = %{version}
+Requires:	%{name}-odbc-devel = %{version}
 
 %description odbc-static
 This package includes static library for interface ODBC.
@@ -294,7 +303,7 @@ Summary:	tcl interface for PostgreSQL
 Summary(pl):	tcl interface dla PostgreSQL
 Group:		Development/Languages/Tcl
 Group(pl):	Programowanie/Jêzyki/Tcl
-#Requires:	%{name}-libs = %{version}
+Requires:	%{name}-libs = %{version}
 
 %description tcl
 tcl interface for PostgreSQL.
@@ -308,6 +317,7 @@ Summary(pl):	Czê¶æ dla programistów interafece tcl dla PostgreSQL
 Group:		Development/Languages/Tcl
 Group(pl):	Programowanie/Jêzyki/Tcl
 Requires:	%{name}-tcl = %{version}
+Requires:	%{name}-devel = %{version}
 
 %description tcl-devel
 Development part of tcl interface for PostgreSQL.
@@ -333,9 +343,8 @@ Biblioteki statyczne interafece tcl dla PostgreSQL
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-#%patch3 -p1
+%patch3 -p1
 #%patch4 -p1
-#%patch5 -p1
 
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
@@ -348,18 +357,20 @@ aclocal
 autoconf
 LDFLAGS="-s"; export LDFLAGS
 %configure \
-	--enable-hba \
-	--enable-locale \
-	--with-odbc \
-	--with-odbcinst=%{_sysconfdir} \
-	--with-tcl \
-	--with-x \
-	--with-mulitbyte=UNICODE \
 %ifarch %{ix86}
 	--with-template=linux_i386 \
 %else
 	--with-template=linux_%{_target_cpu} \
 %endif
+	--enable-hba \
+	--with-mulitbyte=UNICODE \
+	--enable-locale \
+	--with-odbc \
+	--with-odbcinst=%{_sysconfdir} \
+	--with-tcl \
+	--with-tk \
+	--with-python \
+	--with-x \
 	--with-perl
 
 %{__make} OPT="$RPM_OPT_FLAGS"
@@ -370,41 +381,23 @@ cd ..
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
-        $RPM_BUILD_ROOT{%{_bindir},%{_libdir}/pgsql,%{_mandir},%{_includedir}/pgsql} \
-        $RPM_BUILD_ROOT/var/lib/pgsql
+        $RPM_BUILD_ROOT/var/lib/pgsql \
+	$RPM_BUILD_ROOT%{_libdir}/pgsql
 
-# PREFIX (hack for perl)
-( cd src
-  make DESTDIR=$RPM_BUILD_ROOT install
-)
-( cd doc
-  make DESTDIR=$RPM_BUILD_ROOT install
-)
+make -C src install DESTDIR=$RPM_BUILD_ROOT
+make -C doc install DESTDIR=$RPM_BUILD_ROOT
 
 # For Perl interface
-
 ( cd $RPM_BUILD_ROOT%{perl_sitearch}/auto/Pg
   mv .packlist .packlist.old
   sed -e "s|$RPM_BUILD_ROOT/|/|g" -e "s|./||" < .packlist.old > .packlist
   rm -f .packlist.old
 )
 
-# Move all includes beneath %{_includedir}/pgsql.
-( cd $RPM_BUILD_ROOT%{_includedir}
-  rm -rf include
-  for f in *.h access commands executor lib libpq libpq++ port utils
-  do
-	mv $f pgsql
-  done
-)
-
 # Move all templates/examples beneath %{_libdir}/pgsql
 ( cd $RPM_BUILD_ROOT%{_libdir}
   mv  *description *source *sample pgsql
 )
-
-# Move odbc.ini file to etc
-mv -f $RPM_BUILD_ROOT%{_prefix}/*.ini $RPM_BUILD_ROOT%{_sysconfdir}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
@@ -586,7 +579,7 @@ rm -f /tmp/tmp_perl_info
 
 %files odbc-devel
 %defattr(644,root,root,755)
-%{_includedir}/iodbc
+%{_includedir}/pgsql/iodbc
 %attr(755,root,root) %{_libdir}/libpsqlodbc.so
 
 %files odbc-static
