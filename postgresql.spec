@@ -10,8 +10,6 @@
 
 %include	/usr/lib/rpm/macros.python
 
-%define relc rc2
-
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
 Summary(es):	Gestor de Banco de Datos PostgreSQL
@@ -24,10 +22,10 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.3
-Release:	0.2.%{relc}
+Release:	0.3
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{relc}.tar.gz
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
@@ -716,7 +714,7 @@ Za pomoc╠ komendy createlang mo©na dodaФ wsparcie dla jЙzyka
 proceduralnego PL/TCL dla swojej bazy danych.
 
 %prep
-%setup  -q -n %{name}-%{version}%{relc}
+%setup  -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p0
