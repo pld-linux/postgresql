@@ -23,7 +23,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.3.1
-Release:	0.1
+Release:	0.2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -33,6 +33,7 @@ Source3:	%{name}.sysconfig
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-pg_ctl-silent.patch
 Patch2:		%{name}-pg_ctl-nopsql.patch
+Patch3:		%{name}-conf.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -720,6 +721,7 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p0
+%patch3 -p1
 
 tar xzf doc/man*.tar.gz
 
