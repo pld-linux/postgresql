@@ -1,7 +1,5 @@
 #
 # - pg_autovacuum init support? look at its readme file, please
-# - put pgcrypto docs into docdir
-# - put pgcrypto sql files in %{_datadir}/postgresql
 # - pg_ctl uses psql again, current patch2 doesn't eliminate this
 # - remove postgresql-configure patch and create postgresql-doc patch,
 #   which will prevent documentation and manuals installation (the routine
@@ -10,13 +8,13 @@
 #
 # Conditional build:
 %bcond_without  tests			# disable testing
-%bcond_without	tcl			# disables Tcl support
+%bcond_without	tcl	    		# disables Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
 %bcond_without	perl			# disable perl support
 %bcond_without	python			# disable python support
-%bcond_with	jdbc			# enable JDBC driver
+%bcond_with		jdbc			# enable JDBC driver
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
-					# (disabled by default because it is a security risk)
+								# (disabled by default because it is a security risk)
 
 %include	/usr/lib/rpm/macros.python
  
@@ -32,7 +30,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.4
-Release:	0.8
+Release:	0.9
 License:	BSD
 Group:		Applications/Databases
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -51,6 +49,7 @@ Patch5:		%{name}-link.patch
 Patch6:		%{name}-com_err.patch
 Patch7:		%{name}-ecpg_link.patch
 Patch8:		%{name}-ecpg-includedir.patch
+Patch9:		%{name}-contrib_install.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -752,6 +751,7 @@ Funkcje kryptograficzne dla PostgreSQL.
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -1089,7 +1089,6 @@ fi
 
 %files module-pgcrypto
 %defattr(644,root,root,755)
+%doc contrib/pgcrypto/README*
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
-# Hmm i think two below lines shouldn't be here - but i can be wrong ;)
-#%{_datadir}/%{name}/contrib/pgcrypto.sql
-#%{_datadir}/info/%{name}/contrib/README.pgcrypto.gz
+%{_datadir}/%{name}/pgcrypto.sql
