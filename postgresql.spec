@@ -1090,7 +1090,6 @@ autoconf
 	--with-perl \
 	--with-python \
 	--with-openssl \
-	--with-perl \
 	--enable-odbc \
 	--with-odbcinst=%{_sysconfdir} \
 	--with-x \
