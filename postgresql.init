@@ -82,15 +82,8 @@ case "$1" in
 			exit 1
 		    fi
 		else
-		    # Create sample database
-            	    if [ ! -d $POSTGRES_DATA_DIR ]; then
-			mkdir -p $POSTGRES_DATA_DIR
-			chown postgres.postgres $POSTGRES_DATA_DIR
-			chmod 700 $POSTGRES_DATA_DIR
-		    fi
-		    TMPDIR=/tmp su - postgres -c "LD_LIBRARY_PATH=/usr/lib \
-			initdb --pgdata=$POSTGRES_DATA_DIR \
-			-L /usr/share/postgresql -E $ENCODING"
+		    echo "Postgresql database not initialized. Try \"$0 init\" before start."
+		    exit 1
 		fi
 		
 		msg_starting PostgreSQL 
@@ -177,6 +170,32 @@ case "$1" in
 		echo -e "\n$out";
 		exit 1
 	fi
+	;;
+    init)
+	if [ -f "$POSTGRES_DATA_DIR/PG_VERSION" ]; then
+	    echo "Seems that database is initialized now. Remove by hand $POSTGRES_DATA_DIR"
+	    echo "before initialize database."
+	    exit 1
+	fi
+
+	echo -n "Specify encoding for pgsql database (eg: LATIN1, KOI8) [$ENCODING]: "
+	read new_encoding
+	ENCODING=${new_encoding:-$ENCODING}
+
+	show "Creating initial postgresql database usinc $ENCODING encoding"
+	busy
+
+        # Create sample database
+	if [ ! -d $POSTGRES_DATA_DIR ]; then
+	    mkdir -p $POSTGRES_DATA_DIR
+	    chown postgres.postgres $POSTGRES_DATA_DIR
+	    chmod 700 $POSTGRES_DATA_DIR
+	fi
+
+	
+	TMPDIR=/tmp su - postgres -c "LD_LIBRARY_PATH=/usr/lib \
+			initdb --pgdata=$POSTGRES_DATA_DIR \
+			-L /usr/share/postgresql -E $ENCODING"
 	;;
   *)
 	msg_usage "$0 {start|stop|status|restart|reload}"
