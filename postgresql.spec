@@ -12,7 +12,9 @@ Summary(es):	Gestor de Banco de Datos PostgreSQL
 Summary(fr):	SysХme de gestion de base de donnИes PostgreSQL
 Summary(pl):	PostgreSQL - system bazodanowy
 Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
+Summary(ru):	PostgreSQL - система управления базами данных
 Summary(tr):	Veri TabanЩ YЖnetim Sistemi
+Summary(uk):	PostgreSQL - система керування базами даних
 Name:		postgresql
 Version:	7.2.1
 Release:	6
@@ -215,11 +217,73 @@ desenvolvimento do PostgreSQL. O coordenador atual И Marc G. Fournier
 (scrappy@postgreSQL.org). Esta equipe И agora responsАvel pelo
 desenvolvimento atual e futuro do PostgreSQL.
 
+%description -l ru
+PostgreSQL - система управления базами данных (прежде известная как
+Postgres, потом как Postgres95).
+
+PostgreSQL - это расширенная версия системы управления базами данных
+POSTGRES, исследовательского прототипа DBMS следующей генерации.
+Сохраняя мощную модель данных и богатый набор типов данных POSTGRES,
+она заменяет язык запросов PostQuel расширенным набором SQL.
+PostgreSQL бесплатен и поставляется в виде полного комплекта исходных
+текстов.
+
+PostgreSQL разрабатывался командой Internet-разработчиков, подписанных
+на список рассылки, посвященный разработке PostgreSQL. В настоящее
+время координатором является Marc G. Fournier
+(scrappy@postgreSQL.org). Эта команда в настоящее время отвечает за
+все текущие и будущие разработки PostgreSQL.
+
+Авторами PostgreSQL 1.01 были Andrew Yu и Jolly Chen. Многие внесли
+свой вклад в портирование, тестирование, отладку и улучшение кода.
+Оригинальный код Postgres, от которого произошел PostgreSQL, был
+создан усилиями студентов, аспирантов и персонала, работающего под
+руководством профессора Michael Stonebraker в University of
+California, Berkeley.
+
+Оригинальное название ПО в Berkeley было Postgres. Когда в 1995 году
+была добавлена функциональность SQL, название изменилось на
+Postgres95. В конце 1996 года оно еще раз изменилось и теперь это
+PostgreSQL.
+
+PostgreSQL работает на Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
+и большинстве других разновидностей Unix.
+
 %description -l tr
 PostgreSQL, POSTGRES'den tЭremiЧ bir veri tabanЩ yЖnetim sistemidir
 (DBMS). GЭГlЭ veri modeli ve zengin POSTGRES veri tiplerini
 desteklerken SQL'in geniЧletilmiЧ bir altkЭmesi yerine PostQuel
 sorgulama dilini koyar.
+
+%description -l uk
+PostgreSQL - система керування базами даних (ран╕ш в╕дома як Postgres,
+пот╕м як Postgres95).
+
+PostgreSQL - це розширена верс╕я системи керування базами даних
+POSTGRES, досл╕дницького прототипу DBMS наступно╖ генерац╕╖.
+Збер╕гаючи потужну модель даних та багатий наб╕р тип╕в даних POSTGRES,
+вона зам╕ню╓ мову запит╕в PostQuel розширеним набором SQL. PostgreSQL
+безкоштовна та поставля╓ться у вигляд╕ повного комплекту вих╕дних
+текст╕в.
+
+PostgreSQL розробля╓ться командою Internet-програм╕ст╕в, учасник╕в
+списку розсилки, присвяченого розробц╕ PostgreSQL. Нараз╕
+координатором ╓ Marc G. Fournier (scrappy@postgreSQL.org). Ця команда
+в╕дпов╕да╓ за вс╕ поточн╕ та майбутн╕ розробки PostgreSQL.
+
+Авторами PostgreSQL 1.01 були Andrew Yu та Jolly Chen. Багато людей
+внесли св╕й внесок в портування, тестування, в╕дладку та покращення
+коду. Ориг╕нальний код Postgres, в╕д якого походить PostgreSQL, був
+створений зусиллями студент╕в, асп╕рант╕в та персоналу, який працював
+п╕д кер╕вництвом професора Michael Stonebraker в University of
+California, Berkeley.
+
+Ориг╕нальна назва програми в Berkeley була Postgres. Коли в 1995 роц╕
+було додано функц╕ональн╕сть SQL, назва зм╕нилася на Postgres95. В
+к╕нц╕ 1996 року вона ще раз зм╕нилась ╕ зараз це PostgreSQL.
+
+PostgreSQL працю╓ на Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
+та б╕льшост╕ ╕нших р╕зновид╕в Unix.
 
 %package devel
 Summary:	PostgreSQL development header files and libraries
@@ -228,7 +292,9 @@ Summary(es):	Archivos de inclusiСn y bibliotecas PostgreSQL
 Summary(fr):	En-tЙtes et bibliothХques de dИveloppement PostgreSQL
 Summary(pl):	PostgreSQL - pliki nagЁСwkowe i biblioteki
 Summary(pt_BR):	Arquivos de inclusЦo e bibliotecas para desenvolvimento com o PostgreSQL
+Summary(ru):	PostgreSQL - хедеры и библиотеки разработчика
 Summary(tr):	PostgreSQL baЧlЩk dosyalarЩ ve kitaplЩklar
+Summary(uk):	PostgreSQL - хедери та б╕бл╕отеки програм╕ста
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}
 
@@ -261,9 +327,17 @@ Este pacote contИm arquivos de inclusЦo e bibliotecas requeridas para
 compilaГЦo de aplicativos que se comunicam diretamente com o servidor
 backend PostgreSQL.
 
+%description devel -l ru
+Этот пакет содержит хедеры и библиотеки, необходимые для сборки
+приложений, непосредственно взаимодействующих с сервером PostgreSQL.
+
 %description devel -l tr
 Bu paket, PostgreSQL sunucusuyla konuЧacak yazЩlЩmlar geliЧtirmek iГin
 gereken baЧlЩk dosyalarЩnЩ ve kitaplЩklarЩ iГerir.
+
+%description devel -l uk
+Цей пакет м╕стить хедери та б╕бл╕отеки, необх╕дн╕ для розробки
+програм, як╕ безпосередньо вза╓мод╕ють з сервером PostgreSQL.
 
 %package backend-devel
 Summary:	PostgreSQL backend development header files
@@ -284,6 +358,8 @@ Summary:	Clients needed to access a PostgreSQL server
 Summary(es):	Clientes necesarios para acceder al servidor PostgreSQL
 Summary(pl):	Klienci wymagani do dostЙpu do serwera PostgreSQL
 Summary(pt_BR):	Clientes necessАrios para acessar o servidor PostgreSQL
+Summary(ru):	Клиентские программы, необходимые для доступа к серверу PostgreSQL
+Summary(uk):	Кл╕╓нтськ╕ програми, необх╕дн╕ для доступу до сервера PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name}-libs = %{version}
 
@@ -307,11 +383,32 @@ poleceЯ. Serwer znajduje siЙ w gЁСwnym pakiecie.
 Este pacote inclui somente os clientes necessАrios para acessar um
 servidor PostgreSQL. O servidor estА no pacote principal.
 
+%description clients -l ru
+Этот пакет включает только клиентские программы и библиотеки,
+необходимые для доступа к серверу PostgreSQL. Сервер входит в главный
+пакет. Если вам надо только работать с другим сервером PostgreSQL, это
+единственный пакет, который вам надо установить.
+
+Теперь пакеты с библиотеками для разных языков программирования (C,
+C++, PERL и TCL) разделены. Этот пакет включает только библиотеки для
+языка C.
+
+%description clients -l uk
+Цей пакет м╕стить т╕льки кл╕╓нтськ╕ програми та б╕бл╕отеки, необх╕дн╕
+для доступу до сервера PostgreSQL. Сервер м╕ститься в головному
+пакет╕. Якщо вам потр╕бно працювати з ╕ншим сервером PostgreSQL, це
+╓диний пакет, який вам треба встановити.
+
+Тепер пакети з б╕бл╕отеками для р╕зних мов програмування (C, C++, PERL
+╕ TCL) розд╕лен╕. Цей пакет м╕стить т╕льки б╕бл╕отеки для мови C.
+
 %package perl
 Summary:	Perl interface to PostgreSQL database
 Summary(es):	MСdulo Perl para acceder un servidor PostgreSQL
 Summary(pl):	Interfejs dla Perla umo©liwiaj╠cy dostЙp do baz PostgreSQL
 Summary(pt_BR):	MСdulo Perl para acesso ao servidor PostgreSQL
+Summary(ru):	Библиотеки и модули для доступа к postgresql из perl
+Summary(uk):	Б╕бл╕отеки та модул╕ для доступу до postgresql з Perl
 Group:		Applications/Databases
 Requires:	perl >= 5.004
 Requires:	%{name}-libs = %{version}
@@ -329,6 +426,20 @@ PostgreSQL.
 
 %description perl -l pt_BR
 MСdulo Perl para acesso ao servidor PostgreSQL.
+
+%description perl -l ru
+Это пакет postgresql для поддержки perl. Он включает модули perl и
+вспомогательные файлы для доступа к postgresql из perl. Включен только
+для поддержки существующих программ с использованием этого устаревшего
+интерфейса. Не используйте во вновь создаваемых программах -
+используйте perl-DBD-%{name} !
+
+%description perl -l uk
+Це пакет postgresql для п╕дтримки perl. В╕н м╕стить модул╕ perl та
+допом╕жн╕ файли для доступу до postgresql з perl. Включений т╕льки для
+п╕дтримки ╕снуючих програм з використанням цього застар╕лого
+╕нтерфейсу. Не використовуйте його в нових програмах, використовуйте
+perl-DBD-%{name} !
 
 %package -n python-postgresql
 Summary:	The python-based client programs needed for accessing a PostgreSQL server
@@ -396,6 +507,8 @@ Summary:	PostgreSQL static libraries
 Summary(es):	Bibliotecas estaticas PostgreSQL
 Summary(pl):	Biblioteki statyczne programu PostgreSQL
 Summary(pt_BR):	Bibliotecas estАticas PostgreSQL
+Summary(ru):	Статические библиотеки для программирования с postgresql
+Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з postgresql
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}
 
@@ -415,9 +528,19 @@ Este pacote contИm as bibliotecas estАticas requeridas para compilaГЦo
 de aplicativos que se comunicam diretamente com o servidor backend
 PostgreSQL.
 
+%description static -l ru
+Это отдельный пакет со статическими библиотеками, которые больше не
+входят в %{name}-devel.
+
+%description static -l uk
+Це окремий пакет з╕ статичними б╕бл╕отеками, як╕ б╕льш не входять в
+%{name}-devel.
+
 %package c++
 Summary:	C++ interface to PostgreSQL
 Summary(pl):	Interfejs C++ do PostgreSQL
+Summary(ru):	Клиентские библиотеки для поддержки клиентов PostgreSQL, написанных на C++
+Summary(uk):	Кл╕╓нтськ╕ б╕бл╕отеки  для п╕дтримки кл╕╓нт╕в PostgreSQL, написаних на C++
 Group:		Applications/Databases
 Requires:	%{name}-libs = %{version}
 
@@ -427,9 +550,19 @@ This package includes library for C++ interface to PostgreSQL.
 %description c++ -l pl
 Pakiet ten zawiera biblioteki dla interfejsu C++ do PostgreSQL.
 
+%description c++ -l ru
+libpq++ -- объектно-ориентированная библиотека для доступа к базе
+данных PostgreSQL.
+
+%description c++ -l uk
+libpq++ -- об'╓ктно-ор╕╓нтована б╕бл╕отека для доступу до бази даних
+PostgreSQL.
+
 %package c++-devel
 Summary:	C++ interface to PostgreSQL - development part
 Summary(pl):	Interfejs C++ do PostgreSQL - cze╤Ф programistyczna
+Summary(ru):	Хедеры и библиотеки для разработок с использованием libpq++ (C++ интерфейс для postgresql)
+Summary(uk):	Хедери та б╕бл╕отеки для розробок з використанням libpq++ (╕нтерфейс C++ для postgresql)
 Group:		Applications/Databases
 Requires:	%{name}-c++ = %{version}
 Requires:	%{name}-devel = %{version}
@@ -440,9 +573,21 @@ This package includes library and header files for C++ interface.
 %description c++-devel -l pl
 Pakiet ten zawiera biblioteki i pliki nagЁСwkowe dla interfejsu C++.
 
+%description c++-devel -l ru
+Это пакет разработчика для программирования с libpq++. Он включает
+хедеры и библиотеки для использования в программах, которые используют
+код или API libpq++ (C++ интерфейс для postgresql).
+
+%description c++-devel -l uk
+Це пакет програм╕ста для програмування з libpq++. В╕н м╕стить хедери
+та б╕бл╕отеки для використання в програмах, як╕ використовують код або
+API libpq++ (╕нтерфейсу C++ для postgresql).
+
 %package c++-static
 Summary:	C++ interface to PostgreSQL - static libraries
 Summary(pl):	Interfejs C++ do PostgreSQL - biblioteki statyczne
+Summary(ru):	Статические библиотеки для программирования с libpq++
+Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з libpq++
 Group:		Applications/Databases
 Requires:	%{name}-c++-devel = %{version}
 
@@ -451,6 +596,14 @@ This package includes static library for interface C++.
 
 %description c++-static -l pl
 Pakiet ten zawiera biblioteki statyczne dla interfejsu C++.
+
+%description c++-static -l ru
+Это отдельный пакет со статическими библиотеками, которые больше не
+входят в %{name}-c++-devel.
+
+%description c++-static -l uk
+Це окремий пакет з╕ статичними б╕бл╕отеками, як╕ б╕льше не входять в
+%{pkg_name}-c++-devel.
 
 %package odbc
 Summary:	ODBC interface to PostgreSQL
@@ -514,6 +667,8 @@ Summary:	tcl interface for PostgreSQL
 Summary(es):	Bibliotecas y shell TCL para acceder un servidor PostgreSQL
 Summary(pl):	Interfejs tcl dla PostgreSQL
 Summary(pt_BR):	Bibliotecas e shell para programas em TCL acessarem o servidor PostgreSQL
+Summary(ru):	Библиотеки для доступа к postgresql из tcl
+Summary(uk):	Б╕бл╕отеки для доступу до postgresql з tcl
 Group:		Development/Languages/Tcl
 Requires:	%{name}-libs = %{version}
 
@@ -530,9 +685,17 @@ Interfejs tcl dla PostgreSQL.
 Bibliotecas e shell para programas em TCL acessarem o servidor
 PostgreSQL
 
+%description tcl -l ru
+libpgtcl -- API для доступа к базе данных PostgreSQL из языка tcl.
+
+%description tcl -l uk
+libpgtcl -- API для доступу до бази даних PostgreSQL з мови tcl.
+
 %package tcl-devel
 Summary:	Development part of tcl interface for PostgreSQL
 Summary(pl):	CzЙ╤Ф dla programistСw interfejsu tcl dla PostgreSQL
+Summary(ru):	Хедеры и библиотеки для разработок с использованием libpgtcl (tcl интерфейс для postgresql)
+Summary(uk):	Хедери та б╕бл╕отеки для розробок з використанням libpgtcl (tcl-╕нтерфейс для postgresql)
 Group:		Development/Languages/Tcl
 Requires:	%{name}-tcl = %{version}
 Requires:	%{name}-devel = %{version}
@@ -543,17 +706,37 @@ Development part of tcl interface for PostgreSQL.
 %description tcl-devel -l pl
 CzЙ╤Ф interfejsu tcl dla PostgreSQL przeznaczona dla programistСw.
 
+%description tcl-devel -l ru
+Это пакет разработчика для программирования с libpgtcl. Он включает
+хедеры и библиотеки для использования в программах, которые используют
+код или API libtcl (tcl интерфейс для postgresql).
+
+%description tcl-devel -l uk
+Це пакет програм╕ста для програмування з libpgtcl. В╕н м╕стить хедери
+та б╕бл╕отеки для використання в програмах, як╕ використовують код або
+API libtcl (tcl-╕нтерфейсу для postgresql).
+
 %package tcl-static
 Summary:	Static libraries of tcl interface for PostgreSQL
 Summary(pl):	Biblioteki statyczne interfejsu tcl dla PostgreSQL
+Summary(ru):	Статические библиотеки для программирования с libpgtcl
+Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з libpgtcl
 Group:		Development/Languages/Tcl
 Requires:	%{name}-tcl-devel = %{version}
 
 %description tcl-static
 Static libraries of tcl interface for PostgreSQL.
 
-%description tcl-devel -l pl
+%description tcl-static -l pl
 Biblioteki statyczne interfejsu tcl dla PostgreSQL.
+
+%description tcl-static -l ru
+Это отдельный пакет со статическими библиотеками, которые больше не
+входят в %{_name}-tcl-devel.
+
+%description tcl-static -l uk
+Це окремий пакет з╕ статичними б╕бл╕отеками, що б╕льше не входять до
+%{name}-tcl-devel.
 
 %package module-plpgsql
 Summary:	PL/pgSQL - PostgreSQL procedural language
