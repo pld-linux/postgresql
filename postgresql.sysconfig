@@ -2,8 +2,8 @@
 
 #
 # Edit postgresql.conf file in database cluster directory to configure
-# PostgreSQL. When you want to start more then one PostgreSQL instance,
-# than you should change TCP/IP port, at least.
+# PostgreSQL. If you want to start more than one PostgreSQL instance,
+# you should change TCP/IP port, at least.
 #
 
 # standard setting
