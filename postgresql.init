@@ -104,7 +104,8 @@ case "$1" in
 			$(echo "/usr/bin/pg_ctl start $PGSQL_CMDLINE -l $POSTGRES_LOG") \
 			$([ "$POSTMASTER_OPTIONS". != . ] && echo "-o '$POSTMASTER_OPTIONS'") \
 			$(echo "2>&1 >/dev/null")";
-
+		
+		usleep 100000
 		out=`status postmaster`
 		if [ $? -eq 0 ]; then 
 		    deltext; ok
