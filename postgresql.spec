@@ -11,7 +11,7 @@ Summary(pl):	PostgreSQL - system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.1.3
-Release:	4
+Release:	5
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -30,6 +30,7 @@ Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
 Prereq:		rc-scripts
+Prereq:		%{name}-clients
 BuildRequires:	autoconf
 BuildRequires:	tcl-devel >= 8.3.2
 BuildRequires:	tk-devel >= 8.3.2
