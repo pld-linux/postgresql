@@ -1,6 +1,7 @@
 #
 # TODO:
 # - pg_autovacuum init support? look at its readme file, please
+# - init script for slon (Slony-I daemon).
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
@@ -13,6 +14,9 @@
 %bcond_with	jdbc			# build JDBC interface and Java tools
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
+%bcond_without	slony1			# disable Slony-I replication system
+
+%define		slony1_version	1.0.5
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
@@ -26,7 +30,7 @@ Summary(uk):	PostgreSQL - ”…”‘≈Õ¡ À≈“’◊¡ŒŒ— ¬¡⁄¡Õ… ƒ¡Œ…»
 Summary(zh_CN):	PostgreSQL øÕªß∂À≥Ã–Ú∫Õø‚Œƒº˛
 Name:		postgresql
 Version:	7.4.6
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -35,6 +39,8 @@ Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
+Source4:	http://developer.postgresql.org/~wieck/slony1/download/slony1-%{slony1_version}.tar.gz
+# Source4-md5:	66fcc0f53028101e4e0f969e5f47fe43
 Patch0:		%{name}-doc.patch
 Patch1:		%{name}-pg_ctl-silent.patch
 Patch2:		%{name}-pg_ctl-nopsql.patch
@@ -759,8 +765,26 @@ Implementacja nowego typu danych tsvector - typu danych podlegaj±cego
 przeszukiwaniu z dostÍpem poprzez indeksy:
 http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 
+%package -n slony1
+Summary:	Slony-I -- a "master to multiple slaves" replication system for PostgreSQL
+Summary(pl):	Slony-I -- system replikacji dla PostgreSQL
+URL:		http://slony.info/
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description -n slony1
+Slony-I is a "master to multiple slaves" replication system with cascading and
+failover.
+
+The big picture for the development of Slony-I is a master-slave system that
+includes all features and capabilities needed to replicate large databases to a
+reasonably limited number of slave systems.
+
+Slony-I is a system for data centers and backup sites, where the normal mode of
+operation is that all nodes are available. 
+
 %prep
-%setup -q
+%setup -q -a4
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -818,6 +842,15 @@ install /usr/share/automake/config.* config
 %{?with_tests:%{__make} check}
 %endif
 
+%if %{with slony1}
+cd slony1-%{slony1_version}
+%configure \
+	--with-pgsourcetree=`pwd`/..
+%{__make}
+cd ..
+%endif
+
+
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
@@ -841,6 +874,11 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 
 %{__make} -C contrib/tsearch2 install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+%if %{with slony1}
+%{__make} install -C slony1-%{slony1_version} \
+	DESTDIR=$RPM_BUILD_ROOT
+%endif
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
 
@@ -1131,3 +1169,13 @@ fi
 %{_datadir}/%{name}/tsearch2.sql
 %{_datadir}/%{name}/untsearch2.sql
 %{_datadir}/%{name}/*.stop
+
+%if %{with slony1}
+%files -n slony1
+%defattr(644,root,root,755)
+%doc slony1-%{slony1_version}/doc/howto/*
+%attr(755,root,root) %{_bindir}/slon
+%attr(755,root,root) %{_bindir}/slonik
+%{_pgmoduledir}/slony1_funcs.so
+%{_pgmoduledir}/xxid.so
+%endif
