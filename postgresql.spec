@@ -941,7 +941,7 @@ fi
 %doc COPYRIGHT README HISTORY doc/{FAQ*,README*,bug.template}
 %doc contrib/pg_autovacuum/README*
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
-%attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/postgresql
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/postgresql
 
 %attr(755,root,root) %{_bindir}/clusterdb
 %attr(755,root,root) %{_bindir}/createdb
@@ -978,7 +978,7 @@ fi
 
 %attr(700,postgres,postgres) /home/services/postgres
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
-%attr(640,postgres,postgres) %config(noreplace) %verify(not md5 size mtime) /var/log/pgsql
+%attr(640,postgres,postgres) %config(noreplace) %verify(not md5 mtime size) /var/log/pgsql
 
 %{_mandir}/man1/clusterdb.1*
 %{_mandir}/man1/createdb.1*
@@ -1107,12 +1107,12 @@ fi
 %files -n slony1
 %defattr(644,root,root,755)
 %doc slony1-%{slony1_version}/doc/howto/*
-%config(noreplace) /etc/sysconfig/slony1
-%attr(744,root,root) /etc/rc.d/init.d/slony1
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/slony1
+%attr(754,root,root) /etc/rc.d/init.d/slony1
 %attr(755,root,root) %{_bindir}/slon
 %attr(755,root,root) %{_bindir}/slonik
 %attr(750,slony1,slony1) %dir /home/services/slony1
 %attr(600,slony1,slony1) /home/services/slony1/.pgpass
-%{_pgmoduledir}/slony1_funcs.so
-%{_pgmoduledir}/xxid.so
+%attr(755,root,root) %{_pgmoduledir}/slony1_funcs.so
+%attr(755,root,root) %{_pgmoduledir}/xxid.so
 %endif
