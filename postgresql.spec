@@ -6,7 +6,7 @@ Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	6.5.3
-Release:	2
+Release:	3
 Copyright:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy Danych
@@ -396,6 +396,15 @@ install -d howto
 ( cd howto
   tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
 )
+
+# Install all header files. They are required
+# by executor/spi.h and commands/trigger.h
+
+( cd src/include
+  cp -rf * $RPM_BUILD_ROOT%{_includedir}/pgsql
+)
+
+
 
 strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so*
 
