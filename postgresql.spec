@@ -552,6 +552,9 @@ autoconf
 %else
 	--with-template=linux_%{_target_cpu} \
 %endif
+  --enable-locale \
+  --enable-multibyte \
+  --enable-unicode-conversion \
 	--enable-hba \
 	--with-odbc \
 	--with-odbcinst=%{_sysconfdir} \
@@ -688,6 +691,7 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_bindir}/dropuser
 %attr(755,root,root) %{_bindir}/initdb
 %attr(755,root,root) %{_bindir}/initlocation
+%attr(755,root,root) %{_bindir}/pg_encoding
 %attr(755,root,root) %{_bindir}/pg_passwd
 %attr(755,root,root) %{_bindir}/pg_version
 %attr(755,root,root) %{_bindir}/postgres
