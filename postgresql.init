@@ -71,7 +71,7 @@ fi
 pgstatus() {
 	PG_STATUS="unknown"
 	PG_PID="unknown"
-	output=`TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $1 status"`
+	output=`TMPDIR=/tmp su - postgres -c "/usr/bin/pg_ctl -D $1 status"`
 	status=`echo $?`
 
 	if [ $status -eq 1 ]; then
@@ -92,7 +92,7 @@ pgstatus() {
 pgstart() {
 	msg_starting "PostgreSQL $1"
 	busy
-	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $1 start 2>&1 >/dev/null"
+	TMPDIR=/tmp su - postgres -c "/usr/bin/pg_ctl -w -D $1 start 2>&1 >/dev/null"
 	sleep 1
 	pgstatus "$1"
 
@@ -159,7 +159,7 @@ case "$action" in
 			busy
 				# is postgresql really alive?
 			if ps ax | grep -v grep | grep -q "$PG_PID"; then
-				TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir stop -m fast 2>&1 >/dev/null"
+				TMPDIR=/tmp su - postgres -c "/usr/bin/pg_ctl -w -D $pgdir stop -m fast 2>&1 >/dev/null"
 				pgstatus "$pgdir"
 				if [ "$PG_STATUS" != "not running" ]; then
 					fail
@@ -178,7 +178,7 @@ case "$action" in
 	;;
   status)
 	for pgdir in $DB_CLUSTERS; do
-	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir status"
+	TMPDIR=/tmp su - postgres -c "/usr/bin/pg_ctl -D $pgdir status"
 		done
 	;;
   restart)
@@ -195,7 +195,7 @@ case "$action" in
 			busy
 			# is postgresql really alive?
 			if ps ax | grep -v grep | grep -q "$PG_PID"; then
-				TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir restart 2>&1 >/dev/null"
+				TMPDIR=/tmp su - postgres -c "/usr/bin/pg_ctl -D $pgdir restart 2>&1 >/dev/null"
 					pgstatus "$pgdir"
 				if [ "$PG_STATUS" = "running" ]; then
 					ok
