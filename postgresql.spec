@@ -18,7 +18,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.2.3
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -33,6 +33,8 @@ Patch2:		%{name}-ac_fixes.patch
 Patch3:		%{name}-pg_ctl-silent.patch
 Patch4:		%{name}-DESTDIR.patch
 Patch5:		%{name}-pg_ctl-nopsql.patch
+Patch6:		%{name}-geo_ops.patch
+Patch7:		%{name}-acfix.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	XFree86-devel
@@ -890,6 +892,8 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p0
+%patch6 -p1
+%patch7 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -901,7 +905,7 @@ rm -fR `find contrib/ -type d -name CVS`
 
 %build
 rm -f config/libtool.m4
-aclocal -I config
+%{__aclocal} -I config
 %{__autoconf}
 %configure \
 	%{!?_without_pgsql_locale:--enable-locale} \
