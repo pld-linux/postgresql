@@ -2,7 +2,6 @@
 # TODO:
 # - pg_autovacuum init support? look at its readme file, please
 # - init script for slon (Slony-I daemon).
-# - jdbc subpackage
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
@@ -12,7 +11,6 @@
 %bcond_without	pgsql_locale		# disable PostgreSQL locale
 %bcond_without	pgsql_multibyte		# disable PostgreSQL multibyte
 %bcond_without	python			# disable Python support
-%bcond_with	jdbc			# build JDBC interface and Java tools
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 %bcond_without	slony1			# disable Slony-I replication system
@@ -59,7 +57,6 @@ BuildRequires:	automake
 BuildRequires:	flex
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
-%{?with_jdbc:BuildRequires:	jakarta-ant >= 1.5}
 BuildRequires:	libtool
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
@@ -818,12 +815,6 @@ touch $RPM_BUILD_ROOT/var/log/pgsql
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
 
-%if %{with jdbc}
-install -d $RPM_BUILD_ROOT%{_javadir}
-mv	$RPM_BUILD_ROOT%{_datadir}/postgresql/java/*.jar \
-	$RPM_BUILD_ROOT%{_javadir}
-%endif
-
 install -d howto
 ( cd howto
 	tar xzf %{SOURCE2}
@@ -1088,10 +1079,3 @@ fi
 %{_pgmoduledir}/slony1_funcs.so
 %{_pgmoduledir}/xxid.so
 %endif
-
-## %if %{with jdbc}
-## %files jdbc
-## %defattr(644,root,root,755)
-## #{_javadir}/postgresql-exmaples.jar
-## %{_javadir}/postgresql.jar
-## %endif
