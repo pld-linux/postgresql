@@ -15,7 +15,7 @@ Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.2
-Release:	7
+Release:	6
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -779,18 +779,6 @@ install -d howto
   tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
 )
 
-#corection of destination for headers
-mv $RPM_BUILD_ROOT%{_includedir}/pg_config.h $RPM_BUILD_ROOT%{_includedir}/postgresql
-mv $RPM_BUILD_ROOT%{_includedir}/pg_config_os.h $RPM_BUILD_ROOT%{_includedir}/postgresql
-mv $RPM_BUILD_ROOT%{_includedir}/ecpgerrno.h $RPM_BUILD_ROOT%{_includedir}/postgresql
-mv $RPM_BUILD_ROOT%{_includedir}/ecpglib.h $RPM_BUILD_ROOT%{_includedir}/postgresql
-mv $RPM_BUILD_ROOT%{_includedir}/ecpgtype.h $RPM_BUILD_ROOT%{_includedir}/postgresql
-mv $RPM_BUILD_ROOT%{_includedir}/libpgeasy.h $RPM_BUILD_ROOT%{_includedir}/postgresql
-mv $RPM_BUILD_ROOT%{_includedir}/libpq-fe.h $RPM_BUILD_ROOT%{_includedir}/postgresql
-mv $RPM_BUILD_ROOT%{_includedir}/postgres_ext.h $RPM_BUILD_ROOT%{_includedir}/postgresql
-mv $RPM_BUILD_ROOT%{_includedir}/sql3types.h $RPM_BUILD_ROOT%{_includedir}/postgresql
-mv $RPM_BUILD_ROOT%{_includedir}/sqlca.h $RPM_BUILD_ROOT%{_includedir}/postgresql
-
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
 
@@ -928,16 +916,16 @@ fi
 %attr(755,root,root) %{_libdir}/libpgeasy.so
 %attr(755,root,root) %{_libdir}/libpq.so
 %dir %{_includedir}/postgresql
-%{_includedir}/postgresql/pg_config.h
-%{_includedir}/postgresql/pg_config_os.h
-%{_includedir}/postgresql/ecpgerrno.h
-%{_includedir}/postgresql/ecpglib.h
-%{_includedir}/postgresql/ecpgtype.h
-%{_includedir}/postgresql/libpgeasy.h
-%{_includedir}/postgresql/libpq-fe.h
-%{_includedir}/postgresql/postgres_ext.h
-%{_includedir}/postgresql/sql3types.h
-%{_includedir}/postgresql/sqlca.h
+%{_includedir}/pg_config.h
+%{_includedir}/pg_config_os.h
+%{_includedir}/ecpgerrno.h
+%{_includedir}/ecpglib.h
+%{_includedir}/ecpgtype.h
+%{_includedir}/libpgeasy.h
+%{_includedir}/libpq-fe.h
+%{_includedir}/postgres_ext.h
+%{_includedir}/sql3types.h
+%{_includedir}/sqlca.h
 %dir %{_includedir}/postgresql/internal
 %{_includedir}/postgresql/internal/c.h
 %{_includedir}/postgresql/internal/libpq-int.h
