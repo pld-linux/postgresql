@@ -789,27 +789,14 @@ rm -rf $RPM_BUILD_ROOT
 rm -f /tmp/tmp_perl_info
 
 %pre
-if [ -f /etc/sysconfig/postgresql ]; then
-    POSTGRES_DATA_DIR=/var/lib/pgsql
-    . /etc/sysconfig/postgresql
-    if [ -f $POSTGRES_DATA_DIR/PG_VERSION ]; then
-	if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.3' ]; then
-	    echo "Database(s) in older, incompatible format exist in $POSTGRES_DATA_DIR."
-	    echo "Dump them and clean $POSTGRES_DATA_DIR, then upgrade postgresql and"
-	    echo "restore database(s)."
-        echo
-        echo "Warning for upgrade from version *before* 7.2."
-        echo "Please note, that postgresql module path changed from"
-        echo "/usr/lib/pgsql/module to /usr/lib/postgresql. Change the path"
-        echo "in dump file before restore."
-        echo
-        echo "Reading following webpage is encouraged:"
-        echo "http://www.ca.postgresql.org/docs/momjian/upgrade_tips_7.3."
-
-	    exit 1
-	fi
-    fi
-fi
+echo "Warning for upgrade from version *before* 7.2."
+echo "Please note, that postgresql module path changed from"
+echo "/usr/lib/pgsql/module to /usr/lib/postgresql. Change the path"
+echo "in dump file before restore."
+echo
+echo "Warning for upgrade from version *before* 7.3."
+echo "Reading following webpage is encouraged:"
+echo "http://www.ca.postgresql.org/docs/momjian/upgrade_tips_7.3."
 
 getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
 if id postgres >/dev/null 2>&1 ; then
