@@ -12,7 +12,7 @@ Group(pl):	Aplikacje/Bazy danych
 Source0:	ftp://ftp.postgresql.org/pub/%{name}-%{version}.tar.gz
 Source1:	postgresql.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
-Patch0:		postgresql-6.4.2-opt.patch
+Patch0:		postgresql-opt.patch
 Patch1:		postgresql-DESTDIR.patch
 Patch2:		postgresql-perl.patch
 URL:		http://www.postgresql.org/
@@ -363,7 +363,7 @@ Biblioteki statyczne interafece tcl dla PostgreSQL
 
 %prep
 %setup  -q
-#%patch0 -p1 -b .opt
+%patch0 -p1 -b .opt
 %patch1 -p1 -b .destdir
 %patch2 -p1 -b .perl
 
@@ -381,6 +381,7 @@ autoconf
 	--with-odbcinst=/etc \
 	--with-tcl \
 	--with-x \
+	--with-mb=UNICODE \
 %ifarch %{ix86}
 	--with-template=linux_i386 \
 %else
@@ -388,7 +389,7 @@ autoconf
 %endif
 	--with-perl
 
-make OPT_FLAGS="$RPM_OPT_FLAGS"
+make OPT="$RPM_OPT_FLAGS"
 
 cd ..
 make all PGDOCS=unpacked -C doc
@@ -397,7 +398,7 @@ make all PGDOCS=unpacked -C doc
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d \
         $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_mandir},%{_includedir}/pgsql} \
-        $RPM_BUILD_ROOT/var/lib/pgsql
+        $RPM_BUILD_ROOT/var/state/pgsql
 		
 ( cd src
   make DESTDIR=$RPM_BUILD_ROOT PREFIX=$RPM_BUILD_ROOT%{_prefix} install
@@ -462,18 +463,17 @@ rm -fR `find contrib/ -type d -name CVS`
 
 chmod +x $RPM_BUILD_ROOT%{_libdir}/*.so*
 
-%pre 
-if ! `grep postgres /etc/passwd >/dev/null 2>&1`; then
-    useradd -M -o -r -d /var/lib/pgsql -s /bin/bash \
-	-c "PostgreSQL Server" postgres >/dev/null 2>&1 || :
-fi
+%pre
+/usr/sbin/groupadd -g 88 -r -f postgres 1>&2 || :
+/usr/sbin/useradd -M -o -r -u 88 -d /var/state/pgsql -s /bin/bash \
+	-g postgres -c "PostgreSQL Server" postgres 1>&2 || :
 
 %post
 /sbin/chkconfig --add postgresql
 
 # Create sample database
 su postgres -c "LD_LIBRARY_PATH=%{_libdir} \
-    %{_bindir}/initdb --pgdata=/var/lib/pgsql \
+    %{_bindir}/initdb --pgdata=/var/state/pgsql \
     --pglib=%{_libdir}/pgsql"
 
 
@@ -486,7 +486,11 @@ if [ $1 = 0 ]; then
 fi
 
 %post   -p /sbin/ldconfig libs
-%postun -p /sbin/ldconfig libs
+%postun libs
+/sbin/ldconfig
+if [ $1 = 0 ]; then
+	:
+fi
 
 %post   -p /sbin/ldconfig devel
 %postun -p /sbin/ldconfig devel
@@ -551,7 +555,7 @@ rm -f /tmp/tmp_perl_info
 %{_mandir}/man1/ipcclean.1*
 %{_mandir}/man5/*.5*
 
-%attr(644,postgres,postgres) /var/lib/pgsql
+%attr(644,postgres,postgres) /var/state/pgsql
 
 %files libs
 %defattr(644,root,root,755)
@@ -562,8 +566,9 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_libdir}/plpgsql.so 
 
 %{_libdir}/*.description
+%attr(755,root,root) %{_bindir}/pg_id
 
-%defattr(644,postgres,postgres,755)
+#%defattr(644,postgres,postgres,755)
 %{_libdir}/pgsql
 
 %files tcl
@@ -606,7 +611,6 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_libdir}/libpq*.so.*.*
 %attr(755,root,root) %{_bindir}/pg_dump
 %attr(756,root,root) %{_bindir}/pg_dumpall
-%attr(755,root,root) %{_bindir}/pg_id
 %attr(755,root,root) %{_bindir}/pg_upgrade
 %attr(755,root,root) %{_bindir}/psql
 %attr(755,root,root) %{_bindir}/vacuumdb
