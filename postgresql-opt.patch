@@ -1,0 +1,11 @@
+--- postgresql-6.5/src/Makefile.global.in.opt	Tue Feb  2 04:43:56 1999
++++ postgresql-6.5/src/Makefile.global.in	Mon Jul 12 16:50:33 1999
+@@ -204,7 +204,7 @@
+ YACC= @YACC@
+ LEX= @LEX@
+ AROPT= @AROPT@
+-CFLAGS= -I$(SRCDIR)/include -I$(SRCDIR)/backend @CPPFLAGS@ @CFLAGS@
++CFLAGS= -I$(SRCDIR)/include -I$(SRCDIR)/backend @CPPFLAGS@ @CFLAGS@ $(OPT)
+ CFLAGS_SL= @SHARED_LIB@
+ LDFLAGS= @LDFLAGS@ @LIBS@
+ DLSUFFIX= @DLSUFFIX@
