@@ -22,6 +22,7 @@ Patch2:		%{name}-perl.patch
 Patch3:		%{name}-python.patch
 Patch4:		%{name}-no_libnsl.patch
 Patch5:		%{name}-pgaccess-typo.patch
+Patch6:		%{name}-readline.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
@@ -538,6 +539,7 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
