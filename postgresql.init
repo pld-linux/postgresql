@@ -99,7 +99,9 @@ case "$1" in
 		    $(is_yes "$POSTGRES_QUIET" && echo '-S') \
 		    $(is_yes "$POSTGRES_DISABLE_FSYNC" && echo '-F') \
 		    $(is_yes "$ALLOW_TCP_CONNECTIONS" && echo '-i') \
-		    $(is_yes "$ALLOW_USE_SSL" && echo '-l')";
+		    $(is_yes "$ALLOW_USE_SSL" && echo '-l') \
+		    $([ "$BUFFERS" ] && echo \-B $BUFFERS) \
+		    $([ "$MAXCONN" ] && echo \-N $MAXCONN)";
 
 		TMPDIR=/tmp su postgres -c "\
 			$(echo "/usr/bin/pg_ctl start -w $PGSQL_CMDLINE -l $POSTGRES_LOG") \

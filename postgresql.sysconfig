@@ -13,6 +13,14 @@ POSTGRES_QUIET=no
 # only on unix socket
 ALLOW_TCP_CONNECTIONS=no
 
+# For production machines you should increase those numbers to avoid "Too 
+# many connections" messages. Buffers should be (at least) MaxConn*2.
+# But: watch carefully that you won't exceed system resources!!
+# Leave it blank to have default (safe) 32 clients/64 buffers.
+
+MAXCONN=
+BUFFERS=
+
 # Allow using SSL on TCP connections. Requires ALLOW_TCP_CONNECTIONS to be
 # set to yes. Also, you must supply key and certificate files
 # ($POSTGRES_DATA_DIR/server.{key,crt})
