@@ -20,7 +20,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.2.4
-Release:	3
+Release:	4
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -49,6 +49,7 @@ BuildRequires:	tk-devel >= 8.3.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.6a
+BuildRequires:	pam-devel
 BuildRequires:	perl-devel >= 5.6
 BuildRequires:	python-devel >= 2.2.1
 BuildRequires:	rpm-perlprov
@@ -932,6 +933,7 @@ rm -f config/libtool.m4
 	--enable-recode \
 	--enable-syslog \
 	--enable-unicode-conversion \
+	--with-pam \
 	--with-CXX \
 	--with-tcl \
 	--with-tk \
