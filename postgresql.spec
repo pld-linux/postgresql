@@ -896,7 +896,7 @@ rm -fR `find contrib/ -type d -name CVS`
 %build
 rm -f config/libtool.m4
 aclocal -I config
-autoconf
+%{__autoconf}
 %configure \
 	%{!?_without_pgsql_locale:--enable-locale} \
 	%{!?_without_pgsql_multibyte:--enable-multibyte} \
