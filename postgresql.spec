@@ -9,7 +9,9 @@
 #   routine and send it to postgresql team...
 #
 # Conditional build:
-# _with_jdbc		- with JDBC driver
+# _with_jdbc			- with JDBC driver
+# _with_absolute_dbpaths	- allow absolute paths to create database
+#	( disallowed by default because it is a security risk )
 #
 
 %include	/usr/lib/rpm/macros.python
@@ -26,7 +28,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.3.1
-Release:	0.2
+Release:	0.3
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -37,6 +39,7 @@ Patch0:		%{name}-configure.patch
 Patch1:		%{name}-pg_ctl-silent.patch
 Patch2:		%{name}-pg_ctl-nopsql.patch
 Patch3:		%{name}-conf.patch
+Patch4:		%{name}-absolute_dbpaths.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -725,6 +728,7 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch1 -p1
 %patch2 -p0
 %patch3 -p1
+%{?_with_absolute_dbpaths:%patch4 -p1}
 
 tar xzf doc/man*.tar.gz
 
