@@ -39,6 +39,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.6a
+BuildRequires:	pam-devel
 BuildRequires:	perl-devel
 BuildRequires:	python-devel >= 2.2.1
 BuildRequires:	readline-devel >= 4.2
