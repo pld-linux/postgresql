@@ -718,6 +718,16 @@ potrzeby.
 Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka
 proceduralnego PL/TCL dla swojej bazy danych.
 
+%package pgcrypto
+Summary:	Cryptographic functions for PostgreSQL
+Summary(pl):	Funkcje kryptograficzne dla PostgreSQL
+Group:		Applications/Databases
+Requires:       %{name} = %{version}
+
+%description pgcrypto
+
+%description pgcrypto -l pl
+
 %prep
 %setup  -q
 %patch0 -p1
@@ -761,6 +771,9 @@ rm -f config/libtool.m4
 %{!?_without_tests: %{__make} check }
 %endif
 
+cd contrib/pgcrypto/
+%{__make} 
+
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
@@ -791,6 +804,9 @@ install -d howto
 
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
+
+cd contrib/pgcrypto/
+%{__make} install DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1004,3 +1020,9 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
+
+%files pgcrypto
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/%{name}/pgcrypto.so
+%{_datadir}/%{name}/contrib/pgcrypto.sql
+%{_datadir}/info/%{name}/contrib/README.pgcrypto
