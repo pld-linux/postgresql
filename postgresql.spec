@@ -56,6 +56,7 @@ BuildRequires:	flex
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
 %{?with_jdbc:BuildRequires:	jakarta-ant >= 1.5}
+BuildRequires:	libtool
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
