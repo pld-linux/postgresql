@@ -10,7 +10,7 @@
 %bcond_without	pgsql_locale		# disable PostgreSQL locale
 %bcond_without	pgsql_multibyte		# disable PostgreSQL multibyte
 %bcond_without	python			# disable Python support
-%bcond_without	php			# disable PHP support
+%bcond_with	php			# enable PHP support
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 %bcond_without	slony1			# disable Slony-I replication system
