@@ -14,7 +14,7 @@
 
 %include	/usr/lib/rpm/macros.python
 
-%define beta beta4
+%define beta beta5
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
@@ -32,7 +32,7 @@ Release:	0.1.%{beta}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{beta}.tar.bz2
-# Source0-md5:	fdab86878d42cda5d4c04471b1434768
+# Source0-md5:	361f188bf83a2524f98aa0aa1fb250b7
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -45,7 +45,6 @@ Patch4:		%{name}-absolute_dbpaths.patch
 Patch5:		%{name}-link.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
-BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison >= 1.875
