@@ -357,33 +357,20 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig} \
         $RPM_BUILD_ROOT{%{_bindir},%{_libdir}/pgsql,%{_mandir},%{_includedir}/pgsql} \
         $RPM_BUILD_ROOT/var/state/pgsql
-		
+
+# PREFIX (hack for perl)
 ( cd src
-  make DESTDIR=$RPM_BUILD_ROOT install
+  make DESTDIR=$RPM_BUILD_ROOT PREFIX=$RPM_BUILD_ROOT/usr install
   make DESTDIR=$RPM_BUILD_ROOT install-man
 )
 
 # For Perl interface
-#( cd src/interfaces/perl5
-#
-#  install -d $RPM_BUILD_ROOT/%{perl_sitearch}
-#  perl Makefile.PL
-#  make PREFIX=$RPM_BUILD_ROOT/usr install
 
-  ( cd $RPM_BUILD_ROOT%{perl_sitearch}/auto/Pg
-    mv .packlist .packlist.old
-    sed -e "s|$RPM_BUILD_ROOT/|/|g" -e "s|./||" < .packlist.old > .packlist
-    rm -f .packlist.old
-  )
-#  LOCAL="$RPM_BUILD_ROOT/$PERLVER/perllocal.pod"
-#  mv $LOCAL $LOCAL.old
-#  sed -e "s|$RPM_BUILD_ROOT/|/|g" < $LOCAL.old > $LOCAL.pg
-#  rm -f $LOCAL.old
-#)
-#find $RPM_BUILD_ROOT%{_libdir}/perl5 -type f -print | \
-#	sed -e "s|$RPM_BUILD_ROOT/|/|g" | grep -v "perllocal.pod$" > perlfiles.list
-#find $RPM_BUILD_ROOT%{_libdir}/perl5 -type d -name Pg -print | \
-#	sed -e "s|$RPM_BUILD_ROOT/|%dir /|g" >> perlfiles.list
+( cd $RPM_BUILD_ROOT%{perl_sitearch}/auto/Pg
+  mv .packlist .packlist.old
+  sed -e "s|$RPM_BUILD_ROOT/|/|g" -e "s|./||" < .packlist.old > .packlist
+  rm -f .packlist.old
+)
 
 # Move all includes beneath %{_includedir}/pgsql.
 ( cd $RPM_BUILD_ROOT%{_includedir}
@@ -415,19 +402,17 @@ strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so*
 gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man*/*
 
 %pre
-/usr/sbin/groupadd -g 88 -r -f postgres 1>&2 || :
-/usr/sbin/useradd -M -o -r -u 88 -d /var/state/pgsql -s /bin/bash \
+grep -l postgres /etc/group &>/dev/null || (
+    /usr/sbin/groupadd -g 88 -r -f postgres 1>&2 || :
+)
+grep -l postgres /etc/passwd &>/dev/null || (
+    /usr/sbin/useradd -M -o -r -u 88 -d /var/state/pgsql -s /bin/sh \
 	-g postgres -c "PostgreSQL Server" postgres 1>&2 || :
+)
 
 %post
 /sbin/chkconfig --add postgresql
 
-# Create sample database
-if [ ! -f /var/state/pgsql/PG_VERSION ]; then
-	su postgres -c "LD_LIBRARY_PATH=%{_libdir} \
-		%{_bindir}/initdb --pgdata=/var/state/pgsql \
-		--pglib=%{_libdir}/pgsql"
-fi
 if [ -r /var/lock/subsys/postmaster ]; then
 	/etc/rc.d/init.d/postgresql restart >&2
 else
@@ -453,17 +438,6 @@ fi
 
 %post   odbc -p /sbin/ldconfig
 %postun odbc -p /sbin/ldconfig
-
-#%post perl
-#POD=`find %{_libdir} -name perllocal.pod.pg`
-#DIR=`dirname $POD`
-#if [ -f $DIR/perllocal.pod ]; then
-#	mv $DIR/perllocal.pod $DIR/perllocal.pod.prepg
-#	cat $DIR/perllocal.pod.pg $DIR/perllocal.pod.prepg > $DIR/perllocal.pod
-#else
-#	cp $DIR/perllocal.pod.pg $DIR/perllocal.pod
-#fi
-#rm -f $DIR/perllocal.pod.pg
 
 %clean
 rm -rf $RPM_BUILD_ROOT
