@@ -551,8 +551,8 @@ rm -fR `find contrib/ -type d -name CVS`
 aclocal -I config
 autoconf
 %configure \
-	%{!?bcond_off_pgsql_locale:--enable-locale} \
-	%{!?bcond_off_pgsql_multibyte:--enable-multibyte} \
+	%{!?_without_pgsql_locale:--enable-locale} \
+	%{!?_without_pgsql_multibyte:--enable-multibyte} \
 	--enable-recode \
 	--enable-unicode-conversion \
 	--with-CXX \
