@@ -1,12 +1,12 @@
 #
+# - pg_autovacuum init support? look at its readme file, please
 # - put pgcrypto docs into docdir
 # - put pgcrypto sql files in %{_datadir}/postgresql
+# - look at libpq locales
 # - remove postgresql-configure patch and create postgresql-doc patch,
 #   which will prevent documentation and manuals installation (the routine
 #   is bad and we install docs and mans manually, at all) or create good
 #   routine and send it to postgresql team...
-# - look at libpq locales
-# - move ecpg headers to includedir subdir? (conflict with unixODBC-devel)
 #
 # Conditional build:
 %bcond_without	tcl			# disables Tcl support
@@ -29,7 +29,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.4
-Release:	0.6
+Release:	0.7
 License:	BSD
 Group:		Applications/Databases
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -784,6 +784,7 @@ rm -f config/libtool.m4
 %{?_with_jdbc:	--with-java}
 
 %{__make}
+%{__make} -C contrib/pg_autovacuum
 %ifnarch sparc sparcv9 sparc64 alpha ppc
 %{!?_without_tests: %{__make} check }
 %endif
@@ -803,6 +804,8 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 
 %{__make} install -C src/pl/plperl \
 	DESTDIR=$RPM_BUILD_ROOT
+
+%{__make} -C contrib/pg_autovacuum install DESTDIR=$RPM_BUILD_ROOT
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
 
@@ -900,6 +903,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
+%doc contrib/pg_autovacuum/README*
 %attr(754,root,root) /etc/rc.d/init.d/*
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/*
 
@@ -913,6 +917,7 @@ fi
 %attr(755,root,root) %{_bindir}/initdb
 %attr(755,root,root) %{_bindir}/initlocation
 %attr(755,root,root) %{_bindir}/ipcclean
+%attr(755,root,root) %{_bindir}/pg_autovacuum
 %attr(755,root,root) %{_bindir}/pg_controldata
 %attr(755,root,root) %{_bindir}/pg_ctl
 %attr(755,root,root) %{_bindir}/pg_encoding
