@@ -1,6 +1,9 @@
 #
 # todo:
-# - fix postgresql-configure.patch (it puts html doc into /usr/share/info
+# - remove postgresql-configure patch and create postgresql-doc patch,
+#   which will prevent documentation and manulas installation (the routine
+#   is bad and we install docs and mans manually, at all) or create good
+#   routine and send it to postgresql team...
 #
 # Conditional build:
 # _with_jdbc		- with JDBC driver
