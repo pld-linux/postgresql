@@ -1,13 +1,13 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
-Summary(fr):	Sysème de gestion de base de données PostgreSQL.
+Summary(fr):	Sysème de gestion de base de données PostgreSQL
 Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	6.5.3
-Release:	5
-Copyright:	BSD
+Release:	8
+License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy Danych
 Source0:	ftp://ftp.postgresql.org/pub/%{name}-%{version}.tar.gz
@@ -17,6 +17,9 @@ Source3:	%{name}.sysconfig
 Patch0:		postgresql-opt.patch
 Patch1:		postgresql-DESTDIR.patch
 Patch2:		postgresql-perl.patch
+Patch3:		postgresql-alpha.patch
+Patch4:		postgresql-sparc64.patch
+Patch5:		postgresql-armlinux.patch
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
 Requires:	rc-scripts
@@ -33,10 +36,10 @@ Requires:	%{name}-libs = %{version}
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres, then as
-Postgres95). 
+Postgres95).
 
 PostgreSQL is an enhancement of the POSTGRES database management system, a
-next-generation DBMS research prototype.  While PostgreSQL retains the
+next-generation DBMS research prototype. While PostgreSQL retains the
 powerful data model and rich data types of POSTGRES, it replaces the
 PostQuel query language with an extended subset of SQL. PostgreSQL is free
 and the complete source is available.
@@ -57,11 +60,11 @@ The original name of the software at Berkeley was Postgres. When SQL
 functionality was added in 1995, its name was changed to Postgres95. The
 name was changed at the end of 1996 to PostgreSQL.
 
-PostgreSQL runs on Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD, and most
-flavours of Unix. 
+PostgreSQL runs on Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD, and
+most flavours of Unix.
 
 %description -l de
-PostgreSQL Datenbank-Managementsystem (früher als Postgres, dann als 
+PostgreSQL Datenbank-Managementsystem (früher als Postgres, dann als
 Postgres95 bekannt).
 
 PostgreSQL ist eine Verbesserung des POSTGRES-DB-Managementsystems, ein
@@ -72,8 +75,8 @@ PostgreSQL ist gratis, der gesamte Quellcode ist verfügbar.
 
 Ein Team von Internet-Entwicklern befaßt sich mit PostgreSQL. Sie alle sind
 auf der PostgreSQL-Entwickleradreßliste. Koordinator ist Marc G. Fournier
-(scrappy@postgreSQL.org). Das Team ist verantwortlich für alle aktuellen und
-künftigen Entwicklungen von PostgreSQL.
+(scrappy@postgreSQL.org). Das Team ist verantwortlich für alle aktuellen
+und künftigen Entwicklungen von PostgreSQL.
 
 Die Autoren von PostgreSQL 1.01 waren Andrew Yu und Jolly Chen. Zahlreiche
 andere haben zur Portierung, zum Testen, Debugging und zur Verbesserung des
@@ -86,8 +89,8 @@ Der ursprüngliche Name war Postgres. Als 1995 SQL-Funktionalität hinzukam,
 wurde der Name in Postgres95 geändert. Ende 1996 schließlich entschied man
 sich für PostgreSQL.
 
-PostgreSQL läuft auf Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD und den
-meisten Unix-Systemen.
+PostgreSQL läuft auf Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD und
+den meisten Unix-Systemen.
 
 %description -l fr
 Système de gestion de bases de données PostgreSQL (D'abord nommé Postgres,
@@ -110,21 +113,21 @@ Les auteurs de PostgreSQL 1.01 étaient Andrew Yu et Jolly Chen. Beaucoup
 d'autres ont contribué au portage, au test, au débogage et à l'amélioration
 du code. Le code original de Postgres, duquel PostgreSQL est dérivé, a été
 l'oeuvre d'étudiants de haut niveau, de moins haut niveau, et de
-programmeurs travaillant sous la direction du professeur Michael Stonebraker
-à l'université de Berkeley Californie.
+programmeurs travaillant sous la direction du professeur Michael
+Stonebraker à l'université de Berkeley Californie.
 
-Le nom original du logiciel était Postgres. Quand les fonctionnalitées
-SQL furent ajoutées en 1995, son nom est devenu Postgres95. Il a été 
-rebaptisé PostgreSQL en 1996.
+Le nom original du logiciel était Postgres. Quand les fonctionnalitées SQL
+furent ajoutées en 1995, son nom est devenu Postgres95. Il a été rebaptisé
+PostgreSQL en 1996.
 
-PostgreSQL tourne sur Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD,
-et la plupart des Unix.
+PostgreSQL tourne sur Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD, et
+la plupart des Unix.
 
 %description -l pl
 PostgreSQL System Zarz±dzania Baz± Danych (dawniej znany jako Postgres,
 nastêpnie jako Postgres95).
 
-PostgreSQL mo¿e byæ uruchominy pod nastêpuj±cymi systemami: Solaris, SunOS, 
+PostgreSQL mo¿e byæ uruchominy pod nastêpuj±cymi systemami: Solaris, SunOS,
 HPUX, AIX, Linux, Irix, FreeBSD i innych systemach Unix.
 
 %description -l tr
@@ -139,12 +142,13 @@ Summary(fr):	En-têtes et bibliothèques de développement PostgreSQL
 Summary(pl):	PostgreSQL - pliki nag³ówkowe i biblioteki
 Summary(tr):	PostgreSQL baþlýk dosyalarý ve kitaplýklar
 Group:		Development/Libraries
+Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
 Requires:	%{name}-libs = %{version}
 
 %description devel
 This package contains header files and libraries required to compile
-applications that are talking directly to the PostgreSQL backend server. 
+applications that are talking directly to the PostgreSQL backend server.
 
 %description -l de devel
 Dieses Paket enthält die Header-Dateien und Libraries, die zum Kompilieren
@@ -153,11 +157,11 @@ PostgreSQL-Backend-Server kommunizieren.
 
 %description -l fr devel
 Ce package contient les fichiers d'en-tête et les bibliothéques nécessaires
-pour compiler des applications ayant des échanges directs avec le serveur du
-backend PostgreSQL.
+pour compiler des applications ayant des échanges directs avec le serveur
+du backend PostgreSQL.
 
 %description -l pl devel
-Pakiet zawiera nag³ówki oraz biblioteki wymagane do kompilacji aplikacji 
+Pakiet zawiera nag³ówki oraz biblioteki wymagane do kompilacji aplikacji
 ³±cz±cych siê bezpo¶rednio z serwerem PostgreSQL.
 
 %description -l tr devel
@@ -171,17 +175,17 @@ Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy Danych
 
 %description clients
-This package includes only the clients and client libraries needed to access
-an PostgreSQL server. The server is included in the main package. If all you
-need is to connect to another PostgreSQL server, the  this is the only
-package you need to install.
+This package includes only the clients and client libraries needed to
+access an PostgreSQL server. The server is included in the main package. If
+all you need is to connect to another PostgreSQL server, the this is the
+only package you need to install.
 
 In this package there are client libraries available for C and C++, as well
 as several command-line utilities you can use to manage your databases on a
 remote PostgreSQL server.
 
 %description -l pl clients
-Pakiet zawiera klientów oraz biblioteki niezbêdne dla dostêpu do serwera 
+Pakiet zawiera klientów oraz biblioteki niezbêdne dla dostêpu do serwera
 PostgreSQL. Serwer znajduje siê w g³ównym pakiecie.
 
 %package perl
@@ -192,10 +196,11 @@ Group(pl):	Aplikacje/Bazy Danych
 Requires:	postgresql, perl >= 5.004
 
 %description perl
-This package includes only perl modules needed to access an PostgreSQL server.
+This package includes only perl modules needed to access an PostgreSQL
+server.
 
 %description -l pl perl
-Pakiet ten zawiera tylko modu³y Perl'a wymagane dla dostêpu do serwera 
+Pakiet ten zawiera tylko modu³y Perl'a wymagane dla dostêpu do serwera
 PostgreSQL.
 
 %package doc
@@ -206,8 +211,8 @@ Group(pl):	Aplikacje/Bazy Danych
 #Requires:	%{name} = %{version}
 
 %description doc
-This package includes documentation and HOWTO for programmer, admin etc., in
-HTML format.
+This package includes documentation and HOWTO for programmer, admin etc.,
+in HTML format.
 
 %description -l pl doc
 Pakiet ten zawiera dokumentacjê oraz HOWTO m.in. dla programistów,
@@ -256,6 +261,7 @@ Pakiet ten zawiera biblioteki statyczne dla interface'u ODBC.
 Summary:	PostgreSQL libraries
 Summary(pl):	Biblioteki dzielone programu PostgreSQL
 Group:		Libraries
+Group(fr):	Librairies
 Group(pl):	Biblioteki
 
 %description libs
@@ -268,6 +274,7 @@ Biblioteki dzielone programu PostgreSQL.
 Summary:	PostgreSQL static libraries
 Summary(pl):	Biblioteki statyczne programu PostgreSQL
 Group:		Development/Libraries
+Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
 Requires:	%{name}-devel = %{version}
 
@@ -294,7 +301,7 @@ tcl interface dla PostgreSQL.
 Summary:	Development part of tcl interface for PostgreSQL
 Summary(pl):	Czê¶æ dla programistów interafece tcl dla PostgreSQL
 Group:		Development/Languages/Tcl
-Group(pl):      Programowanie/Jêzyki/Tcl
+Group(pl):	Programowanie/Jêzyki/Tcl
 Requires:	%{name}-tcl = %{version}
 
 %description tcl-devel
@@ -304,11 +311,11 @@ Development part of tcl interface for PostgreSQL.
 Czê¶æ dla programistów interafece tcl dla PostgreSQL.
 
 %package tcl-static
-Summary:        Static libraries of tcl interface for PostgreSQL
-Summary(pl):    Biblioteki statyczne interafece tcl dla PostgreSQL
-Group:          Development/Languages/Tcl
-Group(pl):      Programowanie/Jêzyki/Tcl
-Requires:       %{name}-tcl-devel = %{version}
+Summary:	Static libraries of tcl interface for PostgreSQL
+Summary(pl):	Biblioteki statyczne interafece tcl dla PostgreSQL
+Group:		Development/Languages/Tcl
+Group(pl):	Programowanie/Jêzyki/Tcl
+Requires:	%{name}-tcl-devel = %{version}
 
 %description tcl-static
 Static libraries of tcl interface for PostgreSQL
@@ -318,9 +325,12 @@ Biblioteki statyczne interafece tcl dla PostgreSQL
 
 %prep
 %setup  -q
-%patch0 -p1 -b .opt
-%patch1 -p1 -b .destdir
-%patch2 -p1 -b .perl
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
@@ -354,7 +364,7 @@ make all PGDOCS=unpacked -C doc
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig} \
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
         $RPM_BUILD_ROOT{%{_bindir},%{_libdir}/pgsql,%{_mandir},%{_includedir}/pgsql} \
         $RPM_BUILD_ROOT/var/lib/pgsql
 
@@ -387,7 +397,7 @@ install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig} \
 )
 
 # Move odbc.ini file to etc
-mv -f $RPM_BUILD_ROOT/usr/*.ini $RPM_BUILD_ROOT/etc
+mv -f $RPM_BUILD_ROOT%{_prefix}/*.ini $RPM_BUILD_ROOT%{_sysconfdir}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
