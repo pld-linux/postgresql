@@ -929,6 +929,8 @@ fi
 %files -f main.lang
 %defattr(644,root,root,755)
 %doc contrib/pg_autovacuum/README*
+%doc doc/FAQ* doc/README* doc/bug.template
+%doc COPYRIGHT README HISTORY
 %attr(754,root,root) /etc/rc.d/init.d/*
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/*
 
@@ -984,10 +986,6 @@ fi
 %{_mandir}/man1/pg_resetxlog.1*
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
-
-%doc contrib
-%doc doc/FAQ* doc/README*
-%doc COPYRIGHT README HISTORY doc/bug.template
 
 %files doc
 %defattr(644,root,root,755)
