@@ -703,7 +703,7 @@ rm -f /tmp/tmp_perl_info
 %{_libdir}/pgsql/*.sample
 %{_libdir}/pgsql/*.description
 
-%attr(750,postgres,postgres) %dir /var/lib/pgsql
+%attr(770,root,postgres) %dir /var/lib/pgsql
 %attr(640,postgres,postgres) %config(noreplace) %verify(not md5 size mtime) /var/log/pgsql
 
 %{_mandir}/man1/createdb.1*
