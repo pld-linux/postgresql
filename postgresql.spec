@@ -6,7 +6,7 @@ Summary(pl):	PostgreSQL - system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.1
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -34,7 +34,7 @@ BuildRequires:	perl-devel >= 5.6
 BuildRequires:	python-devel
 BuildRequires:	rpm-perlprov
 BuildRequires:	zlib-devel
-BuildRequires:	openssl-devel
+BuildRequires:	openssl-devel >= 0.9.6a
 BuildRequires:	XFree86-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Requires:	%{name}-libs = %{version}
