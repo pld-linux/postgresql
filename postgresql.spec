@@ -448,7 +448,7 @@ Summary:	PostgreSQL libraries
 Summary(es):	Biblioteca compartida del PostgreSQL
 Summary(pl):	Biblioteki dzielone programu PostgreSQL
 Summary(pt_BR):	Biblioteca compartilhada do PostgreSQL
-Summary(zh_CN):	PostgreSQL 客户所需要的共享库.
+Summary(zh_CN):	PostgreSQL 客户所需要的共享库
 Group:		Libraries
 
 %description libs
