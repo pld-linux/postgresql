@@ -15,7 +15,7 @@
 %bcond_without	slony1			# disable Slony-I replication system
 
 %define		postgresql_version	8.0.1
-%define		postgresql_release	1
+%define		postgresql_release	2
 %define		slony1_version	1.0.5
 %define		slony1_release	1
 
@@ -969,13 +969,6 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/postgresql
 
-%attr(755,root,root) %{_bindir}/clusterdb
-%attr(755,root,root) %{_bindir}/createdb
-%attr(755,root,root) %{_bindir}/createlang
-%attr(755,root,root) %{_bindir}/createuser
-%attr(755,root,root) %{_bindir}/dropdb
-%attr(755,root,root) %{_bindir}/droplang
-%attr(755,root,root) %{_bindir}/dropuser
 %attr(755,root,root) %{_bindir}/initdb
 %attr(755,root,root) %{_bindir}/ipcclean
 %attr(755,root,root) %{_bindir}/pg_autovacuum
@@ -1005,13 +998,6 @@ fi
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
 %attr(640,postgres,postgres) %config(noreplace) %verify(not md5 mtime size) /var/log/pgsql
 
-%{_mandir}/man1/clusterdb.1*
-%{_mandir}/man1/createdb.1*
-%{_mandir}/man1/createlang.1*
-%{_mandir}/man1/createuser.1*
-%{_mandir}/man1/dropdb.1*
-%{_mandir}/man1/droplang.1*
-%{_mandir}/man1/dropuser.1*
 %{_mandir}/man1/initdb.1*
 %{_mandir}/man1/ipcclean.1*
 %{_mandir}/man1/pg_controldata.1*
@@ -1082,12 +1068,26 @@ fi
 
 %files clients -f clients.lang
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/clusterdb
+%attr(755,root,root) %{_bindir}/createdb
+%attr(755,root,root) %{_bindir}/createlang
+%attr(755,root,root) %{_bindir}/createuser
+%attr(755,root,root) %{_bindir}/dropdb
+%attr(755,root,root) %{_bindir}/droplang
+%attr(755,root,root) %{_bindir}/dropuser
 %attr(755,root,root) %{_bindir}/pg_dump
 %attr(755,root,root) %{_bindir}/pg_dumpall
 %attr(755,root,root) %{_bindir}/pg_restore
 %attr(755,root,root) %{_bindir}/psql
 %attr(755,root,root) %{_bindir}/vacuumdb
 
+%{_mandir}/man1/clusterdb.1*
+%{_mandir}/man1/createdb.1*
+%{_mandir}/man1/createlang.1*
+%{_mandir}/man1/createuser.1*
+%{_mandir}/man1/dropdb.1*
+%{_mandir}/man1/droplang.1*
+%{_mandir}/man1/dropuser.1*
 %{_mandir}/man1/pg_dump.1*
 %{_mandir}/man1/pg_dumpall.1*
 %{_mandir}/man1/pg_restore.1*
