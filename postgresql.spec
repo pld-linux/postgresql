@@ -2,6 +2,7 @@
 # TODO:
 # - pg_autovacuum init support? look at its readme file, please
 # - init script for slon (Slony-I daemon).
+# - jdbc subpackage
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
@@ -1087,3 +1088,10 @@ fi
 %{_pgmoduledir}/slony1_funcs.so
 %{_pgmoduledir}/xxid.so
 %endif
+
+## %if %{with jdbc}
+## %files jdbc
+## %defattr(644,root,root,755)
+## #{_javadir}/postgresql-exmaples.jar
+## %{_javadir}/postgresql.jar
+## %endif
