@@ -1,27 +1,27 @@
-diff -Nur postgresql-7.3.1.orig/src/backend/utils/misc/postgresql.conf.sample postgresql-7.3.1/src/backend/utils/misc/postgresql.conf.sample
---- postgresql-7.3.1.orig/src/backend/utils/misc/postgresql.conf.sample	Mon Sep  2 07:42:54 2002
-+++ postgresql-7.3.1/src/backend/utils/misc/postgresql.conf.sample	Mon Jan  6 13:48:31 2003
-@@ -121,8 +121,8 @@
- 				#   log, info, notice, warning, error
- #silent_mode = false
+--- postgresql-7.4beta1/src/backend/utils/misc/postgresql.conf.sample	2003-08-08 22:41:16.000000000 +0200
++++ postgresql-7.4beta1/src/backend/utils/misc/postgresql.conf.sample.new	2003-08-08 22:40:08.000000000 +0200
+@@ -137,9 +137,9 @@
  
--#log_connections = false
--#log_pid = false
-+log_connections = true
-+log_pid = true
- #log_statement = false
- #log_duration = false
- #log_timestamp = false
-@@ -144,9 +144,9 @@
- #
- #	Syslog
- #
--#syslog = 0			# range 0-2
+ # - Syslog -
+ 
+-#syslog = 0			# range 0-2; 0=stdout; 1=both; 2=syslog
 -#syslog_facility = 'LOCAL0'
 -#syslog_ident = 'postgres'
-+syslog = 2			# range 0-2
++syslog = 2			# range 0-2; 0=stdout; 1=both; 2=syslog
 +syslog_facility = 'LOCAL0'
 +syslog_ident = 'postgres'
  
+ # - When to Log -
  
- #
+@@ -170,9 +170,9 @@
+ #debug_print_rewritten = false
+ #debug_print_plan = false
+ #debug_pretty_print = false
+-#log_connections = false
++log_connections = true
+ #log_duration = false
+-#log_pid = false
++log_pid = true 
+ #log_statement = false
+ #log_timestamp = false
+ #log_hostname = false

@@ -1,6 +1,6 @@
---- postgresql-7.3.2/configure.in.orig	Wed Mar 12 00:19:05 2003
-+++ postgresql-7.3.2/configure.in	Wed Mar 12 00:31:28 2003
-@@ -599,12 +599,13 @@
+--- postgresql-7.4beta1/configure.in.orig	2003-08-05 00:30:30.000000000 +0200
++++ postgresql-7.4beta1/configure.in	2003-08-09 08:01:18.000000000 +0200
+@@ -614,12 +614,13 @@
  
  if test "$PORTNAME" != "aix" -a "$PORTNAME" != "alpha"
  then
@@ -16,7 +16,7 @@
  AC_CHECK_LIB(socket,   main)
  AC_CHECK_LIB(ipc,      main)
  AC_CHECK_LIB(IPC,      main)
-@@ -615,13 +615,13 @@
+@@ -630,6 +631,6 @@
  AC_CHECK_LIB(BSD,      main)
  AC_CHECK_LIB(gen,      main)
  AC_CHECK_LIB(PW,       main)
@@ -24,11 +24,13 @@
 +dnl AC_CHECK_LIB(resolv,   main)
  AC_SEARCH_LIBS(getopt_long, [getopt gnugetopt])
  # QNX:
- AC_CHECK_LIB([[unix]], main)
- AC_SEARCH_LIBS(crypt,  crypt)
+@@ -639,7 +640,8 @@
  # BeOS:
--AC_CHECK_LIB(bind,     __inet_ntoa)
-+AC_CHECK_FUNC(inet_ntoa, ,[AC_CHECK_LIB(bind,     __inet_ntoa)])
+ if test "$PORTNAME" = "beos"
+ then
+-	AC_CHECK_LIB(bind, __inet_ntoa)
++	dnl AC_CHECK_LIB(bind, __inet_ntoa)
++	AC_CHECK_FUNC(inet_ntoa, ,[AC_CHECK_LIB(bind,     __inet_ntoa)]) 
+ fi
  # Solaris:
  AC_SEARCH_LIBS(fdatasync, [rt posix4])
- # Cygwin:

@@ -7,12 +7,14 @@
 #   routine and send it to postgresql team...
 #
 # Conditional build:
-# _with_jdbc				- with JDBC driver
-# _with_absolute_dbpaths	- allow absolute paths to create database
-#	(disallowed by default because it is a security risk)
-#
+%bcond_without	tcl			# disables Tcl support
+%bcond_with	jdbc			# enable JDBC driver
+%bcond_with	absolute_dbpaths	# enable absolute paths to create database
+					# (disabled by default because it is a security risk)
 
 %include	/usr/lib/rpm/macros.python
+ 
+%define _rc RC1 
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
@@ -25,12 +27,12 @@ Summary(tr):	Veri Tabaný Yönetim Sistemi
 Summary(uk):	PostgreSQL - ÓÉÓÔÅÍÁ ËÅÒÕ×ÁÎÎÑ ÂÁÚÁÍÉ ÄÁÎÉÈ
 Summary(zh_CN):	PostgreSQL ¿Í»§¶Ë³ÌÐòºÍ¿âÎÄ¼þ
 Name:		postgresql
-Version:	7.3.4
-Release:	0.2
+Version:	7.4
+Release:	0.1.%{_rc}
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	82878d6d74c36384af3595d26ed38067
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{_rc}.tar.bz2
+# Source0-md5:	ac449e3b83f226476cedfc09bef30ead
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -43,10 +45,9 @@ Patch4:		%{name}-absolute_dbpaths.patch
 Patch5:		%{name}-link.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
-BuildRequires:	XFree86-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	libtool
+BuildRequires:	bison >= 1.875
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7c
 BuildRequires:	pam-devel
@@ -54,8 +55,8 @@ BuildRequires:	perl-devel
 BuildRequires:	python-devel >= 2.3
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-pythonprov
-BuildRequires:	tcl-devel >= 8.4.3
-BuildRequires:	tk-devel >= 8.4.3
+%{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
+%{?with_tcl:BuildRequires:	tk-devel >= 8.4.3}
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 PreReq:		rc-scripts
@@ -412,34 +413,6 @@ C++, PERL É TCL) ÒÁÚÄÅÌÅÎÙ. üÔÏÔ ÐÁËÅÔ ×ËÌÀÞÁÅÔ ÔÏÌØËÏ ÂÉÂÌÉÏÔÅËÉ ÄÌÑ
 ôÅÐÅÒ ÐÁËÅÔÉ Ú Â¦ÂÌ¦ÏÔÅËÁÍÉ ÄÌÑ Ò¦ÚÎÉÈ ÍÏ× ÐÒÏÇÒÁÍÕ×ÁÎÎÑ (C, C++, PERL
 ¦ TCL) ÒÏÚÄ¦ÌÅÎ¦. ãÅÊ ÐÁËÅÔ Í¦ÓÔÉÔØ Ô¦ÌØËÉ Â¦ÂÌ¦ÏÔÅËÉ ÄÌÑ ÍÏ×É C.
 
-%package -n python-postgresql
-Summary:	The python-based client programs needed for accessing a PostgreSQL server
-Summary(es):	Módulo Python para acceder un servidor PostgreSQL
-Summary(pl):	Programy klienckie do dostêpu do serwera PostgreSQL napisane w Pythonie
-Summary(pt_BR):	Módulo Python para acesso ao servidor PostgreSQL
-Summary(zh_CN):	Python ³ÌÐò·ÃÎÊ PostgreSQL Êý¾Ý¿âËùÐèµÄ¿ª·¢Ä£¿é
-Group:		Libraries/Python
-Requires:	python >= 2.0
-Requires:	python-mx-DateTime
-Requires:	%{name}-libs = %{version}
-Obsoletes:	python-PyGreSQL
-Obsoletes:	postgresql-python
-
-%description -n python-postgresql
-postgresql-python includes the python-based client programs and client
-libraries that you'll need to access a PostgreSQL database management
-system server.
-
-%description -n python-postgresql -l es
-Módulo Python para acceder un servidor PostgreSQL.
-
-%description -n python-postgresql -l pl
-Pakiet ten zawiera napisane w Pythonie programy i biblioteki klienckie
-do dostêpu do serwera baz danych PostgreSQL.
-
-%description -n python-postgresql -l pt_BR
-Módulo Python para acesso ao servidor PostgreSQL.
-
 %package doc
 Summary:	Documentation for PostgreSQL
 Summary(pl):	Dodatkowa dokumantacja dla PostgreSQL
@@ -728,7 +701,7 @@ proceduralnego PL/TCL dla swojej bazy danych.
 Summary:	Cryptographic functions for PostgreSQL
 Summary(pl):	Funkcje kryptograficzne dla PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{version}
+Requires:       %{name} = %{version}
 
 %description module-pgcrypto
 Cryptographic functions for PostgreSQL.
@@ -737,7 +710,7 @@ Cryptographic functions for PostgreSQL.
 Funkcje kryptograficzne dla PostgreSQL.
 
 %prep
-%setup  -q
+%setup  -q  -n %{name}-%{version}%{_rc}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p0
@@ -766,8 +739,8 @@ rm -f config/libtool.m4
 	--enable-syslog \
 	--enable-unicode-conversion \
 	--with-CXX \
-	--with-tcl \
-	--with-tk \
+	%{?with_tcl:--with-tcl} \
+	%{?with_tcl:--with-tk} \
 	--with-pam \
 	--with-perl \
 	--with-python \
@@ -780,8 +753,8 @@ rm -f config/libtool.m4
 %{!?_without_tests: %{__make} check }
 %endif
 
-cd contrib/pgcrypto
-%{__make}
+cd contrib/pgcrypto/
+%{__make} 
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -922,6 +895,7 @@ fi
 %{_datadir}/postgresql/*.sample
 %{_datadir}/postgresql/*.description
 %{_datadir}/postgresql/*.sql
+%{_datadir}/postgresql/*.txt
 
 %attr(700,postgres,postgres) /home/services/postgres
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
@@ -956,8 +930,10 @@ fi
 
 %files libs
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpq.so.*.*
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
+%attr(755,root,root) %{_libdir}/libecpg_compat.so.*.*
+%attr(755,root,root) %{_libdir}/libpq.so.*.*
+%attr(755,root,root) %{_libdir}/libpgtypes.so.*.*
 %attr(755,root,root) %{_bindir}/pg_id
 
 %files devel
@@ -965,7 +941,9 @@ fi
 %attr(755,root,root) %{_bindir}/ecpg
 %attr(755,root,root) %{_bindir}/pg_config
 %attr(755,root,root) %{_libdir}/libecpg.so
+%attr(755,root,root) %{_libdir}/libecpg_compat.so
 %attr(755,root,root) %{_libdir}/libpq.so
+%attr(755,root,root) %{_libdir}/libpgtypes.so
 %dir %{_includedir}/postgresql
 %{_includedir}/pg_config.h
 %{_includedir}/pg_config_os.h
@@ -976,6 +954,11 @@ fi
 %{_includedir}/postgres_ext.h
 %{_includedir}/sql3types.h
 %{_includedir}/sqlca.h
+%{_includedir}/pgtypes_date.h
+%{_includedir}/pgtypes_error.h
+%{_includedir}/pgtypes_interval.h
+%{_includedir}/pgtypes_numeric.h
+%{_includedir}/pgtypes_timestamp.h
 %dir %{_includedir}/postgresql/internal
 %{_includedir}/postgresql/internal/c.h
 %{_includedir}/postgresql/internal/libpq-int.h
@@ -994,7 +977,9 @@ fi
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libecpg.a
+%{_libdir}/libecpg_compat.a
 %{_libdir}/libpq.a
+%{_libdir}/libpgtypes.a
 
 %files clients
 %defattr(644,root,root,755)
@@ -1011,13 +996,7 @@ fi
 %{_mandir}/man1/vacuumdb.1*
 %{_mandir}/manl/*.l*
 
-%files -n python-postgresql
-%defattr(644,root,root,755)
-%doc src/interfaces/python/{README*,ChangeLog}
-%{py_sitedir}/*.pyc
-%{py_sitedir}/*.pyo
-%attr(755,root,root) %{py_sitedir}/*.so
-
+%if %{with tcl}
 %files tcl
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpgtcl.so
@@ -1034,6 +1013,7 @@ fi
 %files tcl-static
 %defattr(644,root,root,755)
 %{_libdir}/libpgtcl.a
+%endif
 
 %files module-plpgsql
 %defattr(644,root,root,755)
@@ -1047,10 +1027,12 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/plpython.so
 
+%if %{with tcl}
 %files module-pltcl
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
+%endif
 
 %files module-pgcrypto
 %defattr(644,root,root,755)
