@@ -769,8 +769,8 @@ przeszukiwaniu z dostêpem poprzez indeksy:
 http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 
 %package -n slony1
-Summary:	Slony-I -- a "master to multiple slaves" replication system for PostgreSQL
-Summary(pl):	Slony-I -- system replikacji dla PostgreSQL
+Summary:	Slony-I - a "master to multiple slaves" replication system for PostgreSQL
+Summary(pl):	Slony-I - system replikacji dla PostgreSQL
 Version:	%{slony1_version}
 Release:	%{slony1_release}@%{postgresql_version}_%{postgresql_release}
 URL:		http://slony.info/
@@ -779,27 +779,27 @@ Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
 Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
 
 %description -n slony1
-Slony-I is a "master to multiple slaves" replication system with cascading and
-failover.
+Slony-I is a "master to multiple slaves" replication system with
+cascading and failover.
 
-The big picture for the development of Slony-I is a master-slave system that
-includes all features and capabilities needed to replicate large databases to a
-reasonably limited number of slave systems.
+The big picture for the development of Slony-I is a master-slave
+system that includes all features and capabilities needed to replicate
+large databases to a reasonably limited number of slave systems.
 
-Slony-I is a system for data centers and backup sites, where the normal mode of
-operation is that all nodes are available. 
+Slony-I is a system for data centers and backup sites, where the
+normal mode of operation is that all nodes are available. 
 
 %description -n slony1 -l pl
-Slony-I jest systemem replikacji dla PostgreSQL. Pozwala na replikacjê typu
-"jeden serwer g³owny, wiele serwerów pomocniczych".
+Slony-I jest systemem replikacji dla PostgreSQL. Pozwala na replikacjê
+typu "jeden serwer g³owny, wiele serwerów pomocniczych".
 
 G³ówn± zalet± Slony-I jest system "master-slave". Zawiera on wszelk±
-funkcjonalno¶æ potrzebn± do replikowania du¿ych baz danych na okre¶lon±
-ilo¶æ serwerów pomocniczych lub zastêpczych.
+funkcjonalno¶æ potrzebn± do replikowania du¿ych baz danych na
+okre¶lon± ilo¶æ serwerów pomocniczych lub zastêpczych.
 
-Slony-I jest przeznaczony dla systemów, gdzie normalny tryb pracy wymaga aby
-zarówno serwer g³ówny jak i wszystkie serwery pomocnicze by³y ca³y czas
-operacyjne.
+Slony-I jest przeznaczony dla systemów, gdzie normalny tryb pracy
+wymaga aby zarówno serwer g³ówny jak i wszystkie serwery pomocnicze
+by³y ca³y czas operacyjne.
 
 %prep
 %setup -q -a4
