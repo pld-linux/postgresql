@@ -20,7 +20,7 @@
 if [ -f /etc/sysconfig/postgresql ]; then
 	. /etc/sysconfig/postgresql
 else
-	nls "Error: /etc/sysconfig/postgresql not found"
+	nls "Error: %s not found" /etc/sysconfig/postgresql
 	nls " PostgreSQL can't be run."
 	exit 1
 fi
