@@ -397,7 +397,7 @@ make all PGDOCS=unpacked -C doc
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d \
-        $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_mandir},%{_includedir}/pgsql} \
+        $RPM_BUILD_ROOT{%{_bindir},%{_libdir}/pgsql,%{_mandir},%{_includedir}/pgsql} \
         $RPM_BUILD_ROOT/var/state/pgsql
 		
 ( cd src
@@ -438,8 +438,7 @@ install -d $RPM_BUILD_ROOT/etc/rc.d/init.d \
 
 # Move all templates/examples beneath %{_libdir}/pgsql
 ( cd $RPM_BUILD_ROOT%{_libdir}
-  install -d pgsql
-  mv *source *sample pgsql
+  mv  *description *source *sample pgsql
 )
 
 # Move odbc.ini file to etc
@@ -565,7 +564,7 @@ rm -f /tmp/tmp_perl_info
 %{_mandir}/man1/ipcclean.1*
 %{_mandir}/man5/*.5*
 
-%attr(755,postgres,postgres) %dir /var/state/pgsql
+%attr(750,postgres,postgres) %dir /var/state/pgsql
 
 %files libs
 %defattr(644,root,root,755)
@@ -575,7 +574,6 @@ rm -f /tmp/tmp_perl_info
 # nie wiem do czego to
 %attr(755,root,root) %{_libdir}/plpgsql.so 
 
-%{_libdir}/*.description
 %attr(755,root,root) %{_bindir}/pg_id
 
 #%defattr(644,postgres,postgres,755)
