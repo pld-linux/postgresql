@@ -28,7 +28,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.4
-Release:	0.1.%{_rc}
+Release:	0.2.%{_rc}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{_rc}.tar.bz2
@@ -43,6 +43,7 @@ Patch2:		%{name}-pg_ctl-nopsql.patch
 Patch3:		%{name}-conf.patch
 Patch4:		%{name}-absolute_dbpaths.patch
 Patch5:		%{name}-link.patch
+Patch6:		%{name}-com_err.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -718,6 +719,7 @@ Funkcje kryptograficzne dla PostgreSQL.
 %patch3 -p1
 %{?_with_absolute_dbpaths:%patch4 -p1}
 %patch5 -p1
+%patch6 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -728,8 +730,6 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 find contrib -type d -name CVS -exec rm -rf {} \;
 
 %build
-CPPFLAGS="-I%{_includedir}/et"
-export CPPFLAGS
 rm -f config/libtool.m4
 %{__aclocal} -I config
 %{__autoconf}
