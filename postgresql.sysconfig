@@ -7,7 +7,7 @@
 #
 
 # standard setting
-# PG_DB_CLUSTERS="/var/lib/pgsql"
+PG_DB_CLUSTERS="/var/lib/pgsql"
 
 # predictable usage
 # PG_DB_CLUSTERS="/var/lib/pgsql/01 /var/lib/pgsql/02"
