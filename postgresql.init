@@ -1,8 +1,4 @@
 #!/bin/sh
-# todo:
-#    - encodings? leave or rip?
-#    - finish init
-#    - tests, more tests
 #
 # postgresql	This is the init script for starting up the PostgreSQL
 #		server
@@ -10,10 +6,9 @@
 # chkconfig:	345 84 25
 #
 # description:	Starts and stops the PostgreSQL backend daemon that handles \
-#		all database requests.
+#				all database requests.
 #
 # processname:	postmaster
-# pidfile:	$POSTGRES_DATA_DIR/postmaster.pid
 
 # Source function library
 . /etc/rc.d/init.d/functions
@@ -21,17 +16,13 @@
 # Get network config
 . /etc/sysconfig/network
 
-# Service config defaults
-ENCODING=UNICODE
-LOCALE=${LANG:-C}
-
 # Get service config
 if [ -f /etc/sysconfig/postgresql ] ; then
-        . /etc/sysconfig/postgresql
+	. /etc/sysconfig/postgresql
 else
-        echo "Error: /etc/sysconfig/postgresql not found"
-        echo " PostgreSQL can't be run."
-        exit 1
+	echo "Error: /etc/sysconfig/postgresql not found"
+	echo " PostgreSQL can't be run."
+	exit 1
 fi
 
 # Check that networking is up.
@@ -41,127 +32,108 @@ if is_no "${NETWORKING}"; then
 fi
 
 pgstatus () {
-  PG_STATUS= "unknown"
-  PG_PID= "unknown"
-  status= $(/usr/bin/pg_ctl -D $1 status)
-  if echo "$status" | grep -q 'pg_ctl: postmaster or postgres is not running'; then
-    PG_STATUS= "not running"
-  elif echo "$status" | grep -q 'pg_ctl: postmaster is running'; then
-    PG_STATUS= "running"
-    PG_PID= $(pg_ctl  -D /var/lib/pgsql status | sed 's/^pg_ctl:.*pid: \([0-9]\+\).*/\1/' | head -1)
-  fi
+	PG_STATUS="unknown"
+	PG_PID="unknown"
+	status=`/usr/bin/pg_ctl -D $1 status`
+
+	if echo "$status" | grep -q 'pg_ctl: postmaster or postgres is not running'; then
+		PG_STATUS="not running"
+	elif echo "$status" | grep -q 'pg_ctl: postmaster is running'; then
+		PG_STATUS="running"
+		PG_PID=`pg_ctl  -D /var/lib/pgsql status | sed 's/^pg_ctl:.*pid: \([0-9]\+\).*/\1/' | head -1`
+	fi
 }
 
-action = "$1"
-shift
+action="$1"
 
 # any db cluster as command line argument?
-if [ $# -gt 0 ]; then
-    POSTGRES_DB_CLUSTERS = "$@"
+if [ $# -gt 1 ]; then
+	shift
+	POSTGRES_DB_CLUSTERS="$@"
 fi
 
 # See how we were called.
 case "$action" in
-  start)
-    for pgdir in $POSTGRES_DB_CLUSTERS; do
-      pgstatus "$pgdir"
-      if [ $PG_STATUS = "not running" ]; then
-        msg_already_running "PostgreSQL $pgdir (skipping"
-      else
-        msg_starting "PostgreSQL $pgdir"
-        busy
-        TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir start 2>&1 >/dev/null"
-        
-        pgstatus "$pgdir"
-        if [ $PG_STATUS != "unknown" -a $PG_PID != "unknown" ]
-            deltext; ok
-        else
-            deltext; fail 
-        fi
-      fi
-    done
+	start)
+		for pgdir in $POSTGRES_DB_CLUSTERS; do
+			pgstatus "$pgdir"
+			if [ "$PG_STATUS" = "running" ]; then
+				msg_already_running "PostgreSQL $pgdir"
+			else
+				msg_starting "PostgreSQL $pgdir"
+				busy
+				TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir start 2>&1 >/dev/null"
+				
+				pgstatus "$pgdir"
+				if [ "$PG_STATUS" != "unknown" -a "$PG_PID" != "unknown" ]; then
+					deltext; ok
+				else
+					deltext; fail 
+				fi
+			fi
+		done
 	;;
-  stop)
-    for pgdir in $POSTGRES_DB_CLUSTERS; do
-      pgstatus "$pgdir"
-      if [ $PG_STATUS = "not running" ]; then
-		msg_not_running "PostgreSQL $pgdir (skipping)"
-      else
-        msg_stopping PostgreSQL
-	    busy
-	    TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir stop -m fast 2>&1 >/dev/null"
-        pgstatus "$pgdir"
-        if [ $PG_STATUS != "not running"]; then
-	      deltext; fail
-	    else
-	      deltext; ok
-	    fi
-	    rm -f $pgdir/postmaster.pid
-      fi
-    done
-	;;
-  status)
-	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir status"
-	;;
-  restart)
-  	$0 stop
-	$0 start
-	;;
-  reload)
-    for pgdir in $POSTGRES_DB_CLUSTERS; do
-      pgstatus "$pgdir"
-      if [ $PG_STATUS = "not running" ]; then
-      	msg_not_running "PostgreSQL $pgdir (skipping)"
-      else
-        msg_reloading PostgreSQL
-        busy
-        
-        TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir restart 2>&1 >/dev/null"
-        
-        pgstatus "$pgdir"
-        if [ $PG_STATUS = "running" ]; then
-        	deltext; ok
-        else
-        	deltext; fail
-        fi
-      fi
-    done
-	;;
-    init)
-	if [ -f "$POSTGRES_DATA_DIR/PG_VERSION" ]; then
-	    echo "Seems that database is initialized now. Remove by hand $POSTGRES_DATA_DIR"
-	    echo "before initialize database."
-	    exit 1
-	fi
+	stop)
+		for pgdir in $POSTGRES_DB_CLUSTERS; do
+			pgstatus "$pgdir"
+			if [ "$PG_STATUS" = "not running" ]; then
+				msg_not_running "PostgreSQL $pgdir"
+			else
+				msg_stopping "PostgreSQL $pgdir"
+				busy
 
-	echo -n "Specify encoding for pgsql database (eg: LATIN2, KOI8) [$ENCODING]: "
-	read new_encoding
-	ENCODING=${new_encoding:-$ENCODING}
-	echo -n "Specify locale for pgsql database (eg: pl_PL, de_DE) [$LOCALE]: "
-	read new_locale
-	LOCALE=${new_locale:-$LOCALE}
+				if ps ax | grep -v grep | grep -q "$PG_PID"; then
+					TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir stop -m fast 2>&1 >/dev/null"
+					pgstatus "$pgdir"
+					if [ "$PG_STATUS" != "not running" ]; then
+						deltext; fail
+					else
+						deltext; ok
+					fi
+				else
+					deltext; died
+				fi
 
-	show "Creating initial postgresql database using $ENCODING/$LOCALE encoding/locale"
-	started
-
-        # Create sample database
-	if [ ! -d $POSTGRES_DATA_DIR ]; then
-	    mkdir -p $POSTGRES_DATA_DIR
-	    chown postgres.postgres $POSTGRES_DATA_DIR
-	    chmod 700 $POSTGRES_DATA_DIR
-	fi
-
-	
-	LC_ALL=$LOCALE; export LC_ALL
-	TMPDIR=/tmp su - postgres -s /bin/sh -c "LD_LIBRARY_PATH=/usr/lib \
-			initdb --pgdata=$POSTGRES_DATA_DIR \
-			-L /usr/share/postgresql -E $ENCODING"
-
-	echo "REMEMBER to setup password for user \"postgres\"!"
+				rm -f $pgdir/postmaster.pid
+			fi
+		done
 	;;
-  *)
-	msg_usage "$0 {start|stop|status|restart|reload}"
-	exit 1
+	status)
+		TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir status"
+	;;
+	restart)
+		$0 stop
+		$0 start
+	;;
+	reload)
+		for pgdir in $POSTGRES_DB_CLUSTERS; do
+			pgstatus "$pgdir"
+			if [ "$PG_STATUS" = "not running" ]; then
+				msg_not_running "PostgreSQL $pgdir"
+			else
+				msg_reloading "PostgreSQL $pgdir"
+				busy
+
+				if ps ax | grep -v grep | grep -q "$PG_PID"; then
+					TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir restart 2>&1 >/dev/null"
+
+					pgstatus "$pgdir"
+					if [ "$PG_STATUS" = "running" ]; then
+						deltext; ok
+					else
+						deltext; fail
+					fi
+				else
+					deltext; died
+					rm -f $pgdir/postmaster.pid
+					$0 start
+				fi
+			fi
+		done
+	;;
+	*)
+		msg_usage "$0 {start|stop|status|restart|reload}"
+		exit 1
 esac
 
 exit 0
