@@ -2,14 +2,6 @@
 # - pg_autovacuum init support? look at its readme file, please
 # - put pgcrypto docs into docdir
 # - put pgcrypto sql files in %{_datadir}/postgresql
-# - add locales:
-#        libpq.mo
-#        pg_controldata.mo
-#        pg_dump.mo
-#        pg_resetxlog.mo
-#        pgscripts.mo
-#        postgres.mo
-#        psql.mo
 # - pg_ctl uses psql again, current patch2 doesn't eliminate this
 # - remove postgresql-configure patch and create postgresql-doc patch,
 #   which will prevent documentation and manuals installation (the routine
@@ -837,6 +829,14 @@ install -d howto
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
 
+# find locales
+for f in libpq pg_controldata pg_dump pg_resetxlog pgscripts postgres psql; do
+	%find_lang $f
+done
+# merge locales
+cat pgscripts.lang pg_resetxlog.lang postgres.lang pg_controldata.lang > main.lang
+cat pg_dump.lang psql.lang > clients.lang
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -909,7 +909,7 @@ fi
 %post   tcl -p /sbin/ldconfig
 %postun tcl -p /sbin/ldconfig
 
-%files
+%files -f main.lang
 %defattr(644,root,root,755)
 %doc contrib/pg_autovacuum/README*
 %attr(754,root,root) /etc/rc.d/init.d/*
@@ -979,7 +979,7 @@ fi
 %doc doc/unpacked/*
 %doc howto
 
-%files libs
+%files libs -f libpq.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
 %attr(755,root,root) %{_bindir}/pg_id
@@ -1029,7 +1029,7 @@ fi
 %{_libdir}/libpq.a
 %{_libdir}/libpgtypes.a
 
-%files clients
+%files clients -f clients.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pg_dump
 %attr(755,root,root) %{_bindir}/pg_dumpall
