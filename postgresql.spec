@@ -1,3 +1,6 @@
+
+# SECURITY: CAN-2002-1399 (unfixable in 7.2.x!)
+
 #
 # Conditional build:
 # _with_jdbc		- with JDBC driver
