@@ -5,12 +5,12 @@ Summary(fr):	Sysème de gestion de base de données PostgreSQL
 Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
-Version:	7.0.2
-Release:	19
+Version:	7.0.3
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
-Source0:	ftp://ftp.postgresql.org/pub/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
