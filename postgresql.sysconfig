@@ -1,38 +1,6 @@
 # $Revision$
 
-# Root of the tree of database directories
-POSTGRES_DATA_DIR=/var/lib/pgsql
-
-#
-# postgres(1) backend options run by postmaster
-#
-# run postgres(1) backend in quiet mode
-POSTGRES_QUIET=no
-
-# Enable listening on TCP port. Without this postmaster responds
-# only on unix socket
-ALLOW_TCP_CONNECTIONS=no
-
-# For production machines you should increase those numbers to avoid "Too 
-# many connections" messages. Buffers should be (at least) MaxConn*2.
-# But: watch carefully that you won't exceed system resources!!
-# Leave it blank to have default (safe) 32 clients/64 buffers.
-
-MAXCONN=
-BUFFERS=
-
-# Allow using SSL on TCP connections. Requires ALLOW_TCP_CONNECTIONS to be
-# set to yes. Also, you must supply key and certificate files
-# ($POSTGRES_DATA_DIR/server.{key,crt})
-ALLOW_USE_SSL=no
-
-# Disable automatic fsync() call after each transaction. This option
-# improves performance, but an operating system crash while a transaction is
-# in progress will probably cause data loss.
-POSTGRES_DISABLE_FSYNC=no
-
-# Where postmaster output is redirected
-POSTGRES_LOG=/var/log/pgsql
+# POSTGRES_DB_CLUSTERS="/var/lib/pgsql"
 
 # Default database chcaracter encoding
 # Avaible character sets:
