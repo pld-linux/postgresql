@@ -821,7 +821,7 @@ install /usr/share/automake/config.* config
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 	$RPM_BUILD_ROOT{/var/{lib/pgsql,log},%{_pgsqldir}} \
-	$RPM_BUILD_ROOT{%{_mandir},%{_javadir}} \
+	$RPM_BUILD_ROOT%{_mandir} \
 	$RPM_BUILD_ROOT/home/services/postgres
 
 %{__make} install install-all-headers \
@@ -847,6 +847,7 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
 
 %if %{with jdbc}
+install -d $RPM_BUILD_ROOT%{_javadir}
 mv	$RPM_BUILD_ROOT%{_datadir}/postgresql/java/*.jar \
 	$RPM_BUILD_ROOT%{_javadir}
 %endif
