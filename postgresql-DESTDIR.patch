@@ -1,0 +1,72 @@
+diff -ur postgresql-6.4.2.old/src/Makefile.global.in postgresql-6.4.2/src/Makefile.global.in
+--- postgresql-6.4.2.old/src/Makefile.global.in	Wed Jun 30 10:43:20 1999
++++ postgresql-6.4.2/src/Makefile.global.in	Wed Jun 30 10:42:13 1999
+@@ -62,13 +62,13 @@
+ 
+ # Where the postgres executables live (changeable by just putting them
+ # somewhere else and putting that directory in your shell PATH)
+-BINDIR= $(POSTGRESDIR)/bin
++BINDIR= $(DESTDIR)$(POSTGRESDIR)/bin
+ 
+ # Where libpq.a gets installed.  You must put it where your loader will
+ # look for it if you wish to use the -lpq convention.  Otherwise you
+ # can just put the absolute pathname to the library at the end of your
+ # command line.
+-LIBDIR= $(POSTGRESDIR)/lib
++LIBDIR= $(DESTDIR)$(POSTGRESDIR)/lib
+ 
+ # This is the directory where IPC utilities ipcs and ipcrm are located
+ #
+@@ -76,18 +76,18 @@
+ IPCRM=@ipcrm@ 
+ 
+ # Where the man pages (suitable for use with "man") get installed.
+-POSTMANDIR= $(POSTGRESDIR)/man
++POSTMANDIR= $(DESTDIR)@mandir@
+ 
+ # Where the formatted documents (e.g., the reference manual) get installed.
+-POSTDOCDIR= $(POSTGRESDIR)/doc
++POSTDOCDIR= $(DESTDIR)$(POSTGRESDIR)/doc
+ 
+ # Where the header files necessary to build frontend programs get installed.
+-HEADERDIR= $(POSTGRESDIR)/include
++HEADERDIR= $(DESTDIR)$(POSTGRESDIR)/include
+ 
+ # Where the ODBC installation-wide configuration file gets installed.
+ # This needs to be a client-side readable area, so can't go in $PGDATA.
+ # - thomas 1998-10-05
+-ODBCINST= $(POSTGRESDIR)
++ODBCINST= $(DESTDIR)$(POSTGRESDIR)
+ 
+ ##############################################################################
+ #
+diff -ur postgresql-6.4.2.old/src/interfaces/ecpg/include/Makefile postgresql-6.4.2/src/interfaces/ecpg/include/Makefile
+--- postgresql-6.4.2.old/src/interfaces/ecpg/include/Makefile	Wed Jun 30 10:43:20 1999
++++ postgresql-6.4.2/src/interfaces/ecpg/include/Makefile	Wed Jun 30 10:42:13 1999
+@@ -6,10 +6,10 @@
+ 	@echo Nothing to be done.
+ 
+ install::
+-	$(INSTALL) $(INSTLOPTS) ecpgerrno.h $(DESTDIR)$(HEADERDIR)	
+-	$(INSTALL) $(INSTLOPTS) ecpglib.h $(DESTDIR)$(HEADERDIR)	
+-	$(INSTALL) $(INSTLOPTS) ecpgtype.h $(DESTDIR)$(HEADERDIR)	
+-	$(INSTALL) $(INSTLOPTS) sqlca.h $(DESTDIR)$(HEADERDIR)	
++	$(INSTALL) $(INSTLOPTS) ecpgerrno.h $(HEADERDIR)	
++	$(INSTALL) $(INSTLOPTS) ecpglib.h $(HEADERDIR)	
++	$(INSTALL) $(INSTLOPTS) ecpgtype.h $(HEADERDIR)	
++	$(INSTALL) $(INSTLOPTS) sqlca.h $(HEADERDIR)	
+ 
+ uninstall::
+ 	rm -f $(DESTDIR)$(HEADERDIR)/ecpgerrno.h
+diff -ur postgresql-6.4.2.old/src/interfaces/ecpg/preproc/Makefile postgresql-6.4.2/src/interfaces/ecpg/preproc/Makefile
+--- postgresql-6.4.2.old/src/interfaces/ecpg/preproc/Makefile	Fri Oct 16 06:40:38 1998
++++ postgresql-6.4.2/src/interfaces/ecpg/preproc/Makefile	Wed Jun 30 10:43:57 1999
+@@ -18,7 +18,7 @@
+ 	rm -f *.o core a.out ecpg y.tab.h y.tab.c pgc.c *~
+ 
+ install: all
+-	$(INSTALL) $(INSTL_EXE_OPTS) ecpg $(DESTDIR)$(BINDIR)
++	$(INSTALL) $(INSTL_EXE_OPTS) ecpg $(BINDIR)
+ 
+ uninstall:
+ 	rm -f $(DESTDIR)$(BINDIR)/ecpg

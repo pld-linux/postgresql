@@ -1,0 +1,26 @@
+--- postgresql-6.4.2.old/src/interfaces/Makefile	Wed Jun 30 11:32:56 1999
++++ postgresql-6.4.2/src/interfaces/Makefile	Wed Jun 30 11:35:29 1999
+@@ -34,12 +34,8 @@
+ 	$(MAKE) -C libpgtcl $@
+ endif
+ ifeq ($(USE_PERL), true)
+-	if [ "$@" = "install" ]; then \
+-		$(MAKE) $(MFLAGS) install-perl5; \
+-	else \
+-		$(MAKE) $(MFLAGS) perl5/Makefile; \
+-		$(MAKE) $(MFLAGS) -C perl5 $@; \
+-	fi
++	$(MAKE) $(MFLAGS) perl5/Makefile; 
++	$(MAKE) $(MFLAGS) -C perl5 $@; 
+ endif
+ ifeq ($(USE_ODBC), true)
+ 	$(MAKE) -C odbc $@
+@@ -50,7 +46,7 @@
+ 
+ install-perl5: perl5/Makefile
+ 	$(MAKE) -C perl5 clean
+-	cd perl5 && POSTGRES_HOME="$(POSTGRESDIR)" perl Makefile.PL
++	cd perl5 && perl Makefile.PL
+ 	$(MAKE) -C perl5 all
+ 	@if [ -w `sed -n -e 's/^ *SITELIBEXP *= *//p' perl5/Makefile` ]; then \
+ 		$(MAKE) $(MFLAGS) -C perl5 install; \
