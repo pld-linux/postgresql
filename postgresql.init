@@ -43,7 +43,7 @@ case "$1" in
 		[ -f /tmp/.s.PGSQL.5432 ] || rm -f /tmp/.s.PGSQL.5432
 		
 		# Check for the PGDATA structure
-		if [ -f $POSTGRES_DATA_DIR/PG_VERSION ] && [ -d $POSTGRES_DATA_DIR/base/template1 ]; then
+		if [ -f $POSTGRES_DATA_DIR/PG_VERSION ] && [ -f $POSTGRES_DATA_DIR/global/pg_control ]; then
 		    # Check version of existing PGDATA
 		    if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.1' ]; then
 			show "Databases created under incompatibile version. Migrate them first."; fail
@@ -54,19 +54,19 @@ case "$1" in
             	    if [ ! -d $POSTGRES_DATA_DIR ]; then
 			mkdir -p $POSTGRES_DATA_DIR
 			chown postgres.postgres $POSTGRES_DATA_DIR
+			chmod 700 $POSTGRES_DATA_DIR
 		    fi
 		    su postgres -c "LD_LIBRARY_PATH=/usr/lib \
-			initdb --pgdata=$POSTGRES_DATA_DIR"
+			initdb --pgdata=$POSTGRES_DATA_DIR \
+			-L /usr/share/postgresql"
 		fi
 		
 		msg_starting PostgreSQL 
 		busy
-		PGSQL_CMDLINE="$([ "$ALLOW_TCP_CONNECTIONS" = yes ] && echo "-i") \
-		    $([ -n "$MAX_NUM_BACKENDS" ] && echo "-N $MAX_NUM_BACKENDS") \
-		    $([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
-		    $([ "$POSTGRES_QUIET". = yes. ] && echo '-o -Q') \
+		PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
+		    $([ "$POSTGRES_QUIET". = yes. ] && echo '-s -o -S') \
 		    $([ "$POSTGRES_DISABLE_FSYNC". = yes. ] && echo '-o -F')";
-		su postgres -c "/usr/bin/postmaster $PGSQL_CMDLINE >>$POSTGRES_LOG 2>&1 &"
+		su postgres -c "/usr/bin/pg_ctl start $PGSQL_CMDLINE -l $POSTGRES_LOG 2>&1 >/dev/null"
 		out=`status postmaster`
 		if [ $? -eq 0 ]; then 
 		    deltext; ok
@@ -83,23 +83,43 @@ case "$1" in
 		exit 0	
 	fi
 	msg_stopping postgreSQL
-	killproc postmaster
+	busy
+	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR")";
+	su postgres -c "/usr/bin/pg_ctl stop $PGSQL_CMDLINE -m fast 2>&1 >/dev/null"
 	out=`status postmaster`
-	if [ $? -eq 0 ]; then 
-	    deltext; fail 
-	    echo -e "\n$out";
-	    exit 1	
+	if [ $? -eq 0 ]; then
+		deltext; fail
+		echo -e "\n$out";
+		exit 1
+	else
+		deltext; ok
 	fi
-	
 	rm -f /var/run/postmaster.pid
 	rm -f /var/lock/subsys/postgresql
 	;;
   status)
-	status postmaster
+	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR")";
+	su postgres -c "/usr/bin/pg_ctl status $PGSQL_CMDLINE"
 	;;
   restart|reload)
-	$0 stop
-	$0 start
+  	if [ ! -f /var/lock/subsys/postgresql ]; then
+		msg_Not_Running PostgreSQL
+		exit 0	
+	fi
+	msg_reloading postgreSQL
+	busy
+	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
+		$([ "$POSTGRES_QUIET". = yes. ] && echo '-s -o -S') \
+		$([ "$POSTGRES_DISABLE_FSYNC". = yes. ] && echo '-o -F')";
+	su postgres -c "/usr/bin/pg_ctl restart $PGSQL_CMDLINE -m fast 2>&1 >/dev/null"
+	out=`status postmaster`
+	if [ $? -eq 0 ]; then
+		deltext; ok
+	else
+		deltext; fail
+		echo -e "\n$out";
+		exit 1
+	fi
 	;;
   *)
 	msg_Usage "$0 {start|stop|status|restart|reload}"
