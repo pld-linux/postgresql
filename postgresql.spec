@@ -15,7 +15,7 @@ Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.2
-Release:	6
+Release:	7
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -335,7 +335,7 @@ Summary:	The python-based client programs needed for accessing a PostgreSQL serv
 Summary(es):	Módulo Python para acceder un servidor PostgreSQL
 Summary(pl):	Programy klienckie do dostêpu do serwera PostgreSQL napisane w Pythonie
 Summary(pt_BR):	Módulo Python para acesso ao servidor PostgreSQL.
-Group:		Development/Languages/Python
+Group:		Libraries/Python
 Requires:	python >= 2.0
 Requires:	python-mx-DateTime
 Requires:	%{name}-libs = %{version}
