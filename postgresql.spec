@@ -5,7 +5,7 @@ Summary(pl): PostgreSQL system bazodanowy
 Summary(tr): Veri Tabaný Yönetim Sistemi
 Name:        postgresql
 Version:     6.4.2
-Release:     3d
+Release:     4d
 Copyright:   BSD
 Group:       Applications/Databases
 URL:         http://www.postgresql.org/
@@ -224,7 +224,7 @@ do serwera PostgreSQL. Serwer znajduje siê w g³ównym pakiecie.
 %package perl
 Summary:     Perl interface to PostgreSQL database
 Summary(pl): Interface dla Perl'a umo¿liwiaj±cy dostêp do baz PostgreSQL
-Group:       Application/Databases
+Group:       Applications/Databases
 Requires:    postgresql, perl >= 5.004
 
 %description perl
@@ -237,7 +237,7 @@ PostgreSQL.
 %package doc
 Summary:     Documentation for PostgreSQL
 Summary(pl): Dodatkowa dokumantacja dla PostgreSQL
-Group:       Application/Databases
+Group:       Applications/Databases
 Requires:    postgresql
 
 %description doc
@@ -251,7 +251,7 @@ administratorów w formacie HTML.
 %package odbc
 Summary:     ODBC interface to PostgreSQL
 Summary(pl): Interface ODBC do PostgreSQL
-Group:       Application/Databases
+Group:       Applications/Databases
 Requires:    postgresql
 
 %description odbc
@@ -473,6 +473,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/include/iodbc
 
 %changelog
+* Wed Mar  3 1999 Jacek Smyda <smyda@posexperts.com.pl>
+- correct group name
+
 * Thu Feb 25 1999 Jacek Smyda <smyda@posexperts.com.pl>
 - gzip man pages
 
