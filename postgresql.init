@@ -29,7 +29,7 @@ fi
 
 # Check that networking is up.
 if is_no "${NETWORKING}"; then
-	msg_Network_Down PostgreSQL
+	msg_network_down PostgreSQL
 	exit 1
 fi
 
@@ -53,7 +53,7 @@ case "$1" in
   start)
 	# Check if the service is already running?
 	if [ -f /var/lock/subsys/postgresql ]; then
-  		msg_Already_Running PostgreSQL
+  		msg_already_running PostgreSQL
 	else 	
 		if is_yes "$ALLOW_USE_SSL"; then
 			if is_no "$ALLOW_TCP_CONNECTIONS"; then
@@ -118,7 +118,7 @@ case "$1" in
   stop)
 
   	if [ ! -f /var/lock/subsys/postgresql ]; then
-		msg_Not_Running PostgreSQL
+		msg_not_running PostgreSQL
 		exit 0	
 	fi
 	msg_stopping PostgreSQL
@@ -146,7 +146,7 @@ case "$1" in
 	;;
   reload)
   	if [ ! -f /var/lock/subsys/postgresql ]; then
-		msg_Not_Running PostgreSQL
+		msg_not_running PostgreSQL
 		exit 0	
 	fi
 	msg_reloading PostgreSQL
@@ -174,7 +174,7 @@ case "$1" in
 	fi
 	;;
   *)
-	msg_Usage "$0 {start|stop|status|restart|reload}"
+	msg_usage "$0 {start|stop|status|restart|reload}"
 	exit 1
 esac
 
