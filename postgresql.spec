@@ -3,6 +3,25 @@
 # _with_jdbc		- with JDBC driver
 #
 
+# todo:
+# 1. pam_xauth problem
+#    - change pam_xauth behaviour?
+#    - change postgres user home directory?
+# 2. dump is required before upgrade
+#    if [ -f /etc/sysconfig/postgresql ]; then
+#      POSTGRES_DATA_DIR=/var/lib/pgsql
+#      . /etc/sysconfig/postgresql
+#      if [ -f $POSTGRES_DATA_DIR/PG_VERSION ]; then
+#        if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.2' ]; then
+#          echo "Database in older, incompatible format exists in $POSTGRES_DATA_DIR."
+#          echo "Dump it and clean $POSTGRES_DATA_DIR, then upgrade postgresql and"
+#          echo "restore database"
+#          exit 1
+#        fi
+#      fi
+#    fi
+
+
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.python
 
