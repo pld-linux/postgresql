@@ -4,10 +4,10 @@
  
  # - Syslog -
  
--#syslog = 0			# range 0-2
+-#syslog = 0			# range 0-2; 0=stdout; 1=both; 2=syslog
 -#syslog_facility = 'LOCAL0'
 -#syslog_ident = 'postgres'
-+syslog = 2			# range 0-2
++syslog = 2			# range 0-2; 0=stdout; 1=both; 2=syslog
 +syslog_facility = 'LOCAL0'
 +syslog_ident = 'postgres'
  
