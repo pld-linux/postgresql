@@ -1019,11 +1019,13 @@ fi
 %dir %{_includedir}/postgresql
 %{_includedir}/libpq-fe.h
 %{_includedir}/pg_config.h
+%{_includedir}/pg_config_manual.h
 %{_includedir}/pg_config_os.h
 %{_includedir}/postgres_ext.h
 %dir %{_includedir}/postgresql/internal
 %{_includedir}/postgresql/internal/c.h
 %{_includedir}/postgresql/internal/libpq-int.h
+%{_includedir}/postgresql/internal/port.h
 %{_includedir}/postgresql/internal/postgres_fe.h
 %{_includedir}/postgresql/internal/pqexpbuffer.h
 %{_includedir}/postgresql/internal/lib
@@ -1110,3 +1112,4 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/tsearch2.so
 %{_datadir}/%{name}/tsearch2.sql
 %{_datadir}/%{name}/untsearch2.sql
+%{_datadir}/%{name}/*.stop
