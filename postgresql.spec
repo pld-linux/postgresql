@@ -46,6 +46,7 @@ Patch6:		%{name}-com_err.patch
 Patch7:		%{name}-ecpg_link.patch
 Patch8:		%{name}-ecpg-includedir.patch
 Patch9:		%{name}-contrib_install.patch
+Patch10:	%{name}-tsearch2-compound_word_support_20031210.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -736,6 +737,15 @@ Cryptographic functions for PostgreSQL.
 %description module-pgcrypto -l pl
 Funkcje kryptograficzne dla PostgreSQL.
 
+%package module-tsearch2
+Summary:	Full text extension for PostgreSQL
+Group:		Applications/Databases
+Requires:	%{name} = %{version}
+
+%description module-tsearch2
+Implementation of a new data type tsvector - a searchable data type with
+indexed access: http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
+
 %prep
 %setup  -q
 %patch0 -p1
@@ -748,6 +758,7 @@ Funkcje kryptograficzne dla PostgreSQL.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -786,6 +797,7 @@ rm -f config/libtool.m4
 %{__make}
 %{__make} -C contrib/pg_autovacuum
 %{__make} -C contrib/pgcrypto
+%{__make} -C contrib/tsearch2
 %ifnarch sparc sparcv9 sparc64 alpha ppc
 %{?with_tests:%{__make} check}
 %endif
@@ -806,6 +818,9 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__make} -C contrib/pgcrypto install \
+	DESTDIR=$RPM_BUILD_ROOT
+
+%{__make} -C contrib/tsearch2 install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
@@ -1081,3 +1096,9 @@ fi
 %doc contrib/pgcrypto/README*
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
 %{_datadir}/%{name}/pgcrypto.sql
+
+%files module-tsearch2
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_pgmoduledir}/tsearch2.so
+%{_datadir}/%{name}/tsearch2.sql
+%{_datadir}/%{name}/untsearch2.sql
