@@ -10,9 +10,10 @@
 #
 # Conditional build:
 %bcond_without	tcl			# disables Tcl support
+%bcond_without	kerberos5	# disable kerberos5 support
 %bcond_with	jdbc			# enable JDBC driver
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
-					# (disabled by default because it is a security risk)
+								# (disabled by default because it is a security risk)
 
 %include	/usr/lib/rpm/macros.python
  
@@ -53,7 +54,7 @@ URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison >= 1.875
-BuildRequires:	heimdal-devel
+%{?with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7c
 BuildRequires:	pam-devel
@@ -777,7 +778,7 @@ rm -f config/libtool.m4
 	%{?with_tcl:--with-tk} \
 	--with-perl \
 	--with-python \
-	--with-krb5=%{_prefix} \
+	%{?with_kerberos5:--with-krb5=%{_prefix}} \
 	--with-openssl \
 	--with-x \
 %{?_with_jdbc:	--with-java}
