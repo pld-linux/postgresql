@@ -884,8 +884,19 @@ if [ "$foundold" = "1" ]; then
 	exit 1
 fi
 
-getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r postgres
-if id postgres >/dev/null 2>&1 ; then
+if [ -n "`/usr/bin/getgid postgres`" ]; then
+	if [ "`/usr/bin/getgid postgres`" != "88" ]; then
+		echo "Error: group postgres doesn't have gid=88. Correct this before installing postgresql." 1>&2
+		exit 1
+	fi
+else
+	/usr/sbin/groupadd -g 88 -r postgres
+fi
+if [ -n "`/bin/id -u postgres 2>/dev/null`" ]; then
+	if [ "`/bin/id -u postgres 2>/dev/null`" != "88" ]; then
+		echo "Error: user postgres doesn't have uid=88. Correct this before installing postgresql." 1>&2
+		exit 1
+	fi
 	/usr/sbin/usermod -d /home/services/postgres postgres
 else
 	/usr/sbin/useradd -M -o -r -u 88 \
@@ -916,9 +927,19 @@ fi
 %postun	ecpg -p /sbin/ldconfig
 
 %pre -n slony1
-getgid slony1 >/dev/null 2>&1 || /usr/sbin/groupadd -g 131 -r slony1
-if id slony1 >/dev/null 2>&1 ; then
-	/usr/sbin/usermod -d /home/services/slony1 slony1
+if [ -n "`/usr/bin/getgid slony1`" ]; then
+	if [ "`/usr/bin/getgid slony1`" != "131" ]; then
+		echo "Error: group slony1 doesn't have gid=131. Correct this before installing slony1." 1>&2
+		exit 1
+	fi
+else
+	/usr/sbin/groupadd -g 131 -r slony1
+fi
+if [ -n "`/bin/id -u slony1 2>/dev/null`" ]; then
+	if [ "`/bin/id -u slony1 2>/dev/null`" != "131" ]; then
+		echo "Error: user postgres doesn't have uid=131. Correct this before installing slony1." 1>&2
+		exit 1
+	fi
 else
 	/usr/sbin/useradd -M -o -r -u 131 \
 		-d /home/services/slony1 -s /bin/sh -g slony1 \
