@@ -14,28 +14,25 @@ Summary(pl):	PostgreSQL - system bazodanowy
 Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(tr):	Veri Tabanı Yönetim Sistemi
 Name:		postgresql
-Version:	7.1.3
-Release:	15
+Version:	7.2
+Release:	2
 License:	BSD
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
 Source4:	pgaccess.desktop
 Source5:	pgaccess.png
-Patch0:		%{name}-DESTDIR.patch
-Patch1:		%{name}-no_libnsl.patch
-Patch2:		%{name}-configure.patch
-Patch3:		%{name}-install.patch
-Patch4:		%{name}-ac_fixes.patch
-Patch5:		%{name}-python-install.patch
-Patch6:		%{name}-pg_ctl-silent.patch
+Patch0:		%{name}-no_libnsl.patch
+Patch1:		%{name}-configure.patch
+Patch2:		%{name}-ac_fixes.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
@@ -214,6 +211,7 @@ Group(es):	Desarrollo/Bibliotecas
 Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
 Group(pt_BR):	Desenvolvimento/Bibliotecas
+Group(pt):	Desenvolvimento/Bibliotecas
 Group(ru):	òÁÚÒÁÂÏÔËÁ/âÉÂÌÉÏÔÅËÉ
 Group(uk):	òÏÚÒÏÂËÁ/â¦ÂÌ¦ÏÔÅËÉ
 Requires:	%{name}-libs = %{version}
@@ -261,6 +259,7 @@ Group(es):	Desarrollo/Bibliotecas
 Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
 Group(pt_BR):	Desenvolvimento/Bibliotecas
+Group(pt):	Desenvolvimento/Bibliotecas
 Group(ru):	òÁÚÒÁÂÏÔËÁ/âÉÂÌÉÏÔÅËÉ
 Group(uk):	òÏÚÒÏÂËÁ/â¦ÂÌ¦ÏÔÅËÉ
 Requires:	%{name}-libs = %{version}
@@ -279,11 +278,12 @@ Summary(es):	Clientes necesarios para acceder al servidor PostgreSQL
 Summary(pl):	Klienci wymagani do dostêpu do serwera PostgreSQL
 Summary(pt_BR):	Clientes necessários para acessar o servidor PostgreSQL
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Requires:	%{name}-libs = %{version}
 
 %description clients
@@ -314,11 +314,12 @@ Summary(es):	Módulo Perl para acceder un servidor PostgreSQL
 Summary(pl):	Interfejs dla Perla umo¿liwiaj±cy dostêp do baz PostgreSQL
 Summary(pt_BR):	Módulo Perl para acesso ao servidor PostgreSQL
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Requires:	perl >= 5.004
 Requires:	%{name}-libs = %{version}
 
@@ -346,6 +347,8 @@ Group(de):	Entwicklung/Sprachen/Python
 Group(es):	Desarrollo/Lenguages/Python
 Group(fr):	Development/Langues/Python
 Group(pl):	Programowanie/Jêzyki/Python
+Group(pt):	Desenvolvimento/Línguas/Python
+Group(ru):	òÁÚÒÁÂÏÔËÁ/ñÚÙËÉ/Python
 Requires:	python >= 2.0
 Requires:	%{name}-libs = %{version}
 Obsoletes:	python-PyGreSQL
@@ -369,11 +372,12 @@ Módulo Python para acesso ao servidor PostgreSQL.
 Summary:	Documentation for PostgreSQL
 Summary(pl):	Dodatkowa dokumantacja dla PostgreSQL
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 
 %description doc
 This package includes documentation and HOWTO for programmer, admin
@@ -423,6 +427,7 @@ Group(es):	Desarrollo/Bibliotecas
 Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
 Group(pt_BR):	Desenvolvimento/Bibliotecas
+Group(pt):	Desenvolvimento/Bibliotecas
 Group(ru):	òÁÚÒÁÂÏÔËÁ/âÉÂÌÉÏÔÅËÉ
 Group(uk):	òÏÚÒÏÂËÁ/â¦ÂÌ¦ÏÔÅËÉ
 Requires:	%{name}-devel = %{version}
@@ -447,11 +452,12 @@ PostgreSQL.
 Summary:	C++ interface to PostgreSQL
 Summary(pl):	Interfejs C++ do PostgreSQL
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Requires:	%{name}-libs = %{version}
 
 %description c++
@@ -464,11 +470,12 @@ Pakiet ten zawiera biblioteki dla interfejsu C++ do PostgreSQL.
 Summary:	C++ interface to PostgreSQL - development part
 Summary(pl):	Interfejs C++ do PostgreSQL - cze¶æ programistyczna
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Requires:	%{name}-c++ = %{version}
 Requires:	%{name}-devel = %{version}
 
@@ -482,11 +489,12 @@ Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interfejsu C++.
 Summary:	C++ interface to PostgreSQL - static libraries
 Summary(pl):	Interfejs C++ do PostgreSQL - biblioteki statyczne
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Requires:	%{name}-c++-devel = %{version}
 
 %description c++-static
@@ -501,11 +509,12 @@ Summary(es):	Driver ODBC para acceder un servidor PostgreSQL
 Summary(pl):	Interfejs ODBC do PostgreSQL
 Summary(pt_BR):	Driver ODBC necessário para acessar um servidor PostgreSQL
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Requires:	%{name}-libs = %{version}
 
 %description odbc
@@ -524,11 +533,12 @@ Driver ODBC necessário para acessar um servidor PostgreSQL.
 Summary:	ODBC interface to PostgreSQL - development part
 Summary(pl):	Interfejs ODBC do PostgreSQL - cze¶æ programistyczna
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Requires:	%{name}-odbc = %{version}
 Requires:	%{name}-devel = %{version}
 
@@ -542,11 +552,12 @@ Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interfejsu ODBC.
 Summary:	ODBC interface to PostgreSQL - static libraries
 Summary(pl):	Interfejs ODBC do PostgreSQL - biblioteki statyczne
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Requires:	%{name}-odbc-devel = %{version}
 
 %description odbc-static
@@ -559,11 +570,12 @@ Pakiet ten zawiera biblioteki statyczne dla interfejsu ODBC.
 Summary:	A free graphical database management tool for PostgreSQL
 Summary(pl):	Graficzne narzêdzie do obs³ugi baz danych PostgreSQL
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Requires:	%{name}-tcl = %{version}
 
 %description -n pgaccess
@@ -582,6 +594,8 @@ Group(de):	Entwicklung/Sprachen/Tcl
 Group(es):	Desarrollo/Lenguages/Tcl
 Group(fr):	Development/Langues/Tcl
 Group(pl):	Programowanie/Jêzyki/Tcl
+Group(pt):	Desenvolvimento/Línguas/Tcl
+Group(ru):	òÁÚÒÁÂÏÔËÁ/ñÚÙËÉ/Tcl
 Requires:	%{name}-libs = %{version}
 
 %description tcl
@@ -605,6 +619,8 @@ Group(de):	Entwicklung/Sprachen/Tcl
 Group(es):	Desarrollo/Lenguages/Tcl
 Group(fr):	Development/Langues/Tcl
 Group(pl):	Programowanie/Jêzyki/Tcl
+Group(pt):	Desenvolvimento/Línguas/Tcl
+Group(ru):	òÁÚÒÁÂÏÔËÁ/ñÚÙËÉ/Tcl
 Requires:	%{name}-tcl = %{version}
 Requires:	%{name}-devel = %{version}
 
@@ -622,6 +638,8 @@ Group(de):	Entwicklung/Sprachen/Tcl
 Group(es):	Desarrollo/Lenguages/Tcl
 Group(fr):	Development/Langues/Tcl
 Group(pl):	Programowanie/Jêzyki/Tcl
+Group(pt):	Desenvolvimento/Línguas/Tcl
+Group(ru):	òÁÚÒÁÂÏÔËÁ/ñÚÙËÉ/Tcl
 Requires:	%{name}-tcl-devel = %{version}
 
 %description tcl-static
@@ -634,11 +652,12 @@ Biblioteki statyczne interfejsu tcl dla PostgreSQL.
 Summary:	Some useful datetime functions for PostgreSQL
 Summary(pl):	Kilka u¿ytecznych funkcji operuj±cych na dacie i czasie dla PostgreSQL
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Requires:	%{name} = %{version}
 
 %description module-datetime
@@ -687,11 +706,12 @@ poziomu zapytañ SQL. Skrypt ten znajduje siê w katalogu
 Summary:	PL/pgSQL - PostgreSQL procedural language
 Summary(pl):	PL/pgSQL jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Requires:	%{name} = %{version}
 
 %description module-plpgsql
@@ -726,11 +746,12 @@ proceduralnego PL/pgSQL dla swojej bazy danych.
 Summary:	PL/TCL - PostgreSQL procedural language
 Summary(pl):	PL/TCL - jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Group(de):	Applikationen/Dateibanken
+Group(de):	Applikationen/Datenbanken
 Group(es):	Aplicaciones/Bases de Datos
 Group(fr):	Applications/Bases de Données
 Group(pl):	Aplikacje/Bazy Danych
 Group(pt):	Aplicações/Bases de Dados
+Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
 Requires:	%{name} = %{version}
 
 %description module-pltcl
@@ -766,10 +787,6 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -808,16 +825,11 @@ autoconf
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
         $RPM_BUILD_ROOT/var/{lib/pgsql,log} \
-	$RPM_BUILD_ROOT%{_libdir}/pgsql/{modules,sql} \
-	$RPM_BUILD_ROOT%{py_sitedir} \
 	$RPM_BUILD_ROOT{%{_applnkdir}/System,%{_pixmapsdir}} \
-	$RPM_BUILD_ROOT%{_mandir}
 
-%{__make} -C src install install-all-headers \
-	INSTALLMAN3DIR=$RPM_BUILD_ROOT%{_mandir}/man3 \
-	DESTSHARED=$RPM_BUILD_ROOT%{py_sitedir} \
+%{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 	
 touch $RPM_BUILD_ROOT/var/log/pgsql
