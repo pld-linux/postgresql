@@ -1,0 +1,80 @@
+#!/bin/sh
+#
+# slony1      This shell script starts and stops Slony-I processes.
+#
+# chkconfig:   2345 80 30
+# description: Slony-I is a replication daemon for PostgreSQL databases.
+# processname: slon
+# pidfile:  /var/run/slony1.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Source slony1 configureation.
+. /etc/sysconfig/slony1
+
+# Check that networking is up.
+if is_yes "${NETWORKING}"; then
+   if [ ! -f /var/lock/subsys/network -a "$1" != stop -a "$1" != status ]; then
+      msg_network_down Slony-I
+      exit 1
+   fi
+else
+   exit 0
+fi
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+   # Start daemons.
+   if [ ! -f /var/lock/subsys/slony1 ]; then
+			for CLUSTER in $SLONY1_CLUSTERS; do
+				msg_starting "Slony-I ($CLUSTER)"
+				CONNSTRING=`eval echo '$SLONY1_CONNECT'_$CLUSTER`
+				/usr/bin/setsid su - slony1 -c "initlog -c \"slon $CLUSTER '$CONNSTRING'\""
+			done
+      RETVAL=$?
+      [ $RETVAL -eq 0 ] && touch /var/lock/subsys/slony1
+   else
+      msg_already_running "Slony-I"
+   fi
+   ;;
+  stop)
+   # Stop daemons.
+   if [ -f /var/lock/subsys/slony1 ]; then
+      msg_stopping "Slony-I"
+      killproc slon
+      rm -f /var/lock/subsys/slony1 >/dev/null 2>&1
+   else
+      msg_not_running "Slony-I"
+   fi
+   ;;
+  restart)
+   $0 stop
+   $0 start
+   exit $?
+   ;;
+  status)
+   status slony1
+   exit $?
+   ;;
+  reload|force-reload)
+   if [ -f /var/lock/subsys/slony1 ]; then
+      msg_reloading "Slony-I"
+      killproc slon -HUP
+      RETVAL=$?
+   else
+      msg_not_running "Slony-I" >&2
+      exit 7
+   fi
+   ;;
+  *)
+   msg_usage "$0 {start|stop|restart|reload|force-reload|status}"
+   exit 3
+esac
+
+exit $RETVAL

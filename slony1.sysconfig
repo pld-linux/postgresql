@@ -1,0 +1,10 @@
+# List each cluster name you want to replicate
+# SLONY1_CLUSTERS='mycluster'
+#
+# More complex:
+# SLONY1_CLUSTERS='mycluster1 mycluster2'
+
+# Set the connect string for each cluster
+# SLONY1_CONNECT_mycluster1='database=repltest username=repltest'
+
+# Set passwords in /var/lib/slony1/.pgpass
