@@ -1,7 +1,8 @@
 
 %include	/usr/lib/rpm/macros.perl
-%define pglibdir %{_libdir}/pgsql
-%define pgsqldir /usr/share/pgsql/sql
+%define pglibdir     %{_libdir}/pgsql
+%define pgsqldir     %{_datadir}/pgsql/sql
+%define pgmoduledir  %{pglibdir}/modules
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
@@ -10,7 +11,7 @@ Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.0.2
-Release:	6
+Release:	7
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy Danych
@@ -389,6 +390,70 @@ Po wykonaniu skryptu datetime_function.sql mo¿na u¿ywaæ tych funkcji
 z poziomu zapytañ SQL. Skrypt ten znajduje siê w katalogu
 /usr/share/pgsql/sql.
 
+%package module-plpgsql
+Summary:	PL/pgSQL - PostgreSQL procedural language
+Summary(pl):	PL/pgSQL jêzyk proceduralny bazy danych PostgreSQL
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy Danych
+
+%description module-plpgsql
+From PostgreSQL documentation.
+
+Postgres supports the definition of procedural languages. In the case of a
+function or trigger procedure defined in a procedural language, the database
+has no built-in knowledge about how to interpret the function's source text.
+Instead, the task is passed to a handler that knows the details of the
+language. The handler itself is a special programming language function
+compiled into a shared object and loaded on demand.
+
+To enable PL/pgSQL procedural language for your database you have to run
+createlang command.
+
+%description module-plpgsql -l pl
+Z dokumentacji PostgreSQL.
+
+Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy programista
+zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku proceduralnym, baza danych
+nie ma pojêcia jak interpretowaæ tego typu funkcjê. Funkcja lub procedura ta
+jest przekazywana do interpretera, który wie jak j± wykonaæ. Interpreter jest
+odpowiedni±, specjaln± funkcj±, która jest skompilowana w obiekt dzielony
+i ³adowany w razie potrzeby.
+
+Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka proceduralnego
+PL/pgSQL dla swojej bazy danych.
+
+%package module-pltcl
+Summary:	PL/TCL - PostgreSQL procedural language
+Summary(pl):	PL/TCL jêzyk proceduralny bazy danych PostgreSQL
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy Danych
+
+%description module-pltcl
+From PostgreSQL documentation.
+
+Postgres supports the definition of procedural languages. In the case of a
+function or trigger procedure defined in a procedural language, the database
+has no built-in knowledge about how to interpret the function's source text.
+Instead, the task is passed to a handler that knows the details of the
+language. The handler itself is a special programming language function
+compiled into a shared object and loaded on demand.
+
+To enable PL/TCL procedural language for your database you have to run
+createlang command.
+
+%description module-pltcl -l pl
+Z dokumentacji PostgreSQL.
+
+Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy programista
+zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku proceduralnym, baza danych
+nie ma pojêcia jak interpretowaæ tego typu funkcjê. Funkcja lub procedura ta
+jest przekazywana do interpretera, który wie jak j± wykonaæ. Interpreter jest
+odpowiedni±, specjaln± funkcj±, która jest skompilowana w obiekt dzielony
+i ³adowany w razie potrzeby.
+
+Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka proceduralnego
+PL/TCL dla swojej bazy danych.
+
 %prep
 %setup  -q
 %patch0 -p1
@@ -444,6 +509,16 @@ make -C doc install DESTDIR=$RPM_BUILD_ROOT
 # for datetime functions
 make -C contrib/datetime install \
   LIBDIR=$RPM_BUILD_ROOT%{pglibdir} SQLDIR=$RPM_BUILD_ROOT%{pgsqldir}
+
+# Move PL/pgSQL procedural language to %{pgmoduledir}
+( cd $RPM_BUILD_ROOT%{_libdir}
+  mv plpgsql.so $RPM_BUILD_ROOT%{pgmoduledir}
+)
+
+# Move PL/TCL procedural language to %{pgmoduledir}
+( cd $RPM_BUILD_ROOT%{_libdir}
+  mv pltcl.so $RPM_BUILD_ROOT%{pgmoduledir}
+)
 
 # For Perl interface
 ( cd $RPM_BUILD_ROOT%{perl_sitearch}/auto/Pg
@@ -564,8 +639,6 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
 %attr(755,root,root) %{_libdir}/libpq++.so.*.*
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
-# nie wiem do czego to
-%attr(755,root,root) %{_libdir}/plpgsql.so 
 
 %attr(755,root,root) %{_bindir}/pg_id
 
@@ -575,7 +648,6 @@ rm -f /tmp/tmp_perl_info
 %files tcl
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
-%attr(755,root,root) %{_libdir}/pltcl.so
 %attr(755,root,root) %{_bindir}/pgtclsh
 %attr(755,root,root) %{_bindir}/pgtksh
 %attr(755,root,root) %{_bindir}/pgaccess
@@ -665,5 +737,13 @@ rm -f /tmp/tmp_perl_info
 
 %files module-datetime
 %defattr(644,root,root,755)
-%attr(755,root,root) %{pglibdir}/modules/datetime_functions.so
+%attr(755,root,root) %{pgmoduledir}/datetime_functions.so
 %attr(644,root,root) %{pgsqldir}/datetime_functions.sql
+
+%files module-plpgsql
+%defattr(644,root,root,755)
+%attr(755,root,root) %{pgmoduledir}/plpgsql.so
+
+%files module-pltcl
+%defattr(644,root,root,755)
+%attr(755,root,root) %{pgmoduledir}/pltcl.so
