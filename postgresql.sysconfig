@@ -21,7 +21,7 @@ POSTGRES_QUIET=yes
 # Disable automatic fsync() call after each transac tion. This option
 # improves performance, but an operating system crash while a transaction is
 # in progress will probably cause data loss.
-POSTGRES_DIABLE_FSYNC=no
+POSTGRES_DISABLE_FSYNC=no
 
 # Where postmaster output is redirected
 POSTGRES_LOG=/var/log/pgsql
