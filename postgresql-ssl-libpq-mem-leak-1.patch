@@ -1,0 +1,35 @@
+diff -c -r1.44 be-secure.c
+*** src/backend/libpq/be-secure.c	29 Nov 2003 19:51:49 -0000	1.44
+--- src/backend/libpq/be-secure.c	13 Dec 2003 01:09:13 -0000
+***************
+*** 764,769 ****
+--- 767,778 ----
+  		SSL_free(port->ssl);
+  		port->ssl = NULL;
+  	}
++ 
++ 	if (port->peer)
++ 	{
++ 		X509_free(port->peer);
++ 		port->peer = NULL;
++ 	}
+  }
+  
+  /*
+*** src/interfaces/libpq/fe-secure.c	29 Nov 2003 19:52:12 -0000	1.33
+--- src/interfaces/libpq/fe-secure.c	13 Dec 2003 00:57:56 -0000
+***************
+*** 1004,1009 ****
+--- 1004,1015 ----
+  		SSL_free(conn->ssl);
+  		conn->ssl = NULL;
+  	}
++ 
++ 	if (conn->peer)
++ 	{
++ 		X509_free(conn->peer);
++ 		conn->peer = NULL;
++ 	}
+  }
+  
+  /*
