@@ -69,12 +69,13 @@ case "$1" in
 		fi
 		
 		# Sanity check
-		[ -f /tmp/.s.PGSQL.5432 ] || rm -f /tmp/.s.PGSQL.5432
+		[ -e /tmp/.s.PGSQL.5432 ] || rm -f /tmp/.s.PGSQL.5432
+		[ -f /tmp/.s.PGSQL.5432.lock ] || rm -f /tmp/.s.PGSQL.5432.lock
 		
 		# Check for the PGDATA structure
 		if [ -f $POSTGRES_DATA_DIR/PG_VERSION ] && [ -f $POSTGRES_DATA_DIR/global/pg_control ]; then
 		    # Check version of existing PGDATA
-		    if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.1' ]; then
+		    if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.2' ]; then
 			show "Databases created under incompatibile version. Migrate them first."; fail
 			exit 1
 		    fi
