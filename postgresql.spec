@@ -1,4 +1,6 @@
 #
+# - put pgcrypto docs into docdir
+# - put pgcrypto sql files in %{_datadir}/postgresql
 # - remove postgresql-configure patch and create postgresql-doc patch,
 #   which will prevent documentation and manulas installation (the routine
 #   is bad and we install docs and mans manually, at all) or create good
@@ -718,15 +720,17 @@ potrzeby.
 Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka
 proceduralnego PL/TCL dla swojej bazy danych.
 
-%package pgcrypto
+%package module-pgcrypto
 Summary:	Cryptographic functions for PostgreSQL
 Summary(pl):	Funkcje kryptograficzne dla PostgreSQL
 Group:		Applications/Databases
 Requires:       %{name} = %{version}
 
-%description pgcrypto
+%description module-pgcrypto
+Cryptographic functions for PostgreSQL.
 
-%description pgcrypto -l pl
+%description module-pgcrypto -l pl
+Funkcje kryptograficzne dla PostgreSQL.
 
 %prep
 %setup  -q
@@ -1021,9 +1025,9 @@ fi
 %attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
 
-%files pgcrypto
+%files module-pgcrypto
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/%{name}/pgcrypto.so
+%attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
 # Hmm i think two below lines shouldn't be here - but i can be wrong ;)
-%{_datadir}/%{name}/contrib/pgcrypto.sql
-%{_datadir}/info/%{name}/contrib/README.pgcrypto.gz
+#%{_datadir}/%{name}/contrib/pgcrypto.sql
+#%{_datadir}/info/%{name}/contrib/README.pgcrypto.gz
