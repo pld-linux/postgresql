@@ -30,8 +30,10 @@ Release:	0.3
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	23d2762571e8c5bb21eee08aab968ccb
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
+# Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-pg_ctl-silent.patch
