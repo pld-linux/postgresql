@@ -22,7 +22,7 @@
  	do
 -	    if "$PGPATH/psql" -p $PGPORT -l >/dev/null 2>&1
 +	    # YES, this is horribly misconceived.
-+	    if ps -C postmaster >/dev/null 2>&1
++	    if ps ax | grep -q "[p]ostmaster -D $PGDATA" >/dev/null 2>&1
  	    then
  		break;
  	    else
