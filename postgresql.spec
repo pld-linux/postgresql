@@ -26,7 +26,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	8.0.0
-Release:	0.%{beta}.1
+Release:	0.%{beta}.2
 License:	BSD
 Group:		Applications/Databases
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -36,18 +36,15 @@ Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
-Patch0:		%{name}-doc.patch
-Patch1:		%{name}-pg_ctl-silent.patch
-Patch2:		%{name}-pg_ctl-nopsql.patch
-Patch3:		%{name}-conf.patch
-Patch4:		%{name}-absolute_dbpaths.patch
-Patch5:		%{name}-link.patch
-Patch6:		%{name}-com_err.patch
-Patch7:		%{name}-ecpg_link.patch
-Patch8:		%{name}-ecpg-includedir.patch
-Patch9:		%{name}-contrib_install.patch
-Patch10:	%{name}-tsearch2-compound_word_support_20031210.patch
-Patch11:	%{name}-python-configdir.patch
+Patch0:		%{name}-conf.patch
+Patch1:		%{name}-python-configdir.patch
+Patch2:		%{name}-absolute_dbpaths.patch
+Patch3:		%{name}-link.patch
+Patch4:		%{name}-com_err.patch
+Patch5:		%{name}-ecpg_link.patch
+Patch6:		%{name}-ecpg-includedir.patch
+Patch7:		%{name}-contrib_install.patch
+Patch8:		%{name}-pg_ctl-silent.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -682,17 +679,15 @@ http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 
 %prep
 %setup -q -n %{name}-%{version}%{beta}
-#%patch1 -p1
-#%patch2 -p1
-#%patch3 -p1
-%{?with_absolute_dbpaths:%patch4 -p1}
+%patch0 -p1
+%patch1 -p1
+%{?with_absolute_dbpaths:%patch2 -p1}
+%patch3 -p1
+%patch4 -p1
 %patch5 -p1
 %patch6 -p1
 #%patch7 -p1
-%patch8 -p1
-#%patch9 -p1
-#%patch10 -p1
-%patch11 -p1
+#%patch8 -p1
 
 tar xzf doc/man*.tar.gz
 
