@@ -854,7 +854,7 @@ mv	$RPM_BUILD_ROOT%{_datadir}/postgresql/java/*.jar \
 
 install -d howto
 ( cd howto
-  tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
+	tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
 )
 
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
@@ -931,14 +931,14 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del postgresql
 fi
 
-%post   libs -p /sbin/ldconfig
-%postun libs -p /sbin/ldconfig
+%post	libs -p /sbin/ldconfig
+%postun	libs -p /sbin/ldconfig
 
-%post   ecpg -p /sbin/ldconfig
-%postun ecpg -p /sbin/ldconfig
+%post	ecpg -p /sbin/ldconfig
+%postun	ecpg -p /sbin/ldconfig
 
-%post   tcl -p /sbin/ldconfig
-%postun tcl -p /sbin/ldconfig
+%post	tcl -p /sbin/ldconfig
+%postun	tcl -p /sbin/ldconfig
 
 %files -f main.lang
 %defattr(644,root,root,755)
