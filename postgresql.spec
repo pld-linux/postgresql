@@ -609,6 +609,8 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
 	$RPM_BUILD_ROOT%{_mandir}
 
 %{__make} -C src install install-all-headers \
+	INSTALLMAN3DIR=$RPM_BUILD_ROOT%{_mandir}/man3 \
+	DESTSHARED=$RPM_BUILD_ROOT%{python_sitepkgsdir} \
 	DESTDIR=$RPM_BUILD_ROOT
 	
 touch $RPM_BUILD_ROOT/var/log/pgsql
