@@ -509,81 +509,81 @@ PostgreSQL.
 %{name}-devel.
 
 %package tcl
-Summary:	tcl interface for PostgreSQL
-Summary(es):	Bibliotecas y shell TCL para acceder un servidor PostgreSQL
-Summary(pl):	Interfejs tcl dla PostgreSQL
-Summary(pt_BR):	Bibliotecas e shell para programas em TCL acessarem o servidor PostgreSQL
-Summary(ru):	Библиотеки для доступа к postgresql из tcl
-Summary(uk):	Б╕бл╕отеки для доступу до postgresql з tcl
+Summary:	Tcl interface for PostgreSQL
+Summary(es):	Bibliotecas y shell Tcl para acceder un servidor PostgreSQL
+Summary(pl):	Interfejs Tcl dla PostgreSQL
+Summary(pt_BR):	Bibliotecas e shell para programas em Tcl acessarem o servidor PostgreSQL
+Summary(ru):	Библиотеки для доступа к postgresql из Tcl
+Summary(uk):	Б╕бл╕отеки для доступу до postgresql з Tcl
 Summary(zh_CN):	р╩╦Ж Tcl ©Б╨м PostgreSQL ╣д PL/Tcl ╠ЮЁлсОят
 Group:		Development/Languages/Tcl
 Requires:	%{name}-libs = %{version}
 
 %description tcl
-tcl interface for PostgreSQL.
+Tcl interface for PostgreSQL.
 
 %description tcl -l es
-Bibliotecas y shell TCL para acceder un servidor PostgreSQL
+Bibliotecas y shell Tcl para acceder un servidor PostgreSQL
 
 %description tcl -l pl
-Interfejs tcl dla PostgreSQL.
+Interfejs Tcl dla PostgreSQL.
 
 %description tcl -l pt_BR
-Bibliotecas e shell para programas em TCL acessarem o servidor
+Bibliotecas e shell para programas em Tcl acessarem o servidor
 PostgreSQL
 
 %description tcl -l ru
-libpgtcl -- API для доступа к базе данных PostgreSQL из языка tcl.
+libpgtcl - API для доступа к базе данных PostgreSQL из языка Tcl.
 
 %description tcl -l uk
-libpgtcl -- API для доступу до бази даних PostgreSQL з мови tcl.
+libpgtcl - API для доступу до бази даних PostgreSQL з мови Tcl.
 
 %package tcl-devel
-Summary:	Development part of tcl interface for PostgreSQL
-Summary(pl):	CzЙ╤Ф dla programistСw interfejsu tcl dla PostgreSQL
-Summary(ru):	Хедеры и библиотеки для разработок с использованием libpgtcl (tcl интерфейс для postgresql)
-Summary(uk):	Хедери та б╕бл╕отеки для розробок з використанням libpgtcl (tcl-╕нтерфейс для postgresql)
+Summary:	Development part of Tcl interface for PostgreSQL
+Summary(pl):	CzЙ╤Ф dla programistСw interfejsu Tcl dla PostgreSQL
+Summary(ru):	Хедеры и библиотеки для разработок с использованием libpgtcl (Tcl интерфейс для postgresql)
+Summary(uk):	Хедери та б╕бл╕отеки для розробок з використанням libpgtcl (Tcl-╕нтерфейс для postgresql)
 Group:		Development/Languages/Tcl
 Requires:	%{name}-tcl = %{version}
 Requires:	%{name}-devel = %{version}
 
 %description tcl-devel
-Development part of tcl interface for PostgreSQL.
+Development part of Tcl interface for PostgreSQL.
 
 %description tcl-devel -l pl
-CzЙ╤Ф interfejsu tcl dla PostgreSQL przeznaczona dla programistСw.
+CzЙ╤Ф interfejsu Tcl dla PostgreSQL przeznaczona dla programistСw.
 
 %description tcl-devel -l ru
 Это пакет разработчика для программирования с libpgtcl. Он включает
 хедеры и библиотеки для использования в программах, которые используют
-код или API libtcl (tcl интерфейс для postgresql).
+код или API libtcl (Tcl интерфейс для postgresql).
 
 %description tcl-devel -l uk
 Це пакет програм╕ста для програмування з libpgtcl. В╕н м╕стить хедери
 та б╕бл╕отеки для використання в програмах, як╕ використовують код або
-API libtcl (tcl-╕нтерфейсу для postgresql).
+API libtcl (Tcl-╕нтерфейсу для postgresql).
 
 %package tcl-static
-Summary:	Static libraries of tcl interface for PostgreSQL
-Summary(pl):	Biblioteki statyczne interfejsu tcl dla PostgreSQL
+Summary:	Static libraries of Tcl interface for PostgreSQL
+Summary(pl):	Biblioteki statyczne interfejsu Tcl dla PostgreSQL
 Summary(ru):	Статические библиотеки для программирования с libpgtcl
 Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з libpgtcl
 Group:		Development/Languages/Tcl
 Requires:	%{name}-tcl-devel = %{version}
 
 %description tcl-static
-Static libraries of tcl interface for PostgreSQL.
+Static libraries of Tcl interface for PostgreSQL.
 
 %description tcl-static -l pl
-Biblioteki statyczne interfejsu tcl dla PostgreSQL.
+Biblioteki statyczne interfejsu Tcl dla PostgreSQL.
 
 %description tcl-static -l ru
 Это отдельный пакет со статическими библиотеками, которые больше не
-входят в %{_name}-tcl-devel.
+входят в postgresql-tcl-devel.
 
 %description tcl-static -l uk
 Це окремий пакет з╕ статичними б╕бл╕отеками, що б╕льше не входять до
-%{name}-tcl-devel.
+postgresql-tcl-devel.
 
 %package module-plpgsql
 Summary:	PL/pgSQL - PostgreSQL procedural language
