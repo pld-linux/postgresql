@@ -630,7 +630,7 @@ Summary:	PL/perl - PostgreSQL procedural language
 Summary(pl):	PL/perl jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}
-%requires_eq	perl
+%requires_eq	perl-base
 
 %description module-plperl
 From PostgreSQL documentation.
