@@ -9,7 +9,7 @@
 #		all database requests.
 #
 # processname:	postmaster
-# pidfile:	/var/run/postmaster.pid
+# pidfile:	$POSTGRES_DATA_DIR/postmaster.pid
 
 # Source function library
 . /etc/rc.d/init.d/functions
@@ -34,16 +34,16 @@ if is_no "${NETWORKING}"; then
 fi
 
 # check if postmaster is realy alive
-if [ -f /var/lib/pgsql/postmaster.pid ]; then
- if ps -p `head -1 /var/lib/pgsql/postmaster.pid` > /dev/null ; then
-	 #ok. it's alive
+if [ -f $POSTGRES_DATA_DIR/postmaster.pid ]; then
+    if ps -p `head -1 $POSTGRES_DATA_DIR/postmaster.pid` > /dev/null ; then
+	# ok. it's alive
 	echo > /dev/null;
- else
-	 # oh, it has crashed
-	 rm -f  /var/lock/subsys/postgresql
- fi
+    else
+	# oh, it has crashed
+	rm -f  /var/lock/subsys/postgresql
+    fi
 else
-	# it's stoped. 
+	# it's stopped.
 	rm -f  /var/lock/subsys/postgresql
 fi
 
@@ -134,7 +134,7 @@ case "$1" in
 	else
 		deltext; ok
 	fi
-	rm -f /var/run/postmaster.pid
+	rm -f $POSTGRES_DATA_DIR/postmaster.pid
 	rm -f /var/lock/subsys/postgresql
 	;;
   status)
