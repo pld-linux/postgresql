@@ -2,8 +2,6 @@
 # TODO:
 # - pg_autovacuum init support? look at its readme file, please
 # - fix tutorial building
-# - when upgrading server from version with incompatible format, block
-#   upgrade if any postmaster is running (just like if old databases exist)
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
