@@ -1,0 +1,27 @@
+diff -Nur postgresql-7.3.1.orig/src/backend/utils/misc/postgresql.conf.sample postgresql-7.3.1/src/backend/utils/misc/postgresql.conf.sample
+--- postgresql-7.3.1.orig/src/backend/utils/misc/postgresql.conf.sample	Mon Sep  2 07:42:54 2002
++++ postgresql-7.3.1/src/backend/utils/misc/postgresql.conf.sample	Mon Jan  6 13:48:31 2003
+@@ -121,8 +121,8 @@
+ 				#   log, info, notice, warning, error
+ #silent_mode = false
+ 
+-#log_connections = false
+-#log_pid = false
++log_connections = true
++log_pid = true
+ #log_statement = false
+ #log_duration = false
+ #log_timestamp = false
+@@ -144,9 +144,9 @@
+ #
+ #	Syslog
+ #
+-#syslog = 0			# range 0-2
+-#syslog_facility = 'LOCAL0'
+-#syslog_ident = 'postgres'
++syslog = 2			# range 0-2
++syslog_facility = 'LOCAL0'
++syslog_ident = 'postgres'
+ 
+ 
+ #
