@@ -1,5 +1,7 @@
 #
 # todo:
+# - support for multiple db clusters (implies postgresql.init and
+#   postgresql.sysconfig simplifications)
 # - fix postgresql-configure.patch (it puts html doc into /usr/share/info
 # - add missing files
 #
