@@ -540,8 +540,8 @@ rm -fR `find contrib/ -type d -name CVS`
 PATH=$PATH:. ; export PATH
 cd src
 
-ENABLE_LOCALE="%{!?pgsql_disable_locale:--enable-locale}"
-ENABLE_MULTIBYTE="%{!?pgsql_disable_multibyte:--enable-multibyte}"
+ENABLE_LOCALE="%{!?bcond_off_pgsql_locale:--enable-locale}"
+ENABLE_MULTIBYTE="%{!?bcond_off_pgsql_multibyte:--enable-multibyte}"
 
 aclocal
 autoconf
