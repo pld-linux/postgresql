@@ -1,1238 +1,1098 @@
-#
-# Conditional build:
-# _with_jdbc		- with JDBC driver
-#
+# [for (x)emacs] -*- coding: utf-8 -*-
+%define beta 0
 
-%include	/usr/lib/rpm/macros.perl
-%include	/usr/lib/rpm/macros.python
+%{?beta:%define __os_install_post /usr/lib/rpm/brp-compress}
+%{!?perl:%define perl 1}
+%{!?tcl:%define tcl 1}
+%{!?tkpkg:%define tkpkg 0}
+%{!?odbc:%define odbc 1}
+%{!?jdbc:%define jdbc 1}
+%{!?test:%define test 0}
+%{!?python:%define python 1}
+%{!?pltcl:%define pltcl 1}
+%{?forceplperl:%define plperl %{expand:forceplperl}}
+%{!?forceplperl:%define forceplperl 0}
+%{!?plperl:%define plperl 0}
+%{!?ssl:%define ssl 1}
+%{!?kerberos:%define kerberos 0}
+%{!?nls:%define nls 1}
+%{!?pam:%define pam 1}
+%{!?sgmldocs:%define sgmldocs 0}
 
-Summary:	PostgreSQL Data Base Management System
-Summary(de):	PostgreSQL Datenbankverwaltungssystem
-Summary(es):	Gestor de Banco de Datos PostgreSQL
-Summary(fr):	SysËme de gestion de base de donnÈes PostgreSQL
-Summary(pl):	PostgreSQL - system bazodanowy
-Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
-Summary(ru):	PostgreSQL - ”…”‘≈Õ¡ ’–“¡◊Ã≈Œ…— ¬¡⁄¡Õ… ƒ¡ŒŒŸ»
-Summary(tr):	Veri Taban˝ Yˆnetim Sistemi
-Summary(uk):	PostgreSQL - ”…”‘≈Õ¡ À≈“’◊¡ŒŒ— ¬¡⁄¡Õ… ƒ¡Œ…»
-Summary(zh_CN):	PostgreSQL øÕªß∂À≥Ã–Ú∫Õø‚Œƒº˛
-Name:		postgresql
-Version:	7.2.3
-Release:	1
-License:	BSD
-Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
-Source1:	%{name}.init
-Source2:	pgsql-Database-HOWTO-html.tar.gz
-Source3:	%{name}.sysconfig
-Source4:	pgaccess.desktop
-Source5:	pgaccess.png
-Patch0:		%{name}-no_libnsl.patch
-Patch1:		%{name}-configure.patch
-Patch2:		%{name}-ac_fixes.patch
-Patch3:		%{name}-pg_ctl-silent.patch
-Patch4:		%{name}-DESTDIR.patch
-Patch5:		%{name}-pg_ctl-nopsql.patch
-Icon:		postgresql.xpm
-URL:		http://www.postgresql.org/
-BuildRequires:	XFree86-devel
-BuildRequires:	autoconf
-BuildRequires:	automake
-BuildRequires:	tcl-devel >= 8.3.2
-BuildRequires:	tk-devel >= 8.3.2
-BuildRequires:	readline-devel >= 4.2
-BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openssl-devel >= 0.9.6a
-BuildRequires:	perl-devel >= 5.6
-BuildRequires:	python-devel >= 2.2.1
-BuildRequires:	rpm-perlprov
-BuildRequires:	rpm-pythonprov
-BuildRequires:	zlib-devel
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-Prereq:		/sbin/chkconfig
-Prereq:		rc-scripts
-Prereq:		%{name}-clients = %{version}
-Prereq:		%{name}-libs = %{version}
-Requires(pre):	/usr/bin/getgid
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/groupadd
-Requires(pre):	/usr/sbin/useradd
-Requires(pre):	/usr/sbin/usermod
-Obsoletes:	postgresql-server
-Obsoletes:	postgresql-test
 
-%define		_pgmoduledir	%{_libdir}/postgresql
-%define		_pgsqldir	%{_pgmoduledir}/sql
+# Utility feature defines.
+%{!?enable_mb:%define enable_mb 1}
+%{!?pgaccess:%define pgaccess 0}
+
+# Python major version.
+%{expand: %%define pyver %(python -c 'import sys;print(sys.version[0:3])')%{nil}}
+%{expand: %%define pynextver %(python -c 'import sys;print(float(sys.version[0:3])+0.1)')%{nil}}
+
+Summary: PostgreSQL client programs and libraries.
+Name: postgresql
+Version: 7.2.3
+
+# Conventions for PostgreSQL Global Development Group RPM releases:
+
+# Official PostgreSQL Development Group RPMS have a PGDG after the release number.
+# Integer releases are stable -- 0.1.x releases are Pre-releases, and x.y are
+# test releases.
+
+# Pre-releases are those that are built from CVS snapshots or pre-release
+# tarballs from postgresql.org.  Official beta releases are not 
+# considered pre-releases, nor are release candidates, as their beta or
+# release candidate status is reflected in the version of the tarball. Pre-
+# releases' versions do not change -- the pre-release tarball of 7.0.3, for
+# example, has the same tarball version as the final official release of 7.0.3:
+# but the tarball is different.
+
+# Test releases are where PostgreSQL itself is not in beta, but certain parts of
+# the RPM packaging (such as the spec file, the initscript, etc) are in beta.
+
+# Pre-release RPM's should not be put up on the public ftp.postgresql.org server
+# -- only test releases or full releases should be.
+
+Release: 1aur
+License: BSD
+Group: Applications/Databases
+Source0: ftp://ftp.postgresql.org/pub/source/v%{version}/postgresql-%{version}.tar.gz
+Source3: postgresql.init
+Source4: file-lists.tar.gz
+Source6: README.rpm-dist
+Source7: migration-scripts.tar.gz
+Source8: http://jdbc.postgresql.org/download/devpgjdbc1.jar
+Source9: http://jdbc.postgresql.org/download/devpgjdbc2.jar
+Source10: http://jdbc.postgresql.org/download/pgjdbc1.jar
+Source11: http://jdbc.postgresql.org/download/pgjdbc2.jar
+Source15: postgresql-bashprofile
+Patch1: rpm-pgsql-7.2.patch
+Patch3: postgresql-7.2rc2-betterquote.patch
+Patch4: postgresql-7.2-tighten.patch
+Patch5: postgresql-7.2.1-mktime.patch
+Patch6: postgresql-aurox.patch
+Patch7:	postgresql-DESTDIR.patch
+Buildrequires: perl glibc-devel bison flex
+Prereq: /sbin/ldconfig initscripts
+BuildPrereq: perl
+BuildPrereq: readline-devel >= 4.0
+BuildPrereq: zlib-devel >= 1.0.4
+BuildPrereq: patch >= 2.5.4
+Url: http://www.postgresql.org/ 
+Requires: postgresql-libs = %{version}
+%if %ssl
+BuildPrereq: openssl-devel
+%endif
+%if %kerberos
+BuildPrereq: krb5-devel
+%endif
+%if %nls
+BuildPrereq: gettext >= 0.10.36
+%endif
+Obsoletes: postgresql-clients
+Buildroot: %{_tmppath}/%{name}-%{version}-root
+# Obsolete the packages we are not building...
+%if ! %{plperl}
+Obsoletes: postgresql-plperl
+%endif
+%if %{tcl}
+Buildrequires: tcl
+%endif
+%if ! %{tcl}
+Obsoletes: postgresql-tcl
+%endif
+%if ! %{tkpkg}
+Obsoletes: postgresql-tk
+%endif
+%if ! %{odbc}
+Obsoletes: postgresql-odbc
+%endif
+%if ! %{perl}
+Obsoletes: postgresql-perl
+%endif
+%if %{python}
+BuildRequires: python-devel
+%endif
+%if ! %{python}
+Obsoletes: postgresql-python
+%endif
+%if ! %{jdbc}
+Obsoletes: postgresql-jdbc
+%endif
+%if ! %{test}
+Obsoletes: postgresql-test
+%endif
+%if ! %{sgmldocs}
+Obsoletes: postgresql-docs
+%endif
+%if %{pam}
+BuildRequires: pam-devel
+%endif
+
+
+
+# This is the PostgreSQL Global Development Group Official RPMset spec file,
+# or a derivative thereof.
+# Copyright 2001 Lamar Owen <lamar@postgresql.org> <lamar.owen@wgcr.org>
+# and others listed.
+
+# Major Contributors:
+# ---------------
+# Lamar Owen
+# Trond Eivind Glomsr√∏d <teg@redhat.com>
+# Thomas Lockhart
+# Reinhard Max
+# Karl DeBisschop
+# Peter Eisentraut
+# and others in the Changelog....
+
+# This spec file and ancilliary files are licensed in accordance with 
+# The PostgreSQL license.
+
+# On top of this file you can find the default build package list macros.  These can be overridden by defining
+# on the rpm command line:
+# rpm --define 'packagename 1' .... to force the package to build.
+# rpm --define 'packagename 0' .... to force the package NOT to build.
+# The base package, the lib package, the devel package, and the server package always get built.
+
 
 %description
-PostgreSQL Data Base Management System (formerly known as Postgres,
-then as Postgres95).
-
-PostgreSQL is an enhancement of the POSTGRES database management
-system, a next-generation DBMS research prototype. While PostgreSQL
-retains the powerful data model and rich data types of POSTGRES, it
-replaces the PostQuel query language with an extended subset of SQL.
-PostgreSQL is free and the complete source is available.
-
-PostgreSQL development is being performed by a team of Internet
-developers who all subscribe to the PostgreSQL development mailing
-list. The current coordinator is Marc G. Fournier
-(scrappy@postgreSQL.org). This team is now responsible for all current
-and future development of PostgreSQL.
-
-The authors of PostgreSQL 1.01 were Andrew Yu and Jolly Chen. Many
-others have contributed to the porting, testing, debugging and
-enhancement of the code. The original Postgres code, from which
-PostgreSQL is derived, was the effort of many graduate students,
-undergraduate students, and staff programmers working under the
-direction of Professor Michael Stonebraker at the University of
-California, Berkeley.
-
-The original name of the software at Berkeley was Postgres. When SQL
-functionality was added in 1995, its name was changed to Postgres95.
-The name was changed at the end of 1996 to PostgreSQL.
-
-PostgreSQL runs on Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD,
-and most flavours of Unix.
-
-%description -l de
-PostgreSQL Datenbank-Managementsystem (fr¸her als Postgres, dann als
-Postgres95 bekannt).
-
-PostgreSQL ist eine Verbesserung des POSTGRES-DB-Managementsystems,
-ein DBMS-Forschungsprototyp der n‰chsten Generation. W‰hrend es das
-leistungsf‰hige Datenmodell und die reichhaltigen Datentypen von
-POSTGRES beibeh‰lt, ersetzt es die PostQuel-Abfragesprache durch ein
-Subset von SQL. PostgreSQL ist gratis, der gesamte Quellcode ist
-verf¸gbar.
-
-Ein Team von Internet-Entwicklern befaﬂt sich mit PostgreSQL. Sie alle
-sind auf der PostgreSQL-Entwickleradreﬂliste. Koordinator ist Marc G.
-Fournier (scrappy@postgreSQL.org). Das Team ist verantwortlich f¸r
-alle aktuellen und k¸nftigen Entwicklungen von PostgreSQL.
-
-Die Autoren von PostgreSQL 1.01 waren Andrew Yu und Jolly Chen.
-Zahlreiche andere haben zur Portierung, zum Testen, Debugging und zur
-Verbesserung des Code beigetragen. Den Original-Postgres-Code, von dem
-sich PostgreSQL ableitet, verdanken wir der Arbeit vieler Doktoranden,
-Studenten und Programmierern unter der Leitung von Professor Michael
-Stonebraker an der University of California, Berkeley.
-
-Der urspr¸ngliche Name war Postgres. Als 1995 SQL-Funktionalit‰t
-hinzukam, wurde der Name in Postgres95 ge‰ndert. Ende 1996 schlieﬂlich
-entschied man sich f¸r PostgreSQL.
-
-PostgreSQL l‰uft auf Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
-und den meisten Unix-Systemen.
-
-%description -l es
-Administrador de Banco de Datos PostgreSQL (conocido anteriormente
-como Postgres, y despuÈs como Postgres95). PostgreSQL es una
-continuaciÛn mejorada del Sistema Administrador de Banco de Datos
-POSTGRES, que era un prototipo de pesquisa para un SGBD de nueva
-generaciÛn. Mientras PostgreSQL mantiene el potente modelo de datos y
-los varios tipos de datos del POSTGRES, substituye el lenguaje de
-consulta PostQuel por un subconjunto extendido de la SQL. PostgreSQL
-es libre y tiene los fuentes disponibles. El desarrollo del PostgreSQL
-se ejecutado por un equipo de estudiosos de Internet, todos suscritos
-en la lista de desarrollo del PostgreSQL. El coordinador actual es
-Marc G. Fournier (scrappy@postgreSQL.org). Este equipo es ahora
-responsable por el desarrollo actual y futuro del PostgreSQL.
-
-%description -l fr
-SystËme de gestion de bases de donnÈes PostgreSQL (D'abord nommÈ
-Postgres, puis Postgres95).
-
-PostgreSQL est une amÈlioration du systËme de gestion de bases de
-donnÈes POSTGRES, un prototype de recherche de la gÈnÈration suivant
-DBMS. Tout en conservant le puissant modËle de donnÈe de et les types
-de donÈe riches de Postgres, il remplace le langage de requÍtes de
-Postgres par un sous ensemble etendu de commandes SQL. PosrgreSQL est
-libre, et ses sources sont disponibles.
-
-Le dÈveloppement de PostgreSQL est actuellement rÈalisÈ via internet
-parune Èquipe de dÈveloppeurs inscrits sur la mailing-list de
-dÈveloppement de PostgreSQL. Le coordinateur actuel est Marc G
-Fournier (scrappy@postgreSQL.org). Cette Èquipe est responsable du
-dÈveloppemen actuel et ‡ venir de PostgreSQL.
-
-Les auteurs de PostgreSQL 1.01 Ètaient Andrew Yu et Jolly Chen.
-Beaucoup d'autres ont contribuÈ au portage, au test, au dÈbogage et ‡
-l'amÈlioration du code. Le code original de Postgres, duquel
-PostgreSQL est dÈrivÈ, a ÈtÈ l'oeuvre d'Ètudiants de haut niveau, de
-moins haut niveau, et de programmeurs travaillant sous la direction du
-professeur Michael Stonebraker ‡ l'universitÈ de Berkeley Californie.
-
-Le nom original du logiciel Ètait Postgres. Quand les fonctionnalitÈes
-SQL furent ajoutÈes en 1995, son nom est devenu Postgres95. Il a ÈtÈ
-rebaptisÈ PostgreSQL en 1996.
-
-PostgreSQL tourne sur Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD,
-et la plupart des Unix.
-
-%description -l pl
-System Zarz±dzania Baz± Danych PostgreSQL (dawniej znany jako
-Postgres, nastÍpnie jako Postgres95).
-
-PostgreSQL jest rozszerzeniem systemu zarz±dzania baz danych POSTGRES,
-prototypu DBMS nastÍpnej generacji. Co prawda PostgreSQL odziedziczy≥
-model danych oraz bogaty zbiÛr rÛønych typÛw danych, to jednak jÍzyk
-zapytaÒ PostQuel zosta≥ zast±piony rozszerzonym SQL-em. PostgreSQL
-jest wolnym oprogramowaniem i kody ºrÛd≥owe tego oprogramowania s± w
-pe≥ni dostÍpne.
-
-System PostgreSQL jest tworzony przez zespÛ≥ ludzi, ktÛrzy s± zapisani
-na listÍ dyskusyjn± dotycz±c± PostgreSQL-a. Obecnym koordynatorem jest
-Marc G. Fournier (scrappy@postgreSQL.org). Wymieniony wyøej zespÛ≥
-jest odpowiedzialny za aktualny i przysz≥y rozwÛj systemu PostgreSQL.
-
-Autorami PostgreSQL-a 1.01 byli Andrew Yu oraz Jolly Chen. Wielu
-innych pomaga≥o przenosz±c na rÛøne platformy, testuj±c, analizuj±c i
-rozszerzaj±c kod. Oryginalny kod Postgres-a, na podstawie ktÛrego
-PostgreSQL powsta≥, by≥ wysi≥kiem wielu absolwentÛw, studentÛw oraz
-zespo≥u programistÛw, ktÛrzy pracowali pod kierunkiem profesora
-Michaela Stonebrakera z Uniwersytetu Kalifornii w Berkeley.
-
-Nazwa oryginalna oprogramowania tworzonego w Berkeley brzmia≥a
-Postgres. W 1995 roku dodano jÍzyk zapytaÒ SQL i nazwÍ zmieniono na
-Postgres95. W koÒcu roku 1996 nazwÍ ostatecznie zmieniono na
-PostgreSQL.
-
-PostgreSQL moøe byÊ uruchominy pod nastÍpuj±cymi systemami: Solaris,
-SunOS, HPUX, AIX, Linux, Irix, FreeBSD i innych systemach Unix.
-
-%description -l pt_BR
-Gerenciador de Banco de Dados PostgreSQL (conhecido anteriormente como
-Postgres, e depois como Postgres95).
-
-O PostgreSQL È uma continuaÁ„o melhorada do Sistema Gerenciador de
-Banco de Dados POSTGRES, que era um protÛtipo de pesquisa para um SGBD
-de nova geraÁ„o. Enquanto o PostgreSQL mantÈm o poderoso modelo de
-dados e os v·rios tipos de dados do POSTGRES, ele substitui a
-linguagem de consulta PostQuel por um subconjunto estendido da SQL. O
-PostgreSQL È livre e tem os fontes disponÌveis.
-
-O desenvolvimento do PostgreSQL est· sendo executado por uma equipe de
-desenvolvedores da Internet, todos subscritores da lista de
-desenvolvimento do PostgreSQL. O coordenador atual È Marc G. Fournier
-(scrappy@postgreSQL.org). Esta equipe È agora respons·vel pelo
-desenvolvimento atual e futuro do PostgreSQL.
-
-%description -l ru
-PostgreSQL - ”…”‘≈Õ¡ ’–“¡◊Ã≈Œ…— ¬¡⁄¡Õ… ƒ¡ŒŒŸ» (–“≈÷ƒ≈ …⁄◊≈”‘Œ¡— À¡À
-Postgres, –œ‘œÕ À¡À Postgres95).
-
-PostgreSQL - ‹‘œ “¡”€…“≈ŒŒ¡— ◊≈“”…— ”…”‘≈ÕŸ ’–“¡◊Ã≈Œ…— ¬¡⁄¡Õ… ƒ¡ŒŒŸ»
-POSTGRES, …””Ã≈ƒœ◊¡‘≈Ãÿ”Àœ«œ –“œ‘œ‘…–¡ DBMS ”Ã≈ƒ’¿›≈  «≈Œ≈“¡√…….
-Ûœ»“¡Œ—— Õœ›Œ’¿ Õœƒ≈Ãÿ ƒ¡ŒŒŸ» … ¬œ«¡‘Ÿ  Œ¡¬œ“ ‘…–œ◊ ƒ¡ŒŒŸ» POSTGRES,
-œŒ¡ ⁄¡Õ≈Œ—≈‘ —⁄ŸÀ ⁄¡–“œ”œ◊ PostQuel “¡”€…“≈ŒŒŸÕ Œ¡¬œ“œÕ SQL.
-PostgreSQL ¬≈”–Ã¡‘≈Œ … –œ”‘¡◊Ã—≈‘”— ◊ ◊…ƒ≈ –œÃŒœ«œ ÀœÕ–Ã≈À‘¡ …”»œƒŒŸ»
-‘≈À”‘œ◊.
-
-PostgreSQL “¡⁄“¡¬¡‘Ÿ◊¡Ã”— ÀœÕ¡Œƒœ  Internet-“¡⁄“¡¬œ‘ﬁ…Àœ◊, –œƒ–…”¡ŒŒŸ»
-Œ¡ ”–…”œÀ “¡””ŸÃÀ…, –œ”◊—›≈ŒŒŸ  “¡⁄“¡¬œ‘À≈ PostgreSQL. ˜ Œ¡”‘œ—›≈≈
-◊“≈Õ— Àœœ“ƒ…Œ¡‘œ“œÕ —◊Ã—≈‘”— Marc G. Fournier
-(scrappy@postgreSQL.org). ¸‘¡ ÀœÕ¡Œƒ¡ ◊ Œ¡”‘œ—›≈≈ ◊“≈Õ— œ‘◊≈ﬁ¡≈‘ ⁄¡
-◊”≈ ‘≈À’›…≈ … ¬’ƒ’›…≈ “¡⁄“¡¬œ‘À… PostgreSQL.
-
-·◊‘œ“¡Õ… PostgreSQL 1.01 ¬ŸÃ… Andrew Yu … Jolly Chen. ÌŒœ«…≈ ◊Œ≈”Ã…
-”◊œ  ◊ÀÃ¡ƒ ◊ –œ“‘…“œ◊¡Œ…≈, ‘≈”‘…“œ◊¡Œ…≈, œ‘Ã¡ƒÀ’ … ’Ã’ﬁ€≈Œ…≈ Àœƒ¡.
-Ô“…«…Œ¡ÃÿŒŸ  Àœƒ Postgres, œ‘ Àœ‘œ“œ«œ –“œ…⁄œ€≈Ã PostgreSQL, ¬ŸÃ
-”œ⁄ƒ¡Œ ’”…Ã…—Õ… ”‘’ƒ≈Œ‘œ◊, ¡”–…“¡Œ‘œ◊ … –≈“”œŒ¡Ã¡, “¡¬œ‘¡¿›≈«œ –œƒ
-“’Àœ◊œƒ”‘◊œÕ –“œ∆≈””œ“¡ Michael Stonebraker ◊ University of
-California, Berkeley.
-
-Ô“…«…Œ¡ÃÿŒœ≈ Œ¡⁄◊¡Œ…≈ Ô ◊ Berkeley ¬ŸÃœ Postgres. Îœ«ƒ¡ ◊ 1995 «œƒ’
-¬ŸÃ¡ ƒœ¬¡◊Ã≈Œ¡ ∆’ŒÀ√…œŒ¡ÃÿŒœ”‘ÿ SQL, Œ¡⁄◊¡Œ…≈ …⁄Õ≈Œ…Ãœ”ÿ Œ¡
-Postgres95. ˜ ÀœŒ√≈ 1996 «œƒ¡ œŒœ ≈›≈ “¡⁄ …⁄Õ≈Œ…Ãœ”ÿ … ‘≈–≈“ÿ ‹‘œ
-PostgreSQL.
-
-PostgreSQL “¡¬œ‘¡≈‘ Œ¡ Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
-… ¬œÃÿ€…Œ”‘◊≈ ƒ“’«…» “¡⁄Œœ◊…ƒŒœ”‘≈  Unix.
-
-%description -l tr
-PostgreSQL, POSTGRES'den t¸remi˛ bir veri taban˝ yˆnetim sistemidir
-(DBMS). G¸Ál¸ veri modeli ve zengin POSTGRES veri tiplerini
-desteklerken SQL'in geni˛letilmi˛ bir altk¸mesi yerine PostQuel
-sorgulama dilini koyar.
-
-%description -l uk
-PostgreSQL - ”…”‘≈Õ¡ À≈“’◊¡ŒŒ— ¬¡⁄¡Õ… ƒ¡Œ…» (“¡Œ¶€ ◊¶ƒœÕ¡ —À Postgres,
-–œ‘¶Õ —À Postgres95).
-
-PostgreSQL - √≈ “œ⁄€…“≈Œ¡ ◊≈“”¶— ”…”‘≈Õ… À≈“’◊¡ŒŒ— ¬¡⁄¡Õ… ƒ¡Œ…»
-POSTGRES, ƒœ”Ã¶ƒŒ…√ÿÀœ«œ –“œ‘œ‘…–’ DBMS Œ¡”‘’–Œœß «≈Œ≈“¡√¶ß.
-˙¬≈“¶«¡¿ﬁ… –œ‘’÷Œ’ Õœƒ≈Ãÿ ƒ¡Œ…» ‘¡ ¬¡«¡‘…  Œ¡¬¶“ ‘…–¶◊ ƒ¡Œ…» POSTGRES,
-◊œŒ¡ ⁄¡Õ¶Œ¿§ Õœ◊’ ⁄¡–…‘¶◊ PostQuel “œ⁄€…“≈Œ…Õ Œ¡¬œ“œÕ SQL. PostgreSQL
-¬≈⁄Àœ€‘œ◊Œ¡ ‘¡ –œ”‘¡◊Ã—§‘ÿ”— ’ ◊…«Ã—ƒ¶ –œ◊Œœ«œ ÀœÕ–Ã≈À‘’ ◊…»¶ƒŒ…»
-‘≈À”‘¶◊.
-
-PostgreSQL “œ⁄“œ¬Ã—§‘ÿ”— ÀœÕ¡Œƒœ¿ Internet-–“œ«“¡Õ¶”‘¶◊, ’ﬁ¡”Œ…À¶◊
-”–…”À’ “œ⁄”…ÃÀ…, –“…”◊—ﬁ≈Œœ«œ “œ⁄“œ¬√¶ PostgreSQL. Ó¡“¡⁄¶
-Àœœ“ƒ…Œ¡‘œ“œÕ § Marc G. Fournier (scrappy@postgreSQL.org). „— ÀœÕ¡Œƒ¡
-◊¶ƒ–œ◊¶ƒ¡§ ⁄¡ ◊”¶ –œ‘œﬁŒ¶ ‘¡ Õ¡ ¬’‘Œ¶ “œ⁄“œ¬À… PostgreSQL.
-
-·◊‘œ“¡Õ… PostgreSQL 1.01 ¬’Ã… Andrew Yu ‘¡ Jolly Chen. ‚¡«¡‘œ Ã¿ƒ≈ 
-◊Œ≈”Ã… ”◊¶  ◊Œ≈”œÀ ◊ –œ“‘’◊¡ŒŒ—, ‘≈”‘’◊¡ŒŒ—, ◊¶ƒÃ¡ƒÀ’ ‘¡ –œÀ“¡›≈ŒŒ—
-Àœƒ’. Ô“…«¶Œ¡ÃÿŒ…  Àœƒ Postgres, ◊¶ƒ —Àœ«œ –œ»œƒ…‘ÿ PostgreSQL, ¬’◊
-”‘◊œ“≈Œ…  ⁄’”…ÃÃ—Õ… ”‘’ƒ≈Œ‘¶◊, ¡”–¶“¡Œ‘¶◊ ‘¡ –≈“”œŒ¡Ã’, —À…  –“¡√¿◊¡◊
-–¶ƒ À≈“¶◊Œ…√‘◊œÕ –“œ∆≈”œ“¡ Michael Stonebraker ◊ University of
-California, Berkeley.
-
-Ô“…«¶Œ¡ÃÿŒ¡ Œ¡⁄◊¡ –“œ«“¡Õ… ◊ Berkeley ¬’Ã¡ Postgres. ÎœÃ… ◊ 1995 “œ√¶
-¬’Ãœ ƒœƒ¡Œœ ∆’ŒÀ√¶œŒ¡ÃÿŒ¶”‘ÿ SQL, Œ¡⁄◊¡ ⁄Õ¶Œ…Ã¡”— Œ¡ Postgres95. ˜
-À¶Œ√¶ 1996 “œÀ’ ◊œŒ¡ ›≈ “¡⁄ ⁄Õ¶Œ…Ã¡”ÿ ¶ ⁄¡“¡⁄ √≈ PostgreSQL.
-
-PostgreSQL –“¡√¿§ Œ¡ Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
-‘¡ ¬¶Ãÿ€œ”‘¶ ¶Œ€…» “¶⁄Œœ◊…ƒ¶◊ Unix.
-
-%package devel
-Summary:	PostgreSQL development header files and libraries
-Summary(de):	PostgreSQL-Entwicklungs-Header-Dateien und Libraries
-Summary(es):	Archivos de inclusiÛn y bibliotecas PostgreSQL
-Summary(fr):	En-tÍtes et bibliothËques de dÈveloppement PostgreSQL
-Summary(pl):	PostgreSQL - pliki nag≥Ûwkowe i biblioteki
-Summary(pt_BR):	Arquivos de inclus„o e bibliotecas para desenvolvimento com o PostgreSQL
-Summary(ru):	PostgreSQL - »≈ƒ≈“Ÿ … ¬…¬Ã…œ‘≈À… “¡⁄“¡¬œ‘ﬁ…À¡
-Summary(tr):	PostgreSQL ba˛l˝k dosyalar˝ ve kitapl˝klar
-Summary(uk):	PostgreSQL - »≈ƒ≈“… ‘¡ ¬¶¬Ã¶œ‘≈À… –“œ«“¡Õ¶”‘¡
-Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}
-
-%description devel
-This package contains header files and libraries required to compile
-applications that are talking directly to the PostgreSQL backend
-server.
-
-%description devel -l de
-Dieses Paket enth‰lt die Header-Dateien und Libraries, die zum
-Kompilieren von Applikationen notwendig sind, die direkt mit dem
-PostgreSQL-Backend-Server kommunizieren.
-
-%description devel -l es
-Este paquete contiene archivos de inclusiÛn y bibliotecas requeridas
-para compilaciÛn de aplicativos que se comunican directamente con el
-servidor backend PostgreSQL.
-
-%description devel -l fr
-Ce package contient les fichiers d'en-tÍte et les bibliothÈques
-nÈcessaires pour compiler des applications ayant des Èchanges directs
-avec le serveur du backend PostgreSQL.
-
-%description devel -l pl
-Pakiet zawiera nag≥Ûwki oraz biblioteki wymagane do kompilacji
-aplikacji ≥±cz±cych siÍ bezpo∂rednio z serwerem PostgreSQL.
-
-%description devel -l pt_BR
-Este pacote contÈm arquivos de inclus„o e bibliotecas requeridas para
-compilaÁ„o de aplicativos que se comunicam diretamente com o servidor
-backend PostgreSQL.
-
-%description devel -l ru
-¸‘œ‘ –¡À≈‘ ”œƒ≈“÷…‘ »≈ƒ≈“Ÿ … ¬…¬Ã…œ‘≈À…, Œ≈œ¬»œƒ…ÕŸ≈ ƒÃ— ”¬œ“À…
-–“…Ãœ÷≈Œ… , Œ≈–œ”“≈ƒ”‘◊≈ŒŒœ ◊⁄¡…Õœƒ≈ ”‘◊’¿›…» ” ”≈“◊≈“œÕ PostgreSQL.
-
-%description devel -l tr
-Bu paket, PostgreSQL sunucusuyla konu˛acak yaz˝l˝mlar geli˛tirmek iÁin
-gereken ba˛l˝k dosyalar˝n˝ ve kitapl˝klar˝ iÁerir.
-
-%description devel -l uk
-„≈  –¡À≈‘ Õ¶”‘…‘ÿ »≈ƒ≈“… ‘¡ ¬¶¬Ã¶œ‘≈À…, Œ≈œ¬»¶ƒŒ¶ ƒÃ— “œ⁄“œ¬À…
-–“œ«“¡Õ, —À¶ ¬≈⁄–œ”≈“≈ƒŒÿœ ◊⁄¡§Õœƒ¶¿‘ÿ ⁄ ”≈“◊≈“œÕ PostgreSQL.
-
-%package backend-devel
-Summary:	PostgreSQL backend development header files
-Summary(pl):	PostgreSQL - pliki nag≥Ûwkowe dla backendu
-Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}
-
-%description backend-devel
-This package contains header files required to compile functions that
-could be loaded directly by backend
-
-%description backend-devel -l pl
-Pakiet zawiera nag≥Ûwki wymagane do kompilacji funkcji ktore moga byc
-bezposrednio ladowane przez beckend serwera PostgreSQL.
-
-%package clients
-Summary:	Clients needed to access a PostgreSQL server
-Summary(es):	Clientes necesarios para acceder al servidor PostgreSQL
-Summary(pl):	Klienci wymagani do dostÍpu do serwera PostgreSQL
-Summary(pt_BR):	Clientes necess·rios para acessar o servidor PostgreSQL
-Summary(ru):	ÎÃ…≈Œ‘”À…≈ –“œ«“¡ÕÕŸ, Œ≈œ¬»œƒ…ÕŸ≈ ƒÃ— ƒœ”‘’–¡ À ”≈“◊≈“’ PostgreSQL
-Summary(uk):	ÎÃ¶§Œ‘”ÿÀ¶ –“œ«“¡Õ…, Œ≈œ¬»¶ƒŒ¶ ƒÃ— ƒœ”‘’–’ ƒœ ”≈“◊≈“¡ PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name}-libs = %{version}
-
-%description clients
-This package includes only the clients needed to access an PostgreSQL
-server. The server is included in the main package. If all you need is
-to connect to another PostgreSQL server, the this is the only package
-you need to install. Clients include several command-line utilities
-you can use to manage your databases on a remote PostgreSQL server.
-
-%description clients -l es
-Este paquete incluye solamente los clientes necesarios para acceder un
-servidor PostgreSQL. El servidor est· en el paquete principal.
-
-%description clients -l pl
-Pakiet zawiera programy klienckie potrzebne dla dostÍpu do serwera
-PostgreSQL oraz narzÍdzia do zarz±dzania bazami dzia≥aj±ce z linii
-poleceÒ. Serwer znajduje siÍ w g≥Ûwnym pakiecie.
-
-%description clients -l pt_BR
-Este pacote inclui somente os clientes necess·rios para acessar um
-servidor PostgreSQL. O servidor est· no pacote principal.
-
-%description clients -l ru
-¸‘œ‘ –¡À≈‘ ◊ÀÃ¿ﬁ¡≈‘ ‘œÃÿÀœ ÀÃ…≈Œ‘”À…≈ –“œ«“¡ÕÕŸ … ¬…¬Ã…œ‘≈À…,
-Œ≈œ¬»œƒ…ÕŸ≈ ƒÃ— ƒœ”‘’–¡ À ”≈“◊≈“’ PostgreSQL. Û≈“◊≈“ ◊»œƒ…‘ ◊ «Ã¡◊ŒŸ 
-–¡À≈‘. Â”Ã… ◊¡Õ Œ¡ƒœ ‘œÃÿÀœ “¡¬œ‘¡‘ÿ ” ƒ“’«…Õ ”≈“◊≈“œÕ PostgreSQL, ‹‘œ
-≈ƒ…Œ”‘◊≈ŒŒŸ  –¡À≈‘, Àœ‘œ“Ÿ  ◊¡Õ Œ¡ƒœ ’”‘¡Œœ◊…‘ÿ.
-
-Ù≈–≈“ÿ –¡À≈‘Ÿ ” ¬…¬Ã…œ‘≈À¡Õ… ƒÃ— “¡⁄ŒŸ» —⁄ŸÀœ◊ –“œ«“¡ÕÕ…“œ◊¡Œ…— (C,
-C++, PERL … TCL) “¡⁄ƒ≈Ã≈ŒŸ. ¸‘œ‘ –¡À≈‘ ◊ÀÃ¿ﬁ¡≈‘ ‘œÃÿÀœ ¬…¬Ã…œ‘≈À… ƒÃ—
-—⁄ŸÀ¡ C.
-
-%description clients -l uk
-„≈  –¡À≈‘ Õ¶”‘…‘ÿ ‘¶ÃÿÀ… ÀÃ¶§Œ‘”ÿÀ¶ –“œ«“¡Õ… ‘¡ ¬¶¬Ã¶œ‘≈À…, Œ≈œ¬»¶ƒŒ¶
-ƒÃ— ƒœ”‘’–’ ƒœ ”≈“◊≈“¡ PostgreSQL. Û≈“◊≈“ Õ¶”‘…‘ÿ”— ◊ «œÃœ◊ŒœÕ’
-–¡À≈‘¶. ÒÀ›œ ◊¡Õ –œ‘“¶¬Œœ –“¡√¿◊¡‘… ⁄ ¶Œ€…Õ ”≈“◊≈“œÕ PostgreSQL, √≈
-§ƒ…Œ…  –¡À≈‘, —À…  ◊¡Õ ‘“≈¬¡ ◊”‘¡Œœ◊…‘….
-
-Ù≈–≈“ –¡À≈‘… ⁄ ¬¶¬Ã¶œ‘≈À¡Õ… ƒÃ— “¶⁄Œ…» Õœ◊ –“œ«“¡Õ’◊¡ŒŒ— (C, C++, PERL
-¶ TCL) “œ⁄ƒ¶Ã≈Œ¶. „≈  –¡À≈‘ Õ¶”‘…‘ÿ ‘¶ÃÿÀ… ¬¶¬Ã¶œ‘≈À… ƒÃ— Õœ◊… C.
-
-%package perl
-Summary:	Perl interface to PostgreSQL database
-Summary(es):	MÛdulo Perl para acceder un servidor PostgreSQL
-Summary(pl):	Interfejs dla Perla umoøliwiaj±cy dostÍp do baz PostgreSQL
-Summary(pt_BR):	MÛdulo Perl para acesso ao servidor PostgreSQL
-Summary(ru):	‚…¬Ã…œ‘≈À… … Õœƒ’Ã… ƒÃ— ƒœ”‘’–¡ À postgresql …⁄ perl
-Summary(uk):	‚¶¬Ã¶œ‘≈À… ‘¡ Õœƒ’Ã¶ ƒÃ— ƒœ”‘’–’ ƒœ postgresql ⁄ Perl
-Summary(zh_CN):	PostgreSQL µƒ PL/Perl ≥Ã–Ú”Ô—‘
-Group:		Applications/Databases
-Requires:	perl >= 5.004
-Requires:	%{name}-libs = %{version}
-
-%description perl
-This package includes only perl modules needed to access an PostgreSQL
-server.
-
-%description perl -l es
-MÛdulo Perl para acceder un servidor PostgreSQL
-
-%description perl -l pl
-Pakiet ten zawiera tylko modu≥y Perla wymagane dla dostÍpu do serwera
-PostgreSQL.
-
-%description perl -l pt_BR
-MÛdulo Perl para acesso ao servidor PostgreSQL.
-
-%description perl -l ru
-¸‘œ –¡À≈‘ postgresql ƒÃ— –œƒƒ≈“÷À… perl. ÔŒ ◊ÀÃ¿ﬁ¡≈‘ Õœƒ’Ã… perl …
-◊”–œÕœ«¡‘≈ÃÿŒŸ≈ ∆¡ ÃŸ ƒÃ— ƒœ”‘’–¡ À postgresql …⁄ perl. ˜ÀÃ¿ﬁ≈Œ ‘œÃÿÀœ
-ƒÃ— –œƒƒ≈“÷À… ”’›≈”‘◊’¿›…» –“œ«“¡ÕÕ ” …”–œÃÿ⁄œ◊¡Œ…≈Õ ‹‘œ«œ ’”‘¡“≈◊€≈«œ
-…Œ‘≈“∆≈ ”¡. Ó≈ …”–œÃÿ⁄’ ‘≈ ◊œ ◊Œœ◊ÿ ”œ⁄ƒ¡◊¡≈ÕŸ» –“œ«“¡ÕÕ¡» -
-…”–œÃÿ⁄’ ‘≈ perl-DBD-%{name} !
-
-%description perl -l uk
-„≈ –¡À≈‘ postgresql ƒÃ— –¶ƒ‘“…ÕÀ… perl. ˜¶Œ Õ¶”‘…‘ÿ Õœƒ’Ã¶ perl ‘¡
-ƒœ–œÕ¶÷Œ¶ ∆¡ Ã… ƒÃ— ƒœ”‘’–’ ƒœ postgresql ⁄ perl. ˜ÀÃ¿ﬁ≈Œ…  ‘¶ÃÿÀ… ƒÃ—
-–¶ƒ‘“…ÕÀ… ¶”Œ’¿ﬁ…» –“œ«“¡Õ ⁄ ◊…Àœ“…”‘¡ŒŒ—Õ √ÿœ«œ ⁄¡”‘¡“¶Ãœ«œ
-¶Œ‘≈“∆≈ ”’. Ó≈ ◊…Àœ“…”‘œ◊’ ‘≈  œ«œ ◊ Œœ◊…» –“œ«“¡Õ¡», ◊…Àœ“…”‘œ◊’ ‘≈
-perl-DBD-%{name} !
-
-%package -n python-postgresql
-Summary:	The python-based client programs needed for accessing a PostgreSQL server
-Summary(es):	MÛdulo Python para acceder un servidor PostgreSQL
-Summary(pl):	Programy klienckie do dostÍpu do serwera PostgreSQL napisane w Pythonie
-Summary(pt_BR):	MÛdulo Python para acesso ao servidor PostgreSQL
-Summary(zh_CN):	Python ≥Ã–Ú∑√Œ  PostgreSQL  ˝æ›ø‚À˘–Ëµƒø™∑¢ƒ£øÈ
-Group:		Libraries/Python
-Requires:	python >= 2.0
-Requires:	python-mx-DateTime
-Requires:	%{name}-libs = %{version}
-Obsoletes:	python-PyGreSQL
-Obsoletes:	postgresql-python
-
-%description -n python-postgresql
-postgresql-python includes the python-based client programs and client
-libraries that you'll need to access a PostgreSQL database management
-system server.
-
-%description -n python-postgresql -l es
-MÛdulo Python para acceder un servidor PostgreSQL
-
-%description -n python-postgresql -l pl
-Pakiet ten zawiera napisane w Pythonie programy i biblioteki klienckie
-do dostÍpu do serwera baz danych PostgreSQL.
-
-%description -n python-postgresql -l pt_BR
-MÛdulo Python para acesso ao servidor PostgreSQL.
-
-%package doc
-Summary:	Documentation for PostgreSQL
-Summary(pl):	Dodatkowa dokumantacja dla PostgreSQL
-Group:		Applications/Databases
-
-%description doc
-This package includes documentation and HOWTO for programmer, admin
-etc., in HTML format.
-
-%description doc -l pl
-Pakiet ten zawiera dokumentacjÍ oraz HOWTO m.in. dla programistÛw,
-administratorÛw w formacie HTML.
+PostgreSQL is an advanced Object-Relational database management system
+(DBMS) that supports almost all SQL constructs (including
+transactions, subselects and user-defined types and functions). The
+postgresql package includes the client programs and libraries that
+you'll need to access a PostgreSQL DBMS server.  These PostgreSQL
+client programs are programs that directly manipulate the internal
+structure of PostgreSQL databases on a PostgreSQL server. These client
+programs can be located on the same machine with the PostgreSQL
+server, or may be on a remote machine which accesses a PostgreSQL
+server over a network connection. This package contains the docs
+in HTML for the whole package, as well as command-line utilities for
+managing PostgreSQL databases on a PostgreSQL server. 
+
+If you want to manipulate a PostgreSQL database on a remote PostgreSQL
+server, you need this package. You also need to install this package
+if you're installing the postgresql-server package.
 
 %package libs
-Summary:	PostgreSQL libraries
-Summary(es):	Biblioteca compartida del PostgreSQL
-Summary(pl):	Biblioteki dzielone programu PostgreSQL
-Summary(pt_BR):	Biblioteca compartilhada do PostgreSQL
-Summary(zh_CN):	PostgreSQL øÕªßÀ˘–Ë“™µƒπ≤œÌø‚.
-Group:		Libraries
+Summary: The shared libraries required for any PostgreSQL clients.
+Group: Applications/Databases
+Provides: libpq.so.2 libpq.so.2.0 libpq.so
 
 %description libs
-PostgreSQL shared libraries.
+The postgresql-libs package provides the essential shared libraries for any 
+PostgreSQL client program or interface. You will need to install this package
+to use any other PostgreSQL package or any clients that need to connect to a
+PostgreSQL server.
 
-%description libs -l es
-Este paquete contiene la biblioteca compartida para acceso al
-postgresql.
+%package server
+Summary: The programs needed to create and run a PostgreSQL server.
+Group: Applications/Databases
+Prereq: /usr/sbin/useradd /sbin/chkconfig 
+Requires: postgresql = %{version} libpq.so
+Requires: postgresql-libs = %{version}
 
-%description libs -l pl
-Biblioteki dzielone programu PostgreSQL.
+#------------
+%if %sgmldocs
+%package docs
+Summary: Extra documentation for PostgreSQL
+Group: Applications/Databases
+%description docs
+The postgresql-docs package includes the SGML source for the documentation
+as well as the documentation in other formats, and some extra documentation.
+Install this package if you want to help with the PostgreSQL documentation
+project, or if you want to generate printed documentation.
+%endif
 
-%description libs -l pt_BR
-Este pacote contÈm a biblioteca compartilhada para acesso ao
-postgresql.
 
-%package static
-Summary:	PostgreSQL static libraries
-Summary(es):	Bibliotecas estaticas PostgreSQL
-Summary(pl):	Biblioteki statyczne programu PostgreSQL
-Summary(pt_BR):	Bibliotecas est·ticas PostgreSQL
-Summary(ru):	Û‘¡‘…ﬁ≈”À…≈ ¬…¬Ã…œ‘≈À… ƒÃ— –“œ«“¡ÕÕ…“œ◊¡Œ…— ” postgresql
-Summary(uk):	Û‘¡‘…ﬁŒ¶ ¬¶¬Ã¶œ‘≈À… ƒÃ— –“œ«“¡Õ’◊¡ŒŒ— ⁄ postgresql
-Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}
+%package contrib
+Summary: Contributed source and binaries distributed with PostgreSQL
+Group: Applications/Databases
+Requires: libpq.so postgresql = %{version}
+%description contrib
+The postgresql-contrib package includes the contrib tree distributed with
+the PostgreSQL tarball.  Selected contrib modules are prebuilt.
 
-%description static
-PostgreSQL static libraries.
+%description server
+The postgresql-server package includes the programs needed to create
+and run a PostgreSQL server, which will in turn allow you to create
+and maintain PostgreSQL databases.  PostgreSQL is an advanced
+Object-Relational database management system (DBMS) that supports
+almost all SQL constructs (including transactions, subselects and
+user-defined types and functions). You should install
+postgresql-server if you want to create and maintain your own
+PostgreSQL databases and/or your own PostgreSQL server. You also need
+to install the postgresql package.
 
-%description static -l es
-Este paquete contiene bibliotecas estaticas requerida para compilaciÛn
-de aplicativos que se comunican directamente con el servidor backend
-PostgreSQL.
+%package devel
+Summary: PostgreSQL development header files and libraries.
+Group: Development/Libraries
+Requires: postgresql-libs = %{version}
 
-%description static -l pl
-Biblioteki statyczne programu PostgreSQL.
+%description devel
+The postgresql-devel package contains the header files and libraries
+needed to compile C or C++ applications which will directly interact
+with a PostgreSQL database management server and the ecpg Embedded C
+Postgres preprocessor. You need to install this package if you want to
+develop applications which will interact with a PostgreSQL server. If
+you're installing postgresql-server, you need to install this
+package.
 
-%description static -l pt_BR
-Este pacote contÈm as bibliotecas est·ticas requeridas para compilaÁ„o
-de aplicativos que se comunicam diretamente com o servidor backend
-PostgreSQL.
+#------------
+%if %plperl
+%package plperl
+Summary: The PL/Perl procedural language for PostgreSQL.
+Group: Applications/Databases
+Requires: perl, postgresql = %{version}
 
-%description static -l ru
-¸‘œ œ‘ƒ≈ÃÿŒŸ  –¡À≈‘ ”œ ”‘¡‘…ﬁ≈”À…Õ… ¬…¬Ã…œ‘≈À¡Õ…, Àœ‘œ“Ÿ≈ ¬œÃÿ€≈ Œ≈
-◊»œƒ—‘ ◊ %{name}-devel.
+%description plperl
+PostgreSQL is an advanced Object-Relational database management
+system.  The postgresql-plperl package contains the the PL/Perl
+procedural language for the backend.
+%endif
 
-%description static -l uk
-„≈ œÀ“≈Õ…  –¡À≈‘ ⁄¶ ”‘¡‘…ﬁŒ…Õ… ¬¶¬Ã¶œ‘≈À¡Õ…, —À¶ ¬¶Ãÿ€ Œ≈ ◊»œƒ—‘ÿ ◊
-%{name}-devel.
-
-%package c++
-Summary:	C++ interface to PostgreSQL
-Summary(pl):	Interfejs C++ do PostgreSQL
-Summary(ru):	ÎÃ…≈Œ‘”À…≈ ¬…¬Ã…œ‘≈À… ƒÃ— –œƒƒ≈“÷À… ÀÃ…≈Œ‘œ◊ PostgreSQL, Œ¡–…”¡ŒŒŸ» Œ¡ C++
-Summary(uk):	ÎÃ¶§Œ‘”ÿÀ¶ ¬¶¬Ã¶œ‘≈À…  ƒÃ— –¶ƒ‘“…ÕÀ… ÀÃ¶§Œ‘¶◊ PostgreSQL, Œ¡–…”¡Œ…» Œ¡ C++
-Group:		Applications/Databases
-Requires:	%{name}-libs = %{version}
-
-%description c++
-This package includes library for C++ interface to PostgreSQL.
-
-%description c++ -l pl
-Pakiet ten zawiera biblioteki dla interfejsu C++ do PostgreSQL.
-
-%description c++ -l ru
-libpq++ -- œ¬ﬂ≈À‘Œœ-œ“…≈Œ‘…“œ◊¡ŒŒ¡— ¬…¬Ã…œ‘≈À¡ ƒÃ— ƒœ”‘’–¡ À ¬¡⁄≈
-ƒ¡ŒŒŸ» PostgreSQL.
-
-%description c++ -l uk
-libpq++ -- œ¬'§À‘Œœ-œ“¶§Œ‘œ◊¡Œ¡ ¬¶¬Ã¶œ‘≈À¡ ƒÃ— ƒœ”‘’–’ ƒœ ¬¡⁄… ƒ¡Œ…»
-PostgreSQL.
-
-%package c++-devel
-Summary:	C++ interface to PostgreSQL - development part
-Summary(pl):	Interfejs C++ do PostgreSQL - cze∂Ê programistyczna
-Summary(ru):	Ë≈ƒ≈“Ÿ … ¬…¬Ã…œ‘≈À… ƒÃ— “¡⁄“¡¬œ‘œÀ ” …”–œÃÿ⁄œ◊¡Œ…≈Õ libpq++ (C++ …Œ‘≈“∆≈ ” ƒÃ— postgresql)
-Summary(uk):	Ë≈ƒ≈“… ‘¡ ¬¶¬Ã¶œ‘≈À… ƒÃ— “œ⁄“œ¬œÀ ⁄ ◊…Àœ“…”‘¡ŒŒ—Õ libpq++ (¶Œ‘≈“∆≈ ” C++ ƒÃ— postgresql)
-Group:		Applications/Databases
-Requires:	%{name}-c++ = %{version}
-Requires:	%{name}-devel = %{version}
-
-%description c++-devel
-This package includes library and header files for C++ interface.
-
-%description c++-devel -l pl
-Pakiet ten zawiera biblioteki i pliki nag≥Ûwkowe dla interfejsu C++.
-
-%description c++-devel -l ru
-¸‘œ –¡À≈‘ “¡⁄“¡¬œ‘ﬁ…À¡ ƒÃ— –“œ«“¡ÕÕ…“œ◊¡Œ…— ” libpq++. ÔŒ ◊ÀÃ¿ﬁ¡≈‘
-»≈ƒ≈“Ÿ … ¬…¬Ã…œ‘≈À… ƒÃ— …”–œÃÿ⁄œ◊¡Œ…— ◊ –“œ«“¡ÕÕ¡», Àœ‘œ“Ÿ≈ …”–œÃÿ⁄’¿‘
-Àœƒ …Ã… API libpq++ (C++ …Œ‘≈“∆≈ ” ƒÃ— postgresql).
-
-%description c++-devel -l uk
-„≈ –¡À≈‘ –“œ«“¡Õ¶”‘¡ ƒÃ— –“œ«“¡Õ’◊¡ŒŒ— ⁄ libpq++. ˜¶Œ Õ¶”‘…‘ÿ »≈ƒ≈“…
-‘¡ ¬¶¬Ã¶œ‘≈À… ƒÃ— ◊…Àœ“…”‘¡ŒŒ— ◊ –“œ«“¡Õ¡», —À¶ ◊…Àœ“…”‘œ◊’¿‘ÿ Àœƒ ¡¬œ
-API libpq++ (¶Œ‘≈“∆≈ ”’ C++ ƒÃ— postgresql).
-
-%package c++-static
-Summary:	C++ interface to PostgreSQL - static libraries
-Summary(pl):	Interfejs C++ do PostgreSQL - biblioteki statyczne
-Summary(ru):	Û‘¡‘…ﬁ≈”À…≈ ¬…¬Ã…œ‘≈À… ƒÃ— –“œ«“¡ÕÕ…“œ◊¡Œ…— ” libpq++
-Summary(uk):	Û‘¡‘…ﬁŒ¶ ¬¶¬Ã¶œ‘≈À… ƒÃ— –“œ«“¡Õ’◊¡ŒŒ— ⁄ libpq++
-Group:		Applications/Databases
-Requires:	%{name}-c++-devel = %{version}
-
-%description c++-static
-This package includes static library for interface C++.
-
-%description c++-static -l pl
-Pakiet ten zawiera biblioteki statyczne dla interfejsu C++.
-
-%description c++-static -l ru
-¸‘œ œ‘ƒ≈ÃÿŒŸ  –¡À≈‘ ”œ ”‘¡‘…ﬁ≈”À…Õ… ¬…¬Ã…œ‘≈À¡Õ…, Àœ‘œ“Ÿ≈ ¬œÃÿ€≈ Œ≈
-◊»œƒ—‘ ◊ %{name}-c++-devel.
-
-%description c++-static -l uk
-„≈ œÀ“≈Õ…  –¡À≈‘ ⁄¶ ”‘¡‘…ﬁŒ…Õ… ¬¶¬Ã¶œ‘≈À¡Õ…, —À¶ ¬¶Ãÿ€≈ Œ≈ ◊»œƒ—‘ÿ ◊
-%{pkg_name}-c++-devel.
-
-%package odbc
-Summary:	ODBC interface to PostgreSQL
-Summary(es):	Driver ODBC para acceder un servidor PostgreSQL
-Summary(pl):	Interfejs ODBC do PostgreSQL
-Summary(pt_BR):	Driver ODBC necess·rio para acessar um servidor PostgreSQL
-Summary(zh_CN):	”√ ODBC ∑√Œ  “ª∏ˆ PostgreSQL  ˝æ›ø‚µƒ ODBC «˝∂Ø
-Group:		Applications/Databases
-Requires:	%{name}-libs = %{version}
-
-%description odbc
-This package includes library for interface ODBC.
-
-%description odbc -l es
-Driver para acceder un servidor PostgreSQL, a travÈs de ODBC.
-
-%description odbc -l pl
-Pakiet ten zawiera biblioteki dla interfejsu ODBC.
-
-%description odbc -l pt_BR
-Driver ODBC necess·rio para acessar um servidor PostgreSQL.
-
-%package odbc-devel
-Summary:	ODBC interface to PostgreSQL - development part
-Summary(pl):	Interfejs ODBC do PostgreSQL - cze∂Ê programistyczna
-Group:		Applications/Databases
-Requires:	%{name}-odbc = %{version}
-Requires:	%{name}-devel = %{version}
-
-%description odbc-devel
-This package includes library and header files for interface ODBC.
-
-%description odbc-devel -l pl
-Pakiet ten zawiera biblioteki i pliki nag≥Ûwkowe dla interfejsu ODBC.
-
-%package odbc-static
-Summary:	ODBC interface to PostgreSQL - static libraries
-Summary(pl):	Interfejs ODBC do PostgreSQL - biblioteki statyczne
-Group:		Applications/Databases
-Requires:	%{name}-odbc-devel = %{version}
-
-%description odbc-static
-This package includes static library for interface ODBC.
-
-%description odbc-static -l pl
-Pakiet ten zawiera biblioteki statyczne dla interfejsu ODBC.
-
-%package -n pgaccess
-Summary:	A free graphical database management tool for PostgreSQL
-Summary(pl):	Graficzne narzÍdzie do obs≥ugi baz danych PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name}-tcl = %{version}
-
-%description -n pgaccess
-A free graphical database management tool for PostgreSQL.
-
-%description -n pgaccess -l pl
-Graficzne narzÍdzie do obs≥ugi baz danych PostgreSQL.
-
+#------------
+%if %tcl
 %package tcl
-Summary:	tcl interface for PostgreSQL
-Summary(es):	Bibliotecas y shell TCL para acceder un servidor PostgreSQL
-Summary(pl):	Interfejs tcl dla PostgreSQL
-Summary(pt_BR):	Bibliotecas e shell para programas em TCL acessarem o servidor PostgreSQL
-Summary(ru):	‚…¬Ã…œ‘≈À… ƒÃ— ƒœ”‘’–¡ À postgresql …⁄ tcl
-Summary(uk):	‚¶¬Ã¶œ‘≈À… ƒÃ— ƒœ”‘’–’ ƒœ postgresql ⁄ tcl
-Summary(zh_CN):	“ª∏ˆ Tcl ø‚∫Õ PostgreSQL µƒ PL/Tcl ±‡≥Ã”Ô—‘
-Group:		Development/Languages/Tcl
-Requires:	%{name}-libs = %{version}
+Summary: A Tcl client library, and the PL/Tcl procedural language for PostgreSQL.
+Group: Applications/Databases
+Requires: tcl >= 8.0
 
 %description tcl
-tcl interface for PostgreSQL.
+PostgreSQL is an advanced Object-Relational database management
+system.  The postgresql-tcl package contains the libpgtcl client library,
+the pg-enhanced pgtclsh, and the PL/Tcl procedural language for the backend.
+%endif
 
-%description tcl -l es
-Bibliotecas y shell TCL para acceder un servidor PostgreSQL
+#------------
+%if %tkpkg
+%package tk
+Summary: Tk shell and tk-based GUI for PostgreSQL.
+Group: Applications/Databases
+Requires: tcl >= 8.0, tk >= 8.0
 
-%description tcl -l pl
-Interfejs tcl dla PostgreSQL.
+%description tk
+PostgreSQL is an advanced Object-Relational database management
+system.  The postgresql-tk package contains the pgaccess
+program. Pgaccess is a graphical front end, written in Tcl/Tk, for the
+psql and related PostgreSQL client programs.
+%endif
 
-%description tcl -l pt_BR
-Bibliotecas e shell para programas em TCL acessarem o servidor
-PostgreSQL
+#------------
+%if %odbc
+%package odbc
+Summary: The ODBC driver needed for accessing a PostgreSQL DB using ODBC.
+Group: Applications/Databases
 
-%description tcl -l ru
-libpgtcl -- API ƒÃ— ƒœ”‘’–¡ À ¬¡⁄≈ ƒ¡ŒŒŸ» PostgreSQL …⁄ —⁄ŸÀ¡ tcl.
+%description odbc
+PostgreSQL is an advanced Object-Relational database management
+system. The postgresql-odbc package includes the ODBC (Open DataBase
+Connectivity) driver and sample configuration files needed for
+applications to access a PostgreSQL database using ODBC.
+%endif
 
-%description tcl -l uk
-libpgtcl -- API ƒÃ— ƒœ”‘’–’ ƒœ ¬¡⁄… ƒ¡Œ…» PostgreSQL ⁄ Õœ◊… tcl.
+#------------
+%if %perl
+%package perl
+Summary: Development module needed for Perl code to access a PostgreSQL DB.
+Group: Applications/Databases
+Requires: perl >= 5.004-4
 
-%package tcl-devel
-Summary:	Development part of tcl interface for PostgreSQL
-Summary(pl):	CzÍ∂Ê dla programistÛw interfejsu tcl dla PostgreSQL
-Summary(ru):	Ë≈ƒ≈“Ÿ … ¬…¬Ã…œ‘≈À… ƒÃ— “¡⁄“¡¬œ‘œÀ ” …”–œÃÿ⁄œ◊¡Œ…≈Õ libpgtcl (tcl …Œ‘≈“∆≈ ” ƒÃ— postgresql)
-Summary(uk):	Ë≈ƒ≈“… ‘¡ ¬¶¬Ã¶œ‘≈À… ƒÃ— “œ⁄“œ¬œÀ ⁄ ◊…Àœ“…”‘¡ŒŒ—Õ libpgtcl (tcl-¶Œ‘≈“∆≈ ” ƒÃ— postgresql)
-Group:		Development/Languages/Tcl
-Requires:	%{name}-tcl = %{version}
-Requires:	%{name}-devel = %{version}
+%description perl
+PostgreSQL is an advanced Object-Relational database management
+system. The postgresql-perl package includes a module for developers
+to use when writing Perl code for accessing a PostgreSQL database.
+%endif
 
-%description tcl-devel
-Development part of tcl interface for PostgreSQL.
+#------------
+%if %python
+%package python
+Summary: Development module for Python code to access a PostgreSQL DB.
+Group: Applications/Databases
+Requires: python
+Conflicts: python < %pyver, python >= %pynextver
 
-%description tcl-devel -l pl
-CzÍ∂Ê interfejsu tcl dla PostgreSQL przeznaczona dla programistÛw.
 
-%description tcl-devel -l ru
-¸‘œ –¡À≈‘ “¡⁄“¡¬œ‘ﬁ…À¡ ƒÃ— –“œ«“¡ÕÕ…“œ◊¡Œ…— ” libpgtcl. ÔŒ ◊ÀÃ¿ﬁ¡≈‘
-»≈ƒ≈“Ÿ … ¬…¬Ã…œ‘≈À… ƒÃ— …”–œÃÿ⁄œ◊¡Œ…— ◊ –“œ«“¡ÕÕ¡», Àœ‘œ“Ÿ≈ …”–œÃÿ⁄’¿‘
-Àœƒ …Ã… API libtcl (tcl …Œ‘≈“∆≈ ” ƒÃ— postgresql).
+%description python
+PostgreSQL is an advanced Object-Relational database management
+system.  The postgresql-python package includes a module for
+developers to use when writing Python code for accessing a PostgreSQL
+database.
+%endif
 
-%description tcl-devel -l uk
-„≈ –¡À≈‘ –“œ«“¡Õ¶”‘¡ ƒÃ— –“œ«“¡Õ’◊¡ŒŒ— ⁄ libpgtcl. ˜¶Œ Õ¶”‘…‘ÿ »≈ƒ≈“…
-‘¡ ¬¶¬Ã¶œ‘≈À… ƒÃ— ◊…Àœ“…”‘¡ŒŒ— ◊ –“œ«“¡Õ¡», —À¶ ◊…Àœ“…”‘œ◊’¿‘ÿ Àœƒ ¡¬œ
-API libtcl (tcl-¶Œ‘≈“∆≈ ”’ ƒÃ— postgresql).
+#----------
+%if %jdbc
+%package jdbc
+Summary: Files needed for Java programs to access a PostgreSQL database.
+Group: Applications/Databases
 
-%package tcl-static
-Summary:	Static libraries of tcl interface for PostgreSQL
-Summary(pl):	Biblioteki statyczne interfejsu tcl dla PostgreSQL
-Summary(ru):	Û‘¡‘…ﬁ≈”À…≈ ¬…¬Ã…œ‘≈À… ƒÃ— –“œ«“¡ÕÕ…“œ◊¡Œ…— ” libpgtcl
-Summary(uk):	Û‘¡‘…ﬁŒ¶ ¬¶¬Ã¶œ‘≈À… ƒÃ— –“œ«“¡Õ’◊¡ŒŒ— ⁄ libpgtcl
-Group:		Development/Languages/Tcl
-Requires:	%{name}-tcl-devel = %{version}
+%description jdbc
+PostgreSQL is an advanced Object-Relational database management
+system. The postgresql-jdbc package includes the .jar file needed for
+Java programs to access a PostgreSQL database.
+%endif
 
-%description tcl-static
-Static libraries of tcl interface for PostgreSQL.
+#------------
+%if %test
+%package test
+Summary: The test suite distributed with PostgreSQL.
+Group: Applications/Databases
+Requires: postgresql = %{version}
 
-%description tcl-static -l pl
-Biblioteki statyczne interfejsu tcl dla PostgreSQL.
-
-%description tcl-static -l ru
-¸‘œ œ‘ƒ≈ÃÿŒŸ  –¡À≈‘ ”œ ”‘¡‘…ﬁ≈”À…Õ… ¬…¬Ã…œ‘≈À¡Õ…, Àœ‘œ“Ÿ≈ ¬œÃÿ€≈ Œ≈
-◊»œƒ—‘ ◊ %{_name}-tcl-devel.
-
-%description tcl-static -l uk
-„≈ œÀ“≈Õ…  –¡À≈‘ ⁄¶ ”‘¡‘…ﬁŒ…Õ… ¬¶¬Ã¶œ‘≈À¡Õ…, ›œ ¬¶Ãÿ€≈ Œ≈ ◊»œƒ—‘ÿ ƒœ
-%{name}-tcl-devel.
-
-%package module-plpgsql
-Summary:	PL/pgSQL - PostgreSQL procedural language
-Summary(pl):	PL/pgSQL jÍzyk proceduralny bazy danych PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name} = %{version}
-
-%description module-plpgsql
-From PostgreSQL documentation.
-
-Postgres supports the definition of procedural languages. In the case
-of a function or trigger procedure defined in a procedural language,
-the database has no built-in knowledge about how to interpret the
-function's source text. Instead, the task is passed to a handler that
-knows the details of the language. The handler itself is a special
-programming language function compiled into a shared object and loaded
-on demand.
-
-To enable PL/pgSQL procedural language for your database you have to
-run createlang command.
-
-%description module-plpgsql -l pl
-Z dokumentacji PostgreSQL.
-
-Postgres ma wsparcie dla jÍzykÛw proceduralnych. W przypadku, kiedy
-programista zdefiniuje procedurÍ wyzwalacza lub funkcjÍ w jÍzyku
-proceduralnym, baza danych nie ma pojÍcia jak interpretowaÊ tego typu
-funkcjÍ. Funkcja lub procedura ta jest przekazywana do interpretera,
-ktÛry wie jak j± wykonaÊ. Interpreter jest odpowiedni±, specjaln±
-funkcj±, ktÛra jest skompilowana w obiekt dzielony i ≥adowany w razie
-potrzeby.
-
-Za pomoc± komendy createlang moøna dodaÊ wsparcie dla jÍzyka
-proceduralnego PL/pgSQL dla swojej bazy danych.
-
-%package module-plperl
-Summary:	PL/perl - PostgreSQL procedural language
-Summary(pl):	PL/perl jÍzyk proceduralny bazy danych PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name} = %{version}
-%requires_eq	perl
-
-%description module-plperl
-From PostgreSQL documentation.
-
-Postgres supports the definition of procedural languages. In the case
-of a function or trigger procedure defined in a procedural language,
-the database has no built-in knowledge about how to interpret the
-function's source text. Instead, the task is passed to a handler that
-knows the details of the language. The handler itself is a special
-programming language function compiled into a shared object and loaded
-on demand.
-
-To enable PL/perl procedural language for your database you have to
-run createlang command.
-
-%description module-plperl -l pl
-Z dokumentacji PostgreSQL.
-
-Postgres ma wsparcie dla jÍzykÛw proceduralnych. W przypadku, kiedy
-programista zdefiniuje procedurÍ wyzwalacza lub funkcjÍ w jÍzyku
-proceduralnym, baza danych nie ma pojÍcia jak interpretowaÊ tego typu
-funkcjÍ. Funkcja lub procedura ta jest przekazywana do interpretera,
-ktÛry wie jak j± wykonaÊ. Interpreter jest odpowiedni±, specjaln±
-funkcj±, ktÛra jest skompilowana w obiekt dzielony i ≥adowany w razie
-potrzeby.
-
-Za pomoc± komendy createlang moøna dodaÊ wsparcie dla jÍzyka
-proceduralnego PL/perl dla swojej bazy danych.
-
-%package module-plpython
-Summary:	PL/python - PostgreSQL procedural language
-Summary(pl):	PL/python jÍzyk proceduralny bazy danych PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name} = %{version}
-%pyrequires_eq	python
-
-%description module-plpython
-From PostgreSQL documentation.
-
-Postgres supports the definition of procedural languages. In the case
-of a function or trigger procedure defined in a procedural language,
-the database has no built-in knowledge about how to interpret the
-function's source text. Instead, the task is passed to a handler that
-knows the details of the language. The handler itself is a special
-programming language function compiled into a shared object and loaded
-on demand.
-
-To enable PL/python procedural language for your database you have to
-run createlang command.
-
-%description module-plpython -l pl
-Z dokumentacji PostgreSQL.
-
-Postgres ma wsparcie dla jÍzykÛw proceduralnych. W przypadku, kiedy
-programista zdefiniuje procedurÍ wyzwalacza lub funkcjÍ w jÍzyku
-proceduralnym, baza danych nie ma pojÍcia jak interpretowaÊ tego typu
-funkcjÍ. Funkcja lub procedura ta jest przekazywana do interpretera,
-ktÛry wie jak j± wykonaÊ. Interpreter jest odpowiedni±, specjaln±
-funkcj±, ktÛra jest skompilowana w obiekt dzielony i ≥adowany w razie
-potrzeby.
-
-Za pomoc± komendy createlang moøna dodaÊ wsparcie dla jÍzyka
-proceduralnego PL/python dla swojej bazy danych.
-
-%package module-pltcl
-Summary:	PL/TCL - PostgreSQL procedural language
-Summary(pl):	PL/TCL - jÍzyk proceduralny bazy danych PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name} = %{version}
-
-%description module-pltcl
-From PostgreSQL documentation.
-
-Postgres supports the definition of procedural languages. In the case
-of a function or trigger procedure defined in a procedural language,
-the database has no built-in knowledge about how to interpret the
-function's source text. Instead, the task is passed to a handler that
-knows the details of the language. The handler itself is a special
-programming language function compiled into a shared object and loaded
-on demand.
-
-To enable PL/TCL procedural language for your database you have to run
-createlang command.
-
-%description module-pltcl -l pl
-Z dokumentacji PostgreSQL.
-
-Postgres ma wsparcie dla jÍzykÛw proceduralnych. W przypadku, kiedy
-programista zdefiniuje procedurÍ wyzwalacza lub funkcjÍ w jÍzyku
-proceduralnym, baza danych nie ma pojÍcia jak interpretowaÊ tego typu
-funkcjÍ. Funkcja lub procedura ta jest przekazywana do interpretera,
-ktÛry wie jak j± wykonaÊ. Interpreter jest odpowiedni±, specjaln±
-funkcj±, ktÛra jest skompilowana w obiekt dzielony i ≥adowany w razie
-potrzeby.
-
-Za pomoc± komendy createlang moøna dodaÊ wsparcie dla jÍzyka
-proceduralnego PL/TCL dla swojej bazy danych.
+%description test
+PostgreSQL is an advanced Object-Relational database management
+system. The postgresql-test package includes the sources and pre-built
+binaries of various tests for the PostgreSQL database management
+system, including regression tests and benchmarks.
+%endif
 
 %prep
-%setup  -q
-%patch0 -p1
+%setup -q 
+
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
+#patch2 -p1
+#patch3 -p1
 %patch4 -p1
-%patch5 -p0
+%patch5 -p1
+%patch6 -p1
+%patch7	-p1
 
-tar xzf doc/man*.tar.gz
-
-mkdir doc/unpacked
-tar zxf doc/postgres.tar.gz -C doc/unpacked
-
-# Erase all CVS dir
-rm -fR `find contrib/ -type d -name CVS`
+#binary
+rm contrib/spi/preprocessor/step1.e
 
 %build
-rm -f config/libtool.m4
-aclocal -I config
-%{__autoconf}
-%configure \
-	%{!?_without_pgsql_locale:--enable-locale} \
-	%{!?_without_pgsql_multibyte:--enable-multibyte} \
-	--disable-rpath \
-	--enable-depend \
-	--enable-odbc \
-	--enable-recode \
-	--enable-syslog \
-	--enable-unicode-conversion \
-	--with-CXX \
-	--with-tcl \
-	--with-tk \
-	--with-perl \
-	--with-python \
-	--with-openssl \
-	--enable-odbc \
-	--with-odbcinst=%{_sysconfdir} \
-	--with-x \
-%{?_with_jdbc:	--with-java}
 
-%{__make}
-%ifnarch sparc sparcv9 sparc64 alpha ppc
-%{!?_without_tests: %{__make} check }
+# Get file lists....
+tar xzf %{SOURCE4}
+
+#Commented out for testing on other platforms for now.
+# If libtool installed, copy some files....
+#if [ -d /usr/share/libtool ]
+#then
+#	cp /usr/share/libtool/config.* .
+#fi
+
+CFLAGS="${CFLAGS:-%optflags}" ; export CFLAGS
+CXXFLAGS="${CXXFLAGS:-%optflags}" ; export CXXFLAGS
+
+# Strip out -ffast-math from CFLAGS....
+
+CFLAGS=`echo $CFLAGS|xargs -n 1|grep -v ffast-math|xargs -n 100`
+
+./configure --enable-locale  --with-CXX --prefix=/usr --disable-rpath\
+%if %beta
+	--enable-debug \
+	--enable-cassert \
+%endif
+%if %perl
+	--with-perl \
+%endif
+%if %enable_mb
+	--enable-multibyte \
+%endif
+%if %tcl
+	--with-tcl \
+%endif
+%if %tkpkg
+%else
+	--without-tk \
+%endif
+%if %odbc
+	--with-odbc \
+%endif
+	--enable-syslog\
+%if %python
+	--with-python \
+%endif
+%if %ssl
+	--with-openssl \
+%endif
+%if %pam
+	--with-pam \
+%endif
+%if %kerberos
+	--with-krb5=/usr/kerberos \
+%endif
+%if %nls
+	--enable-nls \
+%endif
+	--sysconfdir=/etc/pgsql \
+	--mandir=%{_mandir} \
+	--docdir=%{_docdir} \
+	--includedir=%{_includedir} \
+	--datadir=/usr/share/pgsql 
+
+
+make all
+
+
+%if %test
+	pushd src/test
+	make all
+	popd
 %endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
-        $RPM_BUILD_ROOT{/var/{lib/pgsql,log},%{_pgsqldir}} \
-	$RPM_BUILD_ROOT{%{_applnkdir}/System,%{_pixmapsdir}} \
-	$RPM_BUILD_ROOT/home/services/postgres
 
-%{__make} install install-all-headers \
-	DESTDIR=$RPM_BUILD_ROOT
+make DESTDIR=$RPM_BUILD_ROOT install
 
-%{__make} install -C src/pl/plperl \
-	DESTDIR=$RPM_BUILD_ROOT
+%if %perl
+	make DESTDIR=$RPM_BUILD_ROOT -C src/interfaces/perl5 -f Makefile install
 
-touch $RPM_BUILD_ROOT/var/log/pgsql
+	# Get rid of the packing list generated by the perl Makefile, and build my own...
+	find $RPM_BUILD_ROOT/usr/lib/perl5 -name .packlist -exec rm -f {} \;
+	find $RPM_BUILD_ROOT/usr/lib/perl5 -type f -print | \
+		sed -e "s|$RPM_BUILD_ROOT/|/|g"  | \
+		sed -e "s|.*/man/.*|&\*|" > perlfiles.list
+	find $RPM_BUILD_ROOT/usr/lib/perl5 -type d -name Pg -print | \
+		sed -e "s|$RPM_BUILD_ROOT/|%dir /|g" >> perlfiles.list
+	
+	# check and fixup Pg manpage location....
+	if [ ! -e $RPM_BUILD_ROOT%{_mandir}/man3/Pg.* ]
+	then
+		mkdir -p $RPM_BUILD_ROOT%{_mandir}/man3
+		cp src/interfaces/perl5/blib/man3/Pg.3pm $RPM_BUILD_ROOT%{_mandir}/man3
+	fi
+	
+	pushd src/interfaces
+	mkdir -p $RPM_BUILD_ROOT/usr/share/pgsql/perl5
+	cp -a perl5/test.pl $RPM_BUILD_ROOT/usr/share/pgsql/perl5
+	popd
+	# remove perllocal.pod and Pg.bs from the file list - only occurs with 5.6
 
-# Move PL/pgSQL procedural language to %{_pgmoduledir}
-( cd $RPM_BUILD_ROOT%{_libdir}
-  mv -f plpgsql.so $RPM_BUILD_ROOT%{_pgmoduledir}
-)
+	perl -pi -e "s/^.*perllocal.pod$//" perlfiles.list
+	perl -pi -e "s/^.*Pg.bs$//" perlfiles.list
+	mkdir -p $RPM_BUILD_ROOT/usr/lib/perl5/site_perl/%{_arch}-linux/auto/Pg
 
-# Move PL/TCL procedural language to %{_pgmoduledir}
-( cd $RPM_BUILD_ROOT%{_libdir}
-  mv -f pltcl.so $RPM_BUILD_ROOT%{_pgmoduledir}
-)
+%endif
 
-# odbc
-install src/interfaces/odbc/odbcinst.ini $RPM_BUILD_ROOT%{_sysconfdir}
 
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
-install %{SOURCE4} $RPM_BUILD_ROOT%{_applnkdir}/System
-install %{SOURCE5} $RPM_BUILD_ROOT%{_pixmapsdir}
+# install dev headers.
 
-cp -a man?	   $RPM_BUILD_ROOT%{_mandir}
+make DESTDIR=$RPM_BUILD_ROOT install-all-headers
 
-install -d howto
-( cd howto
-  tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
-)
+# copy over Makefile.global to the include dir....
+install -m755 src/Makefile.global $RPM_BUILD_ROOT/usr/include/pgsql
 
-%py_comp $RPM_BUILD_ROOT%{py_libdir}
-%py_ocomp $RPM_BUILD_ROOT%{py_libdir}
+%if %pgaccess
+	# pgaccess installation
+	pushd src/bin
+	install -m 755 pgaccess/pgaccess $RPM_BUILD_ROOT/usr/bin
+	mkdir -p $RPM_BUILD_ROOT/usr/share/pgsql/pgaccess
+	install -m 644 pgaccess/main.tcl $RPM_BUILD_ROOT/usr/share/pgsql/pgaccess
+	tar cf - pgaccess/lib pgaccess/images | tar xf - -C $RPM_BUILD_ROOT/usr/share/pgsql
+	cp -a pgaccess/doc/html   ../../doc/pgaccess
+	cp    pgaccess/demo/*.sql ../../doc/pgaccess
+	popd
+%endif
+
+%if %jdbc
+	# Java/JDBC
+	# The user will have to set a CLASSPATH to find it here, but not sure where else to put it...
+
+	# JDBC jars 
+	install -m 755 %{SOURCE8} $RPM_BUILD_ROOT/usr/share/pgsql
+	install -m 755 %{SOURCE9} $RPM_BUILD_ROOT/usr/share/pgsql
+	install -m 755 %{SOURCE10} $RPM_BUILD_ROOT/usr/share/pgsql
+	install -m 755 %{SOURCE11} $RPM_BUILD_ROOT/usr/share/pgsql
+
+%endif
+
+# The initscripts....
+# Redhat-style....
+if [ -d /etc/rc.d/init.d ]
+then
+	install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
+	install -m 755 %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
+	mv redhat-style-files.lst files.lst
+fi
+
+# SuSE-style....
+# NOTE: SuSE stuff not yet fully implemented -- this is likely to not work yet.
+# Putting SuSE-style stuff here
+if [ -d /sbin/init.d ]
+then
+	# install the SuSE stuff...
+	mv suse-style-files.lst files.lst
+fi
+
+
+# PGDATA needs removal of group and world permissions due to pg_pwd hole.
+install -d -m 700 $RPM_BUILD_ROOT/var/lib/pgsql/data
+
+# backups of data go here...
+install -d -m 700 $RPM_BUILD_ROOT/var/lib/pgsql/backups
+
+# postgres' .bash_profile
+install -m 644 %{SOURCE15} $RPM_BUILD_ROOT/var/lib/pgsql/.bash_profile
+
+%if %test
+	# tests. There are many files included here that are unnecessary, but include
+	# them anyway for completeness.
+	mkdir -p $RPM_BUILD_ROOT/usr/lib/pgsql/test
+	cp -a src/test/regress $RPM_BUILD_ROOT/usr/lib/pgsql/test
+	install -m 0755 contrib/spi/refint.so $RPM_BUILD_ROOT/usr/lib/pgsql/test/regress
+	install -m 0755 contrib/spi/autoinc.so $RPM_BUILD_ROOT/usr/lib/pgsql/test/regress
+	pushd  $RPM_BUILD_ROOT/usr/lib/pgsql/test/regress/
+	strip *.so
+	popd
+%endif
+
+# Upgrade scripts.
+pushd $RPM_BUILD_ROOT
+tar xzf %{SOURCE7}
+popd
+
+# logrotate script removed until future release
+#logrotate script source (which needs WORK)
+#mkdir -p $RPM_BUILD_ROOT/etc/logrotate.d
+#cp %{SOURCE8} $RPM_BUILD_ROOT/etc/logrotate.d/postgres
+#chmod 0644 $RPM_BUILD_ROOT/etc/logrotate.d/postgres
+
+# Fix some more documentation
+# gzip doc/internals.ps
+cp %{SOURCE6} README.rpm-dist
+mv $RPM_BUILD_ROOT%{_docdir}/postgresql/html doc
+
+# Build contrib stuff....
+pushd contrib
+make clean
+make all
+popd 
+# move the contrib tree to the right place after building....
+cp -r contrib $RPM_BUILD_ROOT/usr/lib/pgsql
+# We'll do more prep work in a later release.....
+
+#more massaging
+
+pushd $RPM_BUILD_ROOT/usr/lib/pgsql/contrib
+
+# Get rid of useless makefiles
+rm -f Makefile */Makefile
+
+# array
+pushd array
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/array|" *
+popd
+
+#  btree_gist
+pushd btree_gist
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/btree_gist|" *.sql
+popd
+
+# chkpass
+pushd chkpass
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/chkpass|" *.sql
+popd
+
+# cube
+pushd cube
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/cube|" cube.sql
+popd
+
+# dblink
+pushd dblink
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/dblink|" dblink.sql
+popd
+
+# earthdistance
+pushd earthdistance
+perl -pi -e "s|/usr/share/pgsql/contrib|/usr/lib/pgsql/contrib/earthdistance|" *.sql
+popd
+
+# fulltext
+pushd fulltextindex
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/fulltextindex|" *.sql
+popd
+
+# fuzzystrmatch
+pushd fuzzystrmatch
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/fuzzystrmatch|" *.sql
+popd
+
+# intarray
+pushd intarray
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/intarray|" *.sql
+popd
+
+# isbn_issn
+pushd isbn_issn
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/isbn_issn|" *.sql
+popd
+
+# lo
+pushd lo
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/lo|" *.sql
+popd
+
+# miscutil
+pushd miscutil
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/miscutil|" *.sql
+popd
+
+# noupdate
+pushd noupdate
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/noupdate|" *.sql
+popd
+
+# pgcrypto
+pushd pgcrypto
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/pgcrypto|" *.sql
+perl -pi -e "s|/usr/lib/pgsql/contrib/pgcrypto/pgcrypto|/usr/lib/pgsql/contrib/pgcrypto/libpgcrypto|" *.sql
+rm -f *.in *.o 
+popd
+
+# pgstattuple
+pushd pgstattuple
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/pgstattuple|" *.sql
+popd
+
+# rserv
+pushd rserv
+perl -pi -e "s|/usr/share/|/usr/lib/|" *
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib|" *
+perl -pi -e "s|/usr/bin|/usr/lib/pgsql/contrib/rserv|" *
+popd
+
+# rtree_gist
+pushd pgstattuple
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib|" *.sql
+popd
+
+# seg 
+pushd seg
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib|" *.sql
+popd
+
+# spi
+pushd spi
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/spi|" *.sql
+popd
+
+# Don"t need these
+rm -fr startscripts
+
+# string
+pushd string
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/string|" *.sql
+popd
+
+# tsearch
+pushd tsearch
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/tsearch|" *.sql
+popd
+
+# userlock
+pushd userlock
+perl -pi -e "s|\\\$libdir|/usr/lib/pgsql/contrib/userlock|" *.sql
+popd
+
+popd
+
+#more broken symlinks
+rm -f $RPM_BUILD_ROOT/usr/lib/pgsql/contrib/pg_resetxlog/pg_crc.c $RPM_BUILD_ROOT/usr/lib/pgsql/contrib/pg_controldata/pg_crc.c
+cp src/backend/utils/hash/pg_crc.c $RPM_BUILD_ROOT/usr/lib/pgsql/contrib/pg_resetxlog/pg_crc.c
+ln $RPM_BUILD_ROOT/usr/lib/pgsql/contrib/pg_resetxlog/pg_crc.c $RPM_BUILD_ROOT/usr/lib/pgsql/contrib/pg_controldata/pg_crc.c
+
+# Symlink libpq.so.2.0 to libpq.so.2 for backwards compatibility, until 
+# -soname patches are the norm.
+pushd $RPM_BUILD_ROOT/usr/lib
+ln -s libpq.so.2 libpq.so.2.0
+popd
+
+# arch backups should go in /usr/lib, not /usr/share
+pushd $RPM_BUILD_ROOT
+mkdir -p usr/lib/pgsql/backup
+mv usr/share/pgsql/backup/pg_dumpall_new usr/lib/pgsql/backup/pg_dumpall_new 
+popd
+
+
+%find_lang libpq
+%find_lang pg_dump
+%find_lang postgres
+%find_lang psql
+
+cat psql.lang pg_dump.lang > main.lst
+cat postgres.lang files.lst > server.lst
+
+%pre
+# Need to make backups of some executables if an upgrade
+# They will be needed to do a dump of the old version's database.
+# All output redirected to /dev/null.
+
+if [ $1 -gt 1 ]
+then
+   mkdir -p /usr/lib/pgsql/backup > /dev/null
+   pushd /usr/bin > /dev/null
+   cp -fp postmaster postgres pg_dump pg_dumpall psql /usr/lib/pgsql/backup > /dev/null 2>&1  || :
+   popd > /dev/null
+   pushd /usr/lib > /dev/null
+   cp -fp libpq.* /usr/lib/pgsql/backup > /dev/null 2>&1 || :
+   popd > /dev/null
+fi
+
+%post libs -p /sbin/ldconfig 
+%postun libs -p /sbin/ldconfig 
+
+%pre server
+groupadd -g 26 -o -r postgres >/dev/null 2>&1 || :
+useradd -M -n -g postgres -o -r -d /var/lib/pgsql -s /bin/bash \
+	-c "PostgreSQL Server" -u 26 postgres >/dev/null 2>&1 || :
+touch /var/log/pgsql
+chown postgres.postgres /var/log/pgsql
+chmod 0700 /var/log/pgsql
+
+
+%post server
+chkconfig --add postgresql
+/sbin/ldconfig
+
+%preun server
+if [ $1 = 0 ] ; then
+	chkconfig --del postgresql
+fi
+
+%postun server
+/sbin/ldconfig 
+if [ $1 -ge 1 ]; then
+  /sbin/service postgresql condrestart >/dev/null 2>&1
+fi
+if [ $1 = 0 ] ; then
+	userdel postgres >/dev/null 2>&1 || :
+	groupdel postgres >/dev/null 2>&1 || : 
+fi
+
+%if %odbc
+%post -p /sbin/ldconfig  odbc
+%postun -p /sbin/ldconfig  odbc
+%endif
+
+%if %tcl
+%post -p /sbin/ldconfig   tcl
+%postun -p /sbin/ldconfig   tcl
+%endif
+
+%if %plperl
+%post -p /sbin/ldconfig   plperl
+%postun -p /sbin/ldconfig   plperl
+%endif
+
+%if %test
+%post test
+chown -R postgres.postgres /usr/share/pgsql/test >/dev/null 2>&1 || :
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-rm -f /tmp/tmp_perl_info
+rm -f perlfiles.list
 
-%pre
-if [ -f /etc/sysconfig/postgresql ]; then
-    POSTGRES_DATA_DIR=/var/lib/pgsql
-    . /etc/sysconfig/postgresql
-    if [ -f $POSTGRES_DATA_DIR/PG_VERSION ]; then
-	if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.2' ]; then
-	    echo "Database(s) in older, incompatible format exist in $POSTGRES_DATA_DIR."
-	    echo "Dump them and clean $POSTGRES_DATA_DIR, then upgrade postgresql and"
-	    echo "restore database(s)."
-        echo
-        echo "Warning for upgrade from version *before* 7.2."
-        echo "Please note, that postgresql module path changed from"
-        echo "/usr/lib/pgsql/module to /usr/lib/postgresql. Change the path"
-        echo "in dump file before restore."
-	    exit 1
-	fi
-    fi
-fi
+# Ok, we are dynamically generating some filelists.  These are by default
+# under the BUILD/postgresql-x.y.z tree.
 
-getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
-if id postgres >/dev/null 2>&1 ; then
-	/usr/sbin/usermod -d /home/services/postgres postgres
-else
-	/usr/sbin/useradd -M -o -r -u 88 \
-		-d /home/services/postgres -s /bin/sh -g postgres \
-		-c "PostgreSQL Server" postgres
-fi
+# Note that macros such as config are available in those lists.
+# The lists differentiate between RedHat, SuSE, and others.
 
-%post
-/sbin/chkconfig --add postgresql
-
-if [ -f /var/lock/subsys/postgresql ]; then
-	/etc/rc.d/init.d/postgresql restart >&2
-else
-	echo "Run \"/etc/rc.d/init.d/postgresql start\" to start postgresql server."
-fi
-
-%preun
-if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/postgresql ]; then
-		/etc/rc.d/init.d/postgresql stop
-	fi
-	/sbin/chkconfig --del postgresql
-fi
-
-%post   libs -p /sbin/ldconfig
-%postun libs -p /sbin/ldconfig
-
-%post   tcl -p /sbin/ldconfig
-%postun tcl -p /sbin/ldconfig
-
-%post   c++ -p /sbin/ldconfig
-%postun c++ -p /sbin/ldconfig
-
-%post   odbc -p /sbin/ldconfig
-%postun odbc -p /sbin/ldconfig
-
-%files
-%defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/*
-%attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/*
-
-%attr(755,root,root) %{_bindir}/createdb
-%attr(755,root,root) %{_bindir}/createuser
-%attr(755,root,root) %{_bindir}/dropdb
-%attr(755,root,root) %{_bindir}/dropuser
-%attr(755,root,root) %{_bindir}/initdb
-%attr(755,root,root) %{_bindir}/initlocation
-%attr(755,root,root) %{_bindir}/pg_ctl
-%attr(755,root,root) %{_bindir}/pg_config
-%attr(755,root,root) %{_bindir}/pg_encoding
-%attr(755,root,root) %{_bindir}/pg_passwd
-%attr(755,root,root) %{_bindir}/postgres
-%attr(755,root,root) %{_bindir}/postmaster
-%attr(755,root,root) %{_bindir}/ipcclean
-%attr(755,root,root) %{_bindir}/createlang
-%attr(755,root,root) %{_bindir}/droplang
-
-%dir %{_pgsqldir}
-%dir %{_pgmoduledir}
-%{_datadir}/postgresql/*.bki
-%{_datadir}/postgresql/*.sample
-%{_datadir}/postgresql/*.description
-
-%attr(700,postgres,postgres) /home/services/postgres
-%attr(700,postgres,postgres) %dir /var/lib/pgsql
-%attr(640,postgres,postgres) %config(noreplace) %verify(not md5 size mtime) /var/log/pgsql
-
+%files -f main.lst
+%defattr(-,root,root)
+%doc doc/FAQ doc/KNOWN_BUGS doc/MISSING_FEATURES doc/README* 
+%doc COPYRIGHT README HISTORY doc/bug.template
+%doc README.rpm-dist
+%doc doc/html
+/usr/bin/createdb
+/usr/bin/createlang
+/usr/bin/createuser
+/usr/bin/dropdb
+/usr/bin/droplang
+/usr/bin/dropuser
+/usr/bin/pg_dump
+/usr/bin/pg_dumpall
+/usr/bin/pg_encoding
+/usr/bin/pg_id
+/usr/bin/pg_restore
+/usr/bin/psql
+/usr/bin/vacuumdb
 %{_mandir}/man1/createdb.1*
 %{_mandir}/man1/createlang.1*
 %{_mandir}/man1/createuser.1*
 %{_mandir}/man1/dropdb.1*
 %{_mandir}/man1/droplang.1*
 %{_mandir}/man1/dropuser.1*
-%{_mandir}/man1/initdb.1*
-%{_mandir}/man1/initlocation.1*
-%{_mandir}/man1/pg_passwd.1*
-%{_mandir}/man1/pg_ctl.1*
-%{_mandir}/man1/pg_config.1*
-%{_mandir}/man1/postgres.1*
-%{_mandir}/man1/postmaster.1*
-%{_mandir}/man1/ipcclean.1*
-
-%doc contrib
-%doc doc/FAQ* doc/README*
-%doc COPYRIGHT README HISTORY doc/bug.template
-
-%files doc
-%defattr(644,root,root,755)
-%doc doc/unpacked/*
-%doc howto
-
-%files libs
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpq.so.*.*
-%attr(755,root,root) %{_libdir}/libpgeasy.so.*.*
-%attr(755,root,root) %{_libdir}/libecpg.so.*.*
-%attr(755,root,root) %{_bindir}/pg_id
-
-%files devel
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/ecpg
-%attr(755,root,root) %{_libdir}/libecpg.so
-%attr(755,root,root) %{_libdir}/libpgeasy.so
-%attr(755,root,root) %{_libdir}/libpq.so
-%dir %{_includedir}/postgresql
-%{_includedir}/pg_config.h
-%{_includedir}/pg_config_os.h
-%{_includedir}/ecpgerrno.h
-%{_includedir}/ecpglib.h
-%{_includedir}/ecpgtype.h
-%{_includedir}/libpgeasy.h
-%{_includedir}/libpq-fe.h
-%{_includedir}/postgres_ext.h
-%{_includedir}/sql3types.h
-%{_includedir}/sqlca.h
-%dir %{_includedir}/postgresql/internal
-%{_includedir}/postgresql/internal/c.h
-%{_includedir}/postgresql/internal/libpq-int.h
-%{_includedir}/postgresql/internal/postgres_fe.h
-%{_includedir}/postgresql/internal/pqexpbuffer.h
-%{_includedir}/postgresql/internal/lib
-%{_includedir}/postgresql/internal/libpq
-%{_mandir}/man1/ecpg.1*
-
-%files backend-devel
-%defattr(644,root,root,755)
-%{_includedir}/postgresql/server
-
-%files static
-%defattr(644,root,root,755)
-%{_libdir}/libecpg.a
-%{_libdir}/libpgeasy.a
-%{_libdir}/libpq.a
-
-%files clients
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/pg_dump
-%attr(755,root,root) %{_bindir}/pg_dumpall
-%attr(755,root,root) %{_bindir}/pg_restore
-%attr(755,root,root) %{_bindir}/psql
-%attr(755,root,root) %{_bindir}/vacuumdb
-
 %{_mandir}/man1/pg_dump.1*
 %{_mandir}/man1/pg_dumpall.1*
-%{_mandir}/man1/pg_restore.1*
 %{_mandir}/man1/psql.1*
 %{_mandir}/man1/vacuumdb.1*
-%{_mandir}/manl/*.l*
+%{_mandir}/man1/pg_restore.1*
+%{_mandir}/man7/*
 
-%files c++
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpq++.so.*.*
+%if %sgmldocs
+%files docs
+%defattr(-,root,root)
+%doc doc/src/*
+%endif
 
-%files c++-devel
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpq++.so
-%{_includedir}/libpq++.h
-%{_includedir}/libpq++
+%files contrib
+%defattr(-,root,root)
+%dir /usr/lib/pgsql/contrib/
+/usr/lib/pgsql/contrib/*
 
-%files c++-static
-%defattr(644,root,root,755)
-%{_libdir}/libpq++.a
+%files libs -f libpq.lang
+%defattr(-,root,root)
+/usr/lib/libpq.so.*
+/usr/lib/libecpg.so.*
+/usr/lib/libpq++.so.*
+/usr/lib/libpgeasy.so.*
 
-%files perl
-%defattr(644,root,root,755)
-%dir %{perl_sitearch}/auto/Pg
-%{perl_sitearch}/auto/Pg/Pg.bs
-%attr(755,root,root) %{perl_sitearch}/auto/Pg/Pg.so
-%{perl_sitearch}/auto/Pg/autosplit.ix
-%{perl_sitearch}/Pg.pm
-%{_mandir}/man3/*
+%files server -f server.lst
+%defattr(-,root,root)
+/usr/bin/initdb
+/usr/bin/initlocation
+/usr/bin/ipcclean
+/usr/bin/pg_ctl
+/usr/bin/pg_passwd
+/usr/bin/postgres
+/usr/bin/postmaster
+%{_mandir}/man1/initdb.1*
+%{_mandir}/man1/initlocation.1*
+%{_mandir}/man1/ipcclean.1*
+%{_mandir}/man1/pg_ctl.1*
+%{_mandir}/man1/pg_passwd.1*
+%{_mandir}/man1/postgres.1*
+%{_mandir}/man1/postmaster.1*
+/usr/share/pgsql/postgres.bki
+/usr/share/pgsql/postgres.description
+/usr/share/pgsql/*.sample
+/usr/lib/pgsql/plpgsql.so
+%dir /usr/lib/pgsql
+%dir /usr/share/pgsql
+%attr(700,postgres,postgres) %dir /usr/lib/pgsql/backup
+/usr/lib/pgsql/backup/pg_dumpall_new
+%attr(700,postgres,postgres) %dir /var/lib/pgsql
+%attr(700,postgres,postgres) %dir /var/lib/pgsql/data
+%attr(700,postgres,postgres) %dir /var/lib/pgsql/backups
+%attr(644,postgres,postgres) %config(noreplace) /var/lib/pgsql/.bash_profile
 
+%files devel
+%defattr(-,root,root)
+/usr/include/*
+/usr/bin/ecpg
+/usr/bin/pg_config
+/usr/lib/libpq.so
+/usr/lib/libecpg.so
+/usr/lib/libpq++.so
+/usr/lib/libpgeasy.so
+/usr/lib/libpq.a
+/usr/lib/libecpg.a
+/usr/lib/libpq++.a
+/usr/lib/libpgeasy.a
+%if %tcl
+/usr/lib/libpgtcl.a
+%endif
+%{_mandir}/man1/ecpg.1*
+%{_mandir}/man1/pg_config.1*
 
-%files -n python-postgresql
-%defattr(644,root,root,755)
-%doc src/interfaces/python/{README*,ChangeLog}
-%{py_sitedir}/*.pyc
-%{py_sitedir}/*.pyo
-%attr(755,root,root) %{py_sitedir}/*.so
-
-%files -n pgaccess
-%defattr(644,root,root,755)
-%doc src/bin/pgaccess/doc/html/*
-%attr(755,root,root) %{_bindir}/pgaccess
-%dir %{_datadir}/postgresql/pgaccess
-%attr(755, root, root) %{_datadir}/postgresql/pgaccess/main.tcl
-%{_datadir}/postgresql/pgaccess/images
-%{_datadir}/postgresql/pgaccess/lib
-%{_applnkdir}/System/pgaccess.desktop
-%{_pixmapsdir}/pgaccess.png
-%{_mandir}/man1/pgaccess.1*
-
+%if %tcl
 %files tcl
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpgtcl.so
-%attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
-%attr(755,root,root) %{_bindir}/pgtclsh
-%attr(755,root,root) %{_bindir}/pgtksh
+%defattr(-,root,root)
+%attr(755,root,root) /usr/lib/libpgtcl.so.*
+/usr/lib/libpgtcl.so
+/usr/bin/pgtclsh
+/usr/bin/pltcl_delmod
+/usr/bin/pltcl_listmod
+/usr/bin/pltcl_loadmod
 %{_mandir}/man1/pgtclsh.1*
+/usr/lib/pgsql/pltcl.so
+/usr/share/pgsql/unknown.pltcl
+%endif
+
+%if %tkpkg
+%files tk
+%defattr(-,root,root)
+/usr/bin/pgtksh
 %{_mandir}/man1/pgtksh.1*
+%endif
 
-%files tcl-devel
-%defattr(644,root,root,755)
-%{_includedir}/libpgtcl.h
+%if %pgaccess
+%doc doc/pgaccess/*
+/usr/share/pgsql/pgaccess
+/usr/bin/pgaccess
+%{_mandir}/man1/pgaccess.1*
+%endif
 
-%files tcl-static
-%defattr(644,root,root,755)
-%{_libdir}/libpgtcl.a
-
+%if %odbc
 %files odbc
-%defattr(644,root,root,755)
-%doc src/interfaces/odbc/readme.txt src/interfaces/odbc/notice.txt
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/odbc*
-%attr(755,root,root) %{_libdir}/libpsqlodbc.so.*.*
-%{_datadir}/postgresql/odbc.sql
+%defattr(-,root,root)
+%attr(755,root,root) /usr/lib/libpsqlodbc.so*
+/usr/share/pgsql/odbc.sql
+%endif
 
-%files odbc-devel
-%defattr(644,root,root,755)
-#%{_includedir}/postgresql/iodbc
-%attr(755,root,root) %{_libdir}/libpsqlodbc.so
+%if %perl
+%files -f perlfiles.list perl
+%defattr (-,root,root)
+%dir /usr/lib/perl5/site_perl/%{_arch}-linux/auto
+/usr/share/pgsql/perl5
+%{_mandir}/man3/Pg.*
+/usr/lib/pgsql/plperl.so
+%endif
 
-%files odbc-static
-%defattr(644,root,root,755)
-%{_libdir}/libpsqlodbc.a
+%if %plperl
+%files plperl
+%defattr(-,root,root)
+/usr/lib/pgsql/plperl.so
+%endif
 
-%files module-plpgsql
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_pgmoduledir}/plpgsql.so
+%if %python
+%files python
+%defattr(-,root,root)
+%doc src/interfaces/python/README src/interfaces/python/tutorial
+/usr/lib/python%{pyver}/site-packages/_pgmodule.so
+/usr/lib/python%{pyver}/site-packages/*.py
+/usr/lib/pgsql/plpython.so
+%endif
 
-%files module-plperl
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_pgmoduledir}/plperl.so
+%if %jdbc
+%files jdbc
+%defattr(-,root,root)
+/usr/share/pgsql/*jar
+%endif
 
-%files module-plpython
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_pgmoduledir}/plpython.so
+%if %test
+%files test
+%defattr(-,postgres,postgres)
+%attr(-,postgres,postgres) /usr/lib/pgsql/test/*
+%attr(-,postgres,postgres) %dir /usr/lib/pgsql/test
+%endif
 
-%files module-pltcl
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_pgmoduledir}/pltcl.so
+%changelog
+* Wed Sep  4 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.2-1
+- 7.2.2 - security update
+
+* Wed Aug 28 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-17
+- Add bison and flex to buildprereq (#71590)
+
+* Sat Aug 10 2002 Elliot Lee <sopwith@redhat.com>
+- rebuilt with gcc-3.2 (we hope)
+
+* Fri Aug  9 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-15
+- Minor initscript tweak ( #71027)
+
+* Tue Jul 23 2002 Tim Powers <timp@redhat.com> 7.2.1-14
+- build using gcc-3.2-0.1
+
+* Thu Jul 11 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-13
+- Rebuild with new readline
+
+* Mon Jul  8 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-12
+- Update the jarfiles from jdbc.postgresql.org
+
+* Wed Jul  3 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-11
+- Make postgresql-docs conditional
+- don't ship it - it's just sgml sources for docs in the main package
+  (#67818)
+
+* Fri Jun 21 2002 Tim Powers <timp@redhat.com>
+- automated rebuild
+
+* Tue Jun 18 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-10
+- step1.e was distributed as a binary... make sure it's rebuilt (#66870)
+
+* Wed Jun 12 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-9
+- Make the perl parts build with new perl
+- Fix mktime() usage - don't use it before the epoch
+- Disable tk/pgaccess
+
+* Thu May 23 2002 Tim Powers <timp@redhat.com>
+- automated rebuild
+
+* Tue May  7 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-7
+- Rebuild
+
+* Mon Apr 22 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-6
+- Add a missing percent in a conditional (tcl, devel package)
+
+* Fri Apr 12 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-5
+- Fix conditional build dependencies... it required tcl
+  and python-devel only when you didn't build the modules,
+  not if you needed them
+
+* Wed Apr 10 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-4
+- Fix pgcrypto (#63073)
+- Remove postgresql-dump. Dump before upgrade, as we've documented many times
+
+* Wed Apr  3 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-3
+- make postgresql-server and postgresql depend on postgresql-libs
+- store backups of old binaries in /usr/lib/pgsql/backup instead of /usr/share
+
+* Wed Apr  3 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2.1-2
+- 7.2.1 again, but this time based on the newest 7.2 specfile 
+  and not an older one. oops. 
+
+* Thu Mar 21 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2-6
+- Move the libpgtcl.so symlink into the tcl subpackage from -devel (#61042)
+- Enable pam support (#59617)
+- Include the odbc plugin, not just the symlink to it (#61522)
+
+* Thu Feb 28 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2-5
+- Disable python quote patch... it broke kerberos 
+
+* Thu Feb 21 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2-4
+- Rebuild
+
+* Mon Feb 18 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2-3
+- Don't require tcl-devel, it's just tcl
+- Fix contrib. A lot. Again (last time in 7.1)
+- Add buildprereq of recent patch (#59910)
+- make the initscript 0755
+
+* Fri Feb  8 2002 Trond Eivind Glomsr√∏d <teg@redhat.com> 7.2-2
+- Sync
+- Fix output of backslash-ns from upgrade detection
+- Make the default config use socket credentials, not trust
+- Add patches for tsearch/gist from Oleg Bartunov <oleg@sai.msu.su>
+- Deprecate rh-pgdump script. Dump before upgrading, restore afterwards. 
+  And ask the developers to fix it.
+- Dependency and file inclusion enhancements for conditionals
+- escape previous changelog entry which didn't escape a macro
+- python quote enhancement patch added
+
+* Tue Feb 04 2002 Lamar Owen <lamar.owen@wgcr.org>
+- 7.2 final.
+- 7.2-1PGDG RPM release.
+- Integrate NLS build per Peter E.
+- Clean up a few things; undef beta for final build.
+- Newer JDBC -- point to correct website and 7.2 dev.
+- postgresql.init changes.
+- NLS build does funky %%defattr things; redhat-style-files.lst changed
+-- for execute permission on /etc/rc.d/init.d/postgresql
+
+* Sun Jan 27 2002 Lamar Owen <lamar.owen@wgcr.org>
+- 7.2rc2-0.1PGDG
+
+* Thu Nov 29 2001 Lamar Owen <lamar.owen@wgcr.org>
+- 7.2b3-0.3PGDG
+- beta conditionals for debugging, assertion checking, and no strip.
+
+* Tue Nov 27 2001 Trond Eivind Glomsr√∏d <teg@redhat.com>
+- Improve python version handling
+
+* Fri Nov 23 2001 Lamar Owen <lamar.owen@wgcr.org>
+- 7.2b3-0.2PGDG
+- second beta3 tarball.
+
+* Thu Nov 22 2001 Lamar Owen <lamar.owen@wgcr.org>
+- 7.2b3-0.1PGDG
+- Beta3
+- Docs changes --man pages back, internals.ps gone.
+- manl (letter 'ell') is now 'man7'.
+
+* Mon Nov 19 2001 Lamar Owen <lamar.owen@wgcr.org>
+- 7.2b2-0.1PGDG
+- --disable-rpath configure option.
+
+* Fri Oct 26 2001 Lamar Owen <lamar.owen@wgcr.org>
+- Actual PGDG 7.2b1.
+
+* Mon Oct 01 2001 Lamar Owen <lamar.owen@wgcr.org>
+- 7.2alpha-0.1PGDG
+- Merged some changes from Peter Eisentraut for7.2.
+- Cleaned up some legacy junk.
+- Prepare for 7.2 beta cycle.
