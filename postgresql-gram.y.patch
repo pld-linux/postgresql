@@ -1,18 +1,9 @@
---- pgsql/src/pl/plpgsql/src/gram.y	2005/01/21 00:31:21	1.48.2.1
-+++ pgsql/src/pl/plpgsql/src/gram.y	2005/02/07 03:55:28	1.48.2.2
-@@ -4,7 +4,7 @@
-  *						  procedural language
-  *
-  * IDENTIFICATION
-- *	  $Header$
-+ *	  $Header$
-  *
-  *	  This software is copyrighted by Jan Wieck - Hamburg.
-  *
-@@ -1711,6 +1711,15 @@ read_sql_construct(int until,
- 				plpgsql_dstring_append(&ds, yytext);
- 				break;
+--- postgresql-7.4.6/src/pl/plpgsql/src/gram.y.orig	2003-10-30 18:18:55.000000000 +0100
++++ postgresql-7.4.6/src/pl/plpgsql/src/gram.y	2005-02-10 11:52:50.896826968 +0100
+@@ -1699,6 +1699,16 @@ read_sql_construct(int until,
  		}
+ 		if (plpgsql_SpaceScanned)
+ 			plpgsql_dstring_append(&ds, " ");
 +
 +		/* Check for array overflow */
 +		if (nparams >= 1024)
@@ -22,10 +13,11 @@
 +					(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 +					 errmsg("too many variables specified in SQL statement")));
 +		}
- 	}
- 
- 	expr = malloc(sizeof(PLpgSQL_expr) + sizeof(int) * nparams - sizeof(int));
-@@ -1856,6 +1865,15 @@ make_select_stmt(void)
++
+ 		switch (tok)
+ 		{
+ 			case T_VARIABLE:
+@@ -1852,6 +1861,15 @@
  
  					while ((tok = yylex()) == ',')
  					{
@@ -41,10 +33,10 @@
  						tok = yylex();
  						switch(tok)
  						{
-@@ -1918,6 +1936,15 @@ make_select_stmt(void)
- 				plpgsql_dstring_append(&ds, yytext);
- 				break;
- 		}
+@@ -1924,6 +1925,16 @@ make_select_stmt(void)
+ 
+ 		if (plpgsql_SpaceScanned)
+ 			plpgsql_dstring_append(&ds, " ");
 +
 +		/* Check for array overflow */
 +		if (nparams >= 1024)
@@ -54,10 +46,11 @@
 +					(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
 +					 errmsg("too many variables specified in SQL statement")));
 +		}
- 	}
- 
- 	expr = malloc(sizeof(PLpgSQL_expr) + sizeof(int) * nparams - sizeof(int));
-@@ -1989,6 +2016,15 @@ make_fetch_stmt(void)
++
+ 		switch (tok)
+ 		{
+ 			case T_VARIABLE:
+@@ -1985,6 +2012,15 @@
  
  				while ((tok = yylex()) == ',')
  				{
