@@ -69,6 +69,7 @@ BuildRequires:	pam-devel
 %{?with_python:BuildRequires:	python-devel >= 1:2.3}
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-pythonprov
+BuildRequires:	sed >= 4.0
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
 BuildRequires:	zlib-devel
 PreReq:		rc-scripts
@@ -767,6 +768,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 %{__make}
 %{__make} -C contrib/pg_autovacuum
 %{__make} -C contrib/pgcrypto
+%{__sed} -i 's:contrib/::g' contrib/tsearch2/tsearch.sql.in
 %{__make} -C contrib/tsearch2
 #%{__make} -C src/tutorial
 %ifnarch sparc sparcv9 sparc64 alpha
