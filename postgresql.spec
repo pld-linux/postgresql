@@ -265,7 +265,6 @@ backend PostgreSQL.
 Bu paket, PostgreSQL sunucusuyla konuþacak yazýlýmlar geliþtirmek için
 gereken baþlýk dosyalarýný ve kitaplýklarý içerir.
 
-
 %package backend-devel
 Summary:	PostgreSQL backend development header files
 Summary(pl):	PostgreSQL - pliki nag³ówkowe dla backendu
@@ -338,6 +337,7 @@ Summary(pl):	Programy klienckie do dostêpu do serwera PostgreSQL napisane w Pyth
 Summary(pt_BR):	Módulo Python para acesso ao servidor PostgreSQL.
 Group:		Development/Languages/Python
 Requires:	python >= 2.0
+Requires:	python-mx-DateTime
 Requires:	%{name}-libs = %{version}
 Obsoletes:	python-PyGreSQL
 Obsoletes:	postgresql-python
