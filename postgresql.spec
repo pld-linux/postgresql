@@ -87,7 +87,6 @@ Requires(pre):	/usr/sbin/usermod
 Requires(post,preun):	/sbin/chkconfig
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
-Conflicts:	pwdutils
 BuildRoot:	%{tmpdir}/%{name}-%{postgresql_version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
@@ -965,7 +964,7 @@ if [ "$foundold" = "1" ]; then
 	exit 1
 fi
 
-getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
+getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r postgres
 if id postgres >/dev/null 2>&1 ; then
 	/usr/sbin/usermod -d /home/services/postgres postgres
 else
