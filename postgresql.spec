@@ -6,8 +6,10 @@
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
+Summary(es):	Gestor de Banco de Datos PostgreSQL
 Summary(fr):	Sysème de gestion de base de données PostgreSQL
 Summary(pl):	PostgreSQL - system bazodanowy
+Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.1.3
@@ -115,6 +117,20 @@ entschied man sich für PostgreSQL.
 PostgreSQL läuft auf Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
 und den meisten Unix-Systemen.
 
+%description -l es
+Administrador de Banco de Datos PostgreSQL (conocido anteriormente
+como Postgres, y después como Postgres95). PostgreSQL es una
+continuación mejorada del Sistema Administrador de Banco de Datos
+POSTGRES, que era un prototipo de pesquisa para un SGBD de nueva
+generación. Mientras PostgreSQL mantiene el potente modelo de datos y
+los varios tipos de datos del POSTGRES, substituye el lenguaje de
+consulta PostQuel por un subconjunto extendido de la SQL. PostgreSQL
+es libre y tiene los fuentes disponibles. El desarrollo del PostgreSQL
+se ejecutado por un equipo de estudiosos de Internet, todos suscritos
+en la lista de desarrollo del PostgreSQL. El coordinador actual es
+Marc G. Fournier (scrappy@postgreSQL.org). Este equipo es ahora
+responsable por el desarrollo actual y futuro del PostgreSQL.
+
 %description -l fr
 Système de gestion de bases de données PostgreSQL (D'abord nommé
 Postgres, puis Postgres95).
@@ -153,6 +169,23 @@ Postgres, nastêpnie jako Postgres95).
 PostgreSQL mo¿e byæ uruchominy pod nastêpuj±cymi systemami: Solaris,
 SunOS, HPUX, AIX, Linux, Irix, FreeBSD i innych systemach Unix.
 
+%description -l pt_BR
+Gerenciador de Banco de Dados PostgreSQL (conhecido anteriormente como
+Postgres, e depois como Postgres95).
+
+O PostgreSQL é uma continuação melhorada do Sistema Gerenciador de
+Banco de Dados POSTGRES, que era um protótipo de pesquisa para um SGBD
+de nova geração. Enquanto o PostgreSQL mantém o poderoso modelo de
+dados e os vários tipos de dados do POSTGRES, ele substitui a
+linguagem de consulta PostQuel por um subconjunto estendido da SQL. O
+PostgreSQL é livre e tem os fontes disponíveis.
+
+O desenvolvimento do PostgreSQL está sendo executado por uma equipe de
+desenvolvedores da Internet, todos subscritores da lista de
+desenvolvimento do PostgreSQL. O coordenador atual é Marc G. Fournier
+(scrappy@postgreSQL.org). Esta equipe é agora responsável pelo
+desenvolvimento atual e futuro do PostgreSQL.
+
 %description -l tr
 PostgreSQL, POSTGRES'den türemiþ bir veri tabaný yönetim sistemidir
 (DBMS). Güçlü veri modeli ve zengin POSTGRES veri tiplerini
@@ -162,8 +195,10 @@ sorgulama dilini koyar.
 %package devel
 Summary:	PostgreSQL development header files and libraries
 Summary(de):	PostgreSQL-Entwicklungs-Header-Dateien und Libraries 
+Summary(es):	Archivos de inclusión y bibliotecas PostgreSQL
 Summary(fr):	En-têtes et bibliothèques de développement PostgreSQL
 Summary(pl):	PostgreSQL - pliki nag³ówkowe i biblioteki
+Summary(pt_BR):	Arquivos de inclusão e bibliotecas para desenvolvimento com o PostgreSQL
 Summary(tr):	PostgreSQL baþlýk dosyalarý ve kitaplýklar
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
@@ -185,6 +220,11 @@ Dieses Paket enthält die Header-Dateien und Libraries, die zum
 Kompilieren von Applikationen notwendig sind, die direkt mit dem
 PostgreSQL-Backend-Server kommunizieren.
 
+%description -l es devel
+Este paquete contiene archivos de inclusión y bibliotecas requeridas
+para compilación de aplicativos que se comunican directamente con el
+servidor backend PostgreSQL.
+
 %description -l fr devel
 Ce package contient les fichiers d'en-tête et les bibliothéques
 nécessaires pour compiler des applications ayant des échanges directs
@@ -193,6 +233,11 @@ avec le serveur du backend PostgreSQL.
 %description -l pl devel
 Pakiet zawiera nag³ówki oraz biblioteki wymagane do kompilacji
 aplikacji ³±cz±cych siê bezpo¶rednio z serwerem PostgreSQL.
+
+%description -l pt_BR devel
+Este pacote contém arquivos de inclusão e bibliotecas requeridas para
+compilação de aplicativos que se comunicam diretamente com o servidor
+backend PostgreSQL.
 
 %description -l tr devel
 Bu paket, PostgreSQL sunucusuyla konuþacak yazýlýmlar geliþtirmek için
@@ -222,7 +267,9 @@ bezposrednio ladowane przez beckend serwera PostgreSQL.
 
 %package clients
 Summary:	Clients needed to access a PostgreSQL server
+Summary(es):	Clientes necesarios para acceder al servidor PostgreSQL
 Summary(pl):	Klienci wymagani do dostêpu do serwera PostgreSQL
+Summary(pt_BR):	Clientes necessários para acessar o servidor PostgreSQL
 Group:		Applications/Databases
 Group(de):	Applikationen/Dateibanken
 Group(pl):	Aplikacje/Bazy danych
@@ -238,13 +285,23 @@ In this package there are client libraries available for C and C++, as
 well as several command-line utilities you can use to manage your
 databases on a remote PostgreSQL server.
 
+%description -l es clients
+Este paquete incluye solamente los clientes necesarios para acceder un
+servidor PostgreSQL. El servidor está en el paquete principal.
+
 %description -l pl clients
 Pakiet zawiera klientów oraz biblioteki niezbêdne dla dostêpu do
 serwera PostgreSQL. Serwer znajduje siê w g³ównym pakiecie.
 
+%description -l pt_BR clients
+Este pacote inclui somente os clientes necessários para acessar um
+servidor PostgreSQL. O servidor está no pacote principal.
+
 %package perl
 Summary:	Perl interface to PostgreSQL database
+Summary(es):	Módulo Perl para acceder un servidor PostgreSQL
 Summary(pl):	Interfejs dla Perla umo¿liwiaj±cy dostêp do baz PostgreSQL
+Summary(pt_BR):	Módulo Perl para acesso ao servidor PostgreSQL
 Group:		Applications/Databases
 Group(de):	Applikationen/Dateibanken
 Group(pl):	Aplikacje/Bazy danych
@@ -255,13 +312,21 @@ Requires:	%{name}-libs = %{version}
 This package includes only perl modules needed to access an PostgreSQL
 server.
 
+%description -l es perl
+Módulo Perl para acceder un servidor PostgreSQL
+
 %description -l pl perl
 Pakiet ten zawiera tylko modu³y Perla wymagane dla dostêpu do serwera
 PostgreSQL.
 
+%description -l pt_BR perl
+Módulo Perl para acesso ao servidor PostgreSQL.
+
 %package python
 Summary:	The python-based client programs needed for accessing a PostgreSQL server
+Summary(es):	Módulo Python para acceder un servidor PostgreSQL
 Summary(pl):	Programy klienckie do dostêpu do serwera PostgreSQL napisane w Pythonie
+Summary(pt_BR):	Módulo Python para acesso ao servidor PostgreSQL.
 Group:		Development/Languages/Python
 Group(de):	Entwicklung/Sprachen/Python
 Group(pl):	Programowanie/Jêzyki/Python
@@ -274,9 +339,15 @@ postgresql-python includes the python-based client programs and client
 libraries that you'll need to access a PostgreSQL database management
 system server.
 
+%description -l es python
+Módulo Python para acceder un servidor PostgreSQL
+
 %description python -l pl
 Pakiet ten zawiera napisane w Pythonie programy i biblioteki klienckie
 do dostêpu do serwera baz danych PostgreSQL.
+
+%description -l pt_BR python
+Módulo Python para acesso ao servidor PostgreSQL.
 
 %package doc
 Summary:	Documentation for PostgreSQL
@@ -295,7 +366,9 @@ administratorów w formacie HTML.
 
 %package libs
 Summary:	PostgreSQL libraries
+Summary(es):	Biblioteca compartida del PostgreSQL
 Summary(pl):	Biblioteki dzielone programu PostgreSQL
+Summary(pt_BR):	Biblioteca compartilhada do PostgreSQL
 Group:		Libraries
 Group(de):	Libraries
 Group(es):	Bibliotecas
@@ -308,12 +381,22 @@ Group(uk):	â¦ÂÌ¦ÏÔÅËÉ
 %description libs
 PostgreSQL libraries.
 
+%description -l es lib
+Este paquete contiene la biblioteca compartida para acceso al
+postgresql.
+
 %description libs -l pl
 Biblioteki dzielone programu PostgreSQL.
 
+%description -l pt_BR lib
+Este pacote contém a biblioteca compartilhada para acesso ao
+postgresql.
+
 %package static
 Summary:	PostgreSQL static libraries
+Summary(es):	Bibliotecas estaticas PostgreSQL
 Summary(pl):	Biblioteki statyczne programu PostgreSQL
+Summary(pt_BR):	Bibliotecas estáticas PostgreSQL
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
 Group(es):	Desarrollo/Bibliotecas
@@ -327,8 +410,18 @@ Requires:	%{name}-devel = %{version}
 %description static
 PostgreSQL static libraries.
 
+%description -l es static
+Este paquete contiene bibliotecas estaticas requerida para compilación
+de aplicativos que se comunican directamente con el servidor backend
+PostgreSQL.
+
 %description -l pl static
 Biblioteki statyczne programu PostgreSQL.
+
+%description -l pt_BR static
+Este pacote contém as bibliotecas estáticas requeridas para compilação
+de aplicativos que se comunicam diretamente com o servidor backend
+PostgreSQL.
 
 %package c++
 Summary:	C++ interface to PostgreSQL
@@ -375,7 +468,9 @@ Pakiet ten zawiera biblioteki statyczne dla interfejsu C++.
 
 %package odbc
 Summary:	ODBC interface to PostgreSQL
+Summary(es):	Driver ODBC para acceder un servidor PostgreSQL
 Summary(pl):	Interfejs ODBC do PostgreSQL
+Summary(pt_BR):	Driver ODBC necessário para acessar um servidor PostgreSQL
 Group:		Applications/Databases
 Group(de):	Applikationen/Dateibanken
 Group(pl):	Aplikacje/Bazy danych
@@ -384,8 +479,14 @@ Requires:	%{name}-libs = %{version}
 %description odbc
 This package includes library for interface ODBC.
 
+%description -l es odbc
+Driver para acceder un servidor PostgreSQL, a través de ODBC.
+
 %description -l pl odbc
 Pakiet ten zawiera biblioteki dla interfejsu ODBC.
+
+%description -l pt_BR odbc
+Driver ODBC necessário para acessar um servidor PostgreSQL.
 
 %package odbc-devel
 Summary:	ODBC interface to PostgreSQL - development part
@@ -432,7 +533,9 @@ Graficzne narzêdzie do obs³ugi baz danych PostgreSQL.
 
 %package tcl
 Summary:	tcl interface for PostgreSQL
+Summary(es):	Bibliotecas y shell TCL para acceder un servidor PostgreSQL
 Summary(pl):	Interfejs tcl dla PostgreSQL
+Summary(pt_BR):	Bibliotecas e shell para programas em TCL acessarem o servidor PostgreSQL
 Group:		Development/Languages/Tcl
 Group(de):	Entwicklung/Sprachen/Tcl
 Group(pl):	Programowanie/Jêzyki/Tcl
@@ -441,8 +544,15 @@ Requires:	%{name}-libs = %{version}
 %description tcl
 tcl interface for PostgreSQL.
 
+%description -l es tcl
+Bibliotecas y shell TCL para acceder un servidor PostgreSQL
+
 %description tcl -l pl
 Interfejs tcl dla PostgreSQL.
+
+%description -l pt_BR tcl
+Bibliotecas e shell para programas em TCL acessarem o servidor
+PostgreSQL
 
 %package tcl-devel
 Summary:	Development part of tcl interface for PostgreSQL
