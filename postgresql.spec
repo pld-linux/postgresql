@@ -1,7 +1,6 @@
 #
 # TODO:
 # - pg_autovacuum init support? look at its readme file, please
-# - fix tutorial building
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
@@ -723,7 +722,6 @@ by³y ca³y czas operacyjne.
 
 %prep
 %setup -q -a4
-#%setup -q -n %{name}-%{version}%{beta}
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
 %patch2 -p1
@@ -741,29 +739,27 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 #find contrib -type d -name CVS -exec rm -rf {} \;
 
 %build
-#rm -f config/libtool.m4
-#install /usr/share/automake/config.* config
 %{__aclocal} -I config
 %{__autoconf}
 %configure \
 	CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS" \
+	--disable-rpath \
+	--enable-depend \
+	--enable-integer-datetimes \
 	%{?with_pgsql_locale:--enable-locale} \
 	%{?with_pgsql_multibyte:--enable-multibyte} \
-	--disable-rpath \
 	--enable-nls \
-	--enable-thread-safety \
-	--enable-integer-datetimes \
-	--enable-depend \
 	--enable-recode \
 	--enable-syslog \
-	--with-pam \
+	--enable-thread-safety \
 	--enable-unicode-conversion \
 	--with-CXX \
-	%{?with_tcl:--with-tcl} \
-	%{?with_perl:--with-perl} \
-	%{?with_python:--with-python} \
 	%{?with_kerberos5:--with-krb5} \
 	--with-openssl \
+	--with-pam \
+	%{?with_perl:--with-perl} \
+	%{?with_python:--with-python} \
+	%{?with_tcl:--with-tcl} \
 	--with-x \
 	--without-docdir 
 
@@ -772,7 +768,8 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 %{__make} -C contrib/pgcrypto
 %{__sed} -i 's:contrib/::g' contrib/tsearch2/tsearch.sql.in
 %{__make} -C contrib/tsearch2
-#%{__make} -C src/tutorial
+%{__make} -C src/tutorial \
+	NO_PGXS=1
 %ifnarch sparc sparcv9 sparc64 alpha
 %{?with_tests:%{__make} check}
 %endif
@@ -786,7 +783,6 @@ install /usr/share/automake/config.* config
 cd ..
 %endif
 
-
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
@@ -795,7 +791,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 	$RPM_BUILD_ROOT%{_mandir} \
 	$RPM_BUILD_ROOT/home/services/postgres
 
-#install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -993,7 +989,6 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/utf*
 
 %dir %{_pgsqldir}
-%dir %{_pgmoduledir}
 %dir %{_datadir}/postgresql
 %dir %{_datadir}/postgresql/timezone
 %{_datadir}/postgresql/*.bki
@@ -1030,6 +1025,7 @@ fi
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
+%dir %{_pgmoduledir}
 
 %files ecpg
 %defattr(644,root,root,755)
@@ -1069,6 +1065,9 @@ fi
 %files backend-devel
 %defattr(644,root,root,755)
 %{_includedir}/postgresql/server
+%dir %{_pgmoduledir}/pgxs
+%attr(755,root,root) %{_pgmoduledir}/pgxs/config
+%{_pgmoduledir}/pgxs/src
 
 %files static
 %defattr(644,root,root,755)
