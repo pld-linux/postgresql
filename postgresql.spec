@@ -32,7 +32,7 @@ Release:	0.1.%{beta}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp3.us.postgresql.org/pub/postgresql/source/v%{version}/%{name}-%{version}%{beta}.tar.bz2
-# Source0-md5:	d41d8cd98f00b204e9800998ecf8427e
+# Source0-md5:	e208bf65fee9f573d512386c0181ff96
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
