@@ -26,10 +26,9 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.4.6
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
-##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
 # Source0-md5:	f0ea2b372a7bdaf2613e92176ebf5e0f
 Source1:	%{name}.init
