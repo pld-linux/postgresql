@@ -48,14 +48,14 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libtool
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openssl-devel >= 0.9.7c
+BuildRequires:	openssl-devel >= 0.9.6k
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
-BuildRequires:	python-devel >= 2.3
+BuildRequires:	python-devel >= 2.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-pythonprov
-BuildRequires:	tcl-devel >= 8.4.3
-BuildRequires:	tk-devel >= 8.4.3
+BuildRequires:	tcl-devel >= 8.3.4
+BuildRequires:	tk-devel >= 8.3.4
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 PreReq:		rc-scripts
