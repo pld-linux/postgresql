@@ -15,7 +15,7 @@ Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.2.1
-Release:	5
+Release:	6
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
