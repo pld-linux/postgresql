@@ -18,7 +18,18 @@
 . /etc/sysconfig/network
 
 # Get service config
-[ -f /etc/sysconfig/postgresql ] && . /etc/sysconfig/postgresql
+if [ -f /etc/sysconfig/syslog ] ; then
+        . /etc/sysconfig/syslog
+else
+        ALLOW_TCP=no
+fi
+
+if [ "$ALLOW_TCP" = yes ]; then
+	ALLOW_TCP="-i"
+else
+	ALLOW_TCP=""
+fi
+
 
 # Check that networking is up.
 if [ "${NETWORKING}" = "no" ]; then
@@ -36,7 +47,7 @@ case "$1" in
 	if [ ! -f /var/lock/subsys/postgresql ]; then
 		show Starting postgresql
 		busy
-		su postgres -c "/usr/bin/postmaster -D /var/state/pgsql"
+		su postgres -c "/usr/bin/postmaster $ALLOW_TCP $OPTIONS -D /var/state/pgsql" &
 		
 		if ps ax | grep -v grep | grep -q postmaster; then
 		    deltext;ok
