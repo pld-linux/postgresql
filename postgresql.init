@@ -68,7 +68,7 @@ case "$1" in
 		su postgres -c "/usr/bin/postmaster \
 			$([ "$ALLOW_TCP_CONNECTIONS" = yes ] && echo "-i") \
 			$([ -n "$MAX_NUM_BACKENDS" ] && echo "-N $MAX_NUM_BACKENDS") \
-			$([ -n "POSTGRES_$DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
+			$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
 			-o \
 			$([ "$POSTGRES_QUIET" = yes ] && echo "-Q") \
 			$([ "$POSTGRES_DIABLE_FSYNC" = yes ] && echo "-F") 2> /dev/null &"
