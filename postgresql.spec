@@ -10,7 +10,7 @@
 %bcond_without	pgsql_locale		# disable PostgreSQL locale
 %bcond_without	pgsql_multibyte		# disable PostgreSQL multibyte
 %bcond_without	python			# disable python support
-%bcond_with	jdbc			# enable JDBC driver
+%bcond_with	jdbc			# build JDBC interface and Java tools
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 
@@ -56,6 +56,7 @@ BuildRequires:	automake
 BuildRequires:	flex
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
+%{?with_jdbc:BuildRequires:	jakarta-ant >= 1.5}
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
@@ -821,7 +822,7 @@ install /usr/share/automake/config.* config
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 	$RPM_BUILD_ROOT{/var/{lib/pgsql,log},%{_pgsqldir}} \
-	$RPM_BUILD_ROOT%{_mandir} \
+	$RPM_BUILD_ROOT{%{_mandir},%{_javadir}} \
 	$RPM_BUILD_ROOT/home/services/postgres
 
 %{__make} install install-all-headers \
@@ -845,6 +846,11 @@ touch $RPM_BUILD_ROOT/var/log/pgsql
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
+
+%if %{with jdbc}
+mv	$RPM_BUILD_ROOT%{_datadir}/postgresql/java/*.jar \
+	$RPM_BUILD_ROOT%{_javadir}
+%endif
 
 install -d howto
 ( cd howto
@@ -973,6 +979,11 @@ fi
 %{_datadir}/postgresql/*.description
 %{_datadir}/postgresql/*.sql
 %{_datadir}/postgresql/*.txt
+
+%if %{with jdbc}
+#{_javadir}/postgresql-exmaples.jar
+%{_javadir}/postgresql.jar
+%endif
 
 %attr(700,postgres,postgres) /home/services/postgres
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
