@@ -357,7 +357,7 @@ Pakiet ten zawiera biblioteki statyczne dla interface'u ODBC.
 Summary:	A free graphical database management tool for PostgreSQL.
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
-Requires:	%{name}-libs = %{version}
+Requires:	%{name}-tcl = %{version}
 
 %description -n pgaccess
 A free graphical database management tool for PostgreSQL.
@@ -805,21 +805,22 @@ rm -f /tmp/tmp_perl_info
 %{perl_sitearch}/Pg.pm
 %{_mandir}/man3/*
 
-%files tcl
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
-%attr(755,root,root) %{_bindir}/pgtclsh
-%attr(755,root,root) %{_bindir}/pgtksh
-
 %files -n pgaccess
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pgaccess
 %{_libdir}/pgaccess
 %doc src/bin/pgaccess/doc/html/*
 
+%files tcl
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
+%attr(755,root,root) %{_libdir}/libpgtcl.so
+%attr(755,root,root) %{_bindir}/pgtclsh
+%attr(755,root,root) %{_bindir}/pgtksh
+
 %files tcl-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpgtcl.so
+%attr(755,root,root) %{_includedir}/pgsql/libpgtcl.h
 
 %files tcl-static
 %defattr(644,root,root,755)
