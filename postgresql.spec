@@ -183,6 +183,7 @@ Summary:	clients needed to access a PostgreSQL server
 Summary(pl):	klienci wymagani do dostêpu do serwera PostgreSQL
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy Danych
+Requires:	%{name}-libs = %{version}
 
 %description clients
 This package includes only the clients and client libraries needed to
@@ -203,7 +204,8 @@ Summary:	Perl interface to PostgreSQL database
 Summary(pl):	Interface dla Perl'a umo¿liwiaj±cy dostêp do baz PostgreSQL
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy Danych
-Requires:	postgresql, perl >= 5.004
+Requires:	perl >= 5.004
+Requires:	%{name}-libs = %{version}
 
 %description perl
 This package includes only perl modules needed to access an PostgreSQL
@@ -217,7 +219,7 @@ PostgreSQL.
 Summary:	The python-based client programs needed for accessing a PostgreSQL server
 Group:		Development/Databases
 Requires:	python >= 1.5
-Requires:	postgresql = %{version}
+Requires:	%{name}-libs = %{version}
 
 %description python
 postgresql-python includes the python-based client programs and client
@@ -238,45 +240,6 @@ etc., in HTML format.
 %description -l pl doc
 Pakiet ten zawiera dokumentacjê oraz HOWTO m.in. dla programistów,
 administratorów w formacie HTML.
-
-%package odbc
-Summary:	ODBC interface to PostgreSQL
-Summary(pl):	Interface ODBC do PostgreSQL
-Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
-#Requires:	%{name} = %{version}
-
-%description odbc
-This package includes library for interface ODBC.
-
-%description -l pl odbc
-Pakiet ten zawiera biblioteki dla interface'u ODBC.
-
-%package odbc-devel
-Summary:	ODBC interface to PostgreSQL - development part
-Summary(pl):	Interface ODBC do PostgreSQL - cze¶æ programistyczna
-Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
-Requires:	%{name}-odbc = %{version}
-
-%description odbc-devel
-This package includes library and header files for interface ODBC.
-
-%description -l pl odbc-devel
-Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interface'u ODBC.
-
-%package odbc-static
-Summary:	ODBC interface to PostgreSQL - static libraries
-Summary(pl):	Interface ODBC do PostgreSQL - biblioteki statyczne
-Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy Danych
-Requires:	%{name}-odbc-devel = %{version}
-
-%description odbc-static
-This package includes static library for interface ODBC.
-
-%description -l pl odbc-static
-Pakiet ten zawiera biblioteki statyczne dla interface'u ODBC.
 
 %package libs
 Summary:	PostgreSQL libraries
@@ -302,8 +265,88 @@ Requires:	%{name}-devel = %{version}
 %description static
 PostgreSQL static libraries.
 
-%description libs -l pl
+%description -l pl static
 Biblioteki statyczne programu PostgreSQL.
+
+%package c++
+Summary:	C++ interface to PostgreSQL
+Summary(pl):	Interface C++ do PostgreSQL
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy Danych
+Requires:	%{name}-libs = %{version}
+
+%description c++
+This package includes library for C++ interface to PostgreSQL.
+
+%description -l pl c++
+Pakiet ten zawiera biblioteki dla interface'u C++ do PostgreSQL.
+
+%package c++-devel
+Summary:	C++ interface to PostgreSQL - development part
+Summary(pl):	Interface C++ do PostgreSQL - cze¶æ programistyczna
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy Danych
+Requires:	%{name}-c++ = %{version}
+Requires:	%{name}-devel = %{version}
+
+%description c++-devel
+This package includes library and header files for C++ interface.
+
+%description -l pl c++-devel
+Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interface'u C++.
+
+%package c++-static
+Summary:	C++ interface to PostgreSQL - static libraries
+Summary(pl):	Interface C++ do PostgreSQL - biblioteki statyczne
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy Danych
+Requires:	%{name}-c++-devel = %{version}
+
+%description c++-static
+This package includes static library for interface C++.
+
+%description -l pl c++-static
+Pakiet ten zawiera biblioteki statyczne dla interface'u C++.
+
+%package odbc
+Summary:	ODBC interface to PostgreSQL
+Summary(pl):	Interface ODBC do PostgreSQL
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy Danych
+Requires:	%{name}-libs = %{version}
+
+%description odbc
+This package includes library for interface ODBC.
+
+%description -l pl odbc
+Pakiet ten zawiera biblioteki dla interface'u ODBC.
+
+%package odbc-devel
+Summary:	ODBC interface to PostgreSQL - development part
+Summary(pl):	Interface ODBC do PostgreSQL - cze¶æ programistyczna
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy Danych
+Requires:	%{name}-odbc = %{version}
+Requires:	%{name}-devel = %{version}
+
+%description odbc-devel
+This package includes library and header files for interface ODBC.
+
+%description -l pl odbc-devel
+Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interface'u ODBC.
+
+%package odbc-static
+Summary:	ODBC interface to PostgreSQL - static libraries
+Summary(pl):	Interface ODBC do PostgreSQL - biblioteki statyczne
+Group:		Applications/Databases
+Group(pl):	Aplikacje/Bazy Danych
+Requires:	%{name}-odbc-devel = %{version}
+
+%description odbc-static
+This package includes static library for interface ODBC.
+
+%description -l pl odbc-static
+Pakiet ten zawiera biblioteki statyczne dla interface'u ODBC.
 
 %package tcl
 Summary:	tcl interface for PostgreSQL
@@ -350,6 +393,7 @@ Summary:	Some useful datetime functions for PostgreSQL
 Summary(pl):	Kilka u¿ytecznych funkcji operuj±cych na dacie i czasie dla PostgreSQL
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy Danych
+Requires:	%{name} = %{version}
 
 %description module-datetime
 Some useful datetime function for PostgreSQL such as:
@@ -508,7 +552,7 @@ make -C doc install DESTDIR=$RPM_BUILD_ROOT
 
 # for datetime functions
 make -C contrib/datetime install \
-  LIBDIR=$RPM_BUILD_ROOT%{pglibdir} SQLDIR=$RPM_BUILD_ROOT%{pgsqldir}
+	LIBDIR=$RPM_BUILD_ROOT%{pglibdir} SQLDIR=$RPM_BUILD_ROOT%{pgsqldir}
 
 # Move PL/pgSQL procedural language to %{pgmoduledir}
 ( cd $RPM_BUILD_ROOT%{_libdir}
@@ -547,7 +591,8 @@ install -d howto
   cp -rf * $RPM_BUILD_ROOT%{_includedir}/pgsql
 )
 
-strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so*
+strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so* \
+	$RPM_BUILD_ROOT%{perl_sitearch}/auto/Pg/*.so
 
 gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man*/*
 
@@ -582,6 +627,9 @@ fi
 
 %post   clients -p /sbin/ldconfig
 %postun clients -p /sbin/ldconfig
+
+%post   c++ -p /sbin/ldconfig
+%postun c++ -p /sbin/ldconfig
 
 %post   odbc -p /sbin/ldconfig
 %postun odbc -p /sbin/ldconfig
@@ -637,36 +685,38 @@ rm -f /tmp/tmp_perl_info
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
-%attr(755,root,root) %{_libdir}/libpq++.so.*.*
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
 
 %attr(755,root,root) %{_bindir}/pg_id
 
-#%defattr(644,postgres,postgres,755)
-%{_libdir}/pgsql
-
-%files tcl
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
-%attr(755,root,root) %{_bindir}/pgtclsh
-%attr(755,root,root) %{_bindir}/pgtksh
-%attr(755,root,root) %{_bindir}/pgaccess
-
-%files tcl-devel
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpgtcl.so
-
-%files tcl-static
-%defattr(644,root,root,755)
-%{_libdir}/libpgtcl.a
+%attr(644,postgres,postgres) %{_libdir}/pgsql
 
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libecpg.so
 %attr(755,root,root) %{_libdir}/libpq.so
-%attr(755,root,root) %{_libdir}/libpq++.so
 %dir %{_includedir}/pgsql
-%{_includedir}/pgsql/*h
+%{_includedir}/pgsql/c.h
+%{_includedir}/pgsql/config.h
+%{_includedir}/pgsql/dynloader.h
+%{_includedir}/pgsql/ecpgerrno.h
+%{_includedir}/pgsql/ecpglib.h
+%{_includedir}/pgsql/ecpgtype.h
+%{_includedir}/pgsql/fmgr.h
+%{_includedir}/pgsql/libpgeasy.h
+%{_includedir}/pgsql/libpgtcl.h
+%{_includedir}/pgsql/libpq-fe.h
+%{_includedir}/pgsql/libpq-int.h
+%{_includedir}/pgsql/miscadmin.h
+%{_includedir}/pgsql/os.h
+%{_includedir}/pgsql/postgres.h
+%{_includedir}/pgsql/postgres_ext.h
+%{_includedir}/pgsql/pqexpbuffer.h
+%{_includedir}/pgsql/rusagestub.h
+%{_includedir}/pgsql/sql3types.h
+%{_includedir}/pgsql/sqlca.h
+%{_includedir}/pgsql/strdup.h
+%{_includedir}/pgsql/version.h
 %{_includedir}/pgsql/access
 %{_includedir}/pgsql/bootstrap
 %{_includedir}/pgsql/catalog
@@ -675,7 +725,6 @@ rm -f /tmp/tmp_perl_info
 %{_includedir}/pgsql/iodbc
 %{_includedir}/pgsql/lib
 %{_includedir}/pgsql/libpq
-%{_includedir}/pgsql/libpq++
 %{_includedir}/pgsql/mb
 %{_includedir}/pgsql/nodes
 %{_includedir}/pgsql/optimizer
@@ -692,7 +741,6 @@ rm -f /tmp/tmp_perl_info
 %defattr(644,root,root,755)
 %{_libdir}/libecpg.a
 %{_libdir}/libpq.a
-%{_libdir}/libpq++.a
 
 %files clients
 %defattr(644,root,root,755)
@@ -710,6 +758,20 @@ rm -f /tmp/tmp_perl_info
 %{_mandir}/man1/psql.1*
 %{_mandir}/manl/*.l*
 
+%files c++
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libpq++.so.*.*
+
+%files c++-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libpq++.so
+%{_includedir}/pgsql/libpq++.h
+%{_includedir}/pgsql/libpq++
+
+%files c++-static
+%defattr(644,root,root,755)
+%{_libdir}/libpq++.a
+
 %files perl
 %defattr(644,root,root,755)
 %dir %{perl_sitearch}/auto/Pg
@@ -719,6 +781,21 @@ rm -f /tmp/tmp_perl_info
 %{perl_sitearch}/auto/Pg/.packlist
 %{perl_sitearch}/Pg.pm
 %{_mandir}/man3/*
+
+%files tcl
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
+%attr(755,root,root) %{_bindir}/pgtclsh
+%attr(755,root,root) %{_bindir}/pgtksh
+%attr(755,root,root) %{_bindir}/pgaccess
+
+%files tcl-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libpgtcl.so
+
+%files tcl-static
+%defattr(644,root,root,755)
+%{_libdir}/libpgtcl.a
 
 %files odbc
 %defattr(644,root,root,755)
