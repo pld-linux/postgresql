@@ -26,7 +26,7 @@ BuildRequires:	readline-devel
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	rpm-perlprov
 BuildRequires:	XFree86-devel
-Buildroot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Requires:	%{name}-libs = %{version}
 
 %define		_sysconfdir	/etc
@@ -403,8 +403,6 @@ install -d howto
 ( cd src/include
   cp -rf * $RPM_BUILD_ROOT%{_includedir}/pgsql
 )
-
-
 
 strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so*
 
