@@ -10,7 +10,7 @@ Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.1.3
-Release:	10
+Release:	11
 License:	BSD
 Group:		Applications/Databases
 Group(de):	Applikationen/Dateibanken
@@ -805,7 +805,7 @@ id postgres >/dev/null 2>&1 || /usr/sbin/useradd -M -o -r -u 88 \
 %post
 /sbin/chkconfig --add postgresql
 
-if [ -r /var/lock/subsys/postmaster ]; then
+if [ -f /var/lock/subsys/postgresql ]; then
 	/etc/rc.d/init.d/postgresql restart >&2
 else
 	echo "Run \"/etc/rc.d/init.d/postgresql start\" to start postgresql server."
@@ -813,7 +813,7 @@ fi
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/postmaster ]; then
+	if [ -f /var/lock/subsys/postgresql ]; then
 		/etc/rc.d/init.d/postgresql stop
 	fi
 	/sbin/chkconfig --del postgresql
