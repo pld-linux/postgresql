@@ -5,8 +5,8 @@ Summary(fr):	Sysème de gestion de base de données PostgreSQL
 Summary(pl):	PostgreSQL - system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
-Version:	7.1
-Release:	2
+Version:	7.1.1
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -18,9 +18,8 @@ Source4:	pgaccess.desktop
 Source5:	pgaccess.png
 Patch0:		%{name}-DESTDIR.patch
 Patch1:		%{name}-no_libnsl.patch
-Patch2:		%{name}-readline.patch
-Patch3:		%{name}-configure.patch
-Patch4:		%{name}-install.patch
+Patch2:		%{name}-configure.patch
+Patch3:		%{name}-install.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
@@ -538,7 +537,6 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -692,7 +690,7 @@ rm -f /tmp/tmp_perl_info
 %{_datadir}/postgresql/*.sample
 %{_datadir}/postgresql/*.description
 
-%attr(770,root,postgres) %dir /var/lib/pgsql
+%attr(700,postgres,postgres) %dir /var/lib/pgsql
 %attr(640,postgres,postgres) %config(noreplace) %verify(not md5 size mtime) /var/log/pgsql
 
 %{_mandir}/man1/createdb.1*
