@@ -1,207 +1,229 @@
-#!/bin/sh
-#
+#! /bin/sh
 # postgresql	This is the init script for starting up the PostgreSQL
 #		server
 #
-# chkconfig:	345 84 25
-#
-# description:	Starts and stops the PostgreSQL backend daemon that handles \
-#		all database requests.
-#
-# processname:	postmaster
-# pidfile:	$POSTGRES_DATA_DIR/postmaster.pid
+# chkconfig: - 85 15
+# description: Starts and stops the PostgreSQL backend daemon that handles \
+#	       all database requests.
+# processname: postmaster
+# pidfile: /var/run/postmaster.pid
 
-# Source function library
-. /etc/rc.d/init.d/functions
+# Version 6.5.3-2 Lamar Owen
+# Added code to determine if PGDATA exists, whether it is current version
+#     or not, and initdb if no PGDATA (initdb will not overwrite a database).
 
-# Get network config
+# Version 7.0 Lamar Owen
+# Added logging code
+# Changed PGDATA.
+#
+
+# Version 7.0.2 Trond Eivind Glomsrød <teg@redhat.com>
+# use functions, add conditional restart
+          
+# Version 7.0.3 Lamar Owen <lamar@postgresql.org>
+# Check for the existence of functions before blindly using them 
+# in particular -- check for success () and failure () before using.
+# More Cross-distribution support -- PGVERSION variable, and docdir checks.
+
+# Version 7.1 Release Candidate Lamar Owen <lamar@postgresql.org>
+# initdb parameters have changed.
+
+# Version 7.1.2 Trond Eivind Glomsrød <teg@redhat.com>
+# Specify shell for su
+# Handle stop better - kill unwanted output, make it wait until the database is ready
+# Handle locales slightly differently - always using "C" isn't a valid option 
+# Kill output from database initialization 
+# Mark messages for translation
+
+# Version 7.1.2-2.PGDG Lamar Owen <lamar.owen@wgcr.org>
+# sync up.
+# Karl's fixes for some quoting issues.
+
+# Version 7.2b2 Lamar Owen <lamar.owen@wgcr.org>
+# version change.
+
+# Version 7.2 final.  Lamar Owen <lamar.owen@wgcr.org>
+# reload from Peter E.
+# Eliminate the pidof postmaster test in stop -- we're using pg_ctl so we don't need pidof.
+# Tested the $? return for the stop script -- it does in fact propagate.
+# TODO: multiple postmasters.
+
+# PGVERSION is:
+PGVERSION=7.2
+
+# Source function library.
+INITD=/etc/rc.d/init.d
+. $INITD/functions
+
+# Get function listing for cross-distribution logic.
+TYPESET=`typeset -f|grep "declare"`
+
+# Get config.
 . /etc/sysconfig/network
 
-# Service config defaults
-ALLOW_TCP_CONNECTIONS=no
-ALLOW_USE_SSL=no
-POSTGRES_DATA_DIR=/var/lib/pgsql
-POSTGRES_LOG=/var/log/pgsql
-ENCODING=UNICODE
-
-# Get service config
-if [ -f /etc/sysconfig/postgresql ] ; then
-        . /etc/sysconfig/postgresql
-fi
-
 # Check that networking is up.
-if is_no "${NETWORKING}"; then
-	msg_network_down PostgreSQL
-	exit 1
-fi
+# Pretty much need it for postmaster.
+[ "${NETWORKING}" = "no" ] && exit 0
 
-# check if postmaster is realy alive
-if [ -f $POSTGRES_DATA_DIR/postmaster.pid ]; then
-    if ps -p `head -1 $POSTGRES_DATA_DIR/postmaster.pid` > /dev/null ; then
-	# ok. it's alive
-	echo > /dev/null;
-    else
-	# oh, it has crashed
-	rm -f  /var/lock/subsys/postgresql
-    fi
-else
-	# it's stopped.
-	rm -f  /var/lock/subsys/postgresql
-fi
+[ -f /usr/bin/postmaster ] || exit 0
 
+
+start(){
+	PSQL_START=$"Starting postgresql service: "
+	
+	# Check for older PGDATA location.
+	if [ -f /var/lib/pgsql/PG_VERSION ] && [ -d /var/lib/pgsql/base/template1 ]
+	then
+		export PGDATA=/var/lib/pgsql
+	else
+		export PGDATA=/var/lib/pgsql/data
+	fi
+
+	# Check for the PGDATA structure
+	if [ -f $PGDATA/PG_VERSION ] && [ -d $PGDATA/base ]
+	then
+	# Check version of existing PGDATA
+
+		if [ `cat $PGDATA/PG_VERSION` != '7.2' ]
+		then
+			SYSDOCDIR="(Your System's documentation directory)"
+			if [ -d /usr/doc/postgresql-$PGVERSION ]
+			then
+				SYSDOCDIR=/usr/doc
+			fi
+			if [ -d /usr/share/doc/postgresql-$PGVERSION ]
+			then
+				SYSDOCDIR=/usr/share/doc
+			fi
+			if [ -d /usr/doc/packages/postgresql-$PGVERSION ]
+			then
+				SYSDOCDIR=/usr/doc/packages
+			fi
+			if [ -d /usr/share/doc/packages/postgresql-$PGVERSION ]
+			then
+				SYSDOCDIR=/usr/share/doc/packages
+			fi
+			echo
+			echo -e $"An old version of the database format was found.\nYou need to upgrade the data format before using PostgreSQL.\nSee $SYSDOCDIR/postgresql-$PGVERSION/README.rpm-dist for more information."
+			exit 1
+#                       This doesn't seem to do anything useful...
+#		else
+#			if echo "$TYPESET"|grep "declare -f success ()" >/dev/null
+#			then
+#				success "$PSQL_CHECK"
+#			else
+#				echo "  [ OK ]"
+#			fi
+#			echo
+		fi
+
+	# No existing PGDATA! Initdb it.
+
+	else
+	        echo -n $"Initializing database: "
+                if [ ! -d $PGDATA ]
+		then
+			mkdir -p $PGDATA
+			chown postgres.postgres $PGDATA
+		fi
+		# Make sure the locale from the initdb is preserved for later startups...
+		[ -f /etc/sysconfig/i18n ] && cp /etc/sysconfig/i18n $PGDATA/../initdb.i18n
+		# Just in case no locale was set, use en_US
+		[ ! -f /etc/sysconfig/i18n ] && echo "LANG=en_US" > $PGDATA/../initdb.i18n 
+		# Is expanded this early to be used in the command su runs
+		echo "export LANG LC_ALL LC_CTYPE LC_COLLATE LC_NUMERIC LC_CTYPE LC_TIME" >> $PGDATA/../initdb.i18n
+		# Initialize the database
+		su -l postgres -s /bin/sh -c "/usr/bin/initdb --pgdata=/var/lib/pgsql/data > /dev/null 2>&1" < /dev/null
+		[ -f $PGDATA/PG_VERSION ] && echo_success
+		[ ! -f $PGDATA/PG_VERSION ] && echo_failure
+		echo
+ 	fi
+
+	# Check for postmaster already running...
+	pid=`pidof -s postmaster`
+	if [ $pid ]
+	then
+		echo $"Postmaster already running."
+	else
+		#all systems go -- remove any stale lock files
+		rm -f /tmp/.s.PGSQL.* > /dev/null
+		echo -n "$PSQL_START"
+		su -l postgres -s /bin/sh -c "/usr/bin/pg_ctl  -D $PGDATA -p /usr/bin/postmaster start  > /dev/null 2>&1" < /dev/null
+ 		sleep 1
+ 		pid=`pidof -s postmaster`
+ 		if [ $pid ]
+		then
+		    success "$PSQL_START"
+		    touch /var/lock/subsys/postgresql
+		    echo $pid > /var/run/postmaster.pid
+		    echo
+		else
+		    failure "$PSQL_START"
+		fi
+	fi
+}
+
+stop(){
+	echo -n $"Stopping postgresql service: "
+	# Check for older PGDATA location.
+	if [ -f /var/lib/pgsql/PG_VERSION ] && [ -d /var/lib/pgsql/base/template1 ]
+	then
+		export PGDATA=/var/lib/pgsql
+	else
+		export PGDATA=/var/lib/pgsql/data
+	fi
+	su -l postgres -s /bin/sh -c "/usr/bin/pg_ctl stop -D $PGDATA -s -m fast" > /dev/null 2>&1
+        ret=$? 
+        if [ $ret -eq 0 ]; then
+	    echo_success
+        else
+            echo_failure
+        fi
+	echo
+	rm -f /var/run/postmaster.pid
+	rm -f /var/lock/subsys/postgresql
+}
+
+restart(){
+    stop
+    start
+}
+
+condrestart(){
+    [ -e /var/lock/subsys/postgresql ] && restart || :
+}
+
+reload(){
+    su -l postgres -s /bin/sh -c "/usr/bin/pg_ctl reload -D $PGDATA -s" > /dev/null 2>&1
+}
+
+# This script is slightly unusual in that the name of the daemon (postmaster)
+# is not the same as the name of the subsystem (postgresql)
 
 # See how we were called.
 case "$1" in
   start)
-	# Check if the service is already running?
-	if [ -f /var/lock/subsys/postgresql ]; then
-  		msg_already_running PostgreSQL
-	else 	
-		if is_yes "$ALLOW_USE_SSL"; then
-			if is_no "$ALLOW_TCP_CONNECTIONS"; then
-				nls "You must enable ALLOW_TCP_CONNECTIONS in order to use SSL"
-				exit 1
-			elif [ ! -f "$POSTGRES_DATA_DIR/server.key" ]; then
-				nls "$POSTGRES_DATA_DIR/server.key not found!"
-				exit 1
-			elif [ ! -f "$POSTGRES_DATA_DIR/server.crt" ]; then
-				nls "$POSTGRES_DATA_DIR/server.crt not found!"
-				exit 1
-			fi
-		fi
-		
-		# Sanity check
-		[ -e /tmp/.s.PGSQL.5432 ] || rm -f /tmp/.s.PGSQL.5432
-		[ -f /tmp/.s.PGSQL.5432.lock ] || rm -f /tmp/.s.PGSQL.5432.lock
-		
-		# Check for the PGDATA structure
-		if [ -f $POSTGRES_DATA_DIR/PG_VERSION ] && [ -f $POSTGRES_DATA_DIR/global/pg_control ]; then
-		    # Check version of existing PGDATA
-		    if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.2' ]; then
-			show "Databases created under incompatibile version. Migrate them first."; fail
-			exit 1
-		    fi
-		else
-		    echo "Postgresql database not initialized. Try \"$0 init\" before start."
-		    exit 1
-		fi
-		
-		msg_starting PostgreSQL 
-		busy
-		PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
-		    $(is_yes "$POSTGRES_QUIET" && echo '-s')";
-		POSTMASTER_OPTIONS=" \
-		    $(is_yes "$POSTGRES_QUIET" && echo '-S') \
-		    $(is_yes "$POSTGRES_DISABLE_FSYNC" && echo '-F') \
-		    $(is_yes "$ALLOW_TCP_CONNECTIONS" && echo '-i') \
-		    $(is_yes "$ALLOW_USE_SSL" && echo '-l') \
-		    $([ "$BUFFERS" ] && echo \-B $BUFFERS) \
-		    $([ "$MAXCONN" ] && echo \-N $MAXCONN)";
-
-		TMPDIR=/tmp su postgres -c "\
-			$(echo "/usr/bin/pg_ctl start -w $PGSQL_CMDLINE -l $POSTGRES_LOG") \
-			$([ "$POSTMASTER_OPTIONS". != . ] && echo "-o '$POSTMASTER_OPTIONS'") \
-			$(echo "2>&1 >/dev/null")";
-		
-		out=`status postmaster`
-		if [ $? -eq 0 ]; then 
-		    deltext; ok
-		else
-		    deltext; fail 
-		    exit 1	
-		fi
-	fi
-	touch /var/lock/subsys/postgresql
+	start
 	;;
   stop)
-
-  	if [ ! -f /var/lock/subsys/postgresql ]; then
-		msg_not_running PostgreSQL
-		exit 0	
-	fi
-	msg_stopping PostgreSQL
-	busy
-	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR")";
-	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl stop $PGSQL_CMDLINE -m fast 2>&1 >/dev/null"
-	out=`status postmaster`
-	if [ $? -eq 0 ]; then
-		deltext; fail
-		echo -e "\n$out";
-		exit 1
-	else
-		deltext; ok
-	fi
-	rm -f $POSTGRES_DATA_DIR/postmaster.pid
-	rm -f /var/lock/subsys/postgresql
+	stop
 	;;
   status)
-	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR")";
-	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl status $PGSQL_CMDLINE"
+	status postmaster
 	;;
   restart)
-  	$0 stop
-	$0 start
+	restart
 	;;
-  reload)
-  	if [ ! -f /var/lock/subsys/postgresql ]; then
-		msg_not_running PostgreSQL
-		exit 0	
-	fi
-	msg_reloading PostgreSQL
-	busy
-
-	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
-	    $([ "$POSTGRES_QUIET". = yes. ] && echo '-s')";
-	POSTMASTER_OPTIONS=" \
-	    $([ "$POSTGRES_QUIET". = yes. ] && echo '-S') \
-	    $([ "$POSTGRES_DISABLE_FSYNC". = yes. ] && echo '-F') \
-	    $([ "$ALLOW_TCP_CONNECTIONS". = yes. ] && echo '-i')";
-
-	TMPDIR=/tmp su postgres -c "\
-		$(echo "/usr/bin/pg_ctl restart $PGSQL_CMDLINE -l $POSTGRES_LOG") \
-		$([ "$POSTMASTER_OPTIONS". != . ] && echo "-o '$POSTMASTER_OPTIONS'") \
-		$(echo "2>&1 >/dev/null")";
-
-	out=`status postmaster`
-	if [ $? -eq 0 ]; then
-		deltext; ok
-	else
-		deltext; fail
-		echo -e "\n$out";
-		exit 1
-	fi
+  condrestart)
+	condrestart
 	;;
-    init)
-	if [ -f "$POSTGRES_DATA_DIR/PG_VERSION" ]; then
-	    echo "Seems that database is initialized now. Remove by hand $POSTGRES_DATA_DIR"
-	    echo "before initialize database."
-	    exit 1
-	fi
-
-	echo -n "Specify encoding for pgsql database (eg: LATIN2, KOI8) [$ENCODING]: "
-	read new_encoding
-	ENCODING=${new_encoding:-$ENCODING}
-
-	show "Creating initial postgresql database using $ENCODING encoding"
-	started
-
-        # Create sample database
-	if [ ! -d $POSTGRES_DATA_DIR ]; then
-	    mkdir -p $POSTGRES_DATA_DIR
-	    chown postgres.postgres $POSTGRES_DATA_DIR
-	    chmod 700 $POSTGRES_DATA_DIR
-	fi
-
-	
-	TMPDIR=/tmp su - postgres -s /bin/sh -c "LD_LIBRARY_PATH=/usr/lib \
-			initdb --pgdata=$POSTGRES_DATA_DIR \
-			-L /usr/share/postgresql -E $ENCODING"
-
-	echo "REMEMBER to setup password for user \"postgres\"!"
+  reload|force-reload)
+	reload
 	;;
   *)
-	msg_usage "$0 {start|stop|status|restart|reload}"
+	echo $"Usage: $0 {start|stop|status|restart|condrestart|reload|force-reload}"
 	exit 1
 esac
 
 exit 0
+
