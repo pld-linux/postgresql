@@ -1,42 +1,48 @@
-#! /bin/sh
+#!/bin/sh
+#
 # postgresql	This is the init script for starting up the PostgreSQL
 #		server
 #
-# chkconfig: 345 85 15
-# description: Starts and stops the PostgreSQL backend daemon that handles \
-#	       all database requests.
-# processname: postmaster
-# pidfile: /var/run/postmaster.pid
-# 
+# chkconfig:	345 85 15
+#
+# description:	Starts and stops the PostgreSQL backend daemon that handles \
+#		all database requests.
+#
+# processname:	postmaster
+# pidfile:	/var/run/postmaster.pid
 
-# Source function library.
+
+# Source function library
 . /etc/rc.d/init.d/functions
 
-# Get config.
+# Get network config
 . /etc/sysconfig/network
 
+# Get service config
+[ -f /etc/sysconfig/postgresql ] && . /etc/sysconfig/postgresql
+
 # Check that networking is up.
-# Pretty much need it for postmaster.
-[ "${NETWORKING}" = "no" ] && exit 0
+[ "${NETWORKING}" = "no" ] && echo "Error: Networking is down"; exit 0
 
-[ -f /usr/bin/postmaster ] || exit 0
-
+# Sanity check
 [ -f /tmp/.s.PGSQL.5432 ] || rm -f /tmp/.s.PGSQL.5432
 
-# This script is slightly unusual in that the name of the daemon (postmaster)
-# is not the same as the name of the subsystem (postgresql)
 
 # See how we were called.
 case "$1" in
   start)
-	show Starting postgresql service
-	busy
-	su postgres -c '/usr/bin/postmaster -S -D/var/lib/pgsql'
-	sleep 1
-	pid=`pidof postmaster`
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/postgresql ]; then
+		show Starting postgresql
+		busy
+		su postgres -c '/usr/bin/postmaster
+		touch /var/lock/subsys/postgresql
+		deltext
+		ok
+	else
+		echo "Postgresql already is running"
+	fi
 	touch /var/lock/subsys/postgresql
-	echo $pid > /var/run/postmaster.pid
-	deltext; ok
 	;;
   stop)
 	show Stopping postgresql service
@@ -48,12 +54,12 @@ case "$1" in
   status)
 	status postmaster
 	;;
-  restart)
+  restart|reload)
 	$0 stop
 	$0 start
 	;;
   *)
-	echo "Usage: postgresql {start|stop|status|restart}"
+	echo "Usage: postgresql {start|stop|status|restart|reload}"
 	exit 1
 esac
 
