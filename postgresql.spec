@@ -3,22 +3,6 @@
 # _with_jdbc		- with JDBC driver
 #
 
-# todo:
-# dump is required before upgrade
-#    if [ -f /etc/sysconfig/postgresql ]; then
-#      POSTGRES_DATA_DIR=/var/lib/pgsql
-#      . /etc/sysconfig/postgresql
-#      if [ -f $POSTGRES_DATA_DIR/PG_VERSION ]; then
-#        if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.2' ]; then
-#          echo "Database in older, incompatible format exists in $POSTGRES_DATA_DIR."
-#          echo "Dump it and clean $POSTGRES_DATA_DIR, then upgrade postgresql and"
-#          echo "restore database"
-#          exit 1
-#        fi
-#      fi
-#    fi
-
-
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.python
 
@@ -31,7 +15,7 @@ Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.2
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Databases
 Group(cs):	Aplikace/Databáze
@@ -1169,6 +1153,19 @@ rm -rf $RPM_BUILD_ROOT
 rm -f /tmp/tmp_perl_info
 
 %pre
+if [ -f /etc/sysconfig/postgresql ]; then
+    POSTGRES_DATA_DIR=/var/lib/pgsql
+    . /etc/sysconfig/postgresql
+    if [ -f $POSTGRES_DATA_DIR/PG_VERSION ]; then
+	if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.2' ]; then
+	    echo "Database(s) in older, incompatible format exist in $POSTGRES_DATA_DIR."
+	    echo "Dump them and clean $POSTGRES_DATA_DIR, then upgrade postgresql and"
+	    echo "restore database(s)."
+	    exit 1
+	fi
+    fi
+fi
+
 getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
 if id postgres >/dev/null 2>&1 ; then
 	/usr/sbin/usermod -d /home/services/postgres postgres
@@ -1200,9 +1197,6 @@ fi
 
 %post   tcl -p /sbin/ldconfig
 %postun tcl -p /sbin/ldconfig
-
-%post   clients -p /sbin/ldconfig
-%postun clients -p /sbin/ldconfig
 
 %post   c++ -p /sbin/ldconfig
 %postun c++ -p /sbin/ldconfig
