@@ -1,0 +1,11 @@
+--- postgresql-7.2.3/config/general.m4.orig	Tue Feb  4 12:26:06 2003
++++ postgresql-7.2.3/config/general.m4	Tue Feb  4 12:25:41 2003
+@@ -41,7 +41,7 @@
+ define([pgac_variable], [pgac_arg_to_variable([$1], [$2])])[]dnl
+ dnl Register help string, only if there is one
+ ifelse([$3], [], [],
+-[AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)dnl
++[AC_DIVERT_PUSH(NOTICE)dnl
+ ac_help="$ac_help
+ [$3]"
+ AC_DIVERT_POP()])dnl
