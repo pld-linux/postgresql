@@ -1,0 +1,66 @@
+--- postgresql-7.4.6/src/pl/plpgsql/src/gram.y.orig	2003-10-30 18:18:55.000000000 +0100
++++ postgresql-7.4.6/src/pl/plpgsql/src/gram.y	2005-02-10 11:52:50.896826968 +0100
+@@ -1707,6 +1707,15 @@
+ 				plpgsql_dstring_append(&ds, yytext);
+ 				break;
+ 		}
++
++		/* Check for array overflow */
++		if (nparams >= 1024)
++		{
++			plpgsql_error_lineno = lno;
++			ereport(ERROR,
++					(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
++					 errmsg("too many variables specified in SQL statement")));
++		}
+ 	}
+ 
+ 	expr = malloc(sizeof(PLpgSQL_expr) + sizeof(int) * nparams - sizeof(int));
+@@ -1852,6 +1861,15 @@
+ 
+ 					while ((tok = yylex()) == ',')
+ 					{
++						/* Check for array overflow */
++						if (nfields >= 1024)
++						{
++							plpgsql_error_lineno = plpgsql_scanner_lineno();
++							ereport(ERROR,
++									(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
++									 errmsg("too many INTO variables specified")));
++						}
++
+ 						tok = yylex();
+ 						switch(tok)
+ 						{
+@@ -1914,6 +1932,15 @@
+ 				plpgsql_dstring_append(&ds, yytext);
+ 				break;
+ 		}
++
++		/* Check for array overflow */
++		if (nparams >= 1024)
++		{
++			plpgsql_error_lineno = plpgsql_scanner_lineno();
++			ereport(ERROR,
++					(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
++					 errmsg("too many variables specified in SQL statement")));
++		}
+ 	}
+ 
+ 	expr = malloc(sizeof(PLpgSQL_expr) + sizeof(int) * nparams - sizeof(int));
+@@ -1985,6 +2012,15 @@
+ 
+ 				while ((tok = yylex()) == ',')
+ 				{
++					/* Check for array overflow */
++					if (nfields >= 1024)
++					{
++						plpgsql_error_lineno = plpgsql_scanner_lineno();
++						ereport(ERROR,
++								(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
++								 errmsg("too many INTO variables specified")));
++					}
++
+ 					tok = yylex();
+ 					switch(tok)
+ 					{
