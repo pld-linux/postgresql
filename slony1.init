@@ -35,7 +35,8 @@ case "$1" in
 			for CLUSTER in $SLONY1_CLUSTERS; do
 				msg_starting "Slony-I ($CLUSTER)"
 				CONNSTRING=`eval echo '$SLONY1_CONNECT'_$CLUSTER`
-				/usr/bin/setsid su - slony1 -c "initlog -c \"slon $CLUSTER '$CONNSTRING'\""
+				su - slony1 -c "setsid /sbin/initlog -c \"slon $CLUSTER '$CONNSTRING'\" &" >/dev/null 2>&1
+				ok
 			done
       RETVAL=$?
       [ $RETVAL -eq 0 ] && touch /var/lock/subsys/slony1
