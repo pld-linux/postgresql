@@ -2,7 +2,9 @@
 # Conditional build:
 # _with_jdbc		- with JDBC driver
 #
-
+# TODO:
+# - put pgcrypto docs into docdir
+# - put pgcrypto sql files in %{_datadir}/postgresql
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.python
 
@@ -18,7 +20,7 @@ Summary(uk):	PostgreSQL - ”…”‘≈Õ¡ À≈“’◊¡ŒŒ— ¬¡⁄¡Õ… ƒ¡Œ…»
 Summary(zh_CN):	PostgreSQL øÕªß∂À≥Ã–Ú∫Õø‚Œƒº˛
 Name:		postgresql
 Version:	7.2.4
-Release:	1
+Release:	1.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -883,6 +885,18 @@ potrzeby.
 Za pomoc± komendy createlang moøna dodaÊ wsparcie dla jÍzyka
 proceduralnego PL/TCL dla swojej bazy danych.
 
+%package module-pgcrypto
+Summary:        Cryptographic functions for PostgreSQL
+Summary(pl):    Funkcje kryptograficzne dla PostgreSQL
+Group:          Applications/Databases
+Requires:       %{name} = %{version}
+ 
+%description module-pgcrypto
+Cryptographic functions for PostgreSQL.
+ 
+%description module-pgcrypto -l pl
+Funkcje kryptograficzne dla PostgreSQL.
+
 %prep
 %setup  -q
 %patch0 -p1
@@ -930,6 +944,9 @@ rm -f config/libtool.m4
 %{!?_without_tests: %{__make} check }
 %endif
 
+cd contrib/pgcrypto/
+%{__make}
+
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
@@ -972,6 +989,9 @@ install -d howto
 
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
+
+cd contrib/pgcrypto/
+%{__make} install DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1239,3 +1259,10 @@ fi
 %files module-pltcl
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
+
+%files module-pgcrypto
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
+# Hmm i think two below lines shouldn't be here - but i can be wrong ;)
+#%{_datadir}/%{name}/contrib/pgcrypto.sql
+#%{_datadir}/info/%{name}/contrib/README.pgcrypto.gz
