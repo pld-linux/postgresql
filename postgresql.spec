@@ -27,13 +27,13 @@ Summary(tr):	Veri TabanЩ YЖnetim Sistemi
 Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
-Version:	7.4.2
+Version:	7.4.3
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-Source0:	ftp://ftp2.pl.postgresql.org/mirrors/ftp.postgresql.org/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	54a03da34c8520635957f833a4a077ee
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
+# Source0-md5:	204d8ab0c51d9691da2bd986ddbdc477
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
