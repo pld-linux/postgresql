@@ -16,8 +16,8 @@ Summary(ru):	PostgreSQL - система управления базами данных
 Summary(tr):	Veri TabanЩ YЖnetim Sistemi
 Summary(uk):	PostgreSQL - система керування базами даних
 Name:		postgresql
-Version:	7.2.1
-Release:	9
+Version:	7.2.2
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
