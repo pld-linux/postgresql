@@ -1,6 +1,8 @@
 #
+# TODO:
 # - pg_autovacuum init support? look at its readme file, please
-# - pg_ctl uses psql again, current patch2 doesn't eliminate this
+# - better postmaster start check (taking care of multiple clusters) in
+#   pg_ctl-nopsql patch
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
