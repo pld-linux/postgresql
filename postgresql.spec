@@ -15,7 +15,7 @@ Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.2
-Release:	4
+Release:	5
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -799,6 +799,11 @@ if [ -f /etc/sysconfig/postgresql ]; then
 	    echo "Database(s) in older, incompatible format exist in $POSTGRES_DATA_DIR."
 	    echo "Dump them and clean $POSTGRES_DATA_DIR, then upgrade postgresql and"
 	    echo "restore database(s)."
+        echo
+        echo "Warning for upgrade from version *before* 7.2."
+        echo "Please note, that postgresql module path changed from"
+        echo "/usr/lib/pgsql/module to /usr/lib/postgresql. Change the path"
+        echo "in dump file before restore."
 	    exit 1
 	fi
     fi
