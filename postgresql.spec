@@ -1,9 +1,4 @@
-
 %include	/usr/lib/rpm/macros.perl
-%define pglibdir     %{_libdir}/pgsql
-%define pgsqldir     %{_datadir}/pgsql/sql
-%define pgmoduledir  %{pglibdir}/modules
-
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
 Summary(fr):	Sysème de gestion de base de données PostgreSQL
@@ -11,7 +6,7 @@ Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.0.2
-Release:	9
+Release:	10
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -40,6 +35,10 @@ Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
 
 %define		_sysconfdir	/etc
+%define		pglibdir	%{_libdir}/pgsql
+%define		pgsqldir	%{_datadir}/pgsql/sql
+%define		pgmoduledir	%{pglibdir}/modules
+
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -153,8 +152,9 @@ Summary(fr):	En-têtes et bibliothèques de développement PostgreSQL
 Summary(pl):	PostgreSQL - pliki nag³ówkowe i biblioteki
 Summary(tr):	PostgreSQL baþlýk dosyalarý ve kitaplýklar
 Group:		Development/Libraries
-Group(pl):	Programowanie/Biblioteki
+Group(de):	Entwicklung/Libraries
 Group(fr):	Development/Librairies
+Group(pl):	Programowanie/Biblioteki
 Requires:	%{name}-libs = %{version}
 
 %description devel
@@ -220,6 +220,7 @@ PostgreSQL.
 %package python
 Summary:	The python-based client programs needed for accessing a PostgreSQL server
 Group:		Development/Languages/Python
+Group(de):	Entwicklung/Sprachen/Python
 Group(pl):	Programowanie/Jêzyki/Python
 Requires:	python >= 1.5
 Requires:	%{name}-libs = %{version}
@@ -234,7 +235,6 @@ Summary:	Documentation for PostgreSQL
 Summary(pl):	Dodatkowa dokumantacja dla PostgreSQL
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
-#Requires:	%{name} = %{version}
 
 %description doc
 This package includes documentation and HOWTO for programmer, admin
@@ -248,8 +248,9 @@ administratorów w formacie HTML.
 Summary:	PostgreSQL libraries
 Summary(pl):	Biblioteki dzielone programu PostgreSQL
 Group:		Libraries
-Group(pl):	Biblioteki
+Group(de):	Libraries
 Group(fr):	Librairies
+Group(pl):	Biblioteki
 
 %description libs
 PostgreSQL libraries.
@@ -261,8 +262,9 @@ Biblioteki dzielone programu PostgreSQL.
 Summary:	PostgreSQL static libraries
 Summary(pl):	Biblioteki statyczne programu PostgreSQL
 Group:		Development/Libraries
-Group(pl):	Programowanie/Biblioteki
+Group(de):	Entwicklung/Libraries
 Group(fr):	Development/Librairies
+Group(pl):	Programowanie/Biblioteki
 Requires:	%{name}-devel = %{version}
 
 %description static
@@ -355,6 +357,7 @@ Pakiet ten zawiera biblioteki statyczne dla interface'u ODBC.
 Summary:	tcl interface for PostgreSQL
 Summary(pl):	tcl interface dla PostgreSQL
 Group:		Development/Languages/Tcl
+Group(de):	Entwicklung/Sprachen/Tcl
 Group(pl):	Programowanie/Jêzyki/Tcl
 Requires:	%{name}-libs = %{version}
 
@@ -368,6 +371,7 @@ tcl interface dla PostgreSQL.
 Summary:	Development part of tcl interface for PostgreSQL
 Summary(pl):	Czê¶æ dla programistów interafece tcl dla PostgreSQL
 Group:		Development/Languages/Tcl
+Group(de):	Entwicklung/Sprachen/Tcl
 Group(pl):	Programowanie/Jêzyki/Tcl
 Requires:	%{name}-tcl = %{version}
 Requires:	%{name}-devel = %{version}
@@ -382,6 +386,7 @@ Czê¶æ dla programistów interafece tcl dla PostgreSQL.
 Summary:	Static libraries of tcl interface for PostgreSQL
 Summary(pl):	Biblioteki statyczne interafece tcl dla PostgreSQL
 Group:		Development/Languages/Tcl
+Group(de):	Entwicklung/Sprachen/Tcl
 Group(pl):	Programowanie/Jêzyki/Tcl
 Requires:	%{name}-tcl-devel = %{version}
 
@@ -524,7 +529,6 @@ cd src
 
 aclocal
 autoconf
-LDFLAGS="-s"; export LDFLAGS
 %configure \
 %ifarch %{ix86}
 	--with-template=linux_i386 \
@@ -542,14 +546,13 @@ LDFLAGS="-s"; export LDFLAGS
 	--with-x \
 	--with-perl
 
-%{__make} OPT="$RPM_OPT_FLAGS"
+%{__make} OPT="%{!?debug:$RPM_OPT_FLAGS}%{?debug:-O -g}"
 
 cd ..
 %{__make} all PGDOCS=unpacked -C doc
 
 # for datetime functions
 make -C contrib/datetime LIBDIR=%{pglibdir}
-
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -566,24 +569,24 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
 
 # Move PL/pgSQL procedural language to %{pgmoduledir}
 ( cd $RPM_BUILD_ROOT%{_libdir}
-  mv plpgsql.so $RPM_BUILD_ROOT%{pgmoduledir}
+  mv -f plpgsql.so $RPM_BUILD_ROOT%{pgmoduledir}
 )
 
 # Move PL/TCL procedural language to %{pgmoduledir}
 ( cd $RPM_BUILD_ROOT%{_libdir}
-  mv pltcl.so $RPM_BUILD_ROOT%{pgmoduledir}
+  mv -f pltcl.so $RPM_BUILD_ROOT%{pgmoduledir}
 )
 
 # For Perl interface
 ( cd $RPM_BUILD_ROOT%{perl_sitearch}/auto/Pg
-  mv .packlist .packlist.old
+  mv -f .packlist .packlist.old
   sed -e "s|$RPM_BUILD_ROOT/|/|g" -e "s|./||" < .packlist.old > .packlist
   rm -f .packlist.old
 )
 
 # Move all templates/examples beneath %{_libdir}/pgsql
 ( cd $RPM_BUILD_ROOT%{_libdir}
-  mv  *description *source *sample pgsql
+  mv -f  *description *source *sample pgsql
 )
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
@@ -600,11 +603,6 @@ install -d howto
 ( cd src/include
   cp -rf * $RPM_BUILD_ROOT%{_includedir}/pgsql
 )
-
-strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so* \
-	$RPM_BUILD_ROOT%{perl_sitearch}/auto/Pg/*.so
-
-gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man*/*
 
 %pre
 getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
