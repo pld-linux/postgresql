@@ -11,7 +11,6 @@
 # processname:	postmaster
 # pidfile:	/var/run/postmaster.pid
 
-
 # Source function library
 . /etc/rc.d/init.d/functions
 
@@ -30,7 +29,6 @@ fi
 # Sanity check
 [ -f /tmp/.s.PGSQL.5432 ] || rm -f /tmp/.s.PGSQL.5432
 
-
 # See how we were called.
 case "$1" in
   start)
@@ -38,10 +36,13 @@ case "$1" in
 	if [ ! -f /var/lock/subsys/postgresql ]; then
 		show Starting postgresql
 		busy
-		su postgres -c '/usr/bin/postmaster
-		touch /var/lock/subsys/postgresql
-		deltext
-		ok
+		su postgres -c "/usr/bin/postmaster -D /var/state/pgsql"
+		
+		if ps ax | grep -v grep | grep -q postmaster; then
+		    deltext;ok
+		else
+		    deltext;fail
+		fi
 	else
 		echo "Postgresql already is running"
 	fi
