@@ -381,14 +381,14 @@ Group(uk):	‚¶¬Ã¶œ‘≈À…
 %description libs
 PostgreSQL libraries.
 
-%description -l es lib
+%description -l es libs
 Este paquete contiene la biblioteca compartida para acceso al
 postgresql.
 
 %description libs -l pl
 Biblioteki dzielone programu PostgreSQL.
 
-%description -l pt_BR lib
+%description -l pt_BR libs
 Este pacote contÈm a biblioteca compartilhada para acesso ao
 postgresql.
 
