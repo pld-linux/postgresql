@@ -178,11 +178,11 @@ case "$1" in
 	    exit 1
 	fi
 
-	echo -n "Specify encoding for pgsql database (eg: LATIN1, KOI8) [$ENCODING]: "
+	echo -n "Specify encoding for pgsql database (eg: LATIN2, KOI8) [$ENCODING]: "
 	read new_encoding
 	ENCODING=${new_encoding:-$ENCODING}
 
-	show "Creating initial postgresql database usinc $ENCODING encoding"
+	show "Creating initial postgresql database using $ENCODING encoding"
 	busy
 
         # Create sample database
@@ -193,7 +193,7 @@ case "$1" in
 	fi
 
 	
-	TMPDIR=/tmp su - postgres -c "LD_LIBRARY_PATH=/usr/lib \
+	TMPDIR=/tmp su - postgres -s /bin/sh -c "LD_LIBRARY_PATH=/usr/lib \
 			initdb --pgdata=$POSTGRES_DATA_DIR \
 			-L /usr/share/postgresql -E $ENCODING"
 	;;
