@@ -18,22 +18,6 @@ Version:	7.2
 Release:	4
 License:	BSD
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
@@ -244,22 +228,6 @@ Summary(pl):	PostgreSQL - pliki nag³ówkowe i biblioteki
 Summary(pt_BR):	Arquivos de inclusão e bibliotecas para desenvolvimento com o PostgreSQL
 Summary(tr):	PostgreSQL başlık dosyaları ve kitaplıklar
 Group:		Development/Libraries
-Group(cs):	Vıvojové prostøedky/Knihovny
-Group(da):	Udvikling/Biblioteker
-Group(de):	Entwicklung/Bibliotheken
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(is):	Şróunartól/Ağgerğasöfn
-Group(it):	Sviluppo/Librerie
-Group(ja):	³«È¯/¥é¥¤¥Ö¥é¥ê
-Group(no):	Utvikling/Bibliotek
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(pt):	Desenvolvimento/Bibliotecas
-Group(ru):	òÁÚÒÁÂÏÔËÁ/âÉÂÌÉÏÔÅËÉ
-Group(sl):	Razvoj/Knji¾nice
-Group(sv):	Utveckling/Bibliotek
-Group(uk):	òÏÚÒÏÂËÁ/â¦ÂÌ¦ÏÔÅËÉ
 Requires:	%{name}-libs = %{version}
 
 %description devel
@@ -300,22 +268,6 @@ gereken başlık dosyalarını ve kitaplıkları içerir.
 Summary:	PostgreSQL backend development header files
 Summary(pl):	PostgreSQL - pliki nag³ówkowe dla backendu
 Group:		Development/Libraries
-Group(cs):	Vıvojové prostøedky/Knihovny
-Group(da):	Udvikling/Biblioteker
-Group(de):	Entwicklung/Bibliotheken
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(is):	Şróunartól/Ağgerğasöfn
-Group(it):	Sviluppo/Librerie
-Group(ja):	³«È¯/¥é¥¤¥Ö¥é¥ê
-Group(no):	Utvikling/Bibliotek
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(pt):	Desenvolvimento/Bibliotecas
-Group(ru):	òÁÚÒÁÂÏÔËÁ/âÉÂÌÉÏÔÅËÉ
-Group(sl):	Razvoj/Knji¾nice
-Group(sv):	Utveckling/Bibliotek
-Group(uk):	òÏÚÒÏÂËÁ/â¦ÂÌ¦ÏÔÅËÉ
 Requires:	%{name}-libs = %{version}
 
 %description backend-devel
@@ -332,22 +284,6 @@ Summary(es):	Clientes necesarios para acceder al servidor PostgreSQL
 Summary(pl):	Klienci wymagani do dostêpu do serwera PostgreSQL
 Summary(pt_BR):	Clientes necessários para acessar o servidor PostgreSQL
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name}-libs = %{version}
 
 %description clients
@@ -377,22 +313,6 @@ Summary(es):	Módulo Perl para acceder un servidor PostgreSQL
 Summary(pl):	Interfejs dla Perla umo¿liwiaj±cy dostêp do baz PostgreSQL
 Summary(pt_BR):	Módulo Perl para acesso ao servidor PostgreSQL
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	perl >= 5.004
 Requires:	%{name}-libs = %{version}
 
@@ -416,21 +336,6 @@ Summary(es):	Módulo Python para acceder un servidor PostgreSQL
 Summary(pl):	Programy klienckie do dostêpu do serwera PostgreSQL napisane w Pythonie
 Summary(pt_BR):	Módulo Python para acesso ao servidor PostgreSQL.
 Group:		Development/Languages/Python
-Group(cs):	Vıvojové prostøedky/Programovací jazyky/Python
-Group(da):	Udvikling/Sprog/Python
-Group(de):	Entwicklung/Sprachen/Python
-Group(es):	Desarrollo/Lenguajes/Python
-Group(fr):	Development/Langues/Python
-Group(is):	Şróunartól/Forritunarmál/Python
-Group(it):	Sviluppo/Linguaggi/Python
-Group(ja):	³«È¯/¸À¸ì/Python
-Group(no):	Utvikling/Programmeringsspråk/Python
-Group(pl):	Programowanie/Jêzyki/Python
-Group(pt):	Desenvolvimento/Linguagens/Python
-Group(ru):	òÁÚÒÁÂÏÔËÁ/ñÚÙËÉ/Python
-Group(sl):	Razvoj/Jeziki/Python
-Group(sv):	Utveckling/Språk/Python
-Group(uk):	òÏÚÒÏÂËÁ/íÏ×É/Python
 Requires:	python >= 2.0
 Requires:	%{name}-libs = %{version}
 Obsoletes:	python-PyGreSQL
@@ -455,22 +360,6 @@ Módulo Python para acesso ao servidor PostgreSQL.
 Summary:	Documentation for PostgreSQL
 Summary(pl):	Dodatkowa dokumantacja dla PostgreSQL
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 
 %description doc
 This package includes documentation and HOWTO for programmer, admin
@@ -486,22 +375,6 @@ Summary(es):	Biblioteca compartida del PostgreSQL
 Summary(pl):	Biblioteki dzielone programu PostgreSQL
 Summary(pt_BR):	Biblioteca compartilhada do PostgreSQL
 Group:		Libraries
-Group(cs):	Knihovny
-Group(da):	Biblioteker
-Group(de):	Bibliotheken
-Group(es):	Bibliotecas
-Group(fr):	Librairies
-Group(is):	Ağgerğasöfn
-Group(it):	Librerie
-Group(ja):	¥é¥¤¥Ö¥é¥ê
-Group(no):	Biblioteker
-Group(pl):	Biblioteki
-Group(pt):	Bibliotecas
-Group(pt_BR):	Bibliotecas
-Group(ru):	âÉÂÌÉÏÔÅËÉ
-Group(sl):	Knji¾nice
-Group(sv):	Bibliotek
-Group(uk):	â¦ÂÌ¦ÏÔÅËÉ
 
 %description libs
 PostgreSQL shared libraries.
@@ -523,22 +396,6 @@ Summary(es):	Bibliotecas estaticas PostgreSQL
 Summary(pl):	Biblioteki statyczne programu PostgreSQL
 Summary(pt_BR):	Bibliotecas estáticas PostgreSQL
 Group:		Development/Libraries
-Group(cs):	Vıvojové prostøedky/Knihovny
-Group(da):	Udvikling/Biblioteker
-Group(de):	Entwicklung/Bibliotheken
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(is):	Şróunartól/Ağgerğasöfn
-Group(it):	Sviluppo/Librerie
-Group(ja):	³«È¯/¥é¥¤¥Ö¥é¥ê
-Group(no):	Utvikling/Bibliotek
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(pt):	Desenvolvimento/Bibliotecas
-Group(ru):	òÁÚÒÁÂÏÔËÁ/âÉÂÌÉÏÔÅËÉ
-Group(sl):	Razvoj/Knji¾nice
-Group(sv):	Utveckling/Bibliotek
-Group(uk):	òÏÚÒÏÂËÁ/â¦ÂÌ¦ÏÔÅËÉ
 Requires:	%{name}-devel = %{version}
 
 %description static
@@ -561,22 +418,6 @@ PostgreSQL.
 Summary:	C++ interface to PostgreSQL
 Summary(pl):	Interfejs C++ do PostgreSQL
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name}-libs = %{version}
 
 %description c++
@@ -589,22 +430,6 @@ Pakiet ten zawiera biblioteki dla interfejsu C++ do PostgreSQL.
 Summary:	C++ interface to PostgreSQL - development part
 Summary(pl):	Interfejs C++ do PostgreSQL - cze¶æ programistyczna
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name}-c++ = %{version}
 Requires:	%{name}-devel = %{version}
 
@@ -618,22 +443,6 @@ Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interfejsu C++.
 Summary:	C++ interface to PostgreSQL - static libraries
 Summary(pl):	Interfejs C++ do PostgreSQL - biblioteki statyczne
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name}-c++-devel = %{version}
 
 %description c++-static
@@ -648,22 +457,6 @@ Summary(es):	Driver ODBC para acceder un servidor PostgreSQL
 Summary(pl):	Interfejs ODBC do PostgreSQL
 Summary(pt_BR):	Driver ODBC necessário para acessar um servidor PostgreSQL
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name}-libs = %{version}
 
 %description odbc
@@ -682,22 +475,6 @@ Driver ODBC necessário para acessar um servidor PostgreSQL.
 Summary:	ODBC interface to PostgreSQL - development part
 Summary(pl):	Interfejs ODBC do PostgreSQL - cze¶æ programistyczna
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name}-odbc = %{version}
 Requires:	%{name}-devel = %{version}
 
@@ -711,22 +488,6 @@ Pakiet ten zawiera biblioteki i pliki nag³ówkowe dla interfejsu ODBC.
 Summary:	ODBC interface to PostgreSQL - static libraries
 Summary(pl):	Interfejs ODBC do PostgreSQL - biblioteki statyczne
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name}-odbc-devel = %{version}
 
 %description odbc-static
@@ -739,22 +500,6 @@ Pakiet ten zawiera biblioteki statyczne dla interfejsu ODBC.
 Summary:	A free graphical database management tool for PostgreSQL
 Summary(pl):	Graficzne narzêdzie do obs³ugi baz danych PostgreSQL
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name}-tcl = %{version}
 
 %description -n pgaccess
@@ -769,21 +514,6 @@ Summary(es):	Bibliotecas y shell TCL para acceder un servidor PostgreSQL
 Summary(pl):	Interfejs tcl dla PostgreSQL
 Summary(pt_BR):	Bibliotecas e shell para programas em TCL acessarem o servidor PostgreSQL
 Group:		Development/Languages/Tcl
-Group(cs):	Vıvojové prostøedky/Programovací jazyky/Tcl
-Group(da):	Udvikling/Sprog/Tcl
-Group(de):	Entwicklung/Sprachen/Tcl
-Group(es):	Desarrollo/Lenguajes/Tcl
-Group(fr):	Development/Langues/Tcl
-Group(is):	Şróunartól/Forritunarmál/Tcl
-Group(it):	Sviluppo/Linguaggi/Tcl
-Group(ja):	³«È¯/¸À¸ì/Tcl
-Group(no):	Utvikling/Programmeringsspråk/Tcl
-Group(pl):	Programowanie/Jêzyki/Tcl
-Group(pt):	Desenvolvimento/Linguagens/Tcl
-Group(ru):	òÁÚÒÁÂÏÔËÁ/ñÚÙËÉ/Tcl
-Group(sl):	Razvoj/Jeziki/Tcl
-Group(sv):	Utveckling/Språk/Tcl
-Group(uk):	òÏÚÒÏÂËÁ/íÏ×É/Tcl
 Requires:	%{name}-libs = %{version}
 
 %description tcl
@@ -803,21 +533,6 @@ PostgreSQL
 Summary:	Development part of tcl interface for PostgreSQL
 Summary(pl):	Czê¶æ dla programistów interfejsu tcl dla PostgreSQL
 Group:		Development/Languages/Tcl
-Group(cs):	Vıvojové prostøedky/Programovací jazyky/Tcl
-Group(da):	Udvikling/Sprog/Tcl
-Group(de):	Entwicklung/Sprachen/Tcl
-Group(es):	Desarrollo/Lenguajes/Tcl
-Group(fr):	Development/Langues/Tcl
-Group(is):	Şróunartól/Forritunarmál/Tcl
-Group(it):	Sviluppo/Linguaggi/Tcl
-Group(ja):	³«È¯/¸À¸ì/Tcl
-Group(no):	Utvikling/Programmeringsspråk/Tcl
-Group(pl):	Programowanie/Jêzyki/Tcl
-Group(pt):	Desenvolvimento/Linguagens/Tcl
-Group(ru):	òÁÚÒÁÂÏÔËÁ/ñÚÙËÉ/Tcl
-Group(sl):	Razvoj/Jeziki/Tcl
-Group(sv):	Utveckling/Språk/Tcl
-Group(uk):	òÏÚÒÏÂËÁ/íÏ×É/Tcl
 Requires:	%{name}-tcl = %{version}
 Requires:	%{name}-devel = %{version}
 
@@ -831,21 +546,6 @@ Czê¶æ interfejsu tcl dla PostgreSQL przeznaczona dla programistów.
 Summary:	Static libraries of tcl interface for PostgreSQL
 Summary(pl):	Biblioteki statyczne interfejsu tcl dla PostgreSQL
 Group:		Development/Languages/Tcl
-Group(cs):	Vıvojové prostøedky/Programovací jazyky/Tcl
-Group(da):	Udvikling/Sprog/Tcl
-Group(de):	Entwicklung/Sprachen/Tcl
-Group(es):	Desarrollo/Lenguajes/Tcl
-Group(fr):	Development/Langues/Tcl
-Group(is):	Şróunartól/Forritunarmál/Tcl
-Group(it):	Sviluppo/Linguaggi/Tcl
-Group(ja):	³«È¯/¸À¸ì/Tcl
-Group(no):	Utvikling/Programmeringsspråk/Tcl
-Group(pl):	Programowanie/Jêzyki/Tcl
-Group(pt):	Desenvolvimento/Linguagens/Tcl
-Group(ru):	òÁÚÒÁÂÏÔËÁ/ñÚÙËÉ/Tcl
-Group(sl):	Razvoj/Jeziki/Tcl
-Group(sv):	Utveckling/Språk/Tcl
-Group(uk):	òÏÚÒÏÂËÁ/íÏ×É/Tcl
 Requires:	%{name}-tcl-devel = %{version}
 
 %description tcl-static
@@ -858,22 +558,6 @@ Biblioteki statyczne interfejsu tcl dla PostgreSQL.
 Summary:	PL/pgSQL - PostgreSQL procedural language
 Summary(pl):	PL/pgSQL jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name} = %{version}
 
 %description module-plpgsql
@@ -908,22 +592,6 @@ proceduralnego PL/pgSQL dla swojej bazy danych.
 Summary:	PL/perl - PostgreSQL procedural language
 Summary(pl):	PL/perl jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name} = %{version}
 %requires_eq	perl
 
@@ -959,22 +627,6 @@ proceduralnego PL/perl dla swojej bazy danych.
 Summary:	PL/python - PostgreSQL procedural language
 Summary(pl):	PL/python jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name} = %{version}
 %requires_eq	python
 
@@ -1010,22 +662,6 @@ proceduralnego PL/python dla swojej bazy danych.
 Summary:	PL/TCL - PostgreSQL procedural language
 Summary(pl):	PL/TCL - jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Group(cs):	Aplikace/Databáze
-Group(da):	Programmer/Databaser
-Group(de):	Applikationen/Datenbanken
-Group(es):	Aplicaciones/Bases de Datos
-Group(fr):	Applications/Bases de Données
-Group(id):	Aplikasi/Database
-Group(is):	Forrit/Gagnagrunnar
-Group(it):	Applicazioni/Database
-Group(ja):	¥¢¥×¥ê¥±¡¼¥·¥ç¥ó/¥Ç¡¼¥¿¥Ù¡¼¥¹
-Group(no):	Applikasjoner/Databaser
-Group(pl):	Aplikacje/Bazy Danych
-Group(pt):	Aplicações/Bases de Dados
-Group(ru):	ğÒÉÌÏÖÅÎÉÑ/âÁÚÙ ÄÁÎÎÙÈ
-Group(sl):	Programi/Zbirke podatkov
-Group(sv):	Tillämpningar/Databaser
-Group(uk):	ğÒÉËÌÁÄÎ¦ ğÒÏÇÒÁÍÉ/âÁÚÉ ÄÁÎÉÈ
 Requires:	%{name} = %{version}
 
 %description module-pltcl
