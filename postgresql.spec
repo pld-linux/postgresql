@@ -9,9 +9,10 @@
 #   routine and send it to postgresql team...
 #
 # Conditional build:
-%bcond_without	tcl			# disables Tcl support
+%bcond_without  tests			# disable testing
+%bcond_without	tcl				# disables Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
-%bcond_with	jdbc			# enable JDBC driver
+%bcond_with	jdbc				# enable JDBC driver
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 
