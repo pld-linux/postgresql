@@ -849,6 +849,7 @@ autoconf
 %configure \
 	%{!?_without_pgsql_locale:--enable-locale} \
 	%{!?_without_pgsql_multibyte:--enable-multibyte} \
+	--disable-rpath \
 	--enable-depend \
 	--enable-odbc \
 	--enable-recode \
