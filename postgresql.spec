@@ -25,7 +25,7 @@ Patch5:		%{name}-pgaccess-typo.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
-Requires:	rc-scripts
+Prereq:		rc-scripts
 BuildRequires:	autoconf
 BuildRequires:	tcl-devel >= 8.3.2
 BuildRequires:	tk-devel >= 8.3.2
