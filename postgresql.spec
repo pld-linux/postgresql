@@ -1,7 +1,6 @@
 #
 # TODO:
 # - pg_autovacuum init support? look at its readme file, please
-# - init script for slon (Slony-I daemon).
 # - fix tutorial building
 #
 # Conditional build:
@@ -45,6 +44,9 @@ Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
 Source4:	http://developer.postgresql.org/~wieck/slony1/download/slony1-%{slony1_version}.tar.gz
 # Source4-md5:	66fcc0f53028101e4e0f969e5f47fe43
+Source5:	slony1.init
+Source6:	slony1.pgpass
+Source7:	slony1.sysconfig
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-link.patch
@@ -809,6 +811,10 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 %if %{with slony1}
 %{__make} install -C slony1-%{slony1_version} \
 	DESTDIR=$RPM_BUILD_ROOT
+mkdir $RPM_BUILD_ROOT/home/services/slony1
+install %{SOURCE7} $RPM_BUILD_ROOT/etc/sysconfig/slony1
+install %{SOURCE6} $RPM_BUILD_ROOT/home/services/slony1/.pgpass
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/slony1
 %endif
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
@@ -903,6 +909,32 @@ fi
 
 %post	ecpg -p /sbin/ldconfig
 %postun	ecpg -p /sbin/ldconfig
+
+%pre slony1
+getgid slony1 >/dev/null 2>&1 || /usr/sbin/groupadd -g 131 -r slony1
+if id slony1 >/dev/null 2>&1 ; then
+	/usr/sbin/usermod -d /home/services/slony1 slony1
+else
+	/usr/sbin/useradd -M -o -r -u 131 \
+		-d /home/services/slony1 -s /bin/sh -g slony1 \
+		-c "Slony-I Replicator" slony1
+fi
+
+%post -n slony1
+/sbin/chkconfig --add slony1
+if [ -f /var/lock/subsys/slony1 ]; then
+	/etc/rc.d/init.d/slony1 restart >&2 || :
+else
+	echo "Run \"/etc/rc.d/init.d/slony1 start\" to start slony1 replicator."
+fi
+
+%preun -n slony1
+if [ "$1" = "0" ]; then
+	if [ -f /var/lock/subsys/slony1 ]; then
+		/etc/rc.d/init.d/slony1 stop
+	fi
+	/sbin/chkconfig --del slony1
+fi
 
 %files -f main.lang
 %defattr(644,root,root,755)
@@ -1075,8 +1107,12 @@ fi
 %files -n slony1
 %defattr(644,root,root,755)
 %doc slony1-%{slony1_version}/doc/howto/*
+%config /etc/sysconfig/slony1
+%attr(744,root,root) /etc/rc.d/init.d/slony1
 %attr(755,root,root) %{_bindir}/slon
 %attr(755,root,root) %{_bindir}/slonik
+%attr(750,slony1,slony1) %dir /home/services/slony1
+%attr(600,root,root) /home/services/slony1/.pgpass
 %{_pgmoduledir}/slony1_funcs.so
 %{_pgmoduledir}/xxid.so
 %endif
