@@ -6,7 +6,7 @@ Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	6.5.3
-Release:	1
+Release:	2
 Copyright:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy Danych
