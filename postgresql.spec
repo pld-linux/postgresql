@@ -2,6 +2,7 @@
 # TODO:
 # - pg_autovacuum init support? look at its readme file, please
 # - init script for slon (Slony-I daemon).
+# - fix tutorial building
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
@@ -763,8 +764,8 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 %{__make} -C contrib/pg_autovacuum
 %{__make} -C contrib/pgcrypto
 %{__make} -C contrib/tsearch2
-%{__make} -C src/tutorial
-%ifnarch sparc sparcv9 sparc64 alpha ppc
+#%{__make} -C src/tutorial
+%ifnarch sparc sparcv9 sparc64 alpha
 %{?with_tests:%{__make} check}
 %endif
 
@@ -786,7 +787,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 	$RPM_BUILD_ROOT%{_mandir} \
 	$RPM_BUILD_ROOT/home/services/postgres
 
-install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+#install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
