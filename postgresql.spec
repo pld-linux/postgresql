@@ -1,3 +1,8 @@
+#TODO:
+# - remove bashizm (pushd popd) to build with /bin/sh!=/bin/bash
+# - check BR
+# - remove %define from Aurox and PLD'ize them
+
 %define beta 0
 
 %{?beta:%define __os_install_post /usr/lib/rpm/brp-compress}
