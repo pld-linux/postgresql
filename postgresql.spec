@@ -4,8 +4,8 @@ Summary(fr):	Sysème de gestion de base de données PostgreSQL.
 Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
-Version:	6.4.2
-Release:	7
+Version:	6.5
+Release:	1
 Copyright:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -18,7 +18,7 @@ Patch2:		postgresql-perl.patch
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
 Buildroot:	/tmp/%{name}-%{version}-root
-Requires:	%{name}-clients = %{version}
+#Requires:	%{name}-clients = %{version}
 
 %define		_prefix		/usr
 
@@ -128,7 +128,7 @@ Summary(pl):	PostgreSQL - nag³owki i biblioteki
 Summary(tr):	PostgreSQL baþlýk dosyalarý ve kitaplýklar
 Group:		Development/Libraries
 Group(pl):	Programowanie/Biblioteki
-Requires:	%{name}-clients = %{version}
+#Requires:	%{name}-clients = %{version}
 
 %description devel
 This package contains header files and libraries required to compile
@@ -152,64 +152,63 @@ Pakiet zawiera nag³ówki oraz biblioteki wymagane do kompilacji aplikacji
 Bu paket, PostgreSQL sunucusuyla konuþacak yazýlýmlar geliþtirmek için
 gereken baþlýk dosyalarýný ve kitaplýklarý içerir.
 
-%package data
-Summary:	PostgreSQL initial database structure
-Summary(de):	PostgreSQL-Ausgangs-Datenbankstruktur 
-Summary(fr):	Structure initiale de base de données PostgreSQL 
-Summary(pl):	PostgreSQL - inicjuj±ca struktura bazy danych
-Summary(tr):	PostgreSQL baþlangýç veritabaný yapýsý
-Group:		Applications/Databases
-Group(pl):	Aplikacje/Bazy danych
-Requires:	%{name}  = %{version}
-Requires:	%{name}-clients = %{version}
-Conflicts:	postgresql-data <= 6.2.1
-
-%description data
-This packages includes an initial database structure directory for PostgreSQL.
-For a quick startup on PostegreSQL, it is recommended to install this package
-with your PostgreSQL backend server (altough it is not required). 
-
-If you choose to not install this package you will have to create the initial
-database yourself using 'initdb' command and possibly modify the postgresql
-startup script if you choose a directory other than /var/lib/pgsql for
-storing your databases.
-
-%description -l de data
-Dieses Paket schließt ein elementares Strukturverzeichnis für 
-PostgreSQL ein. Für einen schnellen Start mit PostegreSQL empfehlen 
-wir die Installation dieses Pakets mit Ihrem PostgreSQL-Backend-
-Server (obligatorisch ist es nicht).
-Sie die anfängliche Datenbank selbst mit Hilfe des initdb-Befehls 
-erstellen und möglicherweise das postgresql-Start-Skript modifizieren, 
-wenn Sie ein anderes als das /var/lib/pgsql-Verzeichnis zum Speichern 
-Ihrer Datenbanken wählen. 
-
-%description -l fr data
-Ce paquetage contient une structure initiale de base de données pour PostgreSQL.
-Pour un démarrage rapide avec PostgreSQL, il est recommandé d'installer ce
-paquetage avec votre serveur PostgreSQL (bien que ce ne soit pas obligatoire).
-
-Si vous n'installez pas ce paquetage, vous devrez créer vous-même la base de
-données initiale avec la commande « initdb » et modifier le script de
-démarrage de PostgreSQL si vous choisissez un autre répertoire que
-/var/lib/pgsql pour stocker vos bases de données.
-
-%description -l pl data
-Pakiet zawiera zainicjowan± strukturê bazodanow± dla PostgreSQL. Dla
-szybkiego startu PostgreSQL rekomendowane jest zainstalowanie tego pakietu
-razem z pakietem serwera (jednak¿e nie jest on wymagany).
-
-Je¿eli nie zainstalujesz tego pakietu bêdziesz musia³ rêcznie utworzyæ 
-inicjuj±c± bazê przy pomocy polecenia 'initdb' oraz ewentualnie skrypt
-startowy, je¿eli nie wybierzesz katalogu /var/lib/pgsql jako katalogu
-domy¶lnego dla przechowywania baz danych.
-
-%description -l tr data
-Bu paket, PostgreSQL için bir baþlangýç veri tabaný yapýsý dizinini içerir.
-PostgreSQL'e hýzlý baþlangýç için bu paketin PostgreSQL sunucusuna yüklenmesi
-önerilir. Bu paketi yüklememeyi seçerseniz, baþlangýç veri tabanýný 'initdb'
-komutunu kullanarak kendiniz yaratmanýz gerekir.
-
+#%package data
+#Summary:	PostgreSQL initial database structure
+#Summary(de):	PostgreSQL-Ausgangs-Datenbankstruktur 
+#Summary(fr):	Structure initiale de base de données PostgreSQL 
+#Summary(pl):	PostgreSQL - inicjuj±ca struktura bazy danych
+#Summary(tr):	PostgreSQL baþlangýç veritabaný yapýsý
+#Group:		Applications/Databases
+#Group(pl):	Aplikacje/Bazy danych
+#PreReq:		%{name} = %{version}
+#Conflicts:	postgresql-data <= 6.2.1
+#
+#%description data
+#This packages includes an initial database structure directory for PostgreSQL.
+#For a quick startup on PostegreSQL, it is recommended to install this package
+#with your PostgreSQL backend server (altough it is not required). 
+#
+#If you choose to not install this package you will have to create the initial
+#database yourself using 'initdb' command and possibly modify the postgresql
+#startup script if you choose a directory other than /var/lib/pgsql for
+#storing your databases.
+#
+#%description -l de data
+#Dieses Paket schließt ein elementares Strukturverzeichnis für 
+#PostgreSQL ein. Für einen schnellen Start mit PostegreSQL empfehlen 
+#wir die Installation dieses Pakets mit Ihrem PostgreSQL-Backend-
+#Server (obligatorisch ist es nicht).
+#Sie die anfängliche Datenbank selbst mit Hilfe des initdb-Befehls 
+#erstellen und möglicherweise das postgresql-Start-Skript modifizieren, 
+#wenn Sie ein anderes als das /var/lib/pgsql-Verzeichnis zum Speichern 
+#Ihrer Datenbanken wählen. 
+#
+#%description -l fr data
+#Ce paquetage contient une structure initiale de base de données pour PostgreSQL.
+#Pour un démarrage rapide avec PostgreSQL, il est recommandé d'installer ce
+#paquetage avec votre serveur PostgreSQL (bien que ce ne soit pas obligatoire).
+#
+#Si vous n'installez pas ce paquetage, vous devrez créer vous-même la base de
+#données initiale avec la commande « initdb » et modifier le script de
+#démarrage de PostgreSQL si vous choisissez un autre répertoire que
+#/var/lib/pgsql pour stocker vos bases de données.
+#
+#%description -l pl data
+#Pakiet zawiera zainicjowan± strukturê bazodanow± dla PostgreSQL. Dla
+#szybkiego startu PostgreSQL rekomendowane jest zainstalowanie tego pakietu
+#razem z pakietem serwera (jednak¿e nie jest on wymagany).
+#
+#Je¿eli nie zainstalujesz tego pakietu bêdziesz musia³ rêcznie utworzyæ 
+#inicjuj±c± bazê przy pomocy polecenia 'initdb' oraz ewentualnie skrypt
+#startowy, je¿eli nie wybierzesz katalogu /var/lib/pgsql jako katalogu
+#domy¶lnego dla przechowywania baz danych.
+#
+#%description -l tr data
+#Bu paket, PostgreSQL için bir baþlangýç veri tabaný yapýsý dizinini içerir.
+#PostgreSQL'e hýzlý baþlangýç için bu paketin PostgreSQL sunucusuna yüklenmesi
+#önerilir. Bu paketi yüklememeyi seçerseniz, baþlangýç veri tabanýný 'initdb'
+#komutunu kullanarak kendiniz yaratmanýz gerekir.
+#
 %package clients
 Summary:	clients needed to access a PostgreSQL server
 Summary(pl):	klienci wymagani do dostêpu do serwera PostgreSQL
@@ -249,7 +248,7 @@ Summary:	Documentation for PostgreSQL
 Summary(pl):	Dodatkowa dokumantacja dla PostgreSQL
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
-Requires:	%{name} = %{version}
+#Requires:	%{name} = %{version}
 
 %description doc
 This package includes documentation and HOWTO for programmer, admin etc., in
@@ -315,6 +314,7 @@ Summary:	PostgreSQL static libraries
 Summary(pl):	Biblioteki statyczne programu PostgreSQL
 Group:		Development/Libraries
 Group(pl):	Programowanie/Biblioteki
+Requires:	%{name}-devel = %{version}
 
 %description static
 PostgreSQL static libraries.
@@ -363,9 +363,9 @@ Biblioteki statyczne interafece tcl dla PostgreSQL
 
 %prep
 %setup  -q
-%patch0 -p1 
-%patch1 -p1 
-%patch2 -p1 
+#%patch0 -p1 -b .opt
+%patch1 -p1 -b .destdir
+%patch2 -p1 -b .perl
 
 %build
 PATH=$PATH:. ; export PATH
@@ -462,7 +462,7 @@ rm -fR `find contrib/ -type d -name CVS`
 
 chmod +x $RPM_BUILD_ROOT%{_libdir}/*.so*
 
-%pre data
+%pre 
 if ! `grep postgres /etc/passwd >/dev/null 2>&1`; then
     useradd -M -o -r -d /var/lib/pgsql -s /bin/bash \
 	-c "PostgreSQL Server" postgres >/dev/null 2>&1 || :
@@ -470,6 +470,12 @@ fi
 
 %post
 /sbin/chkconfig --add postgresql
+
+# Create sample database
+su postgres -c "LD_LIBRARY_PATH=%{_libdir} \
+    %{_bindir}/initdb --pgdata=/var/lib/pgsql \
+    --pglib=%{_libdir}/pgsql"
+
 
 %preun
 if [ $1 = 0 ]; then
@@ -479,14 +485,8 @@ if [ $1 = 0 ]; then
 	/sbin/chkconfig --del postgresql
 fi
 
-%post data
-# Create sample database
-su postgres -c "LD_LIBRARY_PATH=%{_libdir} \
-    %{_bindir}/initdb --pgdata=/var/lib/pgsql \
-    --pglib=%{_libdir}/pgsql"
-
-%post   -p /sbin/ldconfig clients
-%postun -p /sbin/ldconfig clients
+%post   -p /sbin/ldconfig libs
+%postun -p /sbin/ldconfig libs
 
 %post   -p /sbin/ldconfig devel
 %postun -p /sbin/ldconfig devel
@@ -523,10 +523,6 @@ rm -f /tmp/tmp_perl_info
 
 %attr(754,root,root) /etc/rc.d/init.d/*
 
-%defattr(644,postgres,postgres,755)
-%{_libdir}/pgsql
-
-%defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/cleardbdir
 %attr(755,root,root) %{_bindir}/createdb
 %attr(755,root,root) %{_bindir}/createuser
@@ -539,6 +535,8 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
 %attr(755,root,root) %{_bindir}/ipcclean
+%attr(755,root,root) %{_bindir}/createlang
+%attr(755,root,root) %{_bindir}/destroylang
 
 %{_mandir}/man1/cleardbdir.1*
 %{_mandir}/man1/createdb.1*
@@ -553,6 +551,8 @@ rm -f /tmp/tmp_perl_info
 %{_mandir}/man1/ipcclean.1*
 %{_mandir}/man5/*.5*
 
+%attr(644,postgres,postgres) /var/lib/pgsql
+
 %files libs
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
@@ -560,7 +560,11 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
 # nie wiem do czego to
 %attr(755,root,root) %{_libdir}/plpgsql.so 
+
 %{_libdir}/*.description
+
+%defattr(644,postgres,postgres,755)
+%{_libdir}/pgsql
 
 %files tcl
 %defattr(644,root,root,755)
@@ -594,9 +598,7 @@ rm -f /tmp/tmp_perl_info
 %{_libdir}/libpq.a
 %{_libdir}/libpq++.a
 
-%files data
-%defattr(644,postgres,postgres,755)
-/var/lib/pgsql
+#%files data
 
 %files clients
 %defattr(644,root,root,755)
@@ -607,6 +609,7 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_bindir}/pg_id
 %attr(755,root,root) %{_bindir}/pg_upgrade
 %attr(755,root,root) %{_bindir}/psql
+%attr(755,root,root) %{_bindir}/vacuumdb
 
 %{_mandir}/man1/pg_dump.1*
 %{_mandir}/man1/pg_dumpall.1*
