@@ -1,9 +1,7 @@
 #!/bin/sh
 # todo:
 #    - encodings? leave or rip?
-#    - finish reload
 #    - finish init
-#    - what about /var/lock/subsys/postgresql?
 #    - tests, more tests
 #
 # postgresql	This is the init script for starting up the PostgreSQL
@@ -66,16 +64,20 @@ fi
 case "$action" in
   start)
     for pgdir in $POSTGRES_DB_CLUSTERS; do
-      msg_starting "PostgreSQL $pgdir"
-      busy
-      TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir start 2>&1 >/dev/null"
-      
       pgstatus "$pgdir"
-      if [ $PG_STATUS != "unknown" -a $PG_PID != "unknown" ]
-          deltext; ok
+      if [ $PG_STATUS = "not running" ]; then
+        msg_already_running "PostgreSQL $pgdir (skipping"
       else
-          deltext; fail 
-          exit 1	
+        msg_starting "PostgreSQL $pgdir"
+        busy
+        TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir start 2>&1 >/dev/null"
+        
+        pgstatus "$pgdir"
+        if [ $PG_STATUS != "unknown" -a $PG_PID != "unknown" ]
+            deltext; ok
+        else
+            deltext; fail 
+        fi
       fi
     done
 	;;
@@ -83,20 +85,19 @@ case "$action" in
     for pgdir in $POSTGRES_DB_CLUSTERS; do
       pgstatus "$pgdir"
       if [ $PG_STATUS = "not running" ]; then
-		msg_not_running "PostgreSQL (skipping)"
+		msg_not_running "PostgreSQL $pgdir (skipping)"
+      else
+        msg_stopping PostgreSQL
+	    busy
+	    TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir stop -m fast 2>&1 >/dev/null"
+        pgstatus "$pgdir"
+        if [ $PG_STATUS != "not running"]; then
+	      deltext; fail
+	    else
+	      deltext; ok
+	    fi
+	    rm -f $pgdir/postmaster.pid
       fi
-      msg_stopping PostgreSQL
-	  busy
-	  TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir stop -m fast 2>&1 >/dev/null"
-      pgstatus "$pgdir"
-      if [ $PG_STATUS != "not running"]; then
-		deltext; fail
-		echo -e "\n$out";
-		exit 1
-	  else
-		deltext; ok
-	  fi
-	  rm -f $pgdir/postmaster.pid
     done
 	;;
   status)
@@ -107,33 +108,24 @@ case "$action" in
 	$0 start
 	;;
   reload)
-  	if [ ! -f /var/lock/subsys/postgresql ]; then
-		msg_not_running PostgreSQL
-		exit 0	
-	fi
-	msg_reloading PostgreSQL
-	busy
-
-	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR") \
-	    $([ "$POSTGRES_QUIET". = yes. ] && echo '-s')";
-	POSTMASTER_OPTIONS=" \
-	    $([ "$POSTGRES_QUIET". = yes. ] && echo '-S') \
-	    $([ "$POSTGRES_DISABLE_FSYNC". = yes. ] && echo '-F') \
-	    $([ "$ALLOW_TCP_CONNECTIONS". = yes. ] && echo '-i')";
-
-	TMPDIR=/tmp su postgres -c "\
-		$(echo "/usr/bin/pg_ctl restart $PGSQL_CMDLINE -l $POSTGRES_LOG") \
-		$([ "$POSTMASTER_OPTIONS". != . ] && echo "-o '$POSTMASTER_OPTIONS'") \
-		$(echo "2>&1 >/dev/null")";
-
-	out=`status postmaster`
-	if [ $? -eq 0 ]; then
-		deltext; ok
-	else
-		deltext; fail
-		echo -e "\n$out";
-		exit 1
-	fi
+    for pgdir in $POSTGRES_DB_CLUSTERS; do
+      pgstatus "$pgdir"
+      if [ $PG_STATUS = "not running" ]; then
+      	msg_not_running "PostgreSQL $pgdir (skipping)"
+      else
+        msg_reloading PostgreSQL
+        busy
+        
+        TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir restart 2>&1 >/dev/null"
+        
+        pgstatus "$pgdir"
+        if [ $PG_STATUS = "running" ]; then
+        	deltext; ok
+        else
+        	deltext; fail
+        fi
+      fi
+    done
 	;;
     init)
 	if [ -f "$POSTGRES_DATA_DIR/PG_VERSION" ]; then
