@@ -911,7 +911,6 @@ fi
 
 %files devel
 %defattr(644,root,root,755)
-%doc doc/internals.ps*
 %attr(755,root,root) %{_bindir}/ecpg
 %attr(755,root,root) %{_libdir}/libecpg.so
 %attr(755,root,root) %{_libdir}/libpgeasy.so
