@@ -417,7 +417,7 @@ gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man*/*
 /sbin/chkconfig --add postgresql
 
 # Create sample database
-if [ ! -f /var/state/psql/PG_VERSION ]; then
+if [ ! -f /var/state/pgsql/PG_VERSION ]; then
 	su postgres -c "LD_LIBRARY_PATH=%{_libdir} \
 		%{_bindir}/initdb --pgdata=/var/state/pgsql \
 		--pglib=%{_libdir}/pgsql"
@@ -476,7 +476,7 @@ rm -f /tmp/tmp_perl_info
 %doc doc/*.ps.gz
 
 %attr(754,root,root) /etc/rc.d/init.d/*
-%attr(640,root,root) /etc/sysconfig/*
+%attr(644,root,root) /etc/sysconfig/*
 
 %attr(755,root,root) %{_bindir}/cleardbdir
 %attr(755,root,root) %{_bindir}/createdb
