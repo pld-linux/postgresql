@@ -2,7 +2,9 @@
 # Conditional build:
 # _with_jdbc		- with JDBC driver
 #
-
+# TODO:
+# - put pgcrypto docs into docdir
+# - put pgcrypto sql files in %{_datadir}/postgresql
 %include	/usr/lib/rpm/macros.perl
 %include	/usr/lib/rpm/macros.python
 
@@ -17,13 +19,15 @@ Summary(tr):	Veri Tabaný Yönetim Sistemi
 Summary(uk):	PostgreSQL - ÓÉÓÔÅÍÁ ËÅÒÕ×ÁÎÎÑ ÂÁÚÁÍÉ ÄÁÎÉÈ
 Summary(zh_CN):	PostgreSQL ¿Í»§¶Ë³ÌÐòºÍ¿âÎÄ¼þ
 Name:		postgresql
-Version:	7.2.3
-Release:	1
+Version:	7.2.4
+Release:	4
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	b767f204a91097f1b3a6d2b4c39eac7a
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
+# Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
 Source4:	pgaccess.desktop
 Source5:	pgaccess.png
@@ -33,6 +37,8 @@ Patch2:		%{name}-ac_fixes.patch
 Patch3:		%{name}-pg_ctl-silent.patch
 Patch4:		%{name}-DESTDIR.patch
 Patch5:		%{name}-pg_ctl-nopsql.patch
+Patch6:		%{name}-acfix.patch
+Patch7:		%{name}-to_ascii-overflows.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	XFree86-devel
@@ -43,6 +49,7 @@ BuildRequires:	tk-devel >= 8.3.2
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.6a
+BuildRequires:	pam-devel
 BuildRequires:	perl-devel >= 5.6
 BuildRequires:	python-devel >= 2.2.1
 BuildRequires:	rpm-perlprov
@@ -882,6 +889,18 @@ potrzeby.
 Za pomoc± komendy createlang mo¿na dodaæ wsparcie dla jêzyka
 proceduralnego PL/TCL dla swojej bazy danych.
 
+%package module-pgcrypto
+Summary:        Cryptographic functions for PostgreSQL
+Summary(pl):    Funkcje kryptograficzne dla PostgreSQL
+Group:          Applications/Databases
+Requires:       %{name} = %{version}
+ 
+%description module-pgcrypto
+Cryptographic functions for PostgreSQL.
+ 
+%description module-pgcrypto -l pl
+Funkcje kryptograficzne dla PostgreSQL.
+
 %prep
 %setup  -q
 %patch0 -p1
@@ -890,6 +909,8 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p0
+%patch6 -p1
+%patch7 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -901,7 +922,7 @@ rm -fR `find contrib/ -type d -name CVS`
 
 %build
 rm -f config/libtool.m4
-aclocal -I config
+%{__aclocal} -I config
 %{__autoconf}
 %configure \
 	%{!?_without_pgsql_locale:--enable-locale} \
@@ -912,6 +933,7 @@ aclocal -I config
 	--enable-recode \
 	--enable-syslog \
 	--enable-unicode-conversion \
+	--with-pam \
 	--with-CXX \
 	--with-tcl \
 	--with-tk \
@@ -927,6 +949,9 @@ aclocal -I config
 %ifnarch sparc sparcv9 sparc64 alpha ppc
 %{!?_without_tests: %{__make} check }
 %endif
+
+cd contrib/pgcrypto/
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -970,6 +995,9 @@ install -d howto
 
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
+
+cd contrib/pgcrypto/
+%{__make} install DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1055,6 +1083,7 @@ fi
 
 %dir %{_pgsqldir}
 %dir %{_pgmoduledir}
+%dir %{_datadir}/postgresql
 %{_datadir}/postgresql/*.bki
 %{_datadir}/postgresql/*.sample
 %{_datadir}/postgresql/*.description
@@ -1236,3 +1265,10 @@ fi
 %files module-pltcl
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
+
+%files module-pgcrypto
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
+# Hmm i think two below lines shouldn't be here - but i can be wrong ;)
+#%{_datadir}/%{name}/contrib/pgcrypto.sql
+#%{_datadir}/info/%{name}/contrib/README.pgcrypto.gz

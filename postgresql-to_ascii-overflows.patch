@@ -1,0 +1,56 @@
+cvs -d :pserver:anoncvs@anoncvs.postgresql.org:/projects/cvsroot diff -u -rREL7_2_4 -rREL7_2_STABLE pgsql-server/src/backend/utils/adt/ascii.c
+
+Index: pgsql-server/src/backend/utils/adt/ascii.c
+===================================================================
+RCS file: /projects/cvsroot/pgsql-server/src/backend/utils/adt/ascii.c,v
+retrieving revision 1.12
+retrieving revision 1.12.2.2
+diff -u -r1.12 -r1.12.2.2
+--- pgsql-server/src/backend/utils/adt/ascii.c	5 Nov 2001 17:46:28 -0000	1.12
++++ pgsql-server/src/backend/utils/adt/ascii.c	14 Jul 2003 16:41:56 -0000	1.12.2.2
+@@ -1,7 +1,7 @@
+ /* -----------------------------------------------------------------------
+  * ascii.c
+  *
+- * $Header$
++ * $Header$
+  *
+  *	 Portions Copyright (c) 1999-2000, PostgreSQL Global Development Group
+  *
+@@ -67,9 +67,9 @@
+ char *
+ pg_to_ascii(unsigned char *src, unsigned char *src_end, unsigned char *desc, int enc)
+ {
+-	unsigned char *x = NULL;
+-	unsigned char *ascii = NULL;
+-	int			range = 0;
++	unsigned char *x;
++	unsigned char *ascii;
++	int			range;
+ 
+ 	/*
+ 	 * relevant start for an encoding
+@@ -106,12 +106,13 @@
+ 	{
+ 		elog(ERROR, "pg_to_ascii(): unsupported encoding from %s",
+ 			 pg_encoding_to_char(enc));
++		return NULL;			/* keep compiler quiet */
+ 	}
+ 
+ 	/*
+ 	 * Encode
+ 	 */
+-	for (x = src; x <= src_end; x++)
++	for (x = src; x < src_end; x++)
+ 	{
+ 		if (*x < 128)
+ 			*desc++ = *x;
+@@ -133,7 +134,7 @@
+ {
+ 	pg_to_ascii(
+ 				(unsigned char *) VARDATA(data),		/* src */
+-				VARDATA(data) + VARSIZE(data),	/* src end */
++				(unsigned char *) (data) + VARSIZE(data),	/* src end */
+ 				(unsigned char *) VARDATA(data),		/* desc */
+ 				enc);			/* encoding */
+ 
