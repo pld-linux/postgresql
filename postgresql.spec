@@ -191,6 +191,24 @@ aplikacji ³±cz±cych siê bezpo¶rednio z serwerem PostgreSQL.
 Bu paket, PostgreSQL sunucusuyla konuþacak yazýlýmlar geliþtirmek için
 gereken baþlýk dosyalarýný ve kitaplýklarý içerir.
 
+
+%package backend-devel
+Summary:	PostgreSQL backend development header files
+Summary(pl):	PostgreSQL - pliki nag³ówkowe dla backendu
+Group:		Development/Libraries
+Group(de):	Entwicklung/Libraries
+Group(fr):	Development/Librairies
+Group(pl):	Programowanie/Biblioteki
+Requires:	%{name}-libs = %{version}
+
+%description backend-devel
+This package contains header files required to compile functions that could
+be loaded directly by backend
+
+%description -l pl backend-devel
+Pakiet zawiera nag³ówki wymagane do kompilacji funkcji ktore moga byc 
+bezposrednio ladowane przez beckend serwera PostgreSQL. 
+
 %package clients
 Summary:	Clients needed to access a PostgreSQL server
 Summary(pl):	Klienci wymagani do dostêpu do serwera PostgreSQL
@@ -577,6 +595,7 @@ autoconf
 	--enable-syslog
 
 %{__make}
+%{!?_without_tests: %{__make} check }
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -587,7 +606,7 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
 	$RPM_BUILD_ROOT{%{_applnkdir}/System,%{_pixmapsdir}} \
 	$RPM_BUILD_ROOT%{_mandir}
 
-%{__make} -C src install \
+%{__make} -C src install install-all-headers \
 	DESTDIR=$RPM_BUILD_ROOT
 	
 touch $RPM_BUILD_ROOT/var/log/pgsql
@@ -750,6 +769,29 @@ rm -f /tmp/tmp_perl_info
 %{_includedir}/postgresql/libpq
 %attr(755,root,root) %{_bindir}/ecpg
 %{_mandir}/man1/ecpg.1*
+
+%files backend-devel
+%{_includedir}/postgresql/access
+%{_includedir}/postgresql/bootstrap
+%{_includedir}/postgresql/catalog
+%{_includedir}/postgresql/commands
+%{_includedir}/postgresql/executor
+%{_includedir}/postgresql/mb
+%{_includedir}/postgresql/nodes
+%{_includedir}/postgresql/optimizer
+%{_includedir}/postgresql/parser
+%{_includedir}/postgresql/port
+%{_includedir}/postgresql/regex
+%{_includedir}/postgresql/rewrite
+%{_includedir}/postgresql/storage
+%{_includedir}/postgresql/tcop
+%{_includedir}/postgresql/utils
+%{_includedir}/postgresql/dynloader.h
+%{_includedir}/postgresql/fmgr.h
+%{_includedir}/postgresql/miscadmin.h
+%{_includedir}/postgresql/postgres.h
+%{_includedir}/postgresql/rusagestub.h
+%{_includedir}/postgresql/strdup.h
 
 %files static
 %defattr(644,root,root,755)
