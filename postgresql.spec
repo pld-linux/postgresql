@@ -362,10 +362,10 @@ LDFLAGS="-s"; export LDFLAGS
 %endif
 	--with-perl
 
-make OPT="$RPM_OPT_FLAGS"
+%{__make} OPT="$RPM_OPT_FLAGS"
 
 cd ..
-make all PGDOCS=unpacked -C doc
+%{__make} all PGDOCS=unpacked -C doc
 
 %install
 rm -rf $RPM_BUILD_ROOT
