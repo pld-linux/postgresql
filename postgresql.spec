@@ -5,7 +5,7 @@ Summary(fr):	Sysème de gestion de base de données PostgreSQL.
 Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
-Version:	6.5
+Version:	6.5.3
 Release:	1
 Copyright:	BSD
 Group:		Applications/Databases
@@ -23,31 +23,33 @@ Requires:	rc-scripts
 Buildroot:	/tmp/%{name}-%{version}-root
 Requires:	%{name}-libs = %{version}
 
+%define		_sysconfdir	/etc
+
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres, then as
 Postgres95). 
 
 PostgreSQL is an enhancement of the POSTGRES database management system, a
 next-generation DBMS research prototype.  While PostgreSQL retains the
-powerful data model and rich data types of POSTGRES, it replaces the PostQuel
-query language with an extended subset of SQL. PostgreSQL is free and the
-complete source is available. 
+powerful data model and rich data types of POSTGRES, it replaces the
+PostQuel query language with an extended subset of SQL. PostgreSQL is free
+and the complete source is available.
 
-PostgreSQL development is being performed by a team of Internet developers who
-all subscribe to the PostgreSQL development mailing list. The current
+PostgreSQL development is being performed by a team of Internet developers
+who all subscribe to the PostgreSQL development mailing list. The current
 coordinator is Marc G. Fournier (scrappy@postgreSQL.org). This team is now
-responsible for all current and future development of PostgreSQL. 
+responsible for all current and future development of PostgreSQL.
 
-The authors of PostgreSQL 1.01 were Andrew Yu and Jolly Chen. Many others have
-contributed to the porting, testing, debugging and enhancement of the code.
-The original Postgres code, from which PostgreSQL is derived, was the effort
-of many graduate students, undergraduate students, and staff programmers
-working under the direction of Professor Michael Stonebraker at the University
-of California, Berkeley. 
+The authors of PostgreSQL 1.01 were Andrew Yu and Jolly Chen. Many others
+have contributed to the porting, testing, debugging and enhancement of the
+code. The original Postgres code, from which PostgreSQL is derived, was the
+effort of many graduate students, undergraduate students, and staff
+programmers working under the direction of Professor Michael Stonebraker at
+the University of California, Berkeley.
 
 The original name of the software at Berkeley was Postgres. When SQL
-functionality was added in 1995, its name was changed to Postgres95. The name
-was changed at the end of 1996 to PostgreSQL. 
+functionality was added in 1995, its name was changed to Postgres95. The
+name was changed at the end of 1996 to PostgreSQL.
 
 PostgreSQL runs on Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD, and most
 flavours of Unix. 
@@ -57,50 +59,53 @@ PostgreSQL Datenbank-Managementsystem (früher als Postgres, dann als
 Postgres95 bekannt).
 
 PostgreSQL ist eine Verbesserung des POSTGRES-DB-Managementsystems, ein
- DBMS-Forschungsprototyp der nächsten Generation. Während es das leistungsfähige
-Datenmodell und die reichhaltigen Datentypen von POSTGRES beibehält, ersetzt
-es die PostQuel-Abfragesprache durch ein Subset von SQL. PostgreSQL ist gratis,
-der gesamte Quellcode ist verfügbar.
+DBMS-Forschungsprototyp der nächsten Generation. Während es das
+leistungsfähige Datenmodell und die reichhaltigen Datentypen von POSTGRES
+beibehält, ersetzt es die PostQuel-Abfragesprache durch ein Subset von SQL.
+PostgreSQL ist gratis, der gesamte Quellcode ist verfügbar.
 
-Ein Team von Internet-Entwicklern befaßt sich mit PostgreSQL. Sie alle sind auf
-der PostgreSQL-Entwickleradreßliste. Koordinator ist
- Marc G. Fournier (scrappy@postgreSQL.org). Das Team ist verantwortlich für alle
-aktuellen und künftigen Entwicklungen von PostgreSQL.
+Ein Team von Internet-Entwicklern befaßt sich mit PostgreSQL. Sie alle sind
+auf der PostgreSQL-Entwickleradreßliste. Koordinator ist Marc G. Fournier
+(scrappy@postgreSQL.org). Das Team ist verantwortlich für alle aktuellen und
+künftigen Entwicklungen von PostgreSQL.
 
-Die Autoren von PostgreSQL 1.01 waren Andrew Yu und Jolly Chen. Zahlreiche andere
-haben zur Portierung, zum Testen, Debugging und zur Verbesserung des Code beigetragen.
-Den Original-Postgres-Code, von dem sich PostgreSQL ableitet, verdanken wir der Arbeit
-vieler Doktoranden, Studenten und Programmierern unter der Leitung von
-Professor Michael Stonebraker an der University of California, Berkeley.
+Die Autoren von PostgreSQL 1.01 waren Andrew Yu und Jolly Chen. Zahlreiche
+andere haben zur Portierung, zum Testen, Debugging und zur Verbesserung des
+Code beigetragen. Den Original-Postgres-Code, von dem sich PostgreSQL
+ableitet, verdanken wir der Arbeit vieler Doktoranden, Studenten und
+Programmierern unter der Leitung von Professor Michael Stonebraker an der
+University of California, Berkeley.
 
 Der ursprüngliche Name war Postgres. Als 1995 SQL-Funktionalität hinzukam,
-wurde der Name in Postgres95 geändert. Ende 1996 schließlich entschied man sich
-für PostgreSQL.
+wurde der Name in Postgres95 geändert. Ende 1996 schließlich entschied man
+sich für PostgreSQL.
 
-PostgreSQL läuft auf Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD und den meisten
-Unix-Systemen.
+PostgreSQL läuft auf Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD und den
+meisten Unix-Systemen.
 
 %description -l fr
 Système de gestion de bases de données PostgreSQL (D'abord nommé Postgres,
 puis Postgres95).
-PostgreSQL est une amélioration du système de gestion de bases de données
-POSTGRES, un prototype de recherche de la génération suivant DBMS. Tout
-en conservant le puissant modèle de donnée de et les types de donée riches
-de Postgres, il remplace le langage de requêtes de Postgres par un sous
-ensemble etendu de commandes SQL. PosrgreSQL est libre, et ses sources
-sont disponibles.
 
-Le développement de PostgreSQL est actuellement réalisé via internet par\une équipe de développeurs inscrits sur la mailing-list de développement
-de PostgreSQL. Le coordinateur actuel est Marc G Fournier
+PostgreSQL est une amélioration du système de gestion de bases de données
+POSTGRES, un prototype de recherche de la génération suivant DBMS. Tout en
+conservant le puissant modèle de donnée de et les types de donée riches de
+Postgres, il remplace le langage de requêtes de Postgres par un sous
+ensemble etendu de commandes SQL. PosrgreSQL est libre, et ses sources sont
+disponibles.
+
+Le développement de PostgreSQL est actuellement réalisé via internet parune
+équipe de développeurs inscrits sur la mailing-list de développement de
+PostgreSQL. Le coordinateur actuel est Marc G Fournier
 (scrappy@postgreSQL.org). Cette équipe est responsable du développemen
 actuel et à venir de PostgreSQL.
 
 Les auteurs de PostgreSQL 1.01 étaient Andrew Yu et Jolly Chen. Beaucoup
 d'autres ont contribué au portage, au test, au débogage et à l'amélioration
-du code. Le code original de Postgres, duquel PostgreSQL est dérivé,
-a été l'oeuvre d'étudiants de haut niveau, de moins haut niveau, et de
-programmeurs travaillant sous la direction du professeur Michael
-Stonebraker à l'université de Berkeley Californie.
+du code. Le code original de Postgres, duquel PostgreSQL est dérivé, a été
+l'oeuvre d'étudiants de haut niveau, de moins haut niveau, et de
+programmeurs travaillant sous la direction du professeur Michael Stonebraker
+à l'université de Berkeley Californie.
 
 Le nom original du logiciel était Postgres. Quand les fonctionnalitées
 SQL furent ajoutées en 1995, son nom est devenu Postgres95. Il a été 
@@ -111,7 +116,7 @@ et la plupart des Unix.
 
 %description -l pl
 PostgreSQL System Zarz±dzania Baz± Danych (dawniej znany jako Postgres,
-nastêpnie jako Postgres95). 
+nastêpnie jako Postgres95).
 
 PostgreSQL mo¿e byæ uruchominy pod nastêpuj±cymi systemami: Solaris, SunOS, 
 HPUX, AIX, Linux, Irix, FreeBSD i innych systemach Unix.
@@ -125,7 +130,7 @@ geniþletilmiþ bir altkümesi yerine PostQuel sorgulama dilini koyar.
 Summary:	PostgreSQL development header files and libraries
 Summary(de):	PostgreSQL-Entwicklungs-Header-Dateien und Libraries 
 Summary(fr):	En-têtes et bibliothèques de développement PostgreSQL
-Summary(pl):	PostgreSQL - nag³owki i biblioteki
+Summary(pl):	PostgreSQL - pliki nag³ówkowe i biblioteki
 Summary(tr):	PostgreSQL baþlýk dosyalarý ve kitaplýklar
 Group:		Development/Libraries
 Group(pl):	Programowanie/Biblioteki
@@ -136,14 +141,14 @@ This package contains header files and libraries required to compile
 applications that are talking directly to the PostgreSQL backend server. 
 
 %description -l de devel
-Dieses Paket enthält die Header-Dateien und Libraries, die zum
-Kompilieren von Applikationen notwendig sind, die direkt mit dem
+Dieses Paket enthält die Header-Dateien und Libraries, die zum Kompilieren
+von Applikationen notwendig sind, die direkt mit dem
 PostgreSQL-Backend-Server kommunizieren.
 
 %description -l fr devel
 Ce package contient les fichiers d'en-tête et les bibliothéques nécessaires
-pour compiler des applications ayant des échanges directs avec le serveur
-du backend PostgreSQL.
+pour compiler des applications ayant des échanges directs avec le serveur du
+backend PostgreSQL.
 
 %description -l pl devel
 Pakiet zawiera nag³ówki oraz biblioteki wymagane do kompilacji aplikacji 
@@ -153,63 +158,6 @@ Pakiet zawiera nag³ówki oraz biblioteki wymagane do kompilacji aplikacji
 Bu paket, PostgreSQL sunucusuyla konuþacak yazýlýmlar geliþtirmek için
 gereken baþlýk dosyalarýný ve kitaplýklarý içerir.
 
-#%package data
-#Summary:	PostgreSQL initial database structure
-#Summary(de):	PostgreSQL-Ausgangs-Datenbankstruktur 
-#Summary(fr):	Structure initiale de base de données PostgreSQL 
-#Summary(pl):	PostgreSQL - inicjuj±ca struktura bazy danych
-#Summary(tr):	PostgreSQL baþlangýç veritabaný yapýsý
-#Group:		Applications/Databases
-#Group(pl):	Aplikacje/Bazy Danych
-#PreReq:		%{name} = %{version}
-#Conflicts:	postgresql-data <= 6.2.1
-#
-#%description data
-#This packages includes an initial database structure directory for PostgreSQL.
-#For a quick startup on PostegreSQL, it is recommended to install this package
-#with your PostgreSQL backend server (altough it is not required). 
-#
-#If you choose to not install this package you will have to create the initial
-#database yourself using 'initdb' command and possibly modify the postgresql
-#startup script if you choose a directory other than /var/lib/pgsql for
-#storing your databases.
-#
-#%description -l de data
-#Dieses Paket schließt ein elementares Strukturverzeichnis für 
-#PostgreSQL ein. Für einen schnellen Start mit PostegreSQL empfehlen 
-#wir die Installation dieses Pakets mit Ihrem PostgreSQL-Backend-
-#Server (obligatorisch ist es nicht).
-#Sie die anfängliche Datenbank selbst mit Hilfe des initdb-Befehls 
-#erstellen und möglicherweise das postgresql-Start-Skript modifizieren, 
-#wenn Sie ein anderes als das /var/lib/pgsql-Verzeichnis zum Speichern 
-#Ihrer Datenbanken wählen. 
-#
-#%description -l fr data
-#Ce paquetage contient une structure initiale de base de données pour PostgreSQL.
-#Pour un démarrage rapide avec PostgreSQL, il est recommandé d'installer ce
-#paquetage avec votre serveur PostgreSQL (bien que ce ne soit pas obligatoire).
-#
-#Si vous n'installez pas ce paquetage, vous devrez créer vous-même la base de
-#données initiale avec la commande « initdb » et modifier le script de
-#démarrage de PostgreSQL si vous choisissez un autre répertoire que
-#/var/lib/pgsql pour stocker vos bases de données.
-#
-#%description -l pl data
-#Pakiet zawiera zainicjowan± strukturê bazodanow± dla PostgreSQL. Dla
-#szybkiego startu PostgreSQL rekomendowane jest zainstalowanie tego pakietu
-#razem z pakietem serwera (jednak¿e nie jest on wymagany).
-#
-#Je¿eli nie zainstalujesz tego pakietu bêdziesz musia³ rêcznie utworzyæ 
-#inicjuj±c± bazê przy pomocy polecenia 'initdb' oraz ewentualnie skrypt
-#startowy, je¿eli nie wybierzesz katalogu /var/lib/pgsql jako katalogu
-#domy¶lnego dla przechowywania baz danych.
-#
-#%description -l tr data
-#Bu paket, PostgreSQL için bir baþlangýç veri tabaný yapýsý dizinini içerir.
-#PostgreSQL'e hýzlý baþlangýç için bu paketin PostgreSQL sunucusuna yüklenmesi
-#önerilir. Bu paketi yüklememeyi seçerseniz, baþlangýç veri tabanýný 'initdb'
-#komutunu kullanarak kendiniz yaratmanýz gerekir.
-#
 %package clients
 Summary:	clients needed to access a PostgreSQL server
 Summary(pl):	klienci wymagani do dostêpu do serwera PostgreSQL
@@ -222,9 +170,9 @@ an PostgreSQL server. The server is included in the main package. If all you
 need is to connect to another PostgreSQL server, the  this is the only
 package you need to install.
 
-In this package there are client libraries available for C and C++, as
-well as several command-line utilities you can use to manage your databases
-on a remote PostgreSQL server.
+In this package there are client libraries available for C and C++, as well
+as several command-line utilities you can use to manage your databases on a
+remote PostgreSQL server.
 
 %description -l pl clients
 Pakiet zawiera klientów oraz biblioteki niezbêdne dla dostêpu do serwera 
@@ -368,18 +316,21 @@ Biblioteki statyczne interafece tcl dla PostgreSQL
 %patch1 -p1 -b .destdir
 %patch2 -p1 -b .perl
 
+# Erase all CVS dir
+rm -fR `find contrib/ -type d -name CVS`
+
 %build
 PATH=$PATH:. ; export PATH
 cd src
 
 aclocal
 autoconf
-
+LDFLAGS="-s"; export LDFLAGS
 %configure \
 	--enable-hba \
 	--enable-locale \
 	--with-odbc \
-	--with-odbcinst=/etc \
+	--with-odbcinst=%{_sysconfdir} \
 	--with-tcl \
 	--with-x \
 	--with-mb=UNICODE \
@@ -453,25 +404,9 @@ install -d howto
   tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
 )
 
-strip -s $RPM_BUILD_ROOT%{_bindir}/ecpg
-strip -s $RPM_BUILD_ROOT%{_bindir}/pg_dump
-strip -s $RPM_BUILD_ROOT%{_bindir}/pg_encoding
-strip -s $RPM_BUILD_ROOT%{_bindir}/pg_id
-strip -s $RPM_BUILD_ROOT%{_bindir}/pg_passwd
-strip -s $RPM_BUILD_ROOT%{_bindir}/pgtclsh
-strip -s $RPM_BUILD_ROOT%{_bindir}/pgtksh
-strip -s $RPM_BUILD_ROOT%{_bindir}/pg_version
-strip -s $RPM_BUILD_ROOT%{_bindir}/postgres
-strip -s $RPM_BUILD_ROOT%{_bindir}/postmaster
-strip -s $RPM_BUILD_ROOT%{_bindir}/psql
+strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so*
 
-# gzip all man pages
 gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man*/*
-
-# Erase all CVS dir
-rm -fR `find contrib/ -type d -name CVS`
-
-chmod +x $RPM_BUILD_ROOT%{_libdir}/*.so*
 
 %pre
 /usr/sbin/groupadd -g 88 -r -f postgres 1>&2 || :
@@ -483,31 +418,35 @@ chmod +x $RPM_BUILD_ROOT%{_libdir}/*.so*
 
 # Create sample database
 if [ ! -f /var/state/psql/PG_VERSION ]; then
-    su postgres -c "LD_LIBRARY_PATH=%{_libdir} \
-	%{_bindir}/initdb --pgdata=/var/state/pgsql \
-	--pglib=%{_libdir}/pgsql"
+	su postgres -c "LD_LIBRARY_PATH=%{_libdir} \
+		%{_bindir}/initdb --pgdata=/var/state/pgsql \
+		--pglib=%{_libdir}/pgsql"
+fi
+if [ -r /var/lock/subsys/postmaster ]; then
+	/etc/rc.d/init.d/postgresql restart >&2
+else
+	echo "Run \"/etc/rc.d/init.d/postgresql start\" to start postgresql server."
 fi
 
 %preun
-if [ $1 = 0 ]; then
+if [ "$1" = "0" ]; then
 	if [ -f /var/lock/subsys/postmaster ]; then
 		/etc/rc.d/init.d/postgresql stop
 	fi
 	/sbin/chkconfig --del postgresql
 fi
 
-%post   -p /sbin/ldconfig libs
-%postun libs
-/sbin/ldconfig
-if [ $1 = 0 ]; then
-	:
-fi
+%post   libs -p /sbin/ldconfig
+%postun libs -p /sbin/ldconfig
 
-%post   -p /sbin/ldconfig devel
-%postun -p /sbin/ldconfig devel
+%post   tcl -p /sbin/ldconfig
+%postun tcl -p /sbin/ldconfig
 
-%post   -p /sbin/ldconfig odbc
-%postun -p /sbin/ldconfig odbc
+%post   clients -p /sbin/ldconfig
+%postun clients -p /sbin/ldconfig
+
+%post   odbc -p /sbin/ldconfig
+%postun odbc -p /sbin/ldconfig
 
 #%post perl
 #POD=`find %{_libdir} -name perllocal.pod.pg`
@@ -615,8 +554,6 @@ rm -f /tmp/tmp_perl_info
 %{_libdir}/libpq.a
 %{_libdir}/libpq++.a
 
-#%files data
-
 %files clients
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libec*.so.*.*
@@ -645,7 +582,7 @@ rm -f /tmp/tmp_perl_info
 %files odbc
 %defattr(644,root,root,755)
 %doc src/interfaces/odbc/readme.txt src/interfaces/odbc/notice.txt
-%config(noreplace) %verify(not size mtime md5) /etc/odbc*
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/odbc*
 %{_libdir}/libpsqlodbc.so.*.*
 
 %files odbc-devel
