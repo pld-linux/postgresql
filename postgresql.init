@@ -44,7 +44,7 @@ case "$1" in
 		# Check for the PGDATA structure
 		if [ -f $POSTGRES_DATA_DIR/PG_VERSION ] && [ -d $POSTGRES_DATA_DIR/base/template1 ]; then
 		    # Check version of existing PGDATA
-		    if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '6.5' ]; then
+		    if [ `cat $POSTGRES_DATA_DIR/PG_VERSION` != '7.0' ]; then
 			STARTTEXT="$STARTTEXT [Old version. Need to Upgrade]"
 			show "$STARTTEXT"; fail
 			exit 1
