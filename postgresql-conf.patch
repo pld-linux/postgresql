@@ -1,27 +1,35 @@
---- postgresql-7.4beta1/src/backend/utils/misc/postgresql.conf.sample	2003-08-08 22:41:16.000000000 +0200
-+++ postgresql-7.4beta1/src/backend/utils/misc/postgresql.conf.sample.new	2003-08-08 22:40:08.000000000 +0200
-@@ -137,9 +137,9 @@
+--- postgresql-8.0.0beta2/src/backend/utils/misc/postgresql.conf.sample	2004-08-12 21:03:36.000000000 +0200
++++ postgresql-8.0.0beta2/src/backend/utils/misc/postgresql.conf.sample.new	2004-09-05 20:54:31.087203264 +0200
+@@ -164,7 +164,7 @@
  
- # - Syslog -
+ # - Where to Log -
  
--#syslog = 0			# range 0-2; 0=stdout; 1=both; 2=syslog
+-#log_destination = 'stderr'	# Valid values are combinations of stderr,
++log_destination = 'syslog'	# Valid values are combinations of stderr,
+                                 # syslog and eventlog, depending on
+                                 # platform.
+ 
+@@ -180,8 +180,8 @@
+                             # so many kilobytes of log output.  0 to disable.
+ 
+ # These are relevant when logging to syslog:
 -#syslog_facility = 'LOCAL0'
 -#syslog_ident = 'postgres'
-+syslog = 2			# range 0-2; 0=stdout; 1=both; 2=syslog
 +syslog_facility = 'LOCAL0'
 +syslog_ident = 'postgres'
  
- # - When to Log -
  
-@@ -170,9 +170,9 @@
+ # - When to Log -
+@@ -211,10 +211,10 @@
  #debug_print_rewritten = false
  #debug_print_plan = false
  #debug_pretty_print = false
 -#log_connections = false
 +log_connections = true
+ #log_disconnections = false
  #log_duration = false
--#log_pid = false
-+log_pid = true 
- #log_statement = false
- #log_timestamp = false
- #log_hostname = false
+-#log_line_prefix = ''		# e.g. '<%u%%%d> ' 
++log_line_prefix = '<%p> '	# e.g. '<%u%%%d> ' 
+ 				# %u=user name %d=database name
+ 				# %r=remote host and port
+ 				# %p=PID %t=timestamp %i=command tag
