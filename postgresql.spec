@@ -33,6 +33,7 @@ Source5:	pgaccess.png
 Patch0:		%{name}-no_libnsl.patch
 Patch1:		%{name}-configure.patch
 Patch2:		%{name}-ac_fixes.patch
+Patch3:		%{name}-pg_ctl-silent.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
@@ -787,6 +788,7 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 tar xzf doc/man*.tar.gz
 
