@@ -13,7 +13,7 @@ Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.1.3
-Release:	8
+Release:	9
 License:	BSD
 Group:		Applications/Databases
 Group(de):	Applikationen/Dateibanken
