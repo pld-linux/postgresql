@@ -14,7 +14,7 @@
 
 %include	/usr/lib/rpm/macros.python
 
-%define beta beta3
+%define beta beta4
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
@@ -31,8 +31,8 @@ Version:	7.4
 Release:	0.1.%{beta}
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp3.us.postgresql.org/pub/postgresql/source/v%{version}/%{name}-%{version}%{beta}.tar.bz2
-# Source0-md5:	95dc98f8dbf25fa2571562707f6805c9
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{beta}.tar.bz2
+# Source0-md5:	fdab86878d42cda5d4c04471b1434768
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
