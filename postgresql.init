@@ -56,7 +56,7 @@ case "$1" in
 			chown postgres.postgres $POSTGRES_DATA_DIR
 			chmod 700 $POSTGRES_DATA_DIR
 		    fi
-		    su postgres -c "LD_LIBRARY_PATH=/usr/lib \
+		    TMPDIR=/tmp su postgres -c "LD_LIBRARY_PATH=/usr/lib \
 			initdb --pgdata=$POSTGRES_DATA_DIR \
 			-L /usr/share/postgresql"
 		fi
@@ -70,7 +70,7 @@ case "$1" in
 		    $([ "$POSTGRES_DISABLE_FSYNC". = yes. ] && echo '-F') \
 		    $([ "$ALLOW_TCP_CONNECTIONS". = yes. ] && echo '-i')";
 
-		su postgres -c "\
+		TMPDIR=/tmp su postgres -c "\
 			$(echo "/usr/bin/pg_ctl start $PGSQL_CMDLINE -l $POSTGRES_LOG") \
 			$([ "$POSTMASTER_OPTIONS". != . ] && echo "-o '$POSTMASTER_OPTIONS'") \
 			$(echo "2>&1 >/dev/null")";
@@ -94,7 +94,7 @@ case "$1" in
 	msg_stopping postgreSQL
 	busy
 	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR")";
-	su postgres -c "/usr/bin/pg_ctl stop $PGSQL_CMDLINE -m fast 2>&1 >/dev/null"
+	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl stop $PGSQL_CMDLINE -m fast 2>&1 >/dev/null"
 	out=`status postmaster`
 	if [ $? -eq 0 ]; then
 		deltext; fail
@@ -108,7 +108,7 @@ case "$1" in
 	;;
   status)
 	PGSQL_CMDLINE="$([ -n "$POSTGRES_DATA_DIR" ] && echo "-D $POSTGRES_DATA_DIR")";
-	su postgres -c "/usr/bin/pg_ctl status $PGSQL_CMDLINE"
+	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl status $PGSQL_CMDLINE"
 	;;
   restart)
   	$0 stop
@@ -129,7 +129,7 @@ case "$1" in
 	    $([ "$POSTGRES_DISABLE_FSYNC". = yes. ] && echo '-F') \
 	    $([ "$ALLOW_TCP_CONNECTIONS". = yes. ] && echo '-i')";
 
-	su postgres -c "\
+	TMPDIR=/tmp su postgres -c "\
 		$(echo "/usr/bin/pg_ctl restart $PGSQL_CMDLINE -l $POSTGRES_LOG") \
 		$([ "$POSTMASTER_OPTIONS". != . ] && echo "-o '$POSTMASTER_OPTIONS'") \
 		$(echo "2>&1 >/dev/null")";
