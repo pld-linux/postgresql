@@ -65,7 +65,7 @@ Source9: http://jdbc.postgresql.org/download/devpgjdbc2.jar
 Source10: http://jdbc.postgresql.org/download/pgjdbc1.jar
 Source11: http://jdbc.postgresql.org/download/pgjdbc2.jar
 Source15: postgresql-bashprofile
-Patch1: rpm-pgsql-7.2.patch
+Patch1: postgresql-rpm.patch
 Patch3: postgresql-7.2rc2-betterquote.patch
 Patch4: postgresql-7.2-tighten.patch
 Patch5: postgresql-7.2.1-mktime.patch
