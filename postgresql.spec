@@ -359,6 +359,12 @@ gzip -9nf $RPM_BUILD_ROOT/usr/man/man*/*
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
 
+%pre data
+if ! `grep postgres /etc/passwd >/dev/null 2>&1`; then
+    useradd -M -o -r -d /var/lib/pgsql -s /bin/bash \
+	-c "PostgreSQL Server" postgres >/dev/null 2>&1 || :
+fi
+
 %post
 /sbin/chkconfig --add postgresql
 
@@ -483,7 +489,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Fri Mar  5 1999 Jacek Smyda <smyda@posexperts.com.pl>
-- remove adduser (standard user in passwd)
 - add polish group names
 - correct install perllocal.pod
 
