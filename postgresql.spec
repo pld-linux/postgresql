@@ -55,6 +55,7 @@ URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	bison >= 1.875
+BuildRequires:	flex
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
