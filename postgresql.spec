@@ -31,7 +31,8 @@ Version:	7.4
 Release:	0.1.%{_rc}
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{_rc}.tar.bz2
+##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}%{_rc}.tar.bz2
+Source0:	ftp://ftp2.pl.postgresql.org/mirrors/ftp.postgresql.org/v%{version}/%{name}-%{version}%{_rc}.tar.bz2
 # Source0-md5:	a1ea58e97dd7849a4fb4721752d3ed41
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
