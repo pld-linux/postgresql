@@ -1,3 +1,5 @@
+%define beta 0
+
 %{?beta:%define __os_install_post /usr/lib/rpm/brp-compress}
 %{!?perl:%define perl 1}
 %{!?tcl:%define tcl 1}
