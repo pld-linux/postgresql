@@ -49,6 +49,7 @@ Patch7:		%{name}-ecpg_link.patch
 Patch8:		%{name}-ecpg-includedir.patch
 Patch9:		%{name}-contrib_install.patch
 Patch10:	%{name}-tsearch2-compound_word_support_20031210.patch
+Patch11:	%{name}-ssl-libpq-mem-leak-1.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -768,6 +769,7 @@ http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p0
 
 tar xzf doc/man*.tar.gz
 
