@@ -5,9 +5,10 @@ Summary(pl): PostgreSQL system bazodanowy
 Summary(tr): Veri Tabaný Yönetim Sistemi
 Name:        postgresql
 Version:     6.4.2
-Release:     4d
+Release:     5d
 Copyright:   BSD
 Group:       Applications/Databases
+Group(pl):   Aplikacje/Bazy danych
 URL:         http://www.postgresql.org/
 Source:      ftp://ftp.postgresql.org/pub/%{name}-%{version}.tar.gz
 Source1:     postgresql.init
@@ -123,6 +124,7 @@ Summary(fr): En-têtes et bibliothèques de développement PostgreSQL
 Summary(pl): PostgreSQL - nag³owki i biblioteki
 Summary(tr): PostgreSQL baþlýk dosyalarý ve kitaplýklar
 Group:       Development/Libraries
+Group(pl):   Programowanie/Biblioteki
 
 %description devel
 This package contains header files and libraries required to compile
@@ -139,8 +141,8 @@ pour compiler des applications ayant des échanges directs avec le serveur
 du backend PostgreSQL.
 
 %description -l pl devel
-Pakiet ten zawiera nag³ówki oraz biblioteki wymagane do kompilacji
-aplikacji ³±cz±cych siê bezpo¶rednio z serwerem PostgreSQL.
+Pakiet zawiera nag³ówki oraz biblioteki wymagane do kompilacji aplikacji 
+³±cz±cych siê bezpo¶rednio z serwerem PostgreSQL.
 
 %description -l tr devel
 Bu paket, PostgreSQL sunucusuyla konuþacak yazýlýmlar geliþtirmek için
@@ -153,6 +155,7 @@ Summary(fr): Structure initiale de base de données PostgreSQL
 Summary(pl): PostgreSQL - inicjuj±ca struktura bazy danych
 Summary(tr): PostgreSQL baþlangýç veritabaný yapýsý
 Group:       Applications/Databases
+Group(pl):   Aplikacje/Bazy danych
 Requires:    postgresql postgresql-clients
 Conflicts:   postgresql-data <= 6.2.1
 
@@ -187,7 +190,7 @@ démarrage de PostgreSQL si vous choisissez un autre répertoire que
 /var/lib/pgsql pour stocker vos bases de données.
 
 %description -l pl data
-Pakiet ten zawiera zainicjowan± strukturê bazodanow± dla PostgreSQL. Dla
+Pakiet zawiera zainicjowan± strukturê bazodanow± dla PostgreSQL. Dla
 szybkiego startu PostgreSQL rekomendowane jest zainstalowanie tego pakietu
 razem z pakietem serwera (jednak¿e nie jest on wymagany).
 
@@ -206,6 +209,7 @@ komutunu kullanarak kendiniz yaratmanýz gerekir.
 Summary:     clients needed to access a PostgreSQL server
 Summary(pl): klienci wymagani do dostêpu do serwera PostgreSQL
 Group:       Applications/Databases
+Group(pl):   Aplikacje/Bazy danych
 
 %description clients
 This package includes only the clients and client libraries needed to access
@@ -218,13 +222,14 @@ well as several command-line utilities you can use to manage your databases
 on a remote PostgreSQL server.
 
 %description -l pl clients
-Pakiet ten zawiera tylko klientów oraz biblioteki niezbêdne dla dostêpu
-do serwera PostgreSQL. Serwer znajduje siê w g³ównym pakiecie.
+Pakiet zawiera klientów oraz biblioteki niezbêdne dla dostêpu do serwera 
+PostgreSQL. Serwer znajduje siê w g³ównym pakiecie.
 
 %package perl
 Summary:     Perl interface to PostgreSQL database
 Summary(pl): Interface dla Perl'a umo¿liwiaj±cy dostêp do baz PostgreSQL
 Group:       Applications/Databases
+Group(pl):   Aplikacje/Bazy danych
 Requires:    postgresql, perl >= 5.004
 
 %description perl
@@ -238,6 +243,7 @@ PostgreSQL.
 Summary:     Documentation for PostgreSQL
 Summary(pl): Dodatkowa dokumantacja dla PostgreSQL
 Group:       Applications/Databases
+Group(pl):   Aplikacje/Bazy danych
 Requires:    postgresql
 
 %description doc
@@ -252,6 +258,7 @@ administratorów w formacie HTML.
 Summary:     ODBC interface to PostgreSQL
 Summary(pl): Interface ODBC do PostgreSQL
 Group:       Applications/Databases
+Group(pl):   Aplikacje/Bazy danych
 Requires:    postgresql
 
 %description odbc
@@ -352,19 +359,11 @@ gzip -9nf $RPM_BUILD_ROOT/usr/man/man*/*
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
 
-%pre
-useradd -M -o -r -d /var/lib/pgsql -s /bin/bash \
-	-c "PostgreSQL Server" postgres >/dev/null 2>&1 || :
-
 %post
 /sbin/chkconfig --add postgresql
 
 %post data
 # Create sample database
-if ! `grep postgres /etc/passwd >/dev/null 2>&1`; then
-    echo "You must add new user postgres before init database."
-    exit 1
-fi
 su postgres -c "LD_LIBRARY_PATH=/usr/lib \
     /usr/bin/initdb --pgdata=/var/lib/pgsql \
     --pglib=/usr/lib/pgsql"
@@ -392,7 +391,6 @@ fi
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
 
 %files doc
 %defattr(644, root, root, 755)
@@ -473,6 +471,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/include/iodbc
 
 %changelog
+* Fri Mar  5 1999 Jacek Smyda <smyda@posexperts.com.pl>
+- remove adduser (standard user in passwd)
+- add polish group names
+
 * Wed Mar  3 1999 Jacek Smyda <smyda@posexperts.com.pl>
 - correct group name
 
