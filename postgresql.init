@@ -32,6 +32,21 @@ if is_no "${NETWORKING}"; then
 	exit 1
 fi
 
+# check if postmaster is realy alive
+if [ -f /var/lib/pgsql/postmaster.pid ]; then
+ if ps -p `head -1 /var/lib/pgsql/postmaster.pid` > /dev/null ; then
+	 #ok. it's alive
+	echo > /dev/null;
+ else
+	 # oh, it has crashed
+	 rm -f  /var/lock/subsys/postgresql
+ fi
+else
+	# it's stoped. 
+	rm -f  /var/lock/subsys/postgresql
+fi
+
+
 # See how we were called.
 case "$1" in
   start)
