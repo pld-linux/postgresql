@@ -3,7 +3,6 @@
 # - support for multiple db clusters (implies postgresql.init and
 #   postgresql.sysconfig simplifications)
 # - fix postgresql-configure.patch (it puts html doc into /usr/share/info
-# - add missing files
 #
 # Conditional build:
 # _with_jdbc		- with JDBC driver
@@ -730,7 +729,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 rm -fR `find contrib/ -type d -name CVS`
 
 %build
-rm -f config/libtool.m4
+#rm -f config/libtool.m4
 %{__aclocal} -I config
 %{__autoconf}
 %configure \
@@ -786,9 +785,11 @@ install -d howto
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-rm -f /tmp/tmp_perl_info
 
 %pre
+echo "If you are upgrading from *pre* 7.3 version,"
+echo "then please downgrade and dump your databases."
+echo
 echo "Warning for upgrade from version *before* 7.2."
 echo "Please note, that postgresql module path changed from"
 echo "/usr/lib/pgsql/module to /usr/lib/postgresql. Change the path"
@@ -835,20 +836,29 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/*
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/*
 
+%attr(755,root,root) %{_bindir}/clusterdb
 %attr(755,root,root) %{_bindir}/createdb
+%attr(755,root,root) %{_bindir}/createlang
 %attr(755,root,root) %{_bindir}/createuser
 %attr(755,root,root) %{_bindir}/dropdb
+%attr(755,root,root) %{_bindir}/droplang
 %attr(755,root,root) %{_bindir}/dropuser
 %attr(755,root,root) %{_bindir}/initdb
 %attr(755,root,root) %{_bindir}/initlocation
-%attr(755,root,root) %{_bindir}/pg_ctl
+%attr(755,root,root) %{_bindir}/ipcclean
 %attr(755,root,root) %{_bindir}/pg_config
+%attr(755,root,root) %{_bindir}/pg_controldata
+%attr(755,root,root) %{_bindir}/pg_ctl
 %attr(755,root,root) %{_bindir}/pg_encoding
+%attr(755,root,root) %{_bindir}/pg_resetxlog
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
-%attr(755,root,root) %{_bindir}/ipcclean
-%attr(755,root,root) %{_bindir}/createlang
-%attr(755,root,root) %{_bindir}/droplang
+
+%attr(755,root,root) %{_pgmoduledir}/ascii*
+%attr(755,root,root) %{_pgmoduledir}/cyrillic*
+%attr(755,root,root) %{_pgmoduledir}/euc*
+%attr(755,root,root) %{_pgmoduledir}/latin*
+%attr(755,root,root) %{_pgmoduledir}/utf*
 
 %dir %{_pgsqldir}
 %dir %{_pgmoduledir}
@@ -860,6 +870,7 @@ fi
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
 %attr(640,postgres,postgres) %config(noreplace) %verify(not md5 size mtime) /var/log/pgsql
 
+%{_mandir}/man1/clusterdb.1*
 %{_mandir}/man1/createdb.1*
 %{_mandir}/man1/createlang.1*
 %{_mandir}/man1/createuser.1*
@@ -868,11 +879,15 @@ fi
 %{_mandir}/man1/dropuser.1*
 %{_mandir}/man1/initdb.1*
 %{_mandir}/man1/initlocation.1*
-%{_mandir}/man1/pg_ctl.1*
+%{_mandir}/man1/ipcclean.1*
 %{_mandir}/man1/pg_config.1*
+%{_mandir}/man1/pg_controldata.1*
+%{_mandir}/man1/pg_ctl.1*
+%{_mandir}/man1/pg_resetxlog.1*
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
-%{_mandir}/man1/ipcclean.1*
+
+%{_mandir}/man7/*.7*
 
 %doc contrib
 %doc doc/FAQ* doc/README*
@@ -911,6 +926,7 @@ fi
 %{_includedir}/postgresql/internal/pqexpbuffer.h
 %{_includedir}/postgresql/internal/lib
 %{_includedir}/postgresql/internal/libpq
+%{_includedir}/libpq
 %{_mandir}/man1/ecpg.1*
 
 %files backend-devel
@@ -975,4 +991,5 @@ fi
 
 %files module-pltcl
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
