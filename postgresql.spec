@@ -35,12 +35,10 @@ Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
 Patch0:		%{name}-conf.patch
-Patch1:		%{name}-python-configdir.patch
-Patch2:		%{name}-absolute_dbpaths.patch
-Patch3:		%{name}-link.patch
-Patch4:		%{name}-com_err.patch
-Patch5:		%{name}-ecpg_link.patch
-Patch6:		%{name}-ecpg-includedir.patch
+Patch1:		%{name}-absolute_dbpaths.patch
+Patch2:		%{name}-link.patch
+Patch3:		%{name}-ecpg_link.patch
+Patch4:		%{name}-ecpg-includedir.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -677,12 +675,10 @@ http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 #%setup -q -n %{name}-%{version}%{beta}
 %setup -q
 %patch0 -p1
-%patch1 -p1
-%{?with_absolute_dbpaths:%patch2 -p1}
+%{?with_absolute_dbpaths:%patch1 -p1}
+%patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -734,7 +730,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 	$RPM_BUILD_ROOT{%{_mandir},%{_javadir}} \
 	$RPM_BUILD_ROOT/home/services/postgres
 
-%{__make} install install-all-headers \
+%{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %if %{with perl}
@@ -942,7 +938,6 @@ fi
 %{_includedir}/postgresql/internal/port.h
 %{_includedir}/postgresql/internal/postgres_fe.h
 %{_includedir}/postgresql/internal/pqexpbuffer.h
-%{_includedir}/postgresql/internal/lib
 %{_includedir}/postgresql/internal/libpq
 %{_includedir}/libpq
 %{_mandir}/man1/pg_config.1*
