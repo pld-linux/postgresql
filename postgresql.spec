@@ -20,7 +20,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.2.4
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.gz
@@ -38,6 +38,7 @@ Patch3:		%{name}-pg_ctl-silent.patch
 Patch4:		%{name}-DESTDIR.patch
 Patch5:		%{name}-pg_ctl-nopsql.patch
 Patch6:		%{name}-acfix.patch
+Patch7:		%{name}-to_ascii-overflows.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	XFree86-devel
@@ -908,6 +909,7 @@ Funkcje kryptograficzne dla PostgreSQL.
 %patch4 -p1
 %patch5 -p0
 %patch6 -p1
+%patch7 -p1
 
 tar xzf doc/man*.tar.gz
 
