@@ -64,7 +64,6 @@ BuildRequires:	pam-devel
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpm-pythonprov
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
-%{?with_tcl:BuildRequires:	tk-devel >= 8.4.3}
 BuildRequires:	zlib-devel
 PreReq:		rc-scripts
 PreReq:		%{name}-clients = %{version}-%{release}
@@ -515,83 +514,6 @@ PostgreSQL.
 Це окремий пакет з╕ статичними б╕бл╕отеками, як╕ б╕льш не входять в
 %{name}-devel.
 
-%package tcl
-Summary:	Tcl interface for PostgreSQL
-Summary(es):	Bibliotecas y shell Tcl para acceder un servidor PostgreSQL
-Summary(pl):	Interfejs Tcl dla PostgreSQL
-Summary(pt_BR):	Bibliotecas e shell para programas em Tcl acessarem o servidor PostgreSQL
-Summary(ru):	Библиотеки для доступа к PostgreSQL из Tcl
-Summary(uk):	Б╕бл╕отеки для доступу до PostgreSQL з Tcl
-Summary(zh_CN):	р╩╦Ж Tcl ©Б╨м PostgreSQL ╣д PL/Tcl ╠ЮЁлсОят
-Group:		Development/Languages/Tcl
-Requires:	%{name}-libs = %{version}-%{release}
-
-%description tcl
-Tcl interface for PostgreSQL.
-
-%description tcl -l es
-Bibliotecas y shell Tcl para acceder un servidor PostgreSQL
-
-%description tcl -l pl
-Interfejs Tcl dla PostgreSQL.
-
-%description tcl -l pt_BR
-Bibliotecas e shell para programas em Tcl acessarem o servidor
-PostgreSQL.
-
-%description tcl -l ru
-libpgtcl - API для доступа к базе данных PostgreSQL из языка Tcl.
-
-%description tcl -l uk
-libpgtcl - API для доступу до бази даних PostgreSQL з мови Tcl.
-
-%package tcl-devel
-Summary:	Development part of Tcl interface for PostgreSQL
-Summary(pl):	CzЙ╤Ф dla programistСw interfejsu Tcl dla PostgreSQL
-Summary(ru):	Хедеры и библиотеки для разработок с использованием libpgtcl (Tcl интерфейс для PostgreSQL)
-Summary(uk):	Хедери та б╕бл╕отеки для розробок з використанням libpgtcl (Tcl-╕нтерфейс для PostgreSQL)
-Group:		Development/Languages/Tcl
-Requires:	%{name}-tcl = %{version}-%{release}
-Requires:	%{name}-devel = %{version}-%{release}
-
-%description tcl-devel
-Development part of Tcl interface for PostgreSQL.
-
-%description tcl-devel -l pl
-CzЙ╤Ф interfejsu Tcl dla PostgreSQL przeznaczona dla programistСw.
-
-%description tcl-devel -l ru
-Это пакет разработчика для программирования с libpgtcl. Он включает
-хедеры и библиотеки для использования в программах, которые используют
-код или API libtcl (Tcl интерфейс для PostgreSQL).
-
-%description tcl-devel -l uk
-Це пакет програм╕ста для програмування з libpgtcl. В╕н м╕стить хедери
-та б╕бл╕отеки для використання в програмах, як╕ використовують код або
-API libtcl (Tcl-╕нтерфейсу для PostgreSQL).
-
-%package tcl-static
-Summary:	Static libraries of Tcl interface for PostgreSQL
-Summary(pl):	Biblioteki statyczne interfejsu Tcl dla PostgreSQL
-Summary(ru):	Статические библиотеки для программирования с libpgtcl
-Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з libpgtcl
-Group:		Development/Languages/Tcl
-Requires:	%{name}-tcl-devel = %{version}-%{release}
-
-%description tcl-static
-Static libraries of Tcl interface for PostgreSQL.
-
-%description tcl-static -l pl
-Biblioteki statyczne interfejsu Tcl dla PostgreSQL.
-
-%description tcl-static -l ru
-Это отдельный пакет со статическими библиотеками, которые больше не
-входят в postgresql-tcl-devel.
-
-%description tcl-static -l uk
-Це окремий пакет з╕ статичними б╕бл╕отеками, що б╕льше не входять до
-postgresql-tcl-devel.
-
 %package module-plpgsql
 Summary:	PL/pgSQL - PostgreSQL procedural language
 Summary(pl):	PL/pgSQL jЙzyk proceduralny bazy danych PostgreSQL
@@ -800,7 +722,6 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	--enable-unicode-conversion \
 	--with-CXX \
 	%{?with_tcl:--with-tcl} \
-	%{?with_tcl:--with-tk} \
 	%{?with_perl:--with-perl} \
 	%{?with_python:--with-python} \
 	%{?with_kerberos5:--with-krb5} \
@@ -930,9 +851,6 @@ fi
 %post   ecpg -p /sbin/ldconfig
 %postun ecpg -p /sbin/ldconfig
 
-%post   tcl -p /sbin/ldconfig
-%postun tcl -p /sbin/ldconfig
-
 %files -f main.lang
 %defattr(644,root,root,755)
 %doc COPYRIGHT README HISTORY doc/{FAQ*,README*,bug.template}
@@ -948,7 +866,6 @@ fi
 %attr(755,root,root) %{_bindir}/droplang
 %attr(755,root,root) %{_bindir}/dropuser
 %attr(755,root,root) %{_bindir}/initdb
-#%attr(755,root,root) %{_bindir}/initlocation
 %attr(755,root,root) %{_bindir}/ipcclean
 %attr(755,root,root) %{_bindir}/pg_autovacuum
 %attr(755,root,root) %{_bindir}/pg_controldata
@@ -986,7 +903,6 @@ fi
 %{_mandir}/man1/droplang.1*
 %{_mandir}/man1/dropuser.1*
 %{_mandir}/man1/initdb.1*
-%{_mandir}/man1/initlocation.1*
 %{_mandir}/man1/ipcclean.1*
 %{_mandir}/man1/pg_controldata.1*
 %{_mandir}/man1/pg_ctl.1*
@@ -1064,25 +980,6 @@ fi
 %{_mandir}/man1/psql.1*
 %{_mandir}/man1/vacuumdb.1*
 %{_mandir}/man7/*.7*
-
-%if %{with tcl}
-%files tcl
-%defattr(644,root,root,755)
-#%attr(755,root,root) %{_libdir}/libpgtcl.so
-#%attr(755,root,root) %{_libdir}/libpgtcl.so.*.*
-#%attr(755,root,root) %{_bindir}/pgtclsh
-#%attr(755,root,root) %{_bindir}/pgtksh
-%{_mandir}/man1/pgtclsh.1*
-%{_mandir}/man1/pgtksh.1*
-
-%files tcl-devel
-%defattr(644,root,root,755)
-#%{_includedir}/libpgtcl.h
-
-%files tcl-static
-%defattr(644,root,root,755)
-#%{_libdir}/libpgtcl.a
-%endif
 
 %files module-plpgsql
 %defattr(644,root,root,755)
