@@ -1,23 +1,22 @@
-diff -urN postgresql-7.1.org/configure.in postgresql-7.1/configure.in
---- postgresql-7.1.org/configure.in	Wed Apr 18 14:00:58 2001
-+++ postgresql-7.1/configure.in	Wed Apr 18 14:07:04 2001
-@@ -17,9 +17,7 @@
+diff -Nur postgresql-7.3rc2.orig/configure.in postgresql-7.3rc2/configure.in
+--- postgresql-7.3rc2.orig/configure.in	Mon Nov 18 05:41:14 2002
++++ postgresql-7.3rc2/configure.in	Mon Nov 25 12:03:38 2002
+@@ -20,9 +20,7 @@
  dnl The GNU folks apparently haven't heard that some people don't use
  dnl Texinfo. Use this sorcery to use "docdir" instead of "infodir".
- define([info], [doc])
--define([infodir], [docdir])
- AC_INIT(src/backend/access/common/heaptuple.c)
--undefine([infodir])
- undefine([info])
+ m4_define([info], [doc])
+-m4_define([infodir], [docdir])
+ AC_INIT([PostgreSQL], [7.3rc2], [pgsql-bugs@postgresql.org])
+-m4_undefine([infodir])
+ m4_undefine([info])
+ AC_SUBST(docdir)
  
- AC_PREFIX_DEFAULT(/usr/local/pgsql)
-@@ -31,6 +29,9 @@
- VERSION='7.1'
- AC_SUBST(VERSION)
- AC_DEFINE_UNQUOTED(PG_VERSION, "$VERSION")
-+
+@@ -34,6 +32,8 @@
+ AC_SUBST(configure_args, [$ac_configure_args])
+ 
+ AC_DEFINE_UNQUOTED(PG_VERSION, "$PACKAGE_VERSION", [PostgreSQL version])
 +docdir=$infodir
 +AC_SUBST(docdir)
  
- unset CDPATH
+ AC_CANONICAL_HOST
  
