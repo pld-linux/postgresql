@@ -28,7 +28,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	7.4.1
-Release:	0.2
+Release:	0.3
 License:	BSD
 Group:		Applications/Databases
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -68,8 +68,8 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 PreReq:		rc-scripts
-PreReq:		%{name}-clients = %{version}
-PreReq:		%{name}-libs = %{version}
+PreReq:		%{name}-clients = %{version}-%{release}
+PreReq:		%{name}-libs = %{version}-%{release}
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
@@ -315,7 +315,7 @@ Summary(ru):	PostgreSQL - хедеры и библиотеки разработчика
 Summary(tr):	PostgreSQL baЧlЩk dosyalarЩ ve kitaplЩklar
 Summary(uk):	PostgreSQL - хедери та б╕бл╕отеки програм╕ста
 Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description devel
 This package contains header files and libraries required to compile
@@ -362,7 +362,7 @@ gereken baЧlЩk dosyalarЩnЩ ve kitaplЩklarЩ iГerir.
 Summary:	PostgreSQL backend development header files
 Summary(pl):	PostgreSQL - pliki nagЁСwkowe dla backendu
 Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description backend-devel
 This package contains header files required to compile functions that
@@ -380,7 +380,7 @@ Summary(pt_BR):	Clientes necessАrios para acessar o servidor PostgreSQL
 Summary(ru):	Клиентские программы, необходимые для доступа к серверу PostgreSQL
 Summary(uk):	Кл╕╓нтськ╕ програми, необх╕дн╕ для доступу до сервера PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name}-libs = %{version}
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description clients
 This package includes only the clients needed to access an PostgreSQL
@@ -460,6 +460,7 @@ PostgreSQL.
 Summary:	Embedded SQL in C interface
 Summary(pl):	Interfejs wbudowanego SQL-a w jЙzyk C
 Group:		Libraries
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description ecpg
 Embedded SQL in C interface.
@@ -471,7 +472,8 @@ Interfejs wbudowanego SQL-a w jЙzyk C.
 Summary:	Embedded SQL in C interface files
 Summary(pl):	Pliki programistyczne interfejsu wbudowanego SQL-a w jЙzyk C
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}
+Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name}-ecpg = %{version}-%{release}
 
 %description ecpg-devel
 Embedded SQL in C interface files.
@@ -487,7 +489,7 @@ Summary(pt_BR):	Bibliotecas estАticas PostgreSQL
 Summary(ru):	Статические библиотеки для программирования с PostgreSQL
 Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з PostgreSQL
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}
+Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 PostgreSQL static libraries.
@@ -522,7 +524,7 @@ Summary(ru):	Библиотеки для доступа к PostgreSQL из Tcl
 Summary(uk):	Б╕бл╕отеки для доступу до PostgreSQL з Tcl
 Summary(zh_CN):	р╩╦Ж Tcl ©Б╨м PostgreSQL ╣д PL/Tcl ╠ЮЁлсОят
 Group:		Development/Languages/Tcl
-Requires:	%{name}-libs = %{version}
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description tcl
 Tcl interface for PostgreSQL.
@@ -549,8 +551,8 @@ Summary(pl):	CzЙ╤Ф dla programistСw interfejsu Tcl dla PostgreSQL
 Summary(ru):	Хедеры и библиотеки для разработок с использованием libpgtcl (Tcl интерфейс для PostgreSQL)
 Summary(uk):	Хедери та б╕бл╕отеки для розробок з використанням libpgtcl (Tcl-╕нтерфейс для PostgreSQL)
 Group:		Development/Languages/Tcl
-Requires:	%{name}-tcl = %{version}
-Requires:	%{name}-devel = %{version}
+Requires:	%{name}-tcl = %{version}-%{release}
+Requires:	%{name}-devel = %{version}-%{release}
 
 %description tcl-devel
 Development part of Tcl interface for PostgreSQL.
@@ -574,7 +576,7 @@ Summary(pl):	Biblioteki statyczne interfejsu Tcl dla PostgreSQL
 Summary(ru):	Статические библиотеки для программирования с libpgtcl
 Summary(uk):	Статичн╕ б╕бл╕отеки для програмування з libpgtcl
 Group:		Development/Languages/Tcl
-Requires:	%{name}-tcl-devel = %{version}
+Requires:	%{name}-tcl-devel = %{version}-%{release}
 
 %description tcl-static
 Static libraries of Tcl interface for PostgreSQL.
@@ -594,7 +596,7 @@ postgresql-tcl-devel.
 Summary:	PL/pgSQL - PostgreSQL procedural language
 Summary(pl):	PL/pgSQL jЙzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 
 %description module-plpgsql
 From PostgreSQL documentation.
@@ -628,7 +630,7 @@ proceduralnego PL/pgSQL dla swojej bazy danych.
 Summary:	PL/perl - PostgreSQL procedural language
 Summary(pl):	PL/perl jЙzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 %requires_eq	perl-base
 
 %description module-plperl
@@ -663,7 +665,7 @@ proceduralnego PL/perl dla swojej bazy danych.
 Summary:	PL/python - PostgreSQL procedural language
 Summary(pl):	PL/python jЙzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 %pyrequires_eq	python
 
 %description module-plpython
@@ -698,7 +700,7 @@ proceduralnego PL/python dla swojej bazy danych.
 Summary:	PL/TCL - PostgreSQL procedural language
 Summary(pl):	PL/TCL - jЙzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 
 %description module-pltcl
 From PostgreSQL documentation.
@@ -732,7 +734,7 @@ proceduralnego PL/TCL dla swojej bazy danych.
 Summary:	Cryptographic functions for PostgreSQL
 Summary(pl):	Funkcje kryptograficzne dla PostgreSQL
 Group:		Applications/Databases
-Requires:       %{name} = %{version}
+Requires:       %{name} = %{version}-%{release}
 
 %description module-pgcrypto
 Cryptographic functions for PostgreSQL.
@@ -744,7 +746,7 @@ Funkcje kryptograficzne dla PostgreSQL.
 Summary:	Full text extension for PostgreSQL
 Summary(pl):	Rozszerzenie peЁnotekstowe dla PostgreSQL-a
 Group:		Applications/Databases
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 
 %description module-tsearch2
 Implementation of a new data type tsvector - a searchable data type
