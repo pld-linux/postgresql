@@ -5,7 +5,7 @@
 ALLOW_TCP_CONNECTIONS=no
 
 # Root of the tree of database directories
-POSTGRES_DATA_DIR=/var/state/pgsql
+POSTGRES_DATA_DIR=/var/lib/pgsql
 
 # maximum number of backend server processes that this postmaster is allowed
 # to start. If not specyfied is 32, and can be set as high as 1024 if your

@@ -22,7 +22,7 @@ if [ -f /etc/sysconfig/postgresql ] ; then
         . /etc/sysconfig/postgresql
 else
         ALLOW_TCP_CONNECTIONS=no
-	POSTGRES_DATA_DIR=/var/state/psql
+	POSTGRES_DATA_DIR=/var/lib/psql
 fi
 
 # Check that networking is up.
