@@ -940,8 +940,8 @@ fi
 %defattr(644,root,root,755)
 %doc COPYRIGHT README HISTORY doc/{FAQ*,README*,bug.template}
 %doc contrib/pg_autovacuum/README*
-%attr(754,root,root) /etc/rc.d/init.d/*
-%attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/*
+%attr(754,root,root) /etc/rc.d/init.d/postgresql
+%attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/sysconfig/postgresql
 
 %attr(755,root,root) %{_bindir}/clusterdb
 %attr(755,root,root) %{_bindir}/createdb
