@@ -452,8 +452,17 @@ install -d howto
   tar xzf $RPM_SOURCE_DIR/pgsql-Database-HOWTO-html.tar.gz
 )
 
-# Strip 'em all
-strip -s $RPM_BUILD_ROOT%{_bindir}/* || :
+strip -s $RPM_BUILD_ROOT%{_bindir}/ecpg
+strip -s $RPM_BUILD_ROOT%{_bindir}/pg_dump
+strip -s $RPM_BUILD_ROOT%{_bindir}/pg_encoding
+strip -s $RPM_BUILD_ROOT%{_bindir}/pg_id
+strip -s $RPM_BUILD_ROOT%{_bindir}/pg_passwd
+strip -s $RPM_BUILD_ROOT%{_bindir}/pgtclsh
+strip -s $RPM_BUILD_ROOT%{_bindir}/pgtksh
+strip -s $RPM_BUILD_ROOT%{_bindir}/pg_version
+strip -s $RPM_BUILD_ROOT%{_bindir}/postgres
+strip -s $RPM_BUILD_ROOT%{_bindir}/postmaster
+strip -s $RPM_BUILD_ROOT%{_bindir}/psql
 
 # gzip all man pages
 gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man*/*
