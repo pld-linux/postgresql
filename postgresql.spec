@@ -217,7 +217,7 @@ Postgres. W 1995 roku dodano jêzyk zapytañ SQL i nazwê zmieniono na
 Postgres95. W koñcu roku 1996 nazwê ostatecznie zmieniono na
 PostgreSQL.
 
-PostgreSQL mo¿e byæ uruchominy pod nastêpuj±cymi systemami: Solaris,
+PostgreSQL mo¿e byæ uruchomiony pod nastêpuj±cymi systemami: Solaris,
 SunOS, HPUX, AIX, Linux, Irix, FreeBSD i innych systemach Unix.
 
 %description -l pt_BR
