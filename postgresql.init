@@ -6,7 +6,7 @@
 # chkconfig:	345 84 25
 #
 # description:	Starts and stops the PostgreSQL backend daemon that handles \
-#				all database requests.
+#		all database requests.
 #
 # processname:	postmaster
 
