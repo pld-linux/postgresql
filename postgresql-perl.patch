@@ -15,12 +15,3 @@
  endif
  ifeq ($(USE_ODBC), true)
  	$(MAKE) -C odbc $@
-@@ -50,7 +46,7 @@
- 
- install-perl5: perl5/Makefile
- 	$(MAKE) -C perl5 clean
--	cd perl5 && POSTGRES_HOME="$(POSTGRESDIR)" perl Makefile.PL
-+	cd perl5 && perl Makefile.PL
- 	$(MAKE) -C perl5 all
- 	@if [ -w `sed -n -e 's/^ *SITELIBEXP *= *//p' perl5/Makefile` ]; then \
- 		$(MAKE) $(MFLAGS) -C perl5 install; \
