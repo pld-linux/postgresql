@@ -27,13 +27,13 @@ Summary(tr):	Veri TabanЩ YЖnetim Sistemi
 Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
-Version:	7.4
-Release:	0.9
+Version:	7.4.1
+Release:	0.1
 License:	BSD
 Group:		Applications/Databases
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
 Source0:	ftp://ftp2.pl.postgresql.org/mirrors/ftp.postgresql.org/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	9db7432c431d1570b1f605727daf27bc
+# Source0-md5:	c6148030e5ee15b3e1384d9fc9ce20f0
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -49,7 +49,6 @@ Patch7:		%{name}-ecpg_link.patch
 Patch8:		%{name}-ecpg-includedir.patch
 Patch9:		%{name}-contrib_install.patch
 Patch10:	%{name}-tsearch2-compound_word_support_20031210.patch
-Patch11:	%{name}-ssl-libpq-mem-leak-1.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -766,10 +765,9 @@ http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
+#%patch8 -p1
 %patch9 -p1
 %patch10 -p1
-%patch11 -p0
 
 tar xzf doc/man*.tar.gz
 
