@@ -735,7 +735,7 @@ autoconf
 %{?_with_jdbc:	--with-java}
 
 %{__make}
-%ifnarch sparc sparcv9 sparc64 alpha
+%ifnarch sparc sparcv9 sparc64 alpha ppc
 %{!?_without_tests: %{__make} check }
 %endif
 
