@@ -10,7 +10,6 @@
 %bcond_without	pgsql_locale		# disable PostgreSQL locale
 %bcond_without	pgsql_multibyte		# disable PostgreSQL multibyte
 %bcond_without	python			# disable python support
-%bcond_with	jdbc			# build JDBC interface and Java tools
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 %define beta beta2
@@ -57,7 +56,6 @@ BuildRequires:	automake
 BuildRequires:	flex
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
-%{?with_jdbc:BuildRequires:	jakarta-ant >= 1.5}
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
@@ -808,8 +806,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	%{?with_kerberos5:--with-krb5} \
 	--with-openssl \
 	--with-x \
-	--without-docdir \
-	%{?with_jdbc:--with-java}
+	--without-docdir 
 
 %{__make}
 %{__make} -C contrib/pg_autovacuum
@@ -847,11 +844,6 @@ touch $RPM_BUILD_ROOT/var/log/pgsql
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
-
-%if %{with jdbc}
-mv	$RPM_BUILD_ROOT%{_datadir}/postgresql/java/*.jar \
-	$RPM_BUILD_ROOT%{_javadir}
-%endif
 
 install -d howto
 ( cd howto
@@ -981,11 +973,6 @@ fi
 %{_datadir}/postgresql/*.sql
 %{_datadir}/postgresql/*.txt
 %{_datadir}/postgresql/timezone/*
-
-%if %{with jdbc}
-#{_javadir}/postgresql-exmaples.jar
-%{_javadir}/postgresql.jar
-%endif
 
 %attr(700,postgres,postgres) /home/services/postgres
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
