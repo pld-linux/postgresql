@@ -25,6 +25,7 @@ else
 	ALLOW_USE_SSL=no
 	POSTGRES_DATA_DIR=/var/lib/pgsql
 	POSTGRES_LOG=/var/log/pgsql
+	ENCODING=UNICODE
 fi
 
 # Check that networking is up.
@@ -88,7 +89,7 @@ case "$1" in
 		    fi
 		    TMPDIR=/tmp su postgres -c "LD_LIBRARY_PATH=/usr/lib \
 			initdb --pgdata=$POSTGRES_DATA_DIR \
-			-L /usr/share/postgresql"
+			-L /usr/share/postgresql -E $ENCODING"
 		fi
 		
 		msg_starting PostgreSQL 
