@@ -6,7 +6,7 @@ Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.0.3
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -14,12 +14,15 @@ Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
+Source4:	pgaccess.desktop
+Source5:	pgaccess.png
 Patch0:		%{name}-opt.patch
 Patch1:		%{name}-DESTDIR.patch
 Patch2:		%{name}-perl.patch
 Patch3:		%{name}-python.patch
 Patch4:		%{name}-no_libnsl.patch
 Patch5:		%{name}-pgaccess-typo.patch
+Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
 Requires:	rc-scripts
@@ -574,7 +577,8 @@ make -C contrib/datetime LIBDIR=%{_libdir}/pgsql
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
         $RPM_BUILD_ROOT/var/{lib/pgsql,log} \
-	$RPM_BUILD_ROOT%{_libdir}/pgsql/{modules,sql}
+	$RPM_BUILD_ROOT%{_libdir}/pgsql/{modules,sql} \
+	$RPM_BUILD_ROOT{%{_applnkdir_}/System,%{_pixmapsdir}}
 
 %{__make} -C src install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -609,6 +613,8 @@ ln -sf . $RPM_BUILD_ROOT%{_libdir}/pgaccess/lib
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
+install %{SOURCE3} $RPM_BUILD_ROOT%{_applnkdir}/System
+install %{SOURCE3} $RPM_BUILD_ROOT%{_pixmapsdir}
 
 install -d howto
 ( cd howto
@@ -621,6 +627,13 @@ install -d howto
 ( cd src/include
   cp -rf * $RPM_BUILD_ROOT%{_includedir}/pgsql
 )
+
+# replace symlinks to header fiels by files
+rm -f $RPM_BUILD_ROOT%{_includedir}/pgsql/dynloader.h
+rm -f $RPM_BUILD_ROOT%{_includedir}/pgsql/os.h
+
+install src/backend/port/dynloader/linux.h $RPM_BUILD_ROOT%{_includedir}/pgsql/dynloader.h
+install src/include/port/linux.h $RPM_BUILD_ROOT%{_includedir}/pgsql/os.h
 
 %pre
 getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
@@ -814,9 +827,11 @@ rm -f /tmp/tmp_perl_info
 
 %files -n pgaccess
 %defattr(644,root,root,755)
+%doc src/bin/pgaccess/doc/html/*
 %attr(755,root,root) %{_bindir}/pgaccess
 %{_libdir}/pgaccess
-%doc src/bin/pgaccess/doc/html/*
+%{_applnkdir}/System/pgaccess.desktop
+%{_pixmapsdir}/pgaccess.png
 
 %files tcl
 %defattr(644,root,root,755)
