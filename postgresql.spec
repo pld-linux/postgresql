@@ -724,7 +724,7 @@ mkdir doc/unpacked
 tar zxf doc/postgres.tar.gz -C doc/unpacked
 
 # Erase all CVS dir
-rm -fR `find contrib -type d -name CVS`
+find contrib -type d -name CVS -exec rm -rf {} \;
 
 %build
 rm -f config/libtool.m4
