@@ -10,10 +10,10 @@
 #
 # Conditional build:
 %bcond_without	tcl			# disables Tcl support
-%bcond_without	kerberos5	# disable kerberos5 support
+%bcond_without	kerberos5		# disable kerberos5 support
 %bcond_with	jdbc			# enable JDBC driver
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
-								# (disabled by default because it is a security risk)
+					# (disabled by default because it is a security risk)
 
 %include	/usr/lib/rpm/macros.python
  
@@ -49,6 +49,7 @@ Patch4:		%{name}-absolute_dbpaths.patch
 Patch5:		%{name}-link.patch
 Patch6:		%{name}-com_err.patch
 Patch7:		%{name}-ecpg_link.patch
+Patch8:		%{name}-ecpg-includedir.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -745,10 +746,11 @@ Funkcje kryptograficzne dla PostgreSQL.
 %patch1 -p1
 %patch2 -p0
 %patch3 -p1
-%{?_with_absolute_dbpaths:%patch4 -p1}
+%{?with_absolute_dbpaths:%patch4 -p1}
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -984,22 +986,7 @@ fi
 %attr(755,root,root) %{_libdir}/libecpg.so
 %attr(755,root,root) %{_libdir}/libecpg_compat.so
 %attr(755,root,root) %{_libdir}/libpgtypes.so
-%{_includedir}/compatlib.h
-%{_includedir}/datetime.h
-%{_includedir}/decimal.h
-%{_includedir}/ecpg_informix.h
-%{_includedir}/ecpgerrno.h
-%{_includedir}/ecpglib.h
-%{_includedir}/ecpgtype.h
-%{_includedir}/pgtypes_date.h
-%{_includedir}/pgtypes_error.h
-%{_includedir}/pgtypes_interval.h
-%{_includedir}/pgtypes_numeric.h
-%{_includedir}/pgtypes_timestamp.h
-%{_includedir}/sql3types.h
-%{_includedir}/sqlca.h
-%{_includedir}/sqlda.h
-%{_includedir}/sqltypes.h
+%{_includedir}/ecpg
 
 %files devel
 %defattr(644,root,root,755)
