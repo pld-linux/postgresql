@@ -180,7 +180,7 @@ case "$action" in
 	$0 stop "$DB_CLUSTERS"
 	$0 start "$DB_CLUSTERS"
 	;;
-  reload)
+  reload|force-reload)
 	for pgdir in $DB_CLUSTERS; do
 		pgstatus "$pgdir"
 		if [ "$PG_STATUS" = "not running" ]; then
@@ -193,9 +193,9 @@ case "$action" in
 				TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir restart 2>&1 >/dev/null"
 					pgstatus "$pgdir"
 				if [ "$PG_STATUS" = "running" ]; then
-					deltext; ok
+					ok
 				else
-					deltext; fail
+					fail
 				fi
 			else
 				# postgresql died and pg_ctl has misinformed us about
@@ -226,8 +226,8 @@ case "$action" in
 	echo $(nls "REMEMBER to setup password for user \"postgres\"")'!'
 	;;
   *)
-	msg_usage "$0 {start|stop|init|restart|reload|status}"
-	exit 1
+	msg_usage "$0 {start|stop|init|restart|reload|force-reload|status}"
+	exit 3
 esac
 
 exit 0
