@@ -360,7 +360,7 @@ install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig} \
 
 # PREFIX (hack for perl)
 ( cd src
-  make DESTDIR=$RPM_BUILD_ROOT PREFIX=$RPM_BUILD_ROOT/usr install
+  make DESTDIR=$RPM_BUILD_ROOT install
   make DESTDIR=$RPM_BUILD_ROOT install-man
 )
 
