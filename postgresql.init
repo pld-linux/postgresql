@@ -26,8 +26,8 @@ else
 fi
 
 # Check that networking is up.
-if [ "${NETWORKING}" = "no" ]; then
-	echo "WARNING: Networking is down. Postgresql service can't be runed."
+if is_no "${NETWORKING}"; then
+	msg_Network_Down Postgresql
 	exit 1
 fi
 
@@ -55,7 +55,7 @@ case "$1" in
 			mkdir -p $POSTGRES_DATA_DIR
 			chown postgres.postgres $POSTGRES_DATA_DIR
 		    fi
-		    show Creating postgresql init database
+		    show "Creating postgresql init database"
 		    busy
 		    su postgres -c "LD_LIBRARY_PATH=/usr/lib \
 			initdb --pgdata=$POSTGRES_DATA_DIR \
@@ -79,12 +79,12 @@ case "$1" in
 			deltext; fail
 		fi
 	else
-		echo "Postgresql already is running"
+		msg_Already_Running Postgresql
 	fi
 	touch /var/lock/subsys/postgresql
 	;;
   stop)
-	show Stopping postgresql service
+	msg_stopping postgresql
 	killproc postmaster
 	sleep 2
 	rm -f /var/run/postmaster.pid
@@ -98,7 +98,7 @@ case "$1" in
 	$0 start
 	;;
   *)
-	echo "Usage: postgresql {start|stop|status|restart|reload}"
+	msg_Usage "$0 {start|stop|status|restart|reload}"
 	exit 1
 esac
 
