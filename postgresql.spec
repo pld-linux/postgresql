@@ -6,7 +6,7 @@ Summary(pl):	PostgreSQL system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	6.5.3
-Release:	4
+Release:	5
 Copyright:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy Danych
@@ -356,7 +356,7 @@ make all PGDOCS=unpacked -C doc
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig} \
         $RPM_BUILD_ROOT{%{_bindir},%{_libdir}/pgsql,%{_mandir},%{_includedir}/pgsql} \
-        $RPM_BUILD_ROOT/var/state/pgsql
+        $RPM_BUILD_ROOT/var/lib/pgsql
 
 # PREFIX (hack for perl)
 ( cd src
@@ -411,7 +411,7 @@ gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man*/*
 %pre
 getgid postgres >/dev/null 2>&1 || /usr/sbin/groupadd -g 88 -r -f postgres
 id postgres >/dev/null 2>&1 || /usr/sbin/useradd -M -o -r -u 88 \
-	-d /var/state/pgsql -s /bin/sh -g postgres \
+	-d /var/lib/pgsql -s /bin/sh -g postgres \
 	-c "PostgreSQL Server" postgres
 )
 
@@ -492,7 +492,7 @@ rm -f /tmp/tmp_perl_info
 %{_mandir}/man1/ipcclean.1*
 %{_mandir}/man5/*.5*
 
-%attr(750,postgres,postgres) %dir /var/state/pgsql
+%attr(750,postgres,postgres) %dir /var/lib/pgsql
 
 %files libs
 %defattr(644,root,root,755)
