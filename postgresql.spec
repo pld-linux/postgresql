@@ -20,7 +20,6 @@ Patch2:		%{name}-perl.patch
 Patch3:		%{name}-python.patch
 Patch4:		%{name}-no_libnsl.patch
 Patch5:		%{name}-pgaccess-typo.patch
-Patch6:		%{name}-pgaccess-modpath.patch
 URL:		http://www.postgresql.org/
 Prereq:		/sbin/chkconfig
 Requires:	rc-scripts
@@ -529,7 +528,6 @@ proceduralnego PL/TCL dla swojej bazy danych.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 # Erase all CVS dir
 rm -fR `find contrib/ -type d -name CVS`
@@ -581,6 +579,9 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/{rc.d/init.d,sysconfig} \
 %{__make} -C src install DESTDIR=$RPM_BUILD_ROOT TEMPLATEDIR=%{_libdir}/pgsql
 %{__make} -C doc install DESTDIR=$RPM_BUILD_ROOT
 touch $RPM_BUILD_ROOT/var/log/pgsql
+
+# pgaccess 
+ln -sf . $RPM_BUILD_ROOT%{_libdir}/pgaccess/lib
 
 # for datetime functions
 %{__make} -C contrib/datetime install LIBDIR=$RPM_BUILD_ROOT%{_libdir}/pgsql
@@ -679,6 +680,8 @@ rm -f /tmp/tmp_perl_info
 %attr(755,root,root) %{_bindir}/droplang
 
 %dir %{_libdir}/pgsql
+%dir %{_libdir}/pgsql/modules
+%dir %{_libdir}/pgsql/sql
 %{_libdir}/pgsql/*.source 
 %{_libdir}/pgsql/*.sample
 %{_libdir}/pgsql/*.description
