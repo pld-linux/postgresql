@@ -20,21 +20,25 @@
 if [ -f /etc/sysconfig/postgresql ]; then
 	. /etc/sysconfig/postgresql
 else
-	echo "Error: /etc/sysconfig/postgresql not found"
-	echo " PostgreSQL can't be run."
+	nls "Error: /etc/sysconfig/postgresql not found"
+	nls " PostgreSQL can't be run."
 	exit 1
 fi
 
 if [ ! "$PG_DB_CLUSTERS" ]; then
-	echo "Error: PG_DB_CLUSTERS not found or is empty"
-	echo " PostgreSQL can't be run."
+	nls "Error: PG_DB_CLUSTERS not found or is empty"
+	nls " PostgreSQL can't be run."
 	exit 1
 fi
 
 # Check that networking is up.
-if is_no "${NETWORKING}"; then
-	msg_network_down PostgreSQL
-	exit 1
+if is_yes "${NETWORKING}"; then
+	if [ ! -f /var/lock/subsys/network ]; then
+		msg_network_down PostgreSQL
+		exit 1
+	fi
+else
+	exit 0
 fi
 
 action="$1"
@@ -88,9 +92,9 @@ pgstart() {
 	sleep 1
 	pgstatus "$1"
 	if [ "$PG_STATUS" != "unknown" -a "$PG_PID" != "unknown" ]; then
-		deltext; ok
+		ok
 	else
-		deltext; fail 
+		fail 
 	fi
 }
 
@@ -114,119 +118,116 @@ pgsubsys() {
 # End of useful functions.
 #
 
+
 # See how we were called.
 # Every action is performed for all given (all configured by default)
 # db clusters.
 case "$action" in
-	start)
-		for pgdir in $DB_CLUSTERS; do
-			pgstatus "$pgdir"
-			if [ "$PG_STATUS" = "running" ]; then
-				# pg_ctl status can misinform us about postgresql status
-				# so let's check if postmaster is really alive
-				if ps ax | grep -v grep | grep -q "$PG_PID"; then
-					msg_already_running "PostgreSQL $pgdir"
-				else
-					# pg_ctl has misinformed us about postgresql status;
-					# remove pid file and run postgresql
-					msg_not_running "PostgreSQL $pgdir"
-					rm -f $pgdir/postmaster.pid
-					pgstart "$pgdir"
-				fi
+  start)
+	for pgdir in $DB_CLUSTERS; do
+		pgstatus "$pgdir"
+		if [ "$PG_STATUS" = "running" ]; then
+			# pg_ctl status can misinform us about postgresql status
+			# so let's check if postmaster is really alive
+			if ps ax | grep -v grep | grep -q "$PG_PID"; then
+				msg_already_running "PostgreSQL $pgdir"
 			else
+				# pg_ctl has misinformed us about postgresql status;
+				# remove pid file and run postgresql
+				msg_not_running "PostgreSQL $pgdir"
+				rm -f $pgdir/postmaster.pid
 				pgstart "$pgdir"
 			fi
-		done
-		pgsubsys
+		else
+			pgstart "$pgdir"
+		fi
+	done
+	pgsubsys
 	;;
-	stop)
-		for pgdir in $DB_CLUSTERS; do
-			pgstatus "$pgdir"
-			if [ "$PG_STATUS" = "not running" ]; then
-				msg_not_running "PostgreSQL $pgdir"
-			else
-				msg_stopping "PostgreSQL $pgdir"
-				busy
-
+  stop)
+	for pgdir in $DB_CLUSTERS; do
+		pgstatus "$pgdir"
+		if [ "$PG_STATUS" = "not running" ]; then
+			msg_not_running "PostgreSQL $pgdir"
+		else
+			msg_stopping "PostgreSQL $pgdir"
+			busy
 				# is postgresql really alive?
-				if ps ax | grep -v grep | grep -q "$PG_PID"; then
-					TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir stop -m fast 2>&1 >/dev/null"
-					pgstatus "$pgdir"
-					if [ "$PG_STATUS" != "not running" ]; then
-						deltext; fail
-					else
-						deltext; ok
-					fi
+			if ps ax | grep -v grep | grep -q "$PG_PID"; then
+				TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir stop -m fast 2>&1 >/dev/null"
+				pgstatus "$pgdir"
+				if [ "$PG_STATUS" != "not running" ]; then
+					fail
 				else
-					# postgresql is not really alive; pg_ctl misinformed us
-					# about the status
-					deltext; died
+					ok
 				fi
-
+			else
+				# postgresql is not really alive; pg_ctl misinformed us
+				# about the status
+				died
+			fi
+			rm -f $pgdir/postmaster.pid
+		fi
+	done
+	pgsubsys
+	;;
+  status)
+	for pgdir in $DB_CLUSTERS; do
+	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir status"
+		done
+	;;
+  restart)
+	$0 stop "$DB_CLUSTERS"
+	$0 start "$DB_CLUSTERS"
+	;;
+  reload)
+	for pgdir in $DB_CLUSTERS; do
+		pgstatus "$pgdir"
+		if [ "$PG_STATUS" = "not running" ]; then
+			msg_not_running "PostgreSQL $pgdir"
+		else
+			msg_reloading "PostgreSQL $pgdir"
+			busy
+			# is postgresql really alive?
+			if ps ax | grep -v grep | grep -q "$PG_PID"; then
+				TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir restart 2>&1 >/dev/null"
+					pgstatus "$pgdir"
+				if [ "$PG_STATUS" = "running" ]; then
+					deltext; ok
+				else
+					deltext; fail
+				fi
+			else
+				# postgresql died and pg_ctl has misinformed us about
+				# the status; remove pid file and start it again
+				deltext; died
 				rm -f $pgdir/postmaster.pid
+				pgstart "$pgdir"
 			fi
-		done
-		pgsubsys
+		fi
+	done
+	pgsubsys
 	;;
-	status)
-		for pgdir in $DB_CLUSTERS; do
-			TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir status"
-		done
+  init)
+	nls "Note: this is only simple init action for convenience."
+	nls "If you want some non-standard options, consider using initdb(1)."
+	echo
+	for pgdir in $DB_CLUSTERS; do
+		if [ -f $pgdir/PG_VERSION ]; then
+			echo $(nls "Skipping existing cluster %s" "$pgdir")
+		else
+			echo $(nls "Initializing cluster %s" "$pgdir")
+			mkdir -p $pgdir
+			chmod 700 $pgdir
+			chown postgres.postgres $pgdir
+			TMPDIR=/tmp su - postgres -s /bin/sh -c "initdb -D $pgdir"
+		fi
+	done
+	echo $(nls "REMEMBER to setup password for user \"postgres\"")'!'
 	;;
-	restart)
-		$0 stop "$DB_CLUSTERS"
-		$0 start "$DB_CLUSTERS"
-	;;
-	reload)
-		for pgdir in $DB_CLUSTERS; do
-			pgstatus "$pgdir"
-			if [ "$PG_STATUS" = "not running" ]; then
-				msg_not_running "PostgreSQL $pgdir"
-			else
-				msg_reloading "PostgreSQL $pgdir"
-				busy
-
-				# is postgresql really alive?
-				if ps ax | grep -v grep | grep -q "$PG_PID"; then
-					TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir restart 2>&1 >/dev/null"
-
-					pgstatus "$pgdir"
-					if [ "$PG_STATUS" = "running" ]; then
-						deltext; ok
-					else
-						deltext; fail
-					fi
-				else
-					# postgresql died and pg_ctl has misinformed us about
-					# the status; remove pid file and start it again
-					deltext; died
-					rm -f $pgdir/postmaster.pid
-					pgstart "$pgdir"
-				fi
-			fi
-		done
-		pgsubsys
-	;;
-	init)
-		echo "Note: this is only simple init action for convenience."
-		echo "If you want some non-standard options, consider using initdb(1)."
-		echo
-		for pgdir in $DB_CLUSTERS; do
-			if [ -f $pgdir/PG_VERSION ]; then
-				echo "Skipping existing cluster $pgdir"
-			else
-				echo "Initializing cluster $pgdir"
-				mkdir -p $pgdir
-				chmod 700 $pgdir
-				chown postgres.postgres $pgdir
-				TMPDIR=/tmp su - postgres -s /bin/sh -c "initdb -D $pgdir"
-			fi
-		done
-		echo "REMEMBER to setup password for user \"postgres\"!"
-	;;
-	*)
-		msg_usage "$0 {start|stop|status|restart|reload}"
-		exit 1
+  *)
+	msg_usage "$0 {start|stop|init|restart|reload|status}"
+	exit 1
 esac
 
 exit 0
