@@ -1,4 +1,5 @@
 %include	/usr/lib/rpm/macros.perl
+%define	_python_sitepkgsdir	%(echo `python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[:3] + '/site-packages/')"`)         
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
 Summary(fr):	Sysème de gestion de base de données PostgreSQL
@@ -6,7 +7,7 @@ Summary(pl):	PostgreSQL - system bazodanowy
 Summary(tr):	Veri Tabaný Yönetim Sistemi
 Name:		postgresql
 Version:	7.1.1
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Group(pl):	Aplikacje/Bazy danych
@@ -226,7 +227,7 @@ Summary:	The python-based client programs needed for accessing a PostgreSQL serv
 Group:		Development/Languages/Python
 Group(de):	Entwicklung/Sprachen/Python
 Group(pl):	Programowanie/Jêzyki/Python
-Requires:	python >= 1.5
+Requires:	python >= 2.0
 Requires:	%{name}-libs = %{version}
 
 %description python
@@ -795,6 +796,11 @@ rm -f /tmp/tmp_perl_info
 %{perl_sitearch}/auto/Pg/autosplit.ix
 %{perl_sitearch}/Pg.pm
 %{_mandir}/man3/*
+
+%files python
+%defattr(644,root,root,755)
+%{_libdir}/python*/*.py
+%attr(755,root,root) %{_python_sitepkgsdir}/*.so
 
 %files -n pgaccess
 %defattr(644,root,root,755)
