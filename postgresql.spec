@@ -30,6 +30,7 @@ BuildRequires:	XFree86-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Requires:	%{name}-libs = %{version}
 Obsoletes:	postgresql-server
+Obsoletes:	postgresql-test
 
 %define		_sysconfdir	/etc
 
