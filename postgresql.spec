@@ -15,8 +15,8 @@
 					# (disabled by default because it is a security risk)
 %bcond_without	slony1			# disable Slony-I replication system
 
-%define		postgresql_version	8.0.1
-%define		postgresql_release	2
+%define		postgresql_version	8.0.2
+%define		postgresql_release	0.1
 %define		slony1_version	1.0.5
 %define		slony1_release	1
 
@@ -36,7 +36,7 @@ Release:	%{postgresql_release}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{postgresql_version}/%{name}-%{postgresql_version}.tar.bz2
-# Source0-md5:	075ac81c865b0af865459260bf1ca890
+# Source0-md5:	1d44b9ca9a05a0df6c4bf8ebb7164a06
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}beta/%{name}-%{version}%{beta}.tar.bz2
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
