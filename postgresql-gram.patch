@@ -16,22 +16,6 @@
  	}
  
  	if (endtoken)
-@@ -1940,6 +1949,15 @@
- 
- 					while ((tok = yylex()) == ',')
- 					{
-+						/* Check for array overflow */
-+						if (nfields >= 1024)
-+						{
-+							plpgsql_error_lineno = plpgsql_scanner_lineno();
-+							ereport(ERROR,
-+									(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
-+									 errmsg("too many INTO variables specified")));
-+						}
-+
- 						tok = yylex();
- 						switch(tok)
- 						{
 @@ -2014,6 +2032,15 @@
  				plpgsql_dstring_append(&ds, yytext);
  				break;
@@ -48,19 +32,3 @@
  	}
  
  	expr = malloc(sizeof(PLpgSQL_expr) + sizeof(int) * nparams - sizeof(int));
-@@ -2085,6 +2112,15 @@
- 
- 				while ((tok = yylex()) == ',')
- 				{
-+					/* Check for array overflow */
-+					if (nfields >= 1024)
-+					{
-+						plpgsql_error_lineno = plpgsql_scanner_lineno();
-+						ereport(ERROR,
-+								(errcode(ERRCODE_PROGRAM_LIMIT_EXCEEDED),
-+								 errmsg("too many INTO variables specified")));
-+					}
-+
- 					tok = yylex();
- 					switch(tok)
- 					{
