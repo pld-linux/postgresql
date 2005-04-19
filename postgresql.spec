@@ -54,8 +54,7 @@ Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-link.patch
 Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
-Patch5:		%{name}-gram.patch
-Patch6:		%{name}-ac.patch
+Patch5:		%{name}-ac.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -769,8 +768,7 @@ by³y ca³y czas operacyjne.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-#patch6 -p1	needed for glibc2.3.4 + gcc4
+#patch5 -p1	needed for glibc2.3.4 + gcc4
 
 %if %{with php}
 patch -p1 < plphp.patch
