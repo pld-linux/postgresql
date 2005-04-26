@@ -375,6 +375,7 @@ gereken baþlýk dosyalarýný ve kitaplýklarý içerir.
 Summary:	PostgreSQL backend development header files
 Summary(pl):	PostgreSQL - pliki nag³ówkowe dla backendu
 Group:		Development/Libraries
+Requires:	%{name}-devel = %{postgresql_version}-%{postgresql_release}
 Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
 
 %description backend-devel
