@@ -76,6 +76,7 @@ BuildRequires:	python >= 1:2.3
 BuildRequires:	python-devel >= 1:2.3
 %endif
 BuildRequires:	readline-devel >= 4.2
+BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	sed >= 4.0
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
 BuildRequires:	zlib-devel
@@ -884,9 +885,7 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
 
 install -d howto
-( cd howto
-	tar xzf %{SOURCE2}
-)
+tar zxf %{SOURCE2} -C howto
 
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
@@ -940,24 +939,12 @@ if [ "$foundold" = "1" ]; then
 	exit 1
 fi
 
-if [ -n "`/usr/bin/getgid postgres`" ]; then
-	if [ "`/usr/bin/getgid postgres`" != "88" ]; then
-		echo "Error: group postgres doesn't have gid=88. Correct this before installing postgresql." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/groupadd -g 88 -r postgres
-fi
+%groupadd -g 88 -r postgres
+%useradd -M -o -r -u 88 -d /home/services/postgres -s /bin/sh -g postgres -c "PostgreSQL Server" postgres
+
+# TODO: move  this to trigger!
 if [ -n "`/bin/id -u postgres 2>/dev/null`" ]; then
-	if [ "`/bin/id -u postgres 2>/dev/null`" != "88" ]; then
-		echo "Error: user postgres doesn't have uid=88. Correct this before installing postgresql." 1>&2
-		exit 1
-	fi
 	/usr/sbin/usermod -d /home/services/postgres postgres
-else
-	/usr/sbin/useradd -M -o -r -u 88 \
-		-d /home/services/postgres -s /bin/sh -g postgres \
-		-c "PostgreSQL Server" postgres
 fi
 
 %post
@@ -983,24 +970,9 @@ fi
 %postun	ecpg -p /sbin/ldconfig
 
 %pre -n slony1
-if [ -n "`/usr/bin/getgid slony1`" ]; then
-	if [ "`/usr/bin/getgid slony1`" != "131" ]; then
-		echo "Error: group slony1 doesn't have gid=131. Correct this before installing slony1." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/groupadd -g 131 -r slony1
-fi
-if [ -n "`/bin/id -u slony1 2>/dev/null`" ]; then
-	if [ "`/bin/id -u slony1 2>/dev/null`" != "131" ]; then
-		echo "Error: user postgres doesn't have uid=131. Correct this before installing slony1." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -M -o -r -u 131 \
-		-d /home/services/slony1 -s /bin/sh -g slony1 \
-		-c "Slony-I Replicator" slony1
-fi
+%groupadd -P slony1 -g 131 -r slony1
+%useradd -P slony1 -M -o -r -u 131 -d /home/services/slony1 -s /bin/sh -g slony1 -c "Slony-I Replicator" slony1
+
 
 %post -n slony1
 /sbin/chkconfig --add slony1
@@ -1012,6 +984,7 @@ fi
 
 %preun -n slony1
 if [ "$1" = "0" ]; then
+	# FIXME: no slony1 user removal?
 	if [ -f /var/lock/subsys/slony1 ]; then
 		/etc/rc.d/init.d/slony1 stop
 	fi
