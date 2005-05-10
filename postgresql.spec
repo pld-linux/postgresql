@@ -16,7 +16,7 @@
 					# (disabled by default because it is a security risk)
 %bcond_without	slony1			# disable Slony-I replication system
 
-%define		postgresql_version	7.4.7
+%define		postgresql_version	7.4.8
 %define		postgresql_release	1
 %define		slony1_version	1.0.5
 %define		slony1_release	1
@@ -37,7 +37,7 @@ Release:	%{postgresql_release}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{postgresql_version}/%{name}-%{postgresql_version}.tar.bz2
-# Source0-md5:	32dac2916d16287d95e0c958a75161fa
+# Source0-md5:	b79761ec3735b5851db44429e97bee88
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -56,7 +56,6 @@ Patch8:		%{name}-ecpg-includedir.patch
 Patch9:		%{name}-contrib_install.patch
 Patch10:	%{name}-tsearch2-compound_word_support_20031210.patch
 Patch11:	%{name}-python-configdir.patch
-Patch12:	%{name}-gram.y.patch
 Icon:		postgresql.xpm
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
@@ -816,7 +815,6 @@ by³y ca³y czas operacyjne.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
 
 tar xzf doc/man*.tar.gz
 
