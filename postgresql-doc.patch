@@ -6,7 +6,7 @@ diff -Naur postgresql-7.4.7.orig/configure.in postgresql-7.4.7/configure.in
  dnl Texinfo. Use this sorcery to use "docdir" instead of "infodir".
  m4_define([info], [doc])
 -m4_define([infodir], [docdir])
- AC_INIT([PostgreSQL], [7.4.7], [pgsql-bugs@postgresql.org])
+ AC_INIT([PostgreSQL], [7.4.8], [pgsql-bugs@postgresql.org])
 -m4_undefine([infodir])
  m4_undefine([info])
  AC_SUBST(docdir)
