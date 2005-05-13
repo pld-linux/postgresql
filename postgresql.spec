@@ -16,7 +16,7 @@
 %bcond_without	slony1			# disable Slony-I replication system
 
 %define		postgresql_version	8.0.3
-%define		postgresql_release	1
+%define		postgresql_release	2
 %define		slony1_version	1.0.5
 %define		slony1_release	1
 
@@ -817,6 +817,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 %{__make} -C contrib/tsearch2
 %{__make} -C src/tutorial \
 	NO_PGXS=1
+
 %ifnarch sparc sparcv9 sparc64 alpha
 %{?with_tests:%{__make} check}
 %endif
@@ -848,6 +849,8 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+%{__cc} -shared -Wl,-soname,libpq.so.3 -o $RPM_BUILD_ROOT%{_libdir}/libpq.so.3 -L$RPM_BUILD_ROOT%{_libdir} -lpq
 
 %if %{with perl}
 %{__make} install -C src/pl/plperl \
@@ -1042,7 +1045,7 @@ fi
 
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpq.so.*.*
+%attr(755,root,root) %{_libdir}/libpq.so.*
 %dir %{_pgmoduledir}
 
 %files ecpg
