@@ -91,16 +91,7 @@ pgstatus() {
 #
 pgstart() {
 	msg_starting "PostgreSQL $1"
-	busy
-	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $1 start 2>&1 >/dev/null"
-	sleep 1
-	pgstatus "$1"
-
-	if [ "$PG_STATUS" != "unknown" -a "$PG_PID" != "unknown" ]; then
-		ok
-	else
-		fail 
-	fi
+	daemon --user postgres /usr/bin/pg_ctl -s -w -D $1 start
 }
 
 #
