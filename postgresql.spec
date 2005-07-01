@@ -13,8 +13,6 @@
 %bcond_with	php			# enable PHP support
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
-%define		postgresql_version	8.0.3
-%define		postgresql_release	3.1
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
@@ -27,11 +25,11 @@ Summary(tr):	Veri Tabaný Yönetim Sistemi
 Summary(uk):	PostgreSQL - ÓÉÓÔÅÍÁ ËÅÒÕ×ÁÎÎÑ ÂÁÚÁÍÉ ÄÁÎÉÈ
 Summary(zh_CN):	PostgreSQL ¿Í»§¶Ë³ÌÐòºÍ¿âÎÄ¼þ
 Name:		postgresql
-Version:	%{postgresql_version}
-Release:	%{postgresql_release}
+Version:	8.0.3
+Release:	3.1
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v%{postgresql_version}/%{name}-%{postgresql_version}.tar.bz2
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
 # Source0-md5:	c0914a133ce6c1e0f1d8b93982d6e881
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}beta/%{name}-%{version}%{beta}.tar.bz2
 Source1:	%{name}.init
@@ -72,8 +70,8 @@ BuildRequires:	sed >= 4.0
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
 BuildRequires:	zlib-devel
 PreReq:		rc-scripts
-PreReq:		%{name}-clients = %{postgresql_version}-%{postgresql_release}
-PreReq:		%{name}-libs = %{postgresql_version}-%{postgresql_release}
+PreReq:		%{name}-clients = %{version}-%{release}
+PreReq:		%{name}-libs = %{version}-%{release}
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
@@ -82,7 +80,7 @@ Requires(pre):	/usr/sbin/usermod
 Requires(post,preun):	/sbin/chkconfig
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
-BuildRoot:	%{tmpdir}/%{name}-%{postgresql_version}-root-%(id -u -n)
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
 %define		_pgsqldir	%{_datadir}/postgresql/contrib
@@ -320,7 +318,7 @@ Summary(ru):	PostgreSQL - ÈÅÄÅÒÙ É ÂÉÂÌÉÏÔÅËÉ ÒÁÚÒÁÂÏÔÞÉËÁ
 Summary(tr):	PostgreSQL baþlýk dosyalarý ve kitaplýklar
 Summary(uk):	PostgreSQL - ÈÅÄÅÒÉ ÔÁ Â¦ÂÌ¦ÏÔÅËÉ ÐÒÏÇÒÁÍ¦ÓÔÁ
 Group:		Development/Libraries
-Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description devel
 This package contains header files and libraries required to compile
@@ -367,8 +365,8 @@ gereken baþlýk dosyalarýný ve kitaplýklarý içerir.
 Summary:	PostgreSQL backend development header files
 Summary(pl):	PostgreSQL - pliki nag³ówkowe dla backendu
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{postgresql_version}-%{postgresql_release}
-Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description backend-devel
 This package contains header files required to compile functions that
@@ -386,7 +384,7 @@ Summary(pt_BR):	Clientes necessários para acessar o servidor PostgreSQL
 Summary(ru):	ëÌÉÅÎÔÓËÉÅ ÐÒÏÇÒÁÍÍÙ, ÎÅÏÂÈÏÄÉÍÙÅ ÄÌÑ ÄÏÓÔÕÐÁ Ë ÓÅÒ×ÅÒÕ PostgreSQL
 Summary(uk):	ëÌ¦¤ÎÔÓØË¦ ÐÒÏÇÒÁÍÉ, ÎÅÏÂÈ¦ÄÎ¦ ÄÌÑ ÄÏÓÔÕÐÕ ÄÏ ÓÅÒ×ÅÒÁ PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description clients
 This package includes only the clients needed to access an PostgreSQL
@@ -466,7 +464,7 @@ PostgreSQL.
 Summary:	Embedded SQL in C interface
 Summary(pl):	Interfejs wbudowanego SQL-a w jêzyk C
 Group:		Libraries
-Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name}-libs = %{version}-%{release}
 
 %description ecpg
 Embedded SQL in C interface.
@@ -478,8 +476,8 @@ Interfejs wbudowanego SQL-a w jêzyk C.
 Summary:	Embedded SQL in C interface files
 Summary(pl):	Pliki programistyczne interfejsu wbudowanego SQL-a w jêzyk C
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{postgresql_version}-%{postgresql_release}
-Requires:	%{name}-ecpg = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name}-ecpg = %{version}-%{release}
 
 %description ecpg-devel
 Embedded SQL in C interface files.
@@ -495,7 +493,7 @@ Summary(pt_BR):	Bibliotecas estáticas PostgreSQL
 Summary(ru):	óÔÁÔÉÞÅÓËÉÅ ÂÉÂÌÉÏÔÅËÉ ÄÌÑ ÐÒÏÇÒÁÍÍÉÒÏ×ÁÎÉÑ Ó PostgreSQL
 Summary(uk):	óÔÁÔÉÞÎ¦ Â¦ÂÌ¦ÏÔÅËÉ ÄÌÑ ÐÒÏÇÒÁÍÕ×ÁÎÎÑ Ú PostgreSQL
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 PostgreSQL static libraries.
@@ -525,7 +523,7 @@ PostgreSQL.
 Summary:	PL/pgSQL - PostgreSQL procedural language
 Summary(pl):	PL/pgSQL - jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name} = %{version}-%{release}
 
 %description module-plpgsql
 From PostgreSQL documentation:
@@ -559,7 +557,7 @@ proceduralnego PL/pgSQL dla swojej bazy danych.
 Summary:	PL/perl - PostgreSQL procedural language
 Summary(pl):	PL/perl - jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name} = %{version}-%{release}
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 
 %description module-plperl
@@ -594,7 +592,7 @@ proceduralnego PL/Perl dla swojej bazy danych.
 Summary:	PL/PHP - PostgreSQL procedural language
 Summary(pl):	PL/PHP - jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name} = %{version}-%{release}
 
 %description module-plphp
 From PostgreSQL documentation:
@@ -628,7 +626,7 @@ proceduralnego PL/PHP dla swojej bazy danych.
 Summary:	PL/Python - PostgreSQL procedural language
 Summary(pl):	PL/Python - jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name} = %{version}-%{release}
 %pyrequires_eq	python
 
 %description module-plpython
@@ -663,7 +661,7 @@ proceduralnego PL/Python dla swojej bazy danych.
 Summary:	PL/Tcl - PostgreSQL procedural language
 Summary(pl):	PL/Tcl - jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name} = %{version}-%{release}
 
 %description module-pltcl
 From PostgreSQL documentation:
@@ -697,7 +695,7 @@ proceduralnego PL/Tcl dla swojej bazy danych.
 Summary:	Cryptographic functions for PostgreSQL
 Summary(pl):	Funkcje kryptograficzne dla PostgreSQL
 Group:		Applications/Databases
-Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name} = %{version}-%{release}
 
 %description module-pgcrypto
 Cryptographic functions for PostgreSQL.
@@ -709,7 +707,7 @@ Funkcje kryptograficzne dla PostgreSQL.
 Summary:	Full text extension for PostgreSQL
 Summary(pl):	Rozszerzenie pe³notekstowe dla PostgreSQL-a
 Group:		Applications/Databases
-Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
+Requires:	%{name} = %{version}-%{release}
 
 %description module-tsearch2
 Implementation of a new data type tsvector - a searchable data type
