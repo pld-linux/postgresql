@@ -13,12 +13,8 @@
 %bcond_with	php			# enable PHP support
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
-%bcond_without	slony1			# disable Slony-I replication system
-
 %define		postgresql_version	8.0.3
-%define		postgresql_release	3
-%define		slony1_version	1.0.5
-%define		slony1_release	1
+%define		postgresql_release	3.1
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de):	PostgreSQL Datenbankverwaltungssystem
@@ -42,11 +38,6 @@ Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
-Source4:	http://developer.postgresql.org/~wieck/slony1/download/slony1-%{slony1_version}.tar.gz
-# Source4-md5:	66fcc0f53028101e4e0f969e5f47fe43
-Source5:	slony1.init
-Source6:	slony1.pgpass
-Source7:	slony1.sysconfig
 Source8:	http://www.commandprompt.com/files/plphp-8.x.tar.bz2
 # Source8-md5:	d307e4ab8cb6900a1c290a5dde1bdeee
 Patch0:		%{name}-conf.patch
@@ -730,41 +721,8 @@ Implementacja nowego typu danych tsvector - typu danych podlegaj±cego
 przeszukiwaniu z dostêpem poprzez indeksy:
 http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 
-%package -n slony1
-Summary:	Slony-I - a "master to multiple slaves" replication system for PostgreSQL
-Summary(pl):	Slony-I - system replikacji dla PostgreSQL
-Version:	%{slony1_version}
-Release:	%{slony1_release}@%{postgresql_version}_%{postgresql_release}
-URL:		http://slony.info/
-Group:		Applications/Databases
-Requires:	%{name} = %{postgresql_version}-%{postgresql_release}
-Requires:	%{name}-libs = %{postgresql_version}-%{postgresql_release}
-
-%description -n slony1
-Slony-I is a "master to multiple slaves" replication system with
-cascading and failover.
-
-The big picture for the development of Slony-I is a master-slave
-system that includes all features and capabilities needed to replicate
-large databases to a reasonably limited number of slave systems.
-
-Slony-I is a system for data centers and backup sites, where the
-normal mode of operation is that all nodes are available. 
-
-%description -n slony1 -l pl
-Slony-I jest systemem replikacji dla PostgreSQL. Pozwala na replikacjê
-typu "jeden serwer g³owny, wiele serwerów pomocniczych".
-
-G³ówn± zalet± Slony-I jest system "master-slave". Zawiera on wszelk±
-funkcjonalno¶æ potrzebn± do replikowania du¿ych baz danych na
-okre¶lon± ilo¶æ serwerów pomocniczych lub zastêpczych.
-
-Slony-I jest przeznaczony dla systemów, gdzie normalny tryb pracy
-wymaga aby zarówno serwer g³ówny jak i wszystkie serwery pomocnicze
-by³y ca³y czas operacyjne.
-
 %prep
-%setup -q -a4 -a8
+%setup -q -a8
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
 %patch2 -p1
@@ -822,15 +780,6 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 %{?with_tests:%{__make} check}
 %endif
 
-%if %{with slony1}
-cd slony1-%{slony1_version}
-install /usr/share/automake/config.* config
-%configure \
-	--with-pgsourcetree=`pwd`/..
-%{__make}
-cd ..
-%endif
-
 %if %{with php}
 cd src/pl/plphp
 %{__make}
@@ -865,15 +814,6 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %{__make} -C contrib/tsearch2 install \
 	DESTDIR=$RPM_BUILD_ROOT
-
-%if %{with slony1}
-%{__make} install -C slony1-%{slony1_version} \
-	DESTDIR=$RPM_BUILD_ROOT
-mkdir $RPM_BUILD_ROOT/home/services/slony1
-install %{SOURCE7} $RPM_BUILD_ROOT/etc/sysconfig/slony1
-install %{SOURCE6} $RPM_BUILD_ROOT/home/services/slony1/.pgpass
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/slony1
-%endif
 
 %if %{with php}
 cd src/pl/plphp
@@ -971,28 +911,6 @@ fi
 
 %post	ecpg -p /sbin/ldconfig
 %postun	ecpg -p /sbin/ldconfig
-
-%pre -n slony1
-%groupadd -P slony1 -g 131 -r slony1
-%useradd -P slony1 -M -o -r -u 131 -d /home/services/slony1 -s /bin/sh -g slony1 -c "Slony-I Replicator" slony1
-
-
-%post -n slony1
-/sbin/chkconfig --add slony1
-if [ -f /var/lock/subsys/slony1 ]; then
-	/etc/rc.d/init.d/slony1 restart >&2 || :
-else
-	echo "Run \"/etc/rc.d/init.d/slony1 start\" to start slony1 replicator."
-fi
-
-%preun -n slony1
-if [ "$1" = "0" ]; then
-	# FIXME: no slony1 user removal?
-	if [ -f /var/lock/subsys/slony1 ]; then
-		/etc/rc.d/init.d/slony1 stop
-	fi
-	/sbin/chkconfig --del slony1
-fi
 
 %files -f main.lang
 %defattr(644,root,root,755)
@@ -1163,17 +1081,3 @@ fi
 %{_pgsqldir}/tsearch2.sql
 %{_pgsqldir}/untsearch2.sql
 %{_pgsqldir}/*.stop
-
-%if %{with slony1}
-%files -n slony1
-%defattr(644,root,root,755)
-%doc slony1-%{slony1_version}/doc/howto/*
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/slony1
-%attr(754,root,root) /etc/rc.d/init.d/slony1
-%attr(755,root,root) %{_bindir}/slon
-%attr(755,root,root) %{_bindir}/slonik
-%attr(750,slony1,slony1) %dir /home/services/slony1
-%attr(600,slony1,slony1) /home/services/slony1/.pgpass
-%attr(755,root,root) %{_pgmoduledir}/slony1_funcs.so
-%attr(755,root,root) %{_pgmoduledir}/xxid.so
-%endif
