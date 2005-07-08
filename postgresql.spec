@@ -691,9 +691,24 @@ potrzeby.
 Za pomoc± polecenia createlang mo¿na dodaæ obs³ugê jêzyka
 proceduralnego PL/Tcl dla swojej bazy danych.
 
+%package module-lo
+Summary:	Large Objects module for PostgreSQL
+Summary(pl):	Modu³ Large Objects dla PostgreSQL-a
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description module-lo
+Large Objects module for PostgreSQL adds a new data type 'lo', some
+support functions and a trigger which handles the orphaning problem.
+
+%description module-lo -l pl
+Modu³ Large Objects dla PostgreSQL-a dodaje nowy typ danych 'lo',
+kilka funkcji pomocniczych i wyzwalacz rozwi±zuj±cy problem
+osieroconych obiektów.
+
 %package module-pgcrypto
 Summary:	Cryptographic functions for PostgreSQL
-Summary(pl):	Funkcje kryptograficzne dla PostgreSQL
+Summary(pl):	Funkcje kryptograficzne dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -767,6 +782,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	--without-docdir 
 
 %{__make}
+%{__make} -C contrib/lo
 %{__make} -C contrib/pg_autovacuum
 %{__make} -C contrib/pgcrypto
 %{__sed} -i 's:contrib/::g' contrib/tsearch2/tsearch.sql.in
@@ -803,6 +819,9 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 %{__make} install -C src/pl/plperl \
 	DESTDIR=$RPM_BUILD_ROOT
 %endif
+
+%{__make} -C contrib/lo install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 %{__make} -C contrib/pg_autovacuum install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -1065,6 +1084,12 @@ fi
 %attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
 %endif
+
+%files module-lo
+%defattr(644,root,root,755)
+%doc contrib/lo/README.lo
+%attr(755,root,root) %{_pgmoduledir}/lo.so
+%{_pgsqldir}/lo*.sql
 
 %files module-pgcrypto
 %defattr(644,root,root,755)
