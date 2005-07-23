@@ -6,11 +6,6 @@
 # you should change TCP/IP port, at least.
 #
 
-# if you want change default initdb encoding use (value WITHOUT QUOTES!):
-# PG_INITDB_ENCODING=UNICODE
-# e.g. if you want use database default encoding use:
-# PG_INITDB_ENCODING=
-
 # standard setting
 PG_DB_CLUSTERS="/var/lib/pgsql"
 
