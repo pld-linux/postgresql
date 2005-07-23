@@ -18,6 +18,9 @@ cd /
 # Get network config
 . /etc/sysconfig/network
 
+# Preconfigure some variables:
+PG_INITDB_ENCODING=UNICODE
+
 # Get service config
 if [ -f /etc/sysconfig/postgresql ]; then
 	. /etc/sysconfig/postgresql
@@ -216,7 +219,12 @@ case "$action" in
 			mkdir -p $pgdir
 			chmod 700 $pgdir
 			chown postgres:postgres $pgdir
-			TMPDIR=/tmp su postgres -s /bin/sh -c "initdb -E UNICODE -D $pgdir"
+			if [ "x${PG_INITDB_ENCODING}x" != "xx" ]; then
+				TMPENC="-E ${PG_INITDB_ENCODING}"
+			else
+				TMPENC=
+			fi
+			TMPDIR=/tmp su postgres -s /bin/sh -c "initdb ${TMPENC} -D $pgdir"
 		fi
 	done
 	echo $(nls "REMEMBER to setup password for user \"postgres\"")'!'
