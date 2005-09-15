@@ -1,6 +1,7 @@
 #
 # TODO:
 # - pg_autovacuum init support? look at its readme file, please
+# - plphp has no files section
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
@@ -58,7 +59,8 @@ BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
 %if %{with php}
-BuildRequires:	php-devel
+BuildRequires:	php-devel >= 3:5.0.0
+BuildRequires:	rpmbuild(macros) >= 1.238
 %endif
 %if %{with python}
 BuildRequires:	python >= 1:2.3
@@ -594,6 +596,7 @@ Summary:	PL/PHP - PostgreSQL procedural language
 Summary(pl):	PL/PHP - jêzyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
+%{?requires_php_extension}
 
 %description module-plphp
 From PostgreSQL documentation:
