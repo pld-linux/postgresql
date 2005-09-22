@@ -1,7 +1,9 @@
 #
 # TODO:
-# - pg_autovacuum init support? look at its readme file, please
 # - plphp has no files section
+#
+# - pg_autovacuum init support? <- no need for it,
+#   integrated with main server in 8.1
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
