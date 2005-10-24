@@ -908,7 +908,6 @@ fi
 %groupadd -g 88 -r postgres
 %useradd -M -o -r -u 88 -d /home/services/postgres -s /bin/sh -g postgres -c "PostgreSQL Server" postgres
 
-# TODO: move  this to trigger!
 if [ -n "`/bin/id -u postgres 2>/dev/null`" ]; then
 	/usr/sbin/usermod -d /home/services/postgres postgres
 fi
