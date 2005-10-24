@@ -16,9 +16,9 @@
 					# (disabled by default because it is a security risk)
 %bcond_without	slony1			# disable Slony-I replication system
 
-%define		postgresql_version	7.4.8
+%define		postgresql_version	7.4.9
 %define		postgresql_release	1
-%define		slony1_version	1.0.5
+%define		slony1_version	1.0.6
 %define		slony1_release	1
 
 Summary:	PostgreSQL Data Base Management System
@@ -37,13 +37,13 @@ Release:	%{postgresql_release}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{postgresql_version}/%{name}-%{postgresql_version}.tar.bz2
-# Source0-md5:	b79761ec3735b5851db44429e97bee88
+# Source0-md5:	d7cf0f0a0e1dda19268f55cb1e124c77
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
 Source4:	http://developer.postgresql.org/~wieck/slony1/download/slony1-%{slony1_version}.tar.gz
-# Source4-md5:	66fcc0f53028101e4e0f969e5f47fe43
+# Source4-md5:	2896d5a6dbf1b40002fd5713bc350ae4
 Patch0:		%{name}-doc.patch
 Patch1:		%{name}-pg_ctl-silent.patch
 Patch2:		%{name}-pg_ctl-nopsql.patch
