@@ -2,9 +2,6 @@
 # TODO:
 # - plphp has no files section
 #
-# - pg_autovacuum init support? <- no need for it,
-#   integrated with main server in 8.1
-#
 # Conditional build:
 %bcond_without	tests			# disable testing
 %bcond_without	tcl			# disables Tcl support
@@ -28,12 +25,12 @@ Summary(tr):	Veri Tabaný Yönetim Sistemi
 Summary(uk):	PostgreSQL - ÓÉÓÔÅÍÁ ËÅÒÕ×ÁÎÎÑ ÂÁÚÁÍÉ ÄÁÎÉÈ
 Summary(zh_CN):	PostgreSQL ¿Í»§¶Ë³ÌÐòºÍ¿âÎÄ¼þ
 Name:		postgresql
-Version:	8.0.4
-Release:	1
+Version:	8.1.0
+Release:	0.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	f507f41297ca6ef7fff271a3ccc68158
+# Source0-md5:	5e1f1a7c5f62170b56a3bf2512fdec2d
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}beta/%{name}-%{version}%{beta}.tar.bz2
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
@@ -789,7 +786,6 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 
 %{__make}
 %{__make} -C contrib/lo
-%{__make} -C contrib/pg_autovacuum
 %{__make} -C contrib/pgcrypto
 %{__sed} -i 's:contrib/::g' contrib/tsearch2/tsearch.sql.in
 %{__make} -C contrib/tsearch2
@@ -827,9 +823,6 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 %endif
 
 %{__make} -C contrib/lo install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/pg_autovacuum install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__make} -C contrib/pgcrypto install \
@@ -937,13 +930,11 @@ fi
 %files -f main.lang
 %defattr(644,root,root,755)
 %doc COPYRIGHT README HISTORY doc/{FAQ*,README*,bug.template}
-%doc contrib/pg_autovacuum/README*
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/postgresql
 
 %attr(755,root,root) %{_bindir}/initdb
 %attr(755,root,root) %{_bindir}/ipcclean
-%attr(755,root,root) %{_bindir}/pg_autovacuum
 %attr(755,root,root) %{_bindir}/pg_controldata
 %attr(755,root,root) %{_bindir}/pg_ctl
 %attr(755,root,root) %{_bindir}/pg_resetxlog
@@ -1051,6 +1042,7 @@ fi
 %attr(755,root,root) %{_bindir}/pg_dumpall
 %attr(755,root,root) %{_bindir}/pg_restore
 %attr(755,root,root) %{_bindir}/psql
+%attr(755,root,root) %{_bindir}/reindexdb
 %attr(755,root,root) %{_bindir}/vacuumdb
 
 %{_mandir}/man1/clusterdb.1*
@@ -1064,6 +1056,7 @@ fi
 %{_mandir}/man1/pg_dumpall.1*
 %{_mandir}/man1/pg_restore.1*
 %{_mandir}/man1/psql.1*
+%{_mandir}/man1/reindexdb.1*
 %{_mandir}/man1/vacuumdb.1*
 %{_mandir}/man7/*.7*
 
