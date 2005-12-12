@@ -29,7 +29,7 @@ Version:	8.1.1
 Release:	1
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp6.pl.postgresql.org/pub/postgresql/source/v%{version}/%{name}-%{version}.tar.bz2
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
 # Source0-md5:	d22d7bd1d5e5f9aa89d574ff66e2c8bb
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}beta/%{name}-%{version}%{beta}.tar.bz2
 Source1:	%{name}.init
