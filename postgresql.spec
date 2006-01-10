@@ -894,7 +894,7 @@ if [ "$foundold" = "1" ]; then
 	echo
 	echo "Warning for upgrade from version *before* 7.3."
 	echo "Reading following webpage is encouraged:"
-	echo "http://www.ca.postgresql.org/docs/momjian/upgrade_tips_7.3."
+	echo "http://www.ca.postgresql.org/docs/momjian/upgrade_tips_7.3"
 	exit 1
 fi
 
