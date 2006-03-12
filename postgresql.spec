@@ -66,19 +66,19 @@ BuildRequires:	python-devel >= 1:2.3
 BuildRequires:	python-modules >= 1:2.3
 %endif
 BuildRequires:	readline-devel >= 4.2
-BuildRequires:	rpmbuild(macros) >= 1.202
+BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
 BuildRequires:	zlib-devel
-PreReq:		rc-scripts
-PreReq:		%{name}-clients = %{version}-%{release}
-PreReq:		%{name}-libs = %{version}-%{release}
-Requires(pre):	/usr/bin/getgid
+Requires(post,preun):	/sbin/chkconfig
 Requires(pre):	/bin/id
+Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires(pre):	/usr/sbin/usermod
-Requires(post,preun):	/sbin/chkconfig
+Requires:	%{name}-clients = %{version}-%{release}
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	rc-scripts
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -781,7 +781,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	%{?with_python:--with-python} \
 	%{?with_tcl:--with-tcl} \
 	--with-x \
-	--without-docdir 
+	--without-docdir
 
 %{__make}
 %{__make} -C contrib/lo
@@ -906,17 +906,11 @@ fi
 
 %post
 /sbin/chkconfig --add postgresql
-if [ -f /var/lock/subsys/postgresql ]; then
-	/etc/rc.d/init.d/postgresql restart >&2 || :
-else
-	echo "Run \"/etc/rc.d/init.d/postgresql start\" to start postgresql server."
-fi
+%service postgresql restart "postgresql server"
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/postgresql ]; then
-		/etc/rc.d/init.d/postgresql stop
-	fi
+	%service postgresql stop
 	/sbin/chkconfig --del postgresql
 fi
 
