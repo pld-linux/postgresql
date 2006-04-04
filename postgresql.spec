@@ -26,7 +26,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	8.1.3
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp6.pl.postgresql.org/pub/postgresql/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -44,6 +44,7 @@ Patch2:		%{name}-link.patch
 Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
 Patch5:		%{name}-ac.patch
+Patch6:		%{name}-pg_ctl-fix.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -744,6 +745,7 @@ http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 %patch3 -p1
 %patch4 -p1
 #patch5 -p1	needed for glibc2.3.4 + gcc4
+%patch6 -p0
 
 %if %{with php}
 patch -p1 < plphp.patch
