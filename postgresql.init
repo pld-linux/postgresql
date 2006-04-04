@@ -169,8 +169,14 @@ case "$action" in
 	;;
   status)
 	for pgdir in $DB_CLUSTERS; do
-	TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir status"
-		done
+		pgstatus "$pgdir"
+		echo -n "$pgdir: "
+		if [ "$PG_STATUS" = "running" ]; then
+			echo "$PG_STATUS (PID: $PG_PID)"
+		else
+			echo "$PG_STATUS"
+		fi
+	done
 	;;
   restart)
 	$0 stop "$DB_CLUSTERS"
