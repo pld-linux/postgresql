@@ -68,7 +68,6 @@ BuildRequires:	python-modules >= 1:2.3
 %endif
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.268
-BuildRequires:	sed >= 4.0
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
 BuildRequires:	zlib-devel
 Requires(post,preun):	/sbin/chkconfig
@@ -788,7 +787,6 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 %{__make}
 %{__make} -C contrib/lo
 %{__make} -C contrib/pgcrypto
-%{__sed} -i 's:contrib/::g' contrib/tsearch2/tsearch.sql.in
 %{__make} -C contrib/tsearch2
 %{__make} -C src/tutorial \
 	NO_PGXS=1
