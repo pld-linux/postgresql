@@ -170,12 +170,14 @@ case "$action" in
   status)
 	for pgdir in $DB_CLUSTERS; do
 		pgstatus "$pgdir"
-		echo -n "$pgdir: "
 		if [ "$PG_STATUS" = "running" ]; then
-			echo "$PG_STATUS (PID: $PG_PID)"
+			show "PostgreSQL cluster %s, PID %s" "$pgdir" "$PG_PID"
+			progress "$PG_STATUS"
 		else
-			echo "$PG_STATUS"
+			show "PostgreSQL cluster %s" "$pgdir"
+			progress "$PG_STATUS" "$CFAIL"
 		fi
+		echo
 	done
 	;;
   restart)
