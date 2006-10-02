@@ -26,7 +26,7 @@ Summary(uk):	PostgreSQL - ”…”‘≈Õ¡ À≈“’◊¡ŒŒ— ¬¡⁄¡Õ… ƒ¡Œ…»
 Summary(zh_CN):	PostgreSQL øÕªß∂À≥Ã–Ú∫Õø‚Œƒº˛
 Name:		postgresql
 Version:	8.1.4
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp6.pl.postgresql.org/pub/postgresql/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -607,8 +607,8 @@ knows the details of the language. The handler itself is a special
 programming language function compiled into a shared object and loaded
 on demand.
 
-To enable PL/PHP procedural language for your database you have to
-run createlang command.
+To enable PL/PHP procedural language for your database you have to run
+createlang command.
 
 %description module-plphp -l pl
 Z dokumentacji PostgreSQL:
@@ -736,6 +736,20 @@ Implementacja nowego typu danych tsvector - typu danych podlegaj±cego
 przeszukiwaniu z dostÍpem poprzez indeksy:
 http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 
+%package module-pg_trgm
+Summary:	Trigram matching for PostgreSQL
+Summary(pl):	Dopasowanie trigram dla PostgreSQL-a
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description module-pg_trgm
+Provides functions and index classes for determining the similarity of
+text based on trigram matching.
+
+%description module-pg_trgm -l pl
+Dostarcza funkcje i klasy do rozpoznawania podobnych tekstÛw bazuj±c
+na ,,trigram matching''.
+
 %prep
 %setup -q -a8
 %patch0 -p1
@@ -788,6 +802,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 %{__make} -C contrib/lo
 %{__make} -C contrib/pgcrypto
 %{__make} -C contrib/tsearch2
+%{__make} -C contrib/pg_trgm
 %{__make} -C src/tutorial \
 	NO_PGXS=1
 
@@ -828,6 +843,9 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__make} -C contrib/tsearch2 install \
+	DESTDIR=$RPM_BUILD_ROOT
+
+%{__make} -C contrib/pg_trgm install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %if %{with php}
@@ -1095,3 +1113,9 @@ fi
 %{_pgsqldir}/tsearch2.sql
 %{_pgsqldir}/untsearch2.sql
 %{_pgsqldir}/*.stop
+
+%files module-pg_trgm
+%defattr(644,root,root,755)
+%doc contrib/pg_trgm/README*
+%attr(755,root,root) %{_pgmoduledir}/pg_trgm.so
+%{_pgsqldir}/pg_trgm.sql
