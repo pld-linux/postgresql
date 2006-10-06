@@ -91,7 +91,7 @@ pgstatus() {
 #
 pgstart() {
 	msg_starting "PostgreSQL $1"
-	daemon --user postgres /usr/bin/pg_ctl -s -w -D $1 start
+	daemon --user postgres /usr/bin/pg_ctl -s -D $1 start
 }
 
 #
