@@ -985,7 +985,7 @@ fi
 
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpq.so.*
+%attr(755,root,root) %{_libdir}/libpq.so.*.*
 %dir %{_pgmoduledir}
 
 %files ecpg
