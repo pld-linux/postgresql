@@ -43,8 +43,7 @@ Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-link.patch
 Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
-Patch5:		%{name}-ac.patch
-Patch6:		%{name}-pg_ctl-fix.patch
+Patch5:		%{name}-pg_ctl-fix.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -738,17 +737,17 @@ http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 
 %package module-pg_trgm
 Summary:	Trigram matching for PostgreSQL
-Summary(pl):	Dopasowanie trigram dla PostgreSQL-a
+Summary(pl):	Dopasowanie trigramowe dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
 %description module-pg_trgm
-Provides functions and index classes for determining the similarity of
-text based on trigram matching.
+This module provides functions and index classes for determining the
+similarity of text based on trigram matching.
 
 %description module-pg_trgm -l pl
-Dostarcza funkcje i klasy do rozpoznawania podobnych tekstów bazuj±c
-na ,,trigram matching''.
+Ten modu³ dostarcza funkcje i klasy do rozpoznawania podobnych tekstów
+w oparciu o dopasowywanie trigramowe (trigram matching).
 
 %prep
 %setup -q -a8
@@ -757,8 +756,7 @@ na ,,trigram matching''.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-#patch5 -p1	needed for glibc2.3.4 + gcc4
-%patch6 -p0
+%patch5 -p0
 
 %if %{with php}
 patch -p1 < plphp.patch
