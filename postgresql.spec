@@ -25,12 +25,12 @@ Summary(tr):	Veri Taban˝ Yˆnetim Sistemi
 Summary(uk):	PostgreSQL - ”…”‘≈Õ¡ À≈“’◊¡ŒŒ— ¬¡⁄¡Õ… ƒ¡Œ…»
 Summary(zh_CN):	PostgreSQL øÕªß∂À≥Ã–Ú∫Õø‚Œƒº˛
 Name:		postgresql
-Version:	8.1.4
+Version:	8.1.5
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp6.pl.postgresql.org/pub/postgresql/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	a65bdc5d833169d28bf6fbaaa8d57fcf
+# Source0-md5:	b5fed57da6b3dc5a535acce4405c1bd2
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}beta/%{name}-%{version}%{beta}.tar.bz2
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
@@ -43,8 +43,7 @@ Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-link.patch
 Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
-Patch5:		%{name}-ac.patch
-Patch6:		%{name}-pg_ctl-fix.patch
+Patch5:		%{name}-pg_ctl-fix.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -607,8 +606,8 @@ knows the details of the language. The handler itself is a special
 programming language function compiled into a shared object and loaded
 on demand.
 
-To enable PL/PHP procedural language for your database you have to
-run createlang command.
+To enable PL/PHP procedural language for your database you have to run
+createlang command.
 
 %description module-plphp -l pl
 Z dokumentacji PostgreSQL:
@@ -736,6 +735,20 @@ Implementacja nowego typu danych tsvector - typu danych podlegaj±cego
 przeszukiwaniu z dostÍpem poprzez indeksy:
 http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 
+%package module-pg_trgm
+Summary:	Trigram matching for PostgreSQL
+Summary(pl):	Dopasowanie trigramowe dla PostgreSQL-a
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description module-pg_trgm
+This module provides functions and index classes for determining the
+similarity of text based on trigram matching.
+
+%description module-pg_trgm -l pl
+Ten modu≥ dostarcza funkcje i klasy do rozpoznawania podobnych tekstÛw
+w oparciu o dopasowywanie trigramowe (trigram matching).
+
 %prep
 %setup -q -a8
 %patch0 -p1
@@ -743,8 +756,7 @@ http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-#patch5 -p1	needed for glibc2.3.4 + gcc4
-%patch6 -p0
+%patch5 -p0
 
 %if %{with php}
 patch -p1 < plphp.patch
@@ -788,6 +800,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 %{__make} -C contrib/lo
 %{__make} -C contrib/pgcrypto
 %{__make} -C contrib/tsearch2
+%{__make} -C contrib/pg_trgm
 %{__make} -C src/tutorial \
 	NO_PGXS=1
 
@@ -828,6 +841,9 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__make} -C contrib/tsearch2 install \
+	DESTDIR=$RPM_BUILD_ROOT
+
+%{__make} -C contrib/pg_trgm install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %if %{with php}
@@ -969,7 +985,7 @@ fi
 
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libpq.so.*
+%attr(755,root,root) %{_libdir}/libpq.so.*.*
 %dir %{_pgmoduledir}
 
 %files ecpg
@@ -1095,3 +1111,9 @@ fi
 %{_pgsqldir}/tsearch2.sql
 %{_pgsqldir}/untsearch2.sql
 %{_pgsqldir}/*.stop
+
+%files module-pg_trgm
+%defattr(644,root,root,755)
+%doc contrib/pg_trgm/README*
+%attr(755,root,root) %{_pgmoduledir}/pg_trgm.so
+%{_pgsqldir}/pg_trgm.sql
