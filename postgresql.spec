@@ -26,7 +26,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	8.1.5
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp6.pl.postgresql.org/pub/postgresql/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -719,6 +719,14 @@ Cryptographic functions for PostgreSQL.
 %description module-pgcrypto -l pl
 Funkcje kryptograficzne dla PostgreSQL.
 
+%package module-tablefunc
+Summary:	tablefunc extension for PostgreSQL
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description module-tablefunc
+tablefunc extension for PostgreSQL.
+
 %package module-tsearch2
 Summary:	Full text extension for PostgreSQL
 Summary(pl):	Rozszerzenie peЁnotekstowe dla PostgreSQL-a
@@ -799,6 +807,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 %{__make}
 %{__make} -C contrib/lo
 %{__make} -C contrib/pgcrypto
+%{__make} -C contrib/tablefunc
 %{__make} -C contrib/tsearch2
 %{__make} -C contrib/pg_trgm
 %{__make} -C src/tutorial \
@@ -838,6 +847,9 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__make} -C contrib/pgcrypto install \
+	DESTDIR=$RPM_BUILD_ROOT
+
+%{__make} -C contrib/tablefunc install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__make} -C contrib/tsearch2 install \
@@ -1103,6 +1115,12 @@ fi
 %doc contrib/pgcrypto/README*
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
 %{_pgsqldir}/pgcrypto.sql
+
+%files module-tablefunc
+%defattr(644,root,root,755)
+%doc contrib/tablefunc/README*
+%attr(755,root,root) %{_pgmoduledir}/tablefunc.so
+%{_pgsqldir}/tablefunc.sql
 
 %files module-tsearch2
 %defattr(644,root,root,755)
