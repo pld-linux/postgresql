@@ -71,15 +71,15 @@ fi
 pgstatus() {
 	PG_STATUS="unknown"
 	PG_PID="unknown"
-	output=`LC_ALL=C TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $1 status"`
-	status=`echo $?`
+	output=$(LC_ALL=C TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $1 status")
+	status=$?
 
 	if [ $status -eq 1 ]; then
 		PG_STATUS="not running"
 	elif [ $status -eq 0 ]; then
 		PG_STATUS="running"
         # or maybe grab it from postmaster.pid file?
-		PG_PID=`echo "$output" | sed 's/^pg_ctl:.*PID: \([0-9]\+\).*/\1/' | head -1`
+		PG_PID=`echo "$output" | sed 's/^pg_ctl:.*PID: \([0-9]\+\).*/\1/' | head -n 1`
 	fi
 }
 
