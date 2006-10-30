@@ -71,7 +71,7 @@ fi
 pgstatus() {
 	PG_STATUS="unknown"
 	PG_PID="unknown"
-	output=`TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $1 status"`
+	output=`LC_ALL=C TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $1 status"`
 	status=`echo $?`
 
 	if [ $status -eq 1 ]; then
