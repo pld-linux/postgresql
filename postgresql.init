@@ -114,12 +114,7 @@ pgsubsys() {
 # End of useful functions.
 #
 
-
-# See how we were called.
-# Every action is performed for all given (all configured by default)
-# db clusters.
-case "$action" in
-  start)
+start() {
 	for pgdir in $DB_CLUSTERS; do
 		pgstatus "$pgdir"
 		if [ "$PG_STATUS" = "running" ]; then
@@ -139,8 +134,9 @@ case "$action" in
 		fi
 	done
 	pgsubsys
-	;;
-  stop)
+}
+
+stop() {
 	for pgdir in $DB_CLUSTERS; do
 		pgstatus "$pgdir"
 		if [ "$PG_STATUS" = "not running" ]; then
@@ -166,6 +162,17 @@ case "$action" in
 		fi
 	done
 	pgsubsys
+}
+
+# See how we were called.
+# Every action is performed for all given (all configured by default)
+# db clusters.
+case "$action" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
 	;;
   status)
 	for pgdir in $DB_CLUSTERS; do
@@ -181,8 +188,8 @@ case "$action" in
 	done
 	;;
   restart)
-	$0 stop "$DB_CLUSTERS"
-	$0 start "$DB_CLUSTERS"
+	stop
+	start
 	;;
   reload|force-reload)
 	for pgdir in $DB_CLUSTERS; do
