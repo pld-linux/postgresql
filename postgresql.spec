@@ -58,7 +58,7 @@ BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
 %if %{with php}
 BuildRequires:	php-devel >= 3:5.0.0
-BuildRequires:	rpmbuild(macros) >= 1.238
+BuildRequires:	rpmbuild(macros) >= 1.322
 %endif
 %if %{with python}
 BuildRequires:	python >= 1:2.3
