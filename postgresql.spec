@@ -692,6 +692,20 @@ potrzeby.
 Za pomoc± polecenia createlang mo¿na dodaæ obs³ugê jêzyka
 proceduralnego PL/Tcl dla swojej bazy danych.
 
+%package module-dblink
+Summary:	dblink module for PostgreSQL
+Summary(pl):	Modu³ dblink dla PostgreSQL-a
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description module-dblink
+dblink module for PostgreSQL provides functions returning results from
+remote database.
+
+%description module-dblink -l pl
+Modu³ dblink dla PostgreSQL-a udostêpnia funkcje zwracaj±ce wyniki ze
+zdalnej bazy danych.
+
 %package module-lo
 Summary:	Large Objects module for PostgreSQL
 Summary(pl):	Modu³ Large Objects dla PostgreSQL-a
@@ -720,12 +734,16 @@ Cryptographic functions for PostgreSQL.
 Funkcje kryptograficzne dla PostgreSQL.
 
 %package module-tablefunc
-Summary:	tablefunc extension for PostgreSQL
+Summary:	crosstab functions for PostgreSQL
+Summary(pl):	Funkcje crosstab dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
 %description module-tablefunc
-tablefunc extension for PostgreSQL.
+crosstab functions for PostgreSQL.
+
+%description module-tablefunc -l pl
+Funkcje crosstab dla PostgreSQL-a.
 
 %package module-tsearch2
 Summary:	Full text extension for PostgreSQL
@@ -805,6 +823,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	--without-docdir
 
 %{__make}
+%{__make} -C contrib/dblink
 %{__make} -C contrib/lo
 %{__make} -C contrib/pgcrypto
 %{__make} -C contrib/tablefunc
@@ -842,6 +861,9 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 %{__make} install -C src/pl/plperl \
 	DESTDIR=$RPM_BUILD_ROOT
 %endif
+
+%{__make} -C contrib/dblink install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 %{__make} -C contrib/lo install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -1104,6 +1126,12 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
 %endif
 
+%files module-dblink
+%defattr(644,root,root,755)
+%doc contrib/dblink/README.dblink
+%attr(755,root,root) %{_pgmoduledir}/dblink.so
+%{_pgsqldir}/dblink.sql
+
 %files module-lo
 %defattr(644,root,root,755)
 %doc contrib/lo/README.lo
@@ -1118,7 +1146,7 @@ fi
 
 %files module-tablefunc
 %defattr(644,root,root,755)
-%doc contrib/tablefunc/README*
+%doc contrib/tablefunc/README.tablefunc
 %attr(755,root,root) %{_pgmoduledir}/tablefunc.so
 %{_pgsqldir}/tablefunc.sql
 
