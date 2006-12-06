@@ -39,6 +39,7 @@ Source8:	http://www.commandprompt.com/files/plphp-8.x.tar.bz2
 # Source8-md5:	d307e4ab8cb6900a1c290a5dde1bdeee
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
+Patch2:		%{name}-version.patch
 Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
 Patch5:		%{name}-pg_ctl-fix.patch
@@ -777,6 +778,7 @@ w oparciu o dopasowywanie trigramowe (trigram matching).
 %setup -q -a8
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
+%patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p0
@@ -989,13 +991,13 @@ fi
 
 %dir %{_pgsqldir}
 %dir %{_datadir}/postgresql
-%dir %{_datadir}/postgresql/timezone
 %{_datadir}/postgresql/*.bki
 %{_datadir}/postgresql/*.sample
 %{_datadir}/postgresql/*.description
 %{_datadir}/postgresql/*.sql
 %{_datadir}/postgresql/*.txt
-%{_datadir}/postgresql/timezone/*
+%{_datadir}/postgresql/timezone
+%{_datadir}/postgresql/timezonesets
 
 %attr(700,postgres,postgres) /home/services/postgres
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
@@ -1032,7 +1034,7 @@ fi
 %attr(755,root,root) %{_libdir}/libecpg.so
 %attr(755,root,root) %{_libdir}/libecpg_compat.so
 %attr(755,root,root) %{_libdir}/libpgtypes.so
-%{_includedir}/ecpg
+%{_includedir}/ecpg*
 
 %files devel -f pg_config.lang
 %defattr(644,root,root,755)
@@ -1127,36 +1129,35 @@ fi
 %defattr(644,root,root,755)
 %doc contrib/dblink/README.dblink
 %attr(755,root,root) %{_pgmoduledir}/dblink.so
-%{_pgsqldir}/dblink.sql
+%{_pgsqldir}/*dblink.sql
 
 %files module-lo
 %defattr(644,root,root,755)
 %doc contrib/lo/README.lo
 %attr(755,root,root) %{_pgmoduledir}/lo.so
-%{_pgsqldir}/lo*.sql
+%{_pgsqldir}/*lo*.sql
 
 %files module-pgcrypto
 %defattr(644,root,root,755)
 %doc contrib/pgcrypto/README*
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
-%{_pgsqldir}/pgcrypto.sql
+%{_pgsqldir}/*pgcrypto.sql
 
 %files module-tablefunc
 %defattr(644,root,root,755)
 %doc contrib/tablefunc/README.tablefunc
 %attr(755,root,root) %{_pgmoduledir}/tablefunc.so
-%{_pgsqldir}/tablefunc.sql
+%{_pgsqldir}/*tablefunc.sql
 
 %files module-tsearch2
 %defattr(644,root,root,755)
 %doc contrib/tsearch2/README*
 %attr(755,root,root) %{_pgmoduledir}/tsearch2.so
-%{_pgsqldir}/tsearch2.sql
-%{_pgsqldir}/untsearch2.sql
+%{_pgsqldir}/*tsearch2.sql
 %{_pgsqldir}/*.stop
 
 %files module-pg_trgm
 %defattr(644,root,root,755)
 %doc contrib/pg_trgm/README*
 %attr(755,root,root) %{_pgmoduledir}/pg_trgm.so
-%{_pgsqldir}/pg_trgm.sql
+%{_pgsqldir}/*pg_trgm.sql
