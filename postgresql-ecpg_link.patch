@@ -1,11 +1,12 @@
 --- postgresql-8.0.0beta2/src/interfaces/ecpg/compatlib/Makefile	2004-09-05 21:38:27.750369536 +0200
 +++ postgresql-8.0.0beta2/src/interfaces/ecpg/compatlib/Makefile.new	2004-09-05 21:40:03.741776624 +0200
 @@ -20,7 +20,7 @@
- override CPPFLAGS := -I$(top_srcdir)/src/interfaces/ecpg/include -I$(libpq_srcdir) \
- 	-I$(top_srcdir)/src/include/utils $(CPPFLAGS)
+ override CPPFLAGS := -I../include -I$(top_srcdir)/src/interfaces/ecpg/include \
+ 	-I$(libpq_srcdir) -I$(top_srcdir)/src/include/utils $(CPPFLAGS)
  override CFLAGS += $(PTHREAD_CFLAGS)
--SHLIB_LINK = -L../ecpglib -lecpg -L../pgtypeslib -lpgtypes $(libpq) \
-+SHLIB_LINK = ../ecpglib/libecpg.so -L../pgtypeslib -lpgtypes $(libpq) \
- 	$(filter -lintl -lssl -lcrypto -lkrb5 -lcrypt -lm, $(LIBS)) $(PTHREAD_LIBS)
+-SHLIB_LINK = -L../ecpglib -lecpg -L../pgtypeslib -lpgtypes $(libpq) -lm \
++SHLIB_LINK = ../ecpglib/libecpg.so -L../pgtypeslib -lpgtypes $(libpq) -lm \
+ 	$(PTHREAD_LIBS)
  
  OBJS= informix.o
+
