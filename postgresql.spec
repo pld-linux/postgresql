@@ -25,13 +25,12 @@ Summary(tr):	Veri TabanЩ YЖnetim Sistemi
 Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
-Version:	8.1.5
-Release:	2
+Version:	8.2.0
+Release:	0.1
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp6.pl.postgresql.org/pub/postgresql/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	b5fed57da6b3dc5a535acce4405c1bd2
-##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}beta/%{name}-%{version}%{beta}.tar.bz2
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
+# Source0-md5:	490cb3a614545cbd3ce9b1c75c1d2b2e
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -40,7 +39,6 @@ Source8:	http://www.commandprompt.com/files/plphp-8.x.tar.bz2
 # Source8-md5:	d307e4ab8cb6900a1c290a5dde1bdeee
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
-Patch2:		%{name}-link.patch
 Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
 Patch5:		%{name}-pg_ctl-fix.patch
@@ -779,7 +777,6 @@ w oparciu o dopasowywanie trigramowe (trigram matching).
 %setup -q -a8
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
-%patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p0
