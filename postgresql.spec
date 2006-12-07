@@ -26,7 +26,7 @@ Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
 Version:	8.2.0
-Release:	0.1
+Release:	0.2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -994,6 +994,7 @@ fi
 %{_datadir}/postgresql/*.bki
 %{_datadir}/postgresql/*.sample
 %{_datadir}/postgresql/*.description
+%{_datadir}/postgresql/*.shdescription
 %{_datadir}/postgresql/*.sql
 %{_datadir}/postgresql/*.txt
 %{_datadir}/postgresql/timezone
@@ -1154,6 +1155,8 @@ fi
 %doc contrib/tsearch2/README*
 %attr(755,root,root) %{_pgmoduledir}/tsearch2.so
 %{_pgsqldir}/*tsearch2.sql
+%{_pgsqldir}/russian.stop.utf8
+%{_pgsqldir}/thesaurus
 %{_pgsqldir}/*.stop
 
 %files module-pg_trgm
