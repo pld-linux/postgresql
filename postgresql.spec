@@ -920,7 +920,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ `cat $pgdir/PG_VERSION` != '8.1' ]; then
+		if [ `cat $pgdir/PG_VERSION` != '8.2' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
