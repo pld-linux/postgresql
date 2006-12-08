@@ -1134,7 +1134,7 @@ fi
 %defattr(644,root,root,755)
 %doc contrib/lo/README.lo
 %attr(755,root,root) %{_pgmoduledir}/lo.so
-%{_pgsqldir}/*lo*.sql
+%{_pgsqldir}/*lo.sql
 
 %files module-pgcrypto
 %defattr(644,root,root,755)
