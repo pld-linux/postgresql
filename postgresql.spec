@@ -854,8 +854,6 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%{__cc} -shared -Wl,-soname,libpq.so.3 -o $RPM_BUILD_ROOT%{_libdir}/libpq.so.3.0.0 -L$RPM_BUILD_ROOT%{_libdir} -lpq
-
 %if %{with perl}
 %{__make} install -C src/pl/plperl \
 	DESTDIR=$RPM_BUILD_ROOT
