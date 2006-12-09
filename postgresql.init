@@ -91,7 +91,7 @@ pgstatus() {
 #
 pgstart() {
 	msg_starting "PostgreSQL $1"
-	daemon --user postgres /usr/bin/pg_ctl -s -D $1 start
+	daemon --user postgres /usr/bin/pg_ctl -s -w -D $1 start
 }
 
 #
@@ -144,7 +144,7 @@ stop() {
 		else
 			msg_stopping "PostgreSQL $pgdir"
 			busy
-				# is postgresql really alive?
+			# is postgresql really alive?
 			if ps ax | grep -v grep | grep -q "$PG_PID"; then
 				TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -w -D $pgdir stop -m fast 2>&1 >/dev/null"
 				pgstatus "$pgdir"
