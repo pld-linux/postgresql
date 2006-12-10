@@ -82,6 +82,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_pgmoduledir	%{_libdir}/postgresql
 %define		_pgsqldir	%{_datadir}/postgresql/contrib
 
+%define		_ulibdir	/usr/lib
+
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
 then as Postgres95).
@@ -809,7 +811,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	%{?with_perl:--with-perl} \
 	%{?with_php:--with-php=/usr/include/php} \
 	%{?with_python:--with-python} \
-	%{?with_tcl:--with-tcl --with-tclconfig=%{_libdir}} \
+	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
 	--without-docdir
 
 %{__make}
