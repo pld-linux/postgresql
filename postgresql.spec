@@ -7,8 +7,6 @@
 %bcond_without	tcl			# disables Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
 %bcond_without	perl			# disable Perl support
-%bcond_without	pgsql_locale		# disable PostgreSQL locale
-%bcond_without	pgsql_multibyte		# disable PostgreSQL multibyte
 %bcond_without	python			# disable Python support
 %bcond_with	php			# enable PHP support
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
@@ -803,22 +801,15 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	--disable-rpath \
 	--enable-depend \
 	--enable-integer-datetimes \
-	%{?with_pgsql_locale:--enable-locale} \
-	%{?with_pgsql_multibyte:--enable-multibyte} \
 	--enable-nls \
-	--enable-recode \
-	--enable-syslog \
 	--enable-thread-safety \
-	--enable-unicode-conversion \
-	--with-CXX \
 	%{?with_kerberos5:--with-krb5} \
 	--with-openssl \
 	--with-pam \
 	%{?with_perl:--with-perl} \
 	%{?with_php:--with-php=/usr/include/php} \
 	%{?with_python:--with-python} \
-	%{?with_tcl:--with-tcl} \
-	--with-x \
+	%{?with_tcl:--with-tcl --with-tclconfig=%{_libdir}} \
 	--without-docdir
 
 %{__make}
@@ -1122,6 +1113,13 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
+%endif
+
+%if %{with php}
+%files module-plphp
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/plphp_*
+%attr(755,root,root) %{_pgmoduledir}/plphp.so
 %endif
 
 %files module-dblink
