@@ -24,7 +24,7 @@ Summary(uk):	PostgreSQL - ÓÉÓÔÅÍÁ ËÅÒÕ×ÁÎÎÑ ÂÁÚÁÍÉ ÄÁÎÉÈ
 Summary(zh_CN):	PostgreSQL ¿Í»§¶Ë³ÌÐòºÍ¿âÎÄ¼þ
 Name:		postgresql
 Version:	8.2.0
-Release:	0.3
+Release:	0.4
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -49,6 +49,8 @@ BuildRequires:	flex
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 BuildRequires:	libtool
+BuildRequires:	libxml2-devel
+BuildRequires:	libxslt-devel
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
@@ -774,6 +776,18 @@ similarity of text based on trigram matching.
 Ten modu³ dostarcza funkcje i klasy do rozpoznawania podobnych tekstów
 w oparciu o dopasowywanie trigramowe (trigram matching).
 
+
+%package module-xml2
+Summary:	XML-handling functions for PostgreSQL
+Summary(pl):	Modu³ XML PostgreSQL-a
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description module-xml2
+Module with XML functions provides both XPath querying and XSLT
+functionality. There is also a new table function which allows the
+straightforward return of multiple XML results.
+
 %prep
 %setup -q -a8
 %patch0 -p1
@@ -821,6 +835,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 %{__make} -C contrib/tablefunc
 %{__make} -C contrib/tsearch2
 %{__make} -C contrib/pg_trgm
+%{__make} -C contrib/xml2
 %{__make} -C src/tutorial \
 	NO_PGXS=1
 
@@ -868,6 +883,9 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__make} -C contrib/pg_trgm install \
+	DESTDIR=$RPM_BUILD_ROOT
+
+%{__make} -C contrib/xml2 install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %if %{with php}
@@ -1162,3 +1180,9 @@ fi
 %doc contrib/pg_trgm/README*
 %attr(755,root,root) %{_pgmoduledir}/pg_trgm.so
 %{_pgsqldir}/*pg_trgm.sql
+
+%files module-xml2
+%defattr(644,root,root,755)
+%doc contrib/xml2/README*
+%attr(755,root,root) %{_pgmoduledir}/pgxml.so
+%{_pgsqldir}/*pgxml.sql
