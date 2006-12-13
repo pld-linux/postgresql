@@ -1,7 +1,4 @@
 #
-# TODO:
-# - plphp has no files section
-#
 # Conditional build:
 %bcond_without	tests			# disable testing
 %bcond_without	tcl			# disables Tcl support
@@ -779,7 +776,7 @@ w oparciu o dopasowywanie trigramowe (trigram matching).
 
 %package module-xml2
 Summary:	XML-handling functions for PostgreSQL
-Summary(pl):	Modu³ XML PostgreSQL-a
+Summary(pl):	Funkcje do obs³ugi XML-a dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -787,6 +784,11 @@ Requires:	%{name} = %{version}-%{release}
 Module with XML functions provides both XPath querying and XSLT
 functionality. There is also a new table function which allows the
 straightforward return of multiple XML results.
+
+%description module-xml2 -l pl
+Modu³ z funkcjami XML zapewniaj±cymi obs³ugê zapytañ XPath oraz
+funkcjonalno¶æ XSLT. Jest tak¿e nowa funkcja tabelowa pozwalaj±ca na
+bezpo¶rednie zwracanie wielu wyników XML.
 
 %prep
 %setup -q -a8
