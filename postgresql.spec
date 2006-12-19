@@ -1,14 +1,9 @@
 #
-# TODO:
-# - plphp has no files section
-#
 # Conditional build:
 %bcond_without	tests			# disable testing
 %bcond_without	tcl			# disables Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
 %bcond_without	perl			# disable Perl support
-%bcond_without	pgsql_locale		# disable PostgreSQL locale
-%bcond_without	pgsql_multibyte		# disable PostgreSQL multibyte
 %bcond_without	python			# disable Python support
 %bcond_with	php			# enable PHP support
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
@@ -26,7 +21,7 @@ Summary(uk):	PostgreSQL - ÓÉÓÔÅÍÁ ËÅÒÕ×ÁÎÎÑ ÂÁÚÁÍÉ ÄÁÎÉÈ
 Summary(zh_CN):	PostgreSQL ¿Í»§¶Ë³ÌÐòºÍ¿âÎÄ¼þ
 Name:		postgresql
 Version:	8.2.0
-Release:	0.1
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -39,6 +34,7 @@ Source8:	http://www.commandprompt.com/files/plphp-8.x.tar.bz2
 # Source8-md5:	d307e4ab8cb6900a1c290a5dde1bdeee
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
+Patch2:		%{name}-version.patch
 Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
 Patch5:		%{name}-pg_ctl-fix.patch
@@ -50,6 +46,8 @@ BuildRequires:	flex
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
 BuildRequires:	libtool
+BuildRequires:	libxml2-devel
+BuildRequires:	libxslt-devel
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
@@ -82,6 +80,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
 %define		_pgsqldir	%{_datadir}/postgresql/contrib
+
+%define		_ulibdir	/usr/lib
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -773,10 +773,28 @@ similarity of text based on trigram matching.
 Ten modu³ dostarcza funkcje i klasy do rozpoznawania podobnych tekstów
 w oparciu o dopasowywanie trigramowe (trigram matching).
 
+
+%package module-xml2
+Summary:	XML-handling functions for PostgreSQL
+Summary(pl):	Funkcje do obs³ugi XML-a dla PostgreSQL-a
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description module-xml2
+Module with XML functions provides both XPath querying and XSLT
+functionality. There is also a new table function which allows the
+straightforward return of multiple XML results.
+
+%description module-xml2 -l pl
+Modu³ z funkcjami XML zapewniaj±cymi obs³ugê zapytañ XPath oraz
+funkcjonalno¶æ XSLT. Jest tak¿e nowa funkcja tabelowa pozwalaj±ca na
+bezpo¶rednie zwracanie wielu wyników XML.
+
 %prep
 %setup -q -a8
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
+%patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p0
@@ -801,22 +819,15 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	--disable-rpath \
 	--enable-depend \
 	--enable-integer-datetimes \
-	%{?with_pgsql_locale:--enable-locale} \
-	%{?with_pgsql_multibyte:--enable-multibyte} \
 	--enable-nls \
-	--enable-recode \
-	--enable-syslog \
 	--enable-thread-safety \
-	--enable-unicode-conversion \
-	--with-CXX \
 	%{?with_kerberos5:--with-krb5} \
 	--with-openssl \
 	--with-pam \
 	%{?with_perl:--with-perl} \
 	%{?with_php:--with-php=/usr/include/php} \
 	%{?with_python:--with-python} \
-	%{?with_tcl:--with-tcl} \
-	--with-x \
+	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
 	--without-docdir
 
 %{__make}
@@ -826,6 +837,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 %{__make} -C contrib/tablefunc
 %{__make} -C contrib/tsearch2
 %{__make} -C contrib/pg_trgm
+%{__make} -C contrib/xml2
 %{__make} -C src/tutorial \
 	NO_PGXS=1
 
@@ -852,8 +864,6 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%{__cc} -shared -Wl,-soname,libpq.so.3 -o $RPM_BUILD_ROOT%{_libdir}/libpq.so.3.0.0 -L$RPM_BUILD_ROOT%{_libdir} -lpq
-
 %if %{with perl}
 %{__make} install -C src/pl/plperl \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -875,6 +885,9 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 	DESTDIR=$RPM_BUILD_ROOT
 
 %{__make} -C contrib/pg_trgm install \
+	DESTDIR=$RPM_BUILD_ROOT
+
+%{__make} -C contrib/xml2 install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 %if %{with php}
@@ -920,7 +933,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ `cat $pgdir/PG_VERSION` != '8.1' ]; then
+		if [ `cat $pgdir/PG_VERSION` != '8.2' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
@@ -989,13 +1002,14 @@ fi
 
 %dir %{_pgsqldir}
 %dir %{_datadir}/postgresql
-%dir %{_datadir}/postgresql/timezone
 %{_datadir}/postgresql/*.bki
 %{_datadir}/postgresql/*.sample
 %{_datadir}/postgresql/*.description
+%{_datadir}/postgresql/*.shdescription
 %{_datadir}/postgresql/*.sql
 %{_datadir}/postgresql/*.txt
-%{_datadir}/postgresql/timezone/*
+%{_datadir}/postgresql/timezone
+%{_datadir}/postgresql/timezonesets
 
 %attr(700,postgres,postgres) /home/services/postgres
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
@@ -1032,7 +1046,7 @@ fi
 %attr(755,root,root) %{_libdir}/libecpg.so
 %attr(755,root,root) %{_libdir}/libecpg_compat.so
 %attr(755,root,root) %{_libdir}/libpgtypes.so
-%{_includedir}/ecpg
+%{_includedir}/ecpg*
 
 %files devel -f pg_config.lang
 %defattr(644,root,root,755)
@@ -1123,40 +1137,54 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
 %endif
 
+%if %{with php}
+%files module-plphp
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/plphp_*
+%attr(755,root,root) %{_pgmoduledir}/plphp.so
+%endif
+
 %files module-dblink
 %defattr(644,root,root,755)
 %doc contrib/dblink/README.dblink
 %attr(755,root,root) %{_pgmoduledir}/dblink.so
-%{_pgsqldir}/dblink.sql
+%{_pgsqldir}/*dblink.sql
 
 %files module-lo
 %defattr(644,root,root,755)
 %doc contrib/lo/README.lo
 %attr(755,root,root) %{_pgmoduledir}/lo.so
-%{_pgsqldir}/lo*.sql
+%{_pgsqldir}/*lo.sql
 
 %files module-pgcrypto
 %defattr(644,root,root,755)
 %doc contrib/pgcrypto/README*
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
-%{_pgsqldir}/pgcrypto.sql
+%{_pgsqldir}/*pgcrypto.sql
 
 %files module-tablefunc
 %defattr(644,root,root,755)
 %doc contrib/tablefunc/README.tablefunc
 %attr(755,root,root) %{_pgmoduledir}/tablefunc.so
-%{_pgsqldir}/tablefunc.sql
+%{_pgsqldir}/*tablefunc.sql
 
 %files module-tsearch2
 %defattr(644,root,root,755)
 %doc contrib/tsearch2/README*
 %attr(755,root,root) %{_pgmoduledir}/tsearch2.so
-%{_pgsqldir}/tsearch2.sql
-%{_pgsqldir}/untsearch2.sql
+%{_pgsqldir}/*tsearch2.sql
+%{_pgsqldir}/russian.stop.utf8
+%{_pgsqldir}/thesaurus
 %{_pgsqldir}/*.stop
 
 %files module-pg_trgm
 %defattr(644,root,root,755)
 %doc contrib/pg_trgm/README*
 %attr(755,root,root) %{_pgmoduledir}/pg_trgm.so
-%{_pgsqldir}/pg_trgm.sql
+%{_pgsqldir}/*pg_trgm.sql
+
+%files module-xml2
+%defattr(644,root,root,755)
+%doc contrib/xml2/README*
+%attr(755,root,root) %{_pgmoduledir}/pgxml.so
+%{_pgsqldir}/*pgxml.sql
