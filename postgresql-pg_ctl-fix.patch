@@ -1,0 +1,75 @@
+--- src/bin/pg_ctl/pg_ctl.c.orig	2006-04-04 15:52:48.000000000 +0000
++++ src/bin/pg_ctl/pg_ctl.c	2006-04-04 16:43:27.000000000 +0000
+@@ -373,9 +373,11 @@
+ 	bool		success = false;
+ 	int			i;
+ 	char		portstr[32];
++	char		sockstr[256];
+ 	char	   *p;
+ 
+ 	*portstr = '\0';
++	*sockstr = '\0';
+ 
+ 	/* post_opts */
+ 	for (p = post_opts; *p;)
+@@ -400,7 +402,7 @@
+ 	}
+ 
+ 	/* config file */
+-	if (!*portstr)
++	if (!*portstr || !*sockstr)
+ 	{
+ 		char	  **optlines;
+ 
+@@ -413,18 +415,32 @@
+ 
+ 				while (isspace((unsigned char) *p))
+ 					p++;
+-				if (strncmp(p, "port", strlen("port")) != 0)
+-					continue;
+-				p += strlen("port");
+-				while (isspace((unsigned char) *p))
+-					p++;
+-				if (*p != '=')
+-					continue;
+-				p++;
+-				while (isspace((unsigned char) *p))
++				if (strncmp(p, "port", strlen("port")) == 0)
++				{
++					p += strlen("port");
++					while (isspace((unsigned char) *p))
++						p++;
++					if (*p != '=')
++						continue;
+ 					p++;
+-				StrNCpy(portstr, p, Min(strcspn(p, "#" WHITESPACE) + 1,
++					while (isspace((unsigned char) *p))
++						p++;
++					StrNCpy(portstr, p, Min(strcspn(p, "#" WHITESPACE) + 1,
+ 										sizeof(portstr)));
++				}
++				if (strncmp(p, "unix_socket_directory", strlen("unix_socket_directory")) == 0)
++				{
++					p += strlen("unix_socket_directory");
++					while (isspace((unsigned char) *p))
++						p++;
++					if (*p != '=')
++						continue;
++					p++;
++					while (isspace((unsigned char) *p) || *p == '\'' || *p == '"')
++						p++;
++					StrNCpy(sockstr, p, Min(strcspn(p, "#\"'" WHITESPACE) + 1,
++										sizeof(sockstr)));
++				}
+ 				/* keep looking, maybe there is another */
+ 			}
+ 		}
+@@ -440,7 +456,7 @@
+ 
+ 	for (i = 0; i < wait_seconds; i++)
+ 	{
+-		if ((conn = PQsetdbLogin(NULL, portstr, NULL, NULL,
++		if ((conn = PQsetdbLogin((!*sockstr ? NULL : sockstr), portstr, NULL, NULL,
+ 								 "postgres", NULL, NULL)) != NULL &&
+ 			(PQstatus(conn) == CONNECTION_OK ||
+ 			 (strcmp(PQerrorMessage(conn),
