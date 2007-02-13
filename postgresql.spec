@@ -10,15 +10,15 @@
 					# (disabled by default because it is a security risk)
 
 Summary:	PostgreSQL Data Base Management System
-Summary(de.UTF-8):   PostgreSQL Datenbankverwaltungssystem
-Summary(es.UTF-8):   Gestor de Banco de Datos PostgreSQL
-Summary(fr.UTF-8):   Sysème de gestion de base de données PostgreSQL
-Summary(pl.UTF-8):   PostgreSQL - system bazodanowy
-Summary(pt_BR.UTF-8):   Gerenciador de Banco de Dados PostgreSQL
-Summary(ru.UTF-8):   PostgreSQL - система управления базами данных
-Summary(tr.UTF-8):   Veri Tabanı Yönetim Sistemi
-Summary(uk.UTF-8):   PostgreSQL - система керування базами даних
-Summary(zh_CN.UTF-8):   PostgreSQL 客户端程序和库文件
+Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
+Summary(es.UTF-8):	Gestor de Banco de Datos PostgreSQL
+Summary(fr.UTF-8):	Sysème de gestion de base de données PostgreSQL
+Summary(pl.UTF-8):	PostgreSQL - system bazodanowy
+Summary(pt_BR.UTF-8):	Gerenciador de Banco de Dados PostgreSQL
+Summary(ru.UTF-8):	PostgreSQL - система управления базами данных
+Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
+Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
+Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.2.3
 Release:	1
@@ -307,14 +307,14 @@ PostgreSQL працює на Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
 
 %package devel
 Summary:	PostgreSQL development header files and libraries
-Summary(de.UTF-8):   PostgreSQL-Entwicklungs-Header-Dateien und Libraries
-Summary(es.UTF-8):   Archivos de inclusión y bibliotecas PostgreSQL
-Summary(fr.UTF-8):   En-têtes et bibliothèques de développement PostgreSQL
-Summary(pl.UTF-8):   PostgreSQL - pliki nagłówkowe i biblioteki
-Summary(pt_BR.UTF-8):   Arquivos de inclusão e bibliotecas para desenvolvimento com o PostgreSQL
-Summary(ru.UTF-8):   PostgreSQL - хедеры и библиотеки разработчика
-Summary(tr.UTF-8):   PostgreSQL başlık dosyaları ve kitaplıklar
-Summary(uk.UTF-8):   PostgreSQL - хедери та бібліотеки програміста
+Summary(de.UTF-8):	PostgreSQL-Entwicklungs-Header-Dateien und Libraries
+Summary(es.UTF-8):	Archivos de inclusión y bibliotecas PostgreSQL
+Summary(fr.UTF-8):	En-têtes et bibliothèques de développement PostgreSQL
+Summary(pl.UTF-8):	PostgreSQL - pliki nagłówkowe i biblioteki
+Summary(pt_BR.UTF-8):	Arquivos de inclusão e bibliotecas para desenvolvimento com o PostgreSQL
+Summary(ru.UTF-8):	PostgreSQL - хедеры и библиотеки разработчика
+Summary(tr.UTF-8):	PostgreSQL başlık dosyaları ve kitaplıklar
+Summary(uk.UTF-8):	PostgreSQL - хедери та бібліотеки програміста
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 
@@ -361,7 +361,7 @@ gereken başlık dosyalarını ve kitaplıkları içerir.
 
 %package backend-devel
 Summary:	PostgreSQL backend development header files
-Summary(pl.UTF-8):   PostgreSQL - pliki nagłówkowe dla backendu
+Summary(pl.UTF-8):	PostgreSQL - pliki nagłówkowe dla backendu
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
@@ -376,11 +376,11 @@ bezposrednio ladowane przez beckend serwera PostgreSQL.
 
 %package clients
 Summary:	Clients needed to access a PostgreSQL server
-Summary(es.UTF-8):   Clientes necesarios para acceder al servidor PostgreSQL
-Summary(pl.UTF-8):   Klienci wymagani do dostępu do serwera PostgreSQL
-Summary(pt_BR.UTF-8):   Clientes necessários para acessar o servidor PostgreSQL
-Summary(ru.UTF-8):   Клиентские программы, необходимые для доступа к серверу PostgreSQL
-Summary(uk.UTF-8):   Клієнтські програми, необхідні для доступу до сервера PostgreSQL
+Summary(es.UTF-8):	Clientes necesarios para acceder al servidor PostgreSQL
+Summary(pl.UTF-8):	Klienci wymagani do dostępu do serwera PostgreSQL
+Summary(pt_BR.UTF-8):	Clientes necessários para acessar o servidor PostgreSQL
+Summary(ru.UTF-8):	Клиентские программы, необходимые для доступа к серверу PostgreSQL
+Summary(uk.UTF-8):	Клієнтські програми, необхідні для доступу до сервера PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name}-libs = %{version}-%{release}
 
@@ -425,7 +425,7 @@ C++, Perl и Tcl) разделены. Этот пакет включает то�
 
 %package doc
 Summary:	Documentation for PostgreSQL
-Summary(pl.UTF-8):   Dodatkowa dokumantacja dla PostgreSQL
+Summary(pl.UTF-8):	Dodatkowa dokumantacja dla PostgreSQL
 Group:		Applications/Databases
 
 %description doc
@@ -438,10 +438,10 @@ administratorów w formacie HTML.
 
 %package libs
 Summary:	PostgreSQL libraries
-Summary(es.UTF-8):   Biblioteca compartida del PostgreSQL
-Summary(pl.UTF-8):   Biblioteki dzielone programu PostgreSQL
-Summary(pt_BR.UTF-8):   Biblioteca compartilhada do PostgreSQL
-Summary(zh_CN.UTF-8):   PostgreSQL 客户所需要的共享库
+Summary(es.UTF-8):	Biblioteca compartida del PostgreSQL
+Summary(pl.UTF-8):	Biblioteki dzielone programu PostgreSQL
+Summary(pt_BR.UTF-8):	Biblioteca compartilhada do PostgreSQL
+Summary(zh_CN.UTF-8):	PostgreSQL 客户所需要的共享库
 Group:		Libraries
 
 %description libs
@@ -460,7 +460,7 @@ PostgreSQL.
 
 %package ecpg
 Summary:	Embedded SQL in C interface
-Summary(pl.UTF-8):   Interfejs wbudowanego SQL-a w język C
+Summary(pl.UTF-8):	Interfejs wbudowanego SQL-a w język C
 Group:		Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 
@@ -472,7 +472,7 @@ Interfejs wbudowanego SQL-a w język C.
 
 %package ecpg-devel
 Summary:	Embedded SQL in C interface files
-Summary(pl.UTF-8):   Pliki programistyczne interfejsu wbudowanego SQL-a w język C
+Summary(pl.UTF-8):	Pliki programistyczne interfejsu wbudowanego SQL-a w język C
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 Requires:	%{name}-ecpg = %{version}-%{release}
@@ -485,11 +485,11 @@ Pliki programistyczne interfejsu wbudowanego SQL-a w język C.
 
 %package static
 Summary:	PostgreSQL static libraries
-Summary(es.UTF-8):   Bibliotecas estaticas PostgreSQL
-Summary(pl.UTF-8):   Biblioteki statyczne programu PostgreSQL
-Summary(pt_BR.UTF-8):   Bibliotecas estáticas PostgreSQL
-Summary(ru.UTF-8):   Статические библиотеки для программирования с PostgreSQL
-Summary(uk.UTF-8):   Статичні бібліотеки для програмування з PostgreSQL
+Summary(es.UTF-8):	Bibliotecas estaticas PostgreSQL
+Summary(pl.UTF-8):	Biblioteki statyczne programu PostgreSQL
+Summary(pt_BR.UTF-8):	Bibliotecas estáticas PostgreSQL
+Summary(ru.UTF-8):	Статические библиотеки для программирования с PostgreSQL
+Summary(uk.UTF-8):	Статичні бібліотеки для програмування з PostgreSQL
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
@@ -519,7 +519,7 @@ PostgreSQL.
 
 %package module-plpgsql
 Summary:	PL/pgSQL - PostgreSQL procedural language
-Summary(pl.UTF-8):   PL/pgSQL - język proceduralny bazy danych PostgreSQL
+Summary(pl.UTF-8):	PL/pgSQL - język proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -553,7 +553,7 @@ proceduralnego PL/pgSQL dla swojej bazy danych.
 
 %package module-plperl
 Summary:	PL/perl - PostgreSQL procedural language
-Summary(pl.UTF-8):   PL/perl - język proceduralny bazy danych PostgreSQL
+Summary(pl.UTF-8):	PL/perl - język proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
@@ -588,7 +588,7 @@ proceduralnego PL/Perl dla swojej bazy danych.
 
 %package module-plphp
 Summary:	PL/PHP - PostgreSQL procedural language
-Summary(pl.UTF-8):   PL/PHP - język proceduralny bazy danych PostgreSQL
+Summary(pl.UTF-8):	PL/PHP - język proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 %{?requires_php_extension}
@@ -623,7 +623,7 @@ proceduralnego PL/PHP dla swojej bazy danych.
 
 %package module-plpython
 Summary:	PL/Python - PostgreSQL procedural language
-Summary(pl.UTF-8):   PL/Python - język proceduralny bazy danych PostgreSQL
+Summary(pl.UTF-8):	PL/Python - język proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 %pyrequires_eq	python
@@ -658,7 +658,7 @@ proceduralnego PL/Python dla swojej bazy danych.
 
 %package module-pltcl
 Summary:	PL/Tcl - PostgreSQL procedural language
-Summary(pl.UTF-8):   PL/Tcl - język proceduralny bazy danych PostgreSQL
+Summary(pl.UTF-8):	PL/Tcl - język proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -692,7 +692,7 @@ proceduralnego PL/Tcl dla swojej bazy danych.
 
 %package module-dblink
 Summary:	dblink module for PostgreSQL
-Summary(pl.UTF-8):   Moduł dblink dla PostgreSQL-a
+Summary(pl.UTF-8):	Moduł dblink dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -706,7 +706,7 @@ zdalnej bazy danych.
 
 %package module-lo
 Summary:	Large Objects module for PostgreSQL
-Summary(pl.UTF-8):   Moduł Large Objects dla PostgreSQL-a
+Summary(pl.UTF-8):	Moduł Large Objects dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -721,7 +721,7 @@ osieroconych obiektów.
 
 %package module-pgcrypto
 Summary:	Cryptographic functions for PostgreSQL
-Summary(pl.UTF-8):   Funkcje kryptograficzne dla PostgreSQL-a
+Summary(pl.UTF-8):	Funkcje kryptograficzne dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -733,7 +733,7 @@ Funkcje kryptograficzne dla PostgreSQL.
 
 %package module-tablefunc
 Summary:	crosstab functions for PostgreSQL
-Summary(pl.UTF-8):   Funkcje crosstab dla PostgreSQL-a
+Summary(pl.UTF-8):	Funkcje crosstab dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -745,7 +745,7 @@ Funkcje crosstab dla PostgreSQL-a.
 
 %package module-tsearch2
 Summary:	Full text extension for PostgreSQL
-Summary(pl.UTF-8):   Rozszerzenie pełnotekstowe dla PostgreSQL-a
+Summary(pl.UTF-8):	Rozszerzenie pełnotekstowe dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -761,7 +761,7 @@ http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 
 %package module-pg_trgm
 Summary:	Trigram matching for PostgreSQL
-Summary(pl.UTF-8):   Dopasowanie trigramowe dla PostgreSQL-a
+Summary(pl.UTF-8):	Dopasowanie trigramowe dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -776,7 +776,7 @@ w oparciu o dopasowywanie trigramowe (trigram matching).
 
 %package module-xml2
 Summary:	XML-handling functions for PostgreSQL
-Summary(pl.UTF-8):   Funkcje do obsługi XML-a dla PostgreSQL-a
+Summary(pl.UTF-8):	Funkcje do obsługi XML-a dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
