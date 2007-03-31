@@ -21,7 +21,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.2.3
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -44,7 +44,7 @@ BuildRequires:	automake
 #BuildRequires:	bison >= 1.875	not needed for releases
 BuildRequires:	flex
 BuildRequires:	gettext-devel
-%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
+%{?with_kerberos5:BuildRequires:	krb5-devel}
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel
 BuildRequires:	libxslt-devel
