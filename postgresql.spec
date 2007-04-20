@@ -5,7 +5,6 @@
 %bcond_without	kerberos5		# disable kerberos5 support
 %bcond_without	perl			# disable Perl support
 %bcond_without	python			# disable Python support
-%bcond_with	php			# enable PHP support
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 
@@ -50,10 +49,6 @@ BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
-%if %{with php}
-BuildRequires:	php-devel >= 3:5.0.0
-BuildRequires:	rpmbuild(macros) >= 1.322
-%endif
 %if %{with python}
 BuildRequires:	python >= 1:2.3
 BuildRequires:	python-devel >= 1:2.3
@@ -784,7 +779,6 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	--with-openssl \
 	--with-pam \
 	%{?with_perl:--with-perl} \
-	%{?with_php:--with-php=/usr/include/php} \
 	%{?with_python:--with-python} \
 	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
 	--without-docdir
