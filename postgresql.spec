@@ -20,18 +20,16 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	8.2.3
-Release:	2
+Version:	8.2.4
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	cb47771004d53505200ffd00ac45bc32
+# Source0-md5:	af7ec100a33c41bfb8d87b5e0ec2f44a
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
-Source8:	http://www.commandprompt.com/files/plphp-8.x.tar.bz2
-# Source8-md5:	d307e4ab8cb6900a1c290a5dde1bdeee
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-version.patch
@@ -586,41 +584,6 @@ potrzeby.
 Za pomocą polecenia createlang można dodać obsługę języka
 proceduralnego PL/Perl dla swojej bazy danych.
 
-%package module-plphp
-Summary:	PL/PHP - PostgreSQL procedural language
-Summary(pl.UTF-8):	PL/PHP - język proceduralny bazy danych PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
-%{?requires_php_extension}
-
-%description module-plphp
-From PostgreSQL documentation:
-
-Postgres supports the definition of procedural languages. In the case
-of a function or trigger procedure defined in a procedural language,
-the database has no built-in knowledge about how to interpret the
-function's source text. Instead, the task is passed to a handler that
-knows the details of the language. The handler itself is a special
-programming language function compiled into a shared object and loaded
-on demand.
-
-To enable PL/PHP procedural language for your database you have to run
-createlang command.
-
-%description module-plphp -l pl.UTF-8
-Z dokumentacji PostgreSQL:
-
-Postgres ma wsparcie dla języków proceduralnych. W przypadku, kiedy
-programista zdefiniuje procedurę wyzwalacza lub funkcję w języku
-proceduralnym, baza danych nie ma pojęcia jak interpretować tego typu
-funkcję. Funkcja lub procedura ta jest przekazywana do interpretera,
-który wie jak ją wykonać. Interpreter jest odpowiednią, specjalną
-funkcją, która jest skompilowana w obiekt dzielony i ładowany w razie
-potrzeby.
-
-Za pomocą polecenia createlang można dodać obsługę języka
-proceduralnego PL/PHP dla swojej bazy danych.
-
 %package module-plpython
 Summary:	PL/Python - PostgreSQL procedural language
 Summary(pl.UTF-8):	PL/Python - język proceduralny bazy danych PostgreSQL
@@ -791,17 +754,13 @@ funkcjonalność XSLT. Jest także nowa funkcja tabelowa pozwalająca na
 bezpośrednie zwracanie wielu wyników XML.
 
 %prep
-%setup -q -a8
+%setup -q
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p0
-
-%if %{with php}
-patch -p1 < plphp.patch
-%endif
 
 tar xzf doc/man*.tar.gz
 
@@ -845,12 +804,6 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 %{?with_tests:%{__make} check}
 %endif
 
-%if %{with php}
-cd src/pl/plphp
-%{__make}
-cd ../../../
-%endif
-
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
@@ -889,13 +842,6 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %{__make} -C contrib/xml2 install \
 	DESTDIR=$RPM_BUILD_ROOT
-
-%if %{with php}
-cd src/pl/plphp
-%{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT
-cd ../../../
-%endif
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
 
@@ -1135,13 +1081,6 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
-%endif
-
-%if %{with php}
-%files module-plphp
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/plphp_*
-%attr(755,root,root) %{_pgmoduledir}/plphp.so
 %endif
 
 %files module-dblink
