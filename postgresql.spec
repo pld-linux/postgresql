@@ -20,7 +20,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.2.4
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -619,6 +619,7 @@ Summary:	PL/Tcl - PostgreSQL procedural language
 Summary(pl.UTF-8):	PL/Tcl - język proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
+Requires:	tcl(Pgtcl)
 
 %description module-pltcl
 From PostgreSQL documentation:
@@ -859,6 +860,8 @@ cat pg_dump.lang psql.lang initdb.lang pg_ctl.lang > clients.lang
 # Remove Contrib documentation. We use macro %doc
 rm -rf $RPM_BUILD_ROOT/contrib
 
+mv $RPM_BUILD_ROOT{%{_datadir}/postgresql,%{_pgsqldir}}/unknown.pltcl
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -1075,6 +1078,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
+%{_pgsqldir}/unknown.pltcl
 %endif
 
 %files module-dblink
