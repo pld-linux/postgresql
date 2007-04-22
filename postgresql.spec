@@ -20,7 +20,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.2.4
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -861,6 +861,8 @@ cat pg_dump.lang psql.lang initdb.lang pg_ctl.lang > clients.lang
 rm -rf $RPM_BUILD_ROOT/contrib
 
 mv $RPM_BUILD_ROOT{%{_datadir}/postgresql,%{_pgsqldir}}/unknown.pltcl
+
+install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
