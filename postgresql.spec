@@ -16,7 +16,7 @@
 					# (disabled by default because it is a security risk)
 %bcond_without	slony1			# disable Slony-I replication system
 
-%define		postgresql_version	7.4.10
+%define		postgresql_version	7.4.17
 %define		postgresql_release	1
 %define		slony1_version	1.0.6
 %define		slony1_release	1
@@ -37,7 +37,7 @@ Release:	%{postgresql_release}
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{postgresql_version}/%{name}-%{postgresql_version}.tar.bz2
-# Source0-md5:	f35f4fa1c0a135f5418f89a464c6fc7b
+# Source0-md5:	cdb4b2cd37e9c26773cddeebfa960675
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
