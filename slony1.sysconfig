@@ -5,6 +5,6 @@
 # SLONY1_CLUSTERS='mycluster1 mycluster2'
 
 # Set the connect string for each cluster
-# SLONY1_CONNECT_mycluster1='database=repltest username=repltest'
+# SLONY1_CONNECT_mycluster1='dbname=repltest user=repltest'
 
 # Set passwords in /var/lib/slony1/.pgpass
