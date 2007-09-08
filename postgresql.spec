@@ -1,7 +1,7 @@
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
-%bcond_without	tcl			# disables Tcl support
+%bcond_without	tcl			# disable Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
 %bcond_without	perl			# disable Perl support
 %bcond_without	python			# disable Python support
@@ -19,31 +19,34 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	8.2.4
-Release:	3
+Version:	8.3.0
+%define	_snap	20070908
+Release:	0.%{_snap}.1
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	af7ec100a33c41bfb8d87b5e0ec2f44a
+#Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
+Source0:	ftp://ftp.postgresql.org/pub/dev/%{name}-snapshot.tar.bz2
+# Source0-md5:	b60d9c3413a782d8883d8d6d655d2daa
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
-Patch2:		%{name}-version.patch
+#Patch2:		%{name}-version.patch
 Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
-Patch5:		%{name}-pg_ctl-fix.patch
+#Patch5:		%{name}-pg_ctl-fix.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
-#BuildRequires:	bison >= 1.875	not needed for releases
+# not needed for releases... but fixes something in snapshot
+BuildRequires:	bison >= 1.875
 BuildRequires:	flex
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	krb5-devel}
 BuildRequires:	libtool
-BuildRequires:	libxml2-devel
+BuildRequires:	libxml2-devel >= 2.6.23
 BuildRequires:	libxslt-devel
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
@@ -750,18 +753,21 @@ funkcjonalność XSLT. Jest także nowa funkcja tabelowa pozwalająca na
 bezpośrednie zwracanie wielu wyników XML.
 
 %prep
-%setup -q
+%setup -q -n %{name}-snapshot
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
-%patch2 -p1
+#%patch2 -p1	# required?
 %patch3 -p1
 %patch4 -p1
-%patch5 -p0
+#%patch5 -p0	# hmm :-/
 
 tar xzf doc/man*.tar.gz
 
 mkdir doc/unpacked
 tar zxf doc/postgres.tar.gz -C doc/unpacked
+
+# force rebuild of bison/flex files
+find src -name \*.l -o -name \*.y | xargs touch
 
 # Erase all CVS dirs
 #find contrib -type d -name CVS -exec rm -rf {} \;
@@ -932,6 +938,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/postgresql
 
 %attr(755,root,root) %{_bindir}/initdb
+#%attr(755,root,root) %{_bindir}/initlocation
 %attr(755,root,root) %{_bindir}/ipcclean
 %attr(755,root,root) %{_bindir}/pg_controldata
 %attr(755,root,root) %{_bindir}/pg_ctl
@@ -961,6 +968,7 @@ fi
 %attr(640,postgres,postgres) %config(noreplace) %verify(not md5 mtime size) /var/log/pgsql
 
 %{_mandir}/man1/initdb.1*
+%{_mandir}/man1/initlocation.1*
 %{_mandir}/man1/ipcclean.1*
 %{_mandir}/man1/pg_controldata.1*
 %{_mandir}/man1/pg_ctl.1*
@@ -1055,7 +1063,7 @@ fi
 %{_mandir}/man1/pg_dumpall.1*
 %{_mandir}/man1/pg_restore.1*
 %{_mandir}/man1/psql.1*
-%{_mandir}/man1/reindexdb.1*
+#%{_mandir}/man1/reindexdb.1*
 %{_mandir}/man1/vacuumdb.1*
 %{_mandir}/man7/*.7*
 
@@ -1111,10 +1119,12 @@ fi
 %defattr(644,root,root,755)
 %doc contrib/tsearch2/README*
 %attr(755,root,root) %{_pgmoduledir}/tsearch2.so
+%attr(755,root,root) %{_pgmoduledir}/dict_snowball.so
 %{_pgsqldir}/*tsearch2.sql
 %{_pgsqldir}/russian.stop.utf8
 %{_pgsqldir}/thesaurus
 %{_pgsqldir}/*.stop
+%{_datadir}/postgresql/tsearch_data
 
 %files module-pg_trgm
 %defattr(644,root,root,755)
