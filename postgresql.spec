@@ -8,6 +8,8 @@
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 
+# NOTE: merge from POSTGRESQL_8_3 branch when 8.3 arrives
+
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
 Summary(es.UTF-8):	Gestor de Banco de Datos PostgreSQL
