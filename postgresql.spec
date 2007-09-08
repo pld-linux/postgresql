@@ -79,6 +79,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_ulibdir	/usr/lib
 
+%define	contrib_modules	adminpack btree_gist chkpass dblink hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pgstattuple pg_trgm sslinfo tablefunc tsearch2 vacuumlo xml2
+
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
 then as Postgres95).
@@ -735,7 +737,6 @@ similarity of text based on trigram matching.
 Ten moduł dostarcza funkcje i klasy do rozpoznawania podobnych tekstów
 w oparciu o dopasowywanie trigramowe (trigram matching).
 
-
 %package module-xml2
 Summary:	XML-handling functions for PostgreSQL
 Summary(pl.UTF-8):	Funkcje do obsługi XML-a dla PostgreSQL-a
@@ -751,6 +752,15 @@ straightforward return of multiple XML results.
 Moduł z funkcjami XML zapewniającymi obsługę zapytań XPath oraz
 funkcjonalność XSLT. Jest także nowa funkcja tabelowa pozwalająca na
 bezpośrednie zwracanie wielu wyników XML.
+
+%package contrib
+Summary:	Misc PostgreSQL contrib modules
+#Summary(pl.UTF-8):	
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description contrib
+Misc PostgreSQL contrib modules.
 
 %prep
 %setup -q -n %{name}-snapshot
@@ -791,13 +801,11 @@ find src -name \*.l -o -name \*.y | xargs touch
 	--without-docdir
 
 %{__make}
-%{__make} -C contrib/dblink
-%{__make} -C contrib/lo
-%{__make} -C contrib/pgcrypto
-%{__make} -C contrib/tablefunc
-%{__make} -C contrib/tsearch2
-%{__make} -C contrib/pg_trgm
-%{__make} -C contrib/xml2
+
+for mod in %{contrib_modules}; do \
+	%{__make} -C contrib/$mod
+done
+
 %{__make} -C src/tutorial \
 	NO_PGXS=1
 
@@ -823,26 +831,10 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 	DESTDIR=$RPM_BUILD_ROOT
 %endif
 
-%{__make} -C contrib/dblink install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/lo install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/pgcrypto install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/tablefunc install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/tsearch2 install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/pg_trgm install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/xml2 install \
-	DESTDIR=$RPM_BUILD_ROOT
+for mod in %{contrib_modules}; do \
+	%{__make} -C contrib/$mod install \
+		DESTDIR=$RPM_BUILD_ROOT
+done
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
 
@@ -1137,3 +1129,51 @@ fi
 %doc contrib/xml2/README*
 %attr(755,root,root) %{_pgmoduledir}/pgxml.so
 %{_pgsqldir}/*pgxml.sql
+
+%files contrib
+%defattr(644,root,root,755)
+%{_bindir}/oid2name
+%{_bindir}/pgbench
+%{_bindir}/vacuumlo
+%attr(755,root,root) %{_pgmoduledir}/_int.so
+%attr(755,root,root) %{_pgmoduledir}/adminpack.so
+%attr(755,root,root) %{_pgmoduledir}/btree_gist.so
+%attr(755,root,root) %{_pgmoduledir}/chkpass.so
+%attr(755,root,root) %{_pgmoduledir}/hstore.so
+%attr(755,root,root) %{_pgmoduledir}/int_aggregate.so
+%attr(755,root,root) %{_pgmoduledir}/isn.so
+%attr(755,root,root) %{_pgmoduledir}/ltree.so
+%attr(755,root,root) %{_pgmoduledir}/pageinspect.so
+%attr(755,root,root) %{_pgmoduledir}/pg_buffercache.so
+%attr(755,root,root) %{_pgmoduledir}/pg_freespacemap.so
+%attr(755,root,root) %{_pgmoduledir}/pgrowlocks.so
+%attr(755,root,root) %{_pgmoduledir}/pgstattuple.so
+%attr(755,root,root) %{_pgmoduledir}/sslinfo.so
+%{_pgsqldir}/_int.sql
+%{_pgsqldir}/adminpack.sql
+%{_pgsqldir}/btree_gist.sql
+%{_pgsqldir}/chkpass.sql
+%{_pgsqldir}/hstore.sql
+%{_pgsqldir}/int_aggregate.sql
+%{_pgsqldir}/isn.sql
+%{_pgsqldir}/ltree.sql
+%{_pgsqldir}/pageinspect.sql
+%{_pgsqldir}/pg_buffercache.sql
+%{_pgsqldir}/pg_freespacemap.sql
+%{_pgsqldir}/pgrowlocks.sql
+%{_pgsqldir}/pgstattuple.sql
+%{_pgsqldir}/sslinfo.sql
+%{_pgsqldir}/uninstall__int.sql
+%{_pgsqldir}/uninstall_adminpack.sql
+%{_pgsqldir}/uninstall_btree_gist.sql
+%{_pgsqldir}/uninstall_chkpass.sql
+%{_pgsqldir}/uninstall_hstore.sql
+%{_pgsqldir}/uninstall_int_aggregate.sql
+%{_pgsqldir}/uninstall_isn.sql
+%{_pgsqldir}/uninstall_ltree.sql
+%{_pgsqldir}/uninstall_pageinspect.sql
+%{_pgsqldir}/uninstall_pg_buffercache.sql
+%{_pgsqldir}/uninstall_pg_freespacemap.sql
+%{_pgsqldir}/uninstall_pgrowlocks.sql
+%{_pgsqldir}/uninstall_pgstattuple.sql
+%{_pgsqldir}/uninstall_sslinfo.sql
