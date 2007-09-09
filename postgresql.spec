@@ -26,7 +26,7 @@ License:	BSD
 Group:		Applications/Databases
 #Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
 Source0:	ftp://ftp.postgresql.org/pub/dev/%{name}-snapshot.tar.bz2
-# Source0-md5:	b60d9c3413a782d8883d8d6d655d2daa
+# Source0-md5:	53f035b2f633ed817fe4070bb8a241d6
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -876,7 +876,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ `cat $pgdir/PG_VERSION` != '8.2' ]; then
+		if [ `cat $pgdir/PG_VERSION` != '8.3' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
