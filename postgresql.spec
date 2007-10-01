@@ -20,12 +20,12 @@ Summary(tr):	Veri TabanЩ YЖnetim Sistemi
 Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
-Version:	8.2.4
+Version:	8.2.5
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	af7ec100a33c41bfb8d87b5e0ec2f44a
+# Source0-md5:	bb1cd309ea72f070cb964736f5755847
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -34,10 +34,9 @@ Source8:	http://www.commandprompt.com/files/plphp-8.x.tar.bz2
 # Source8-md5:	d307e4ab8cb6900a1c290a5dde1bdeee
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
-Patch2:		%{name}-version.patch
-Patch3:		%{name}-ecpg_link.patch
-Patch4:		%{name}-ecpg-includedir.patch
-Patch5:		%{name}-pg_ctl-fix.patch
+Patch2:		%{name}-ecpg_link.patch
+Patch3:		%{name}-ecpg-includedir.patch
+Patch4:		%{name}-pg_ctl-fix.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -797,7 +796,6 @@ bezpo╤rednie zwracanie wielu wynikСw XML.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p0
 
 %if %{with php}
 patch -p1 < plphp.patch
