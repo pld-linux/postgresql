@@ -20,13 +20,13 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.3.0
-%define	_snap	20070908
-Release:	0.%{_snap}.1
+%define	_beta	beta1
+%define	_ver	8.3%{_beta}
+Release:	0.%{_beta}.1
 License:	BSD
 Group:		Applications/Databases
-#Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-Source0:	ftp://ftp.postgresql.org/pub/dev/%{name}-snapshot.tar.bz2
-# Source0-md5:	53f035b2f633ed817fe4070bb8a241d6
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{_ver}/%{name}-%{_ver}.tar.bz2
+# Source0-md5:	e0ea2a351141041ff05978e11b4202dd
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -34,7 +34,6 @@ Source3:	%{name}.sysconfig
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 #Patch2:		%{name}-version.patch
-Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
 #Patch5:		%{name}-pg_ctl-fix.patch
 URL:		http://www.postgresql.org/
@@ -763,11 +762,10 @@ Requires:	%{name} = %{version}-%{release}
 Misc PostgreSQL contrib modules.
 
 %prep
-%setup -q -n %{name}-snapshot
+%setup -q -n %{name}-%{_ver}
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
 #%patch2 -p1	# required?
-%patch3 -p1
 %patch4 -p1
 #%patch5 -p0	# hmm :-/
 
@@ -930,7 +928,6 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/postgresql
 
 %attr(755,root,root) %{_bindir}/initdb
-#%attr(755,root,root) %{_bindir}/initlocation
 %attr(755,root,root) %{_bindir}/ipcclean
 %attr(755,root,root) %{_bindir}/pg_controldata
 %attr(755,root,root) %{_bindir}/pg_ctl
@@ -960,7 +957,6 @@ fi
 %attr(640,postgres,postgres) %config(noreplace) %verify(not md5 mtime size) /var/log/pgsql
 
 %{_mandir}/man1/initdb.1*
-%{_mandir}/man1/initlocation.1*
 %{_mandir}/man1/ipcclean.1*
 %{_mandir}/man1/pg_controldata.1*
 %{_mandir}/man1/pg_ctl.1*
@@ -1055,7 +1051,7 @@ fi
 %{_mandir}/man1/pg_dumpall.1*
 %{_mandir}/man1/pg_restore.1*
 %{_mandir}/man1/psql.1*
-#%{_mandir}/man1/reindexdb.1*
+%{_mandir}/man1/reindexdb.1*
 %{_mandir}/man1/vacuumdb.1*
 %{_mandir}/man7/*.7*
 
