@@ -22,7 +22,7 @@ Name:		postgresql
 Version:	8.3.0
 %define	_beta	beta2
 %define	_ver	8.3%{_beta}
-Release:	0.%{_beta}.1
+Release:	0.%{_beta}.2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v8.3beta/%{name}-%{_ver}.tar.bz2
@@ -69,8 +69,10 @@ Requires(pre):	/usr/sbin/usermod
 Requires:	%{name}-clients = %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	rc-scripts
+Requires:	tzdata
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
+Obsoletes:	postgresql-module-tsearch2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
@@ -78,7 +80,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_ulibdir	/usr/lib
 
-%define	contrib_modules	adminpack btree_gist chkpass dblink hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pgstattuple pg_trgm sslinfo tablefunc tsearch2 vacuumlo xml2
+%define	contrib_modules	adminpack btree_gist chkpass dblink hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pgstattuple pg_trgm sslinfo tablefunc vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -706,22 +708,6 @@ crosstab functions for PostgreSQL.
 %description module-tablefunc -l pl.UTF-8
 Funkcje crosstab dla PostgreSQL-a.
 
-%package module-tsearch2
-Summary:	Full text extension for PostgreSQL
-Summary(pl.UTF-8):	Rozszerzenie pełnotekstowe dla PostgreSQL-a
-Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
-
-%description module-tsearch2
-Implementation of a new data type tsvector - a searchable data type
-with indexed access:
-http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
-
-%description module-tsearch2 -l pl.UTF-8
-Implementacja nowego typu danych tsvector - typu danych podlegającego
-przeszukiwaniu z dostępem poprzez indeksy:
-http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
-
 %package module-pg_trgm
 Summary:	Trigram matching for PostgreSQL
 Summary(pl.UTF-8):	Dopasowanie trigramowe dla PostgreSQL-a
@@ -788,6 +774,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 	--disable-rpath \
 	--enable-depend \
 	--enable-integer-datetimes \
+	--with-system-tzdata=%{_datadir}/zoneinfo \
 	--enable-nls \
 	--enable-thread-safety \
 	%{?with_kerberos5:--with-krb5} \
@@ -949,8 +936,7 @@ fi
 %{_datadir}/postgresql/*.shdescription
 %{_datadir}/postgresql/*.sql
 %{_datadir}/postgresql/*.txt
-%{_datadir}/postgresql/timezone
-%{_datadir}/postgresql/timezonesets
+%{_datadir}/postgresql/tsearch_data
 
 %attr(700,postgres,postgres) /home/services/postgres
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
@@ -1102,17 +1088,6 @@ fi
 %doc contrib/tablefunc/README.tablefunc
 %attr(755,root,root) %{_pgmoduledir}/tablefunc.so
 %{_pgsqldir}/*tablefunc.sql
-
-%files module-tsearch2
-%defattr(644,root,root,755)
-%doc contrib/tsearch2/README*
-%attr(755,root,root) %{_pgmoduledir}/tsearch2.so
-%attr(755,root,root) %{_pgmoduledir}/dict_snowball.so
-%{_pgsqldir}/*tsearch2.sql
-%{_pgsqldir}/russian.stop.utf8
-%{_pgsqldir}/thesaurus
-%{_pgsqldir}/*.stop
-%{_datadir}/postgresql/tsearch_data
 
 %files module-pg_trgm
 %defattr(644,root,root,755)
