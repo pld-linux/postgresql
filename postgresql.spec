@@ -20,13 +20,13 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.3.0
-%define	_beta	beta2
+%define	_beta	beta3
 %define	_ver	8.3%{_beta}
-Release:	0.%{_beta}.2
+Release:	0.%{_beta}.1
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v8.3beta/%{name}-%{_ver}.tar.bz2
-# Source0-md5:	8996b49d965fbce62092864877b1beb7
+Source0:	ftp://ftp.postgresql.org/pub/source/v8.3%{_beta}/%{name}-%{_ver}.tar.bz2
+# Source0-md5:	c993b57fb40a8aabe6d192f0fe76b2ce
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -936,6 +936,7 @@ fi
 %{_datadir}/postgresql/*.shdescription
 %{_datadir}/postgresql/*.sql
 %{_datadir}/postgresql/*.txt
+%{_datadir}/postgresql/timezonesets
 %{_datadir}/postgresql/tsearch_data
 
 %attr(700,postgres,postgres) /home/services/postgres
@@ -1097,7 +1098,6 @@ fi
 
 %files module-xml2
 %defattr(644,root,root,755)
-%doc contrib/xml2/README*
 %attr(755,root,root) %{_pgmoduledir}/pgxml.so
 %{_pgsqldir}/*pgxml.sql
 
