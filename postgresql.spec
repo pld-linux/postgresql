@@ -1,12 +1,19 @@
+# TODO:
+# - init scripts for pgclusters lb and replicate
 #
 # Conditional build:
-%bcond_without	tests			# disable testing
-%bcond_without	tcl			# disables Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
-%bcond_without	perl			# disable Perl support
 %bcond_without	python			# disable Python support
+%bcond_without	perl			# disable Perl support
+%bcond_without	tcl			# disables Tcl support
+%bcond_without	tests			# disable testing
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
+%bcond_with	pgcluster		# enable pgcluster support
+# Fails tests because of cluster turned off:
+%if %{with pgcluster}
+%undefine       with_tests
+%endif
 
 # NOTE: merge from POSTGRESQL_8_3 branch when 8.3 arrives
 
@@ -22,7 +29,8 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.2.5
-Release:	2
+%define	pgcluster_version	1.7.0rc7
+Release:	2.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -37,6 +45,8 @@ Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
 Patch5:		%{name}-pg_ctl-fix.patch
 Patch6:		%{name}-825_planner_regression.patch
+# Sources from: http://ftp.man.poznan.pl/postgresql/projects/pgFoundry/pgcluster/
+Patch7:		%{name}-pgcluster-%{pgcluster_version}.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -418,6 +428,74 @@ C++, Perl и Tcl) разделены. Этот пакет включает то�
 Тепер пакети з бібліотеками для різних мов програмування (C, C++, Perl
 і Tcl) розділені. Цей пакет містить тільки бібліотеки для мови C.
 
+%if %{with pgcluster}
+%package lb
+Summary:	PGCluster - synchronous replication system of the multi-master composition for PostgreSQL
+Group:		Applications/Databases
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	pgcluster = %{pgcluster_version}
+Provides:	pgcluster-lb = %{pgcluster_version}
+
+%description lb
+PGCluster is the synchronous replication system of the multi-master
+composition for PostgreSQL.
+
+PGCluster is the replication system of the query base using
+PostgreSQL.
+
+- Since a replication system is a synchronous replication, delay does
+  not occur with the data duplicate between the Cluster DBs.
+- Since a server is multi-master composition, two or more the Cluster
+  DBs can receive access from a user simultaneously.
+
+PGCluster consists of three kinds of servers, a load balancer, Cluster
+DB, and a replication server.
+
+%package replicate
+Summary:	PGCluster - synchronous replication system of the multi-master composition for PostgreSQL
+Group:		Applications/Databases
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	pgcluster = %{pgcluster_version}
+Provides:	pgcluster-replicate = %{pgcluster_version}
+
+%description replicate
+PGCluster is the synchronous replication system of the multi-master
+composition for PostgreSQL.
+
+PGCluster is the replication system of the query base using
+PostgreSQL.
+
+- Since a replication system is a synchronous replication, delay does
+  not occur with the data duplicate between the Cluster DBs.
+- Since a server is multi-master composition, two or more the Cluster
+  DBs can receive access from a user simultaneously.
+
+PGCluster consists of three kinds of servers, a load balancer, Cluster
+DB, and a replication server.
+
+%package replicate-tools
+Summary:	PGCluster - synchronous replication system of the multi-master composition for PostgreSQL
+Group:		Applications/Databases
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	pgcluster = %{pgcluster_version}
+Provides:	pgcluster-replicate = %{pgcluster_version}
+
+%description replicate-tools
+PGCluster is the synchronous replication system of the multi-master
+composition for PostgreSQL.
+
+PGCluster is the replication system of the query base using
+PostgreSQL.
+
+- Since a replication system is a synchronous replication, delay does
+  not occur with the data duplicate between the Cluster DBs.
+- Since a server is multi-master composition, two or more the Cluster
+  DBs can receive access from a user simultaneously.
+
+PGCluster consists of three kinds of servers, a load balancer, Cluster
+DB, and a replication server.
+%endif
+
 %package doc
 Summary:	Documentation for PostgreSQL
 Summary(pl.UTF-8):	Dodatkowa dokumantacja dla PostgreSQL
@@ -438,6 +516,7 @@ Summary(pl.UTF-8):	Biblioteki dzielone programu PostgreSQL
 Summary(pt_BR.UTF-8):	Biblioteca compartilhada do PostgreSQL
 Summary(zh_CN.UTF-8):	PostgreSQL 客户所需要的共享库
 Group:		Libraries
+%{?with_pgcluster:Provides:	pgcluster = %{pgcluster_version}}
 
 %description libs
 PostgreSQL shared libraries.
@@ -759,6 +838,7 @@ bezpośrednie zwracanie wielu wyników XML.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p0
+%{?with_pgcluster:%patch7 -p1}
 
 tar xzf doc/man*.tar.gz
 
@@ -1060,6 +1140,23 @@ fi
 %{_mandir}/man1/reindexdb.1*
 %{_mandir}/man1/vacuumdb.1*
 %{_mandir}/man7/*.7*
+
+%if %{with pgcluster}
+%files lb
+%defattr(644,root,root,755)
+%doc INSTALL_PGCLUSTER src/pgcluster/pglb/AUTHORS src/pgcluster/pglb/pglb.conf.sample
+%attr(755,root,root) %{_bindir}/pglb
+
+%files replicate
+%defattr(644,root,root,755)
+%doc INSTALL_PGCLUSTER src/pgcluster/pgrp/AUTHORS src/pgcluster/pgrp/pgreplicate.conf.sample
+%attr(755,root,root) %{_bindir}/pgreplicate
+
+%files replicate-tools
+%defattr(644,root,root,755)
+%doc src/pgcluster/tool/pgcbench.sh src/pgcluster/tool/README.jp src/pgcluster/tool/tpc-b_like.sql
+%attr(755,root,root) %{_bindir}/pgcbench
+%endif
 
 %files module-plpgsql
 %defattr(644,root,root,755)
