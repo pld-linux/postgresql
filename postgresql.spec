@@ -20,13 +20,13 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.3.0
-%define	_beta	beta3
+%define	_beta	beta4
 %define	_ver	8.3%{_beta}
 Release:	0.%{_beta}.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v8.3%{_beta}/%{name}-%{_ver}.tar.bz2
-# Source0-md5:	c993b57fb40a8aabe6d192f0fe76b2ce
+# Source0-md5:	d18745da2c25fb78d5e7a436e9a07759
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -36,6 +36,7 @@ Patch1:		%{name}-absolute_dbpaths.patch
 #Patch2:		%{name}-version.patch
 Patch4:		%{name}-ecpg-includedir.patch
 #Patch5:		%{name}-pg_ctl-fix.patch
+Patch6:		%{name}-ac_version.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -754,6 +755,7 @@ Misc PostgreSQL contrib modules.
 #%patch2 -p1	# required?
 %patch4 -p1
 #%patch5 -p0	# hmm :-/
+%patch6 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -1068,31 +1070,26 @@ fi
 
 %files module-dblink
 %defattr(644,root,root,755)
-%doc contrib/dblink/README.dblink
 %attr(755,root,root) %{_pgmoduledir}/dblink.so
 %{_pgsqldir}/*dblink.sql
 
 %files module-lo
 %defattr(644,root,root,755)
-%doc contrib/lo/README.lo
 %attr(755,root,root) %{_pgmoduledir}/lo.so
 %{_pgsqldir}/*lo.sql
 
 %files module-pgcrypto
 %defattr(644,root,root,755)
-%doc contrib/pgcrypto/README*
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
 %{_pgsqldir}/*pgcrypto.sql
 
 %files module-tablefunc
 %defattr(644,root,root,755)
-%doc contrib/tablefunc/README.tablefunc
 %attr(755,root,root) %{_pgmoduledir}/tablefunc.so
 %{_pgsqldir}/*tablefunc.sql
 
 %files module-pg_trgm
 %defattr(644,root,root,755)
-%doc contrib/pg_trgm/README*
 %attr(755,root,root) %{_pgmoduledir}/pg_trgm.so
 %{_pgsqldir}/*pg_trgm.sql
 
@@ -1103,6 +1100,7 @@ fi
 
 %files contrib
 %defattr(644,root,root,755)
+%doc contrib/README
 %{_bindir}/oid2name
 %{_bindir}/pgbench
 %{_bindir}/vacuumlo
