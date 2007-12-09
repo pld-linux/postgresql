@@ -929,6 +929,7 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/euc*
 %attr(755,root,root) %{_pgmoduledir}/latin*
 %attr(755,root,root) %{_pgmoduledir}/utf*
+%attr(755,root,root) %{_pgmoduledir}/dict_*
 
 %dir %{_pgsqldir}
 %dir %{_datadir}/postgresql
