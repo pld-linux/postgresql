@@ -28,13 +28,13 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	8.2.5
+Version:	8.2.6
 %define	pgcluster_version	1.7.0rc7
-Release:	2.1
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	bb1cd309ea72f070cb964736f5755847
+# Source0-md5:	17b9049b4fcad42ee95410833c1db228
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -44,7 +44,7 @@ Patch1:		%{name}-absolute_dbpaths.patch
 Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
 Patch5:		%{name}-pg_ctl-fix.patch
-Patch6:		%{name}-825_planner_regression.patch
+Patch6:		%{name}-ac_version.patch
 # Sources from: http://ftp.man.poznan.pl/postgresql/projects/pgFoundry/pgcluster/
 Patch7:		%{name}-pgcluster-%{pgcluster_version}.patch
 URL:		http://www.postgresql.org/
@@ -837,7 +837,7 @@ bezpośrednie zwracanie wielu wyników XML.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p0
+%patch6 -p1
 %{?with_pgcluster:%patch7 -p1}
 
 tar xzf doc/man*.tar.gz
