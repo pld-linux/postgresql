@@ -1058,14 +1058,18 @@ fi
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libpq.so.5
 %dir %{_pgmoduledir}
 
 %files ecpg
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/ecpg
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libecpg.so.5
 %attr(755,root,root) %{_libdir}/libecpg_compat.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libecpg_compat.so.2
 %attr(755,root,root) %{_libdir}/libpgtypes.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libpgtypes.so.2
 %{_mandir}/man1/ecpg.1*
 
 %files ecpg-devel
