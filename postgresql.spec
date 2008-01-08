@@ -25,12 +25,12 @@ Summary(tr):	Veri TabanЩ YЖnetim Sistemi
 Summary(uk):	PostgreSQL - система керування базами даних
 Summary(zh_CN):	PostgreSQL ©м╩╖╤кЁлпР╨м©Бнд╪Ч
 Name:		postgresql
-Version:	8.1.9
+Version:	8.1.11
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp6.pl.postgresql.org/pub/postgresql/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	a8a3bd5cb45c4c2747d5218912a82cfc
+# Source0-md5:	48922512bcf683d5ea22a99df5eaaecd
 ##Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}beta/%{name}-%{version}%{beta}.tar.bz2
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
@@ -44,6 +44,7 @@ Patch2:		%{name}-link.patch
 Patch3:		%{name}-ecpg_link.patch
 Patch4:		%{name}-ecpg-includedir.patch
 Patch5:		%{name}-pg_ctl-fix.patch
+Patch6:		%{name}-ac.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -757,6 +758,7 @@ w oparciu o dopasowywanie trigramowe (trigram matching).
 %patch3 -p1
 %patch4 -p1
 %patch5 -p0
+%patch6 -p0
 
 %if %{with php}
 patch -p1 < plphp.patch
