@@ -20,13 +20,13 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.3.0
-%define	_beta	beta4
-%define	_ver	8.3%{_beta}
-Release:	0.%{_beta}.1
+%define	_rc	RC1
+%define	_ver	8.3%{_rc}
+Release:	1.%{_rc}.1
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v8.3%{_beta}/%{name}-%{_ver}.tar.bz2
-# Source0-md5:	d18745da2c25fb78d5e7a436e9a07759
+Source0:	ftp://ftp.postgresql.org/pub/source/v8.3%{_rc}/%{name}-%{_ver}.tar.bz2
+# Source0-md5:	c0994ab0d16aa7410d05102344f819fe
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
