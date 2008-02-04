@@ -20,23 +20,19 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.3.0
-%define	_rc	RC1
-%define	_ver	8.3%{_rc}
-Release:	1.%{_rc}.1
+Release:	1
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v8.3%{_rc}/%{name}-%{_ver}.tar.bz2
-# Source0-md5:	c0994ab0d16aa7410d05102344f819fe
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
+# Source0-md5:	53d6816eac7442f9bc8103439ebee22e
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
-#Patch2:		%{name}-version.patch
-Patch4:		%{name}-ecpg-includedir.patch
-#Patch5:		%{name}-pg_ctl-fix.patch
-Patch6:		%{name}-ac_version.patch
+Patch2:		%{name}-ecpg-includedir.patch
+Patch3:		%{name}-ac_version.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -749,13 +745,11 @@ Requires:	%{name} = %{version}-%{release}
 Misc PostgreSQL contrib modules.
 
 %prep
-%setup -q -n %{name}-%{_ver}
+%setup -q
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
-#%patch2 -p1	# required?
-%patch4 -p1
-#%patch5 -p0	# hmm :-/
-%patch6 -p1
+%patch2 -p1
+%patch3 -p1
 
 tar xzf doc/man*.tar.gz
 
