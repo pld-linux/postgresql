@@ -1,21 +1,12 @@
-# TODO:
-# - init scripts for pgclusters lb and replicate
 #
 # Conditional build:
-%bcond_without	kerberos5		# disable kerberos5 support
-%bcond_without	python			# disable Python support
-%bcond_without	perl			# disable Perl support
-%bcond_without	tcl			# disables Tcl support
 %bcond_without	tests			# disable testing
+%bcond_without	tcl			# disable Tcl support
+%bcond_without	kerberos5		# disable kerberos5 support
+%bcond_without	perl			# disable Perl support
+%bcond_without	python			# disable Python support
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
-%bcond_with	pgcluster		# enable pgcluster support
-# Fails tests because of cluster turned off:
-%if %{with pgcluster}
-%undefine       with_tests
-%endif
-
-# NOTE: merge from POSTGRESQL_8_3 branch when 8.3 arrives
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -28,34 +19,31 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	8.2.6
-%define	pgcluster_version	1.7.0rc7
+Version:	8.3.0
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	17b9049b4fcad42ee95410833c1db228
+# Source0-md5:	53d6816eac7442f9bc8103439ebee22e
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
-Patch3:		%{name}-ecpg_link.patch
-Patch4:		%{name}-ecpg-includedir.patch
-Patch5:		%{name}-pg_ctl-fix.patch
-Patch6:		%{name}-ac_version.patch
-# Sources from: http://ftp.man.poznan.pl/postgresql/projects/pgFoundry/pgcluster/
-Patch7:		%{name}-pgcluster-%{pgcluster_version}.patch
+Patch2:		%{name}-ecpg-includedir.patch
+Patch3:		%{name}-ac_version.patch
+Patch4:		%{name}-disable_horology_test.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
-#BuildRequires:	bison >= 1.875	not needed for releases
+# not needed for releases... but fixes something in snapshot
+BuildRequires:	bison >= 1.875
 BuildRequires:	flex
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	krb5-devel}
 BuildRequires:	libtool
-BuildRequires:	libxml2-devel
+BuildRequires:	libxml2-devel >= 2.6.23
 BuildRequires:	libxslt-devel
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
@@ -79,14 +67,18 @@ Requires(pre):	/usr/sbin/usermod
 Requires:	%{name}-clients = %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	rc-scripts
+Requires:	tzdata
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
+Obsoletes:	postgresql-module-tsearch2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
 %define		_pgsqldir	%{_datadir}/postgresql/contrib
 
 %define		_ulibdir	/usr/lib
+
+%define	contrib_modules	adminpack btree_gist chkpass dblink hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pgstattuple pg_trgm sslinfo tablefunc vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -428,74 +420,6 @@ C++, Perl и Tcl) разделены. Этот пакет включает то�
 Тепер пакети з бібліотеками для різних мов програмування (C, C++, Perl
 і Tcl) розділені. Цей пакет містить тільки бібліотеки для мови C.
 
-%if %{with pgcluster}
-%package lb
-Summary:	PGCluster - synchronous replication system of the multi-master composition for PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name}-libs = %{version}-%{release}
-Requires:	pgcluster = %{pgcluster_version}
-Provides:	pgcluster-lb = %{pgcluster_version}
-
-%description lb
-PGCluster is the synchronous replication system of the multi-master
-composition for PostgreSQL.
-
-PGCluster is the replication system of the query base using
-PostgreSQL.
-
-- Since a replication system is a synchronous replication, delay does
-  not occur with the data duplicate between the Cluster DBs.
-- Since a server is multi-master composition, two or more the Cluster
-  DBs can receive access from a user simultaneously.
-
-PGCluster consists of three kinds of servers, a load balancer, Cluster
-DB, and a replication server.
-
-%package replicate
-Summary:	PGCluster - synchronous replication system of the multi-master composition for PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name}-libs = %{version}-%{release}
-Requires:	pgcluster = %{pgcluster_version}
-Provides:	pgcluster-replicate = %{pgcluster_version}
-
-%description replicate
-PGCluster is the synchronous replication system of the multi-master
-composition for PostgreSQL.
-
-PGCluster is the replication system of the query base using
-PostgreSQL.
-
-- Since a replication system is a synchronous replication, delay does
-  not occur with the data duplicate between the Cluster DBs.
-- Since a server is multi-master composition, two or more the Cluster
-  DBs can receive access from a user simultaneously.
-
-PGCluster consists of three kinds of servers, a load balancer, Cluster
-DB, and a replication server.
-
-%package replicate-tools
-Summary:	PGCluster - synchronous replication system of the multi-master composition for PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name}-libs = %{version}-%{release}
-Requires:	pgcluster = %{pgcluster_version}
-Provides:	pgcluster-replicate = %{pgcluster_version}
-
-%description replicate-tools
-PGCluster is the synchronous replication system of the multi-master
-composition for PostgreSQL.
-
-PGCluster is the replication system of the query base using
-PostgreSQL.
-
-- Since a replication system is a synchronous replication, delay does
-  not occur with the data duplicate between the Cluster DBs.
-- Since a server is multi-master composition, two or more the Cluster
-  DBs can receive access from a user simultaneously.
-
-PGCluster consists of three kinds of servers, a load balancer, Cluster
-DB, and a replication server.
-%endif
-
 %package doc
 Summary:	Documentation for PostgreSQL
 Summary(pl.UTF-8):	Dodatkowa dokumantacja dla PostgreSQL
@@ -516,7 +440,6 @@ Summary(pl.UTF-8):	Biblioteki dzielone programu PostgreSQL
 Summary(pt_BR.UTF-8):	Biblioteca compartilhada do PostgreSQL
 Summary(zh_CN.UTF-8):	PostgreSQL 客户所需要的共享库
 Group:		Libraries
-%{?with_pgcluster:Provides:	pgcluster = %{pgcluster_version}}
 
 %description libs
 PostgreSQL shared libraries.
@@ -783,22 +706,6 @@ crosstab functions for PostgreSQL.
 %description module-tablefunc -l pl.UTF-8
 Funkcje crosstab dla PostgreSQL-a.
 
-%package module-tsearch2
-Summary:	Full text extension for PostgreSQL
-Summary(pl.UTF-8):	Rozszerzenie pełnotekstowe dla PostgreSQL-a
-Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
-
-%description module-tsearch2
-Implementation of a new data type tsvector - a searchable data type
-with indexed access:
-http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
-
-%description module-tsearch2 -l pl.UTF-8
-Implementacja nowego typu danych tsvector - typu danych podlegającego
-przeszukiwaniu z dostępem poprzez indeksy:
-http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
-
 %package module-pg_trgm
 Summary:	Trigram matching for PostgreSQL
 Summary(pl.UTF-8):	Dopasowanie trigramowe dla PostgreSQL-a
@@ -812,7 +719,6 @@ similarity of text based on trigram matching.
 %description module-pg_trgm -l pl.UTF-8
 Ten moduł dostarcza funkcje i klasy do rozpoznawania podobnych tekstów
 w oparciu o dopasowywanie trigramowe (trigram matching).
-
 
 %package module-xml2
 Summary:	XML-handling functions for PostgreSQL
@@ -830,20 +736,30 @@ Moduł z funkcjami XML zapewniającymi obsługę zapytań XPath oraz
 funkcjonalność XSLT. Jest także nowa funkcja tabelowa pozwalająca na
 bezpośrednie zwracanie wielu wyników XML.
 
+%package contrib
+Summary:	Misc PostgreSQL contrib modules
+#Summary(pl.UTF-8):	
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description contrib
+Misc PostgreSQL contrib modules.
+
 %prep
 %setup -q
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
+%patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%{?with_pgcluster:%patch7 -p1}
 
 tar xzf doc/man*.tar.gz
 
 mkdir doc/unpacked
 tar zxf doc/postgres.tar.gz -C doc/unpacked
+
+# force rebuild of bison/flex files
+find src -name \*.l -o -name \*.y | xargs touch
 
 # Erase all CVS dirs
 #find contrib -type d -name CVS -exec rm -rf {} \;
@@ -856,6 +772,7 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	--disable-rpath \
 	--enable-depend \
 	--enable-integer-datetimes \
+	--with-system-tzdata=%{_datadir}/zoneinfo \
 	--enable-nls \
 	--enable-thread-safety \
 	%{?with_kerberos5:--with-krb5} \
@@ -867,13 +784,11 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	--without-docdir
 
 %{__make}
-%{__make} -C contrib/dblink
-%{__make} -C contrib/lo
-%{__make} -C contrib/pgcrypto
-%{__make} -C contrib/tablefunc
-%{__make} -C contrib/tsearch2
-%{__make} -C contrib/pg_trgm
-%{__make} -C contrib/xml2
+
+for mod in %{contrib_modules}; do \
+	%{__make} -C contrib/$mod
+done
+
 %{__make} -C src/tutorial \
 	NO_PGXS=1
 
@@ -899,26 +814,10 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 	DESTDIR=$RPM_BUILD_ROOT
 %endif
 
-%{__make} -C contrib/dblink install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/lo install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/pgcrypto install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/tablefunc install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/tsearch2 install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/pg_trgm install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/xml2 install \
-	DESTDIR=$RPM_BUILD_ROOT
+for mod in %{contrib_modules}; do \
+	%{__make} -C contrib/$mod install \
+		DESTDIR=$RPM_BUILD_ROOT
+done
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
 
@@ -960,7 +859,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ `cat $pgdir/PG_VERSION` != '8.2' ]; then
+		if [ `cat $pgdir/PG_VERSION` != '8.3' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
@@ -1026,6 +925,7 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/euc*
 %attr(755,root,root) %{_pgmoduledir}/latin*
 %attr(755,root,root) %{_pgmoduledir}/utf*
+%attr(755,root,root) %{_pgmoduledir}/dict_*
 
 %dir %{_pgsqldir}
 %dir %{_datadir}/postgresql
@@ -1035,8 +935,8 @@ fi
 %{_datadir}/postgresql/*.shdescription
 %{_datadir}/postgresql/*.sql
 %{_datadir}/postgresql/*.txt
-%{_datadir}/postgresql/timezone
 %{_datadir}/postgresql/timezonesets
+%{_datadir}/postgresql/tsearch_data
 
 %attr(700,postgres,postgres) /home/services/postgres
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
@@ -1058,18 +958,14 @@ fi
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpq.so.5
 %dir %{_pgmoduledir}
 
 %files ecpg
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/ecpg
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
-%attr(755,root,root) %ghost %{_libdir}/libecpg.so.5
 %attr(755,root,root) %{_libdir}/libecpg_compat.so.*.*
-%attr(755,root,root) %ghost %{_libdir}/libecpg_compat.so.2
 %attr(755,root,root) %{_libdir}/libpgtypes.so.*.*
-%attr(755,root,root) %ghost %{_libdir}/libpgtypes.so.2
 %{_mandir}/man1/ecpg.1*
 
 %files ecpg-devel
@@ -1145,23 +1041,6 @@ fi
 %{_mandir}/man1/vacuumdb.1*
 %{_mandir}/man7/*.7*
 
-%if %{with pgcluster}
-%files lb
-%defattr(644,root,root,755)
-%doc INSTALL_PGCLUSTER src/pgcluster/pglb/AUTHORS src/pgcluster/pglb/pglb.conf.sample
-%attr(755,root,root) %{_bindir}/pglb
-
-%files replicate
-%defattr(644,root,root,755)
-%doc INSTALL_PGCLUSTER src/pgcluster/pgrp/AUTHORS src/pgcluster/pgrp/pgreplicate.conf.sample
-%attr(755,root,root) %{_bindir}/pgreplicate
-
-%files replicate-tools
-%defattr(644,root,root,755)
-%doc src/pgcluster/tool/pgcbench.sh src/pgcluster/tool/README.jp src/pgcluster/tool/tpc-b_like.sql
-%attr(755,root,root) %{_bindir}/pgcbench
-%endif
-
 %files module-plpgsql
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/plpgsql.so
@@ -1188,45 +1067,79 @@ fi
 
 %files module-dblink
 %defattr(644,root,root,755)
-%doc contrib/dblink/README.dblink
 %attr(755,root,root) %{_pgmoduledir}/dblink.so
 %{_pgsqldir}/*dblink.sql
 
 %files module-lo
 %defattr(644,root,root,755)
-%doc contrib/lo/README.lo
 %attr(755,root,root) %{_pgmoduledir}/lo.so
 %{_pgsqldir}/*lo.sql
 
 %files module-pgcrypto
 %defattr(644,root,root,755)
-%doc contrib/pgcrypto/README*
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
 %{_pgsqldir}/*pgcrypto.sql
 
 %files module-tablefunc
 %defattr(644,root,root,755)
-%doc contrib/tablefunc/README.tablefunc
 %attr(755,root,root) %{_pgmoduledir}/tablefunc.so
 %{_pgsqldir}/*tablefunc.sql
 
-%files module-tsearch2
-%defattr(644,root,root,755)
-%doc contrib/tsearch2/README*
-%attr(755,root,root) %{_pgmoduledir}/tsearch2.so
-%{_pgsqldir}/*tsearch2.sql
-%{_pgsqldir}/russian.stop.utf8
-%{_pgsqldir}/thesaurus
-%{_pgsqldir}/*.stop
-
 %files module-pg_trgm
 %defattr(644,root,root,755)
-%doc contrib/pg_trgm/README*
 %attr(755,root,root) %{_pgmoduledir}/pg_trgm.so
 %{_pgsqldir}/*pg_trgm.sql
 
 %files module-xml2
 %defattr(644,root,root,755)
-%doc contrib/xml2/README*
 %attr(755,root,root) %{_pgmoduledir}/pgxml.so
 %{_pgsqldir}/*pgxml.sql
+
+%files contrib
+%defattr(644,root,root,755)
+%doc contrib/README
+%{_bindir}/oid2name
+%{_bindir}/pgbench
+%{_bindir}/vacuumlo
+%attr(755,root,root) %{_pgmoduledir}/_int.so
+%attr(755,root,root) %{_pgmoduledir}/adminpack.so
+%attr(755,root,root) %{_pgmoduledir}/btree_gist.so
+%attr(755,root,root) %{_pgmoduledir}/chkpass.so
+%attr(755,root,root) %{_pgmoduledir}/hstore.so
+%attr(755,root,root) %{_pgmoduledir}/int_aggregate.so
+%attr(755,root,root) %{_pgmoduledir}/isn.so
+%attr(755,root,root) %{_pgmoduledir}/ltree.so
+%attr(755,root,root) %{_pgmoduledir}/pageinspect.so
+%attr(755,root,root) %{_pgmoduledir}/pg_buffercache.so
+%attr(755,root,root) %{_pgmoduledir}/pg_freespacemap.so
+%attr(755,root,root) %{_pgmoduledir}/pgrowlocks.so
+%attr(755,root,root) %{_pgmoduledir}/pgstattuple.so
+%attr(755,root,root) %{_pgmoduledir}/sslinfo.so
+%{_pgsqldir}/_int.sql
+%{_pgsqldir}/adminpack.sql
+%{_pgsqldir}/btree_gist.sql
+%{_pgsqldir}/chkpass.sql
+%{_pgsqldir}/hstore.sql
+%{_pgsqldir}/int_aggregate.sql
+%{_pgsqldir}/isn.sql
+%{_pgsqldir}/ltree.sql
+%{_pgsqldir}/pageinspect.sql
+%{_pgsqldir}/pg_buffercache.sql
+%{_pgsqldir}/pg_freespacemap.sql
+%{_pgsqldir}/pgrowlocks.sql
+%{_pgsqldir}/pgstattuple.sql
+%{_pgsqldir}/sslinfo.sql
+%{_pgsqldir}/uninstall__int.sql
+%{_pgsqldir}/uninstall_adminpack.sql
+%{_pgsqldir}/uninstall_btree_gist.sql
+%{_pgsqldir}/uninstall_chkpass.sql
+%{_pgsqldir}/uninstall_hstore.sql
+%{_pgsqldir}/uninstall_int_aggregate.sql
+%{_pgsqldir}/uninstall_isn.sql
+%{_pgsqldir}/uninstall_ltree.sql
+%{_pgsqldir}/uninstall_pageinspect.sql
+%{_pgsqldir}/uninstall_pg_buffercache.sql
+%{_pgsqldir}/uninstall_pg_freespacemap.sql
+%{_pgsqldir}/uninstall_pgrowlocks.sql
+%{_pgsqldir}/uninstall_pgstattuple.sql
+%{_pgsqldir}/uninstall_sslinfo.sql
