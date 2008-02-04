@@ -1,64 +1,53 @@
 #
-# TODO:
-# - plphp has no files section
-#
 # Conditional build:
 %bcond_without	tests			# disable testing
-%bcond_without	tcl			# disables Tcl support
+%bcond_without	tcl			# disable Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
 %bcond_without	perl			# disable Perl support
-%bcond_without	pgsql_locale		# disable PostgreSQL locale
-%bcond_without	pgsql_multibyte		# disable PostgreSQL multibyte
 %bcond_without	python			# disable Python support
-%bcond_with	php			# enable PHP support
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 
 Summary:	PostgreSQL Data Base Management System
-Summary(de):	PostgreSQL Datenbankverwaltungssystem
-Summary(es):	Gestor de Banco de Datos PostgreSQL
-Summary(fr):	Sysème de gestion de base de données PostgreSQL
-Summary(pl):	PostgreSQL - system bazodanowy
-Summary(pt_BR):	Gerenciador de Banco de Dados PostgreSQL
-Summary(ru):	PostgreSQL - ÓÉÓÔÅÍÁ ÕÐÒÁ×ÌÅÎÉÑ ÂÁÚÁÍÉ ÄÁÎÎÙÈ
-Summary(tr):	Veri Tabaný Yönetim Sistemi
-Summary(uk):	PostgreSQL - ÓÉÓÔÅÍÁ ËÅÒÕ×ÁÎÎÑ ÂÁÚÁÍÉ ÄÁÎÉÈ
-Summary(zh_CN):	PostgreSQL ¿Í»§¶Ë³ÌÐòºÍ¿âÎÄ¼þ
+Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
+Summary(es.UTF-8):	Gestor de Banco de Datos PostgreSQL
+Summary(fr.UTF-8):	SysÃ¨me de gestion de base de donnÃ©es PostgreSQL
+Summary(pl.UTF-8):	PostgreSQL - system bazodanowy
+Summary(pt_BR.UTF-8):	Gerenciador de Banco de Dados PostgreSQL
+Summary(ru.UTF-8):	PostgreSQL - ÑÐ¸ÑÑ‚ÐµÐ¼Ð° ÑƒÐ¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ñ Ð±Ð°Ð·Ð°Ð¼Ð¸ Ð´Ð°Ð½Ð½Ñ‹Ñ…
+Summary(tr.UTF-8):	Veri TabanÄ± YÃ¶netim Sistemi
+Summary(uk.UTF-8):	PostgreSQL - ÑÐ¸ÑÑ‚ÐµÐ¼Ð° ÐºÐµÑ€ÑƒÐ²Ð°Ð½Ð½Ñ Ð±Ð°Ð·Ð°Ð¼Ð¸ Ð´Ð°Ð½Ð¸Ñ…
+Summary(zh_CN.UTF-8):	PostgreSQL å®¢æˆ·ç«¯ç¨‹åºå’Œåº“æ–‡ä»¶
 Name:		postgresql
-Version:	8.2.0
-Release:	0.2
+Version:	8.3.0
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	490cb3a614545cbd3ce9b1c75c1d2b2e
+# Source0-md5:	53d6816eac7442f9bc8103439ebee22e
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
-Source8:	http://www.commandprompt.com/files/plphp-8.x.tar.bz2
-# Source8-md5:	d307e4ab8cb6900a1c290a5dde1bdeee
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
-Patch2:		%{name}-version.patch
-Patch3:		%{name}-ecpg_link.patch
-Patch4:		%{name}-ecpg-includedir.patch
-Patch5:		%{name}-pg_ctl-fix.patch
+Patch2:		%{name}-ecpg-includedir.patch
+Patch3:		%{name}-ac_version.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
-#BuildRequires:	bison >= 1.875	not needed for releases
+# not needed for releases... but fixes something in snapshot
+BuildRequires:	bison >= 1.875
 BuildRequires:	flex
 BuildRequires:	gettext-devel
-%{?with_kerberos5:BuildRequires:	heimdal-devel >= 0.7}
+%{?with_kerberos5:BuildRequires:	krb5-devel}
 BuildRequires:	libtool
+BuildRequires:	libxml2-devel >= 2.6.23
+BuildRequires:	libxslt-devel
 BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
-%if %{with php}
-BuildRequires:	php-devel >= 3:5.0.0
-BuildRequires:	rpmbuild(macros) >= 1.322
-%endif
 %if %{with python}
 BuildRequires:	python >= 1:2.3
 BuildRequires:	python-devel >= 1:2.3
@@ -77,12 +66,18 @@ Requires(pre):	/usr/sbin/usermod
 Requires:	%{name}-clients = %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	rc-scripts
+Requires:	tzdata
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
+Obsoletes:	postgresql-module-tsearch2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
 %define		_pgsqldir	%{_datadir}/postgresql/contrib
+
+%define		_ulibdir	/usr/lib
+
+%define	contrib_modules	adminpack btree_gist chkpass dblink hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pgstattuple pg_trgm sslinfo tablefunc vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -115,21 +110,21 @@ The name was changed at the end of 1996 to PostgreSQL.
 PostgreSQL runs on Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD,
 and most flavours of Unix.
 
-%description -l de
-PostgreSQL Datenbank-Managementsystem (früher als Postgres, dann als
+%description -l de.UTF-8
+PostgreSQL Datenbank-Managementsystem (frÃ¼her als Postgres, dann als
 Postgres95 bekannt).
 
 PostgreSQL ist eine Verbesserung des POSTGRES-DB-Managementsystems,
-ein DBMS-Forschungsprototyp der nächsten Generation. Während es das
-leistungsfähige Datenmodell und die reichhaltigen Datentypen von
-POSTGRES beibehält, ersetzt es die PostQuel-Abfragesprache durch ein
+ein DBMS-Forschungsprototyp der nÃ¤chsten Generation. WÃ¤hrend es das
+leistungsfÃ¤hige Datenmodell und die reichhaltigen Datentypen von
+POSTGRES beibehÃ¤lt, ersetzt es die PostQuel-Abfragesprache durch ein
 Subset von SQL. PostgreSQL ist gratis, der gesamte Quellcode ist
-verfügbar.
+verfÃ¼gbar.
 
-Ein Team von Internet-Entwicklern befaßt sich mit PostgreSQL. Sie alle
-sind auf der PostgreSQL-Entwickleradreßliste. Koordinator ist Marc G.
-Fournier (scrappy@postgreSQL.org). Das Team ist verantwortlich für
-alle aktuellen und künftigen Entwicklungen von PostgreSQL.
+Ein Team von Internet-Entwicklern befaÃŸt sich mit PostgreSQL. Sie alle
+sind auf der PostgreSQL-EntwickleradreÃŸliste. Koordinator ist Marc G.
+Fournier (scrappy@postgreSQL.org). Das Team ist verantwortlich fÃ¼r
+alle aktuellen und kÃ¼nftigen Entwicklungen von PostgreSQL.
 
 Die Autoren von PostgreSQL 1.01 waren Andrew Yu und Jolly Chen.
 Zahlreiche andere haben zur Portierung, zum Testen, Debugging und zur
@@ -138,19 +133,19 @@ sich PostgreSQL ableitet, verdanken wir der Arbeit vieler Doktoranden,
 Studenten und Programmierern unter der Leitung von Professor Michael
 Stonebraker an der University of California, Berkeley.
 
-Der ursprüngliche Name war Postgres. Als 1995 SQL-Funktionalität
-hinzukam, wurde der Name in Postgres95 geändert. Ende 1996 schließlich
-entschied man sich für PostgreSQL.
+Der ursprÃ¼ngliche Name war Postgres. Als 1995 SQL-FunktionalitÃ¤t
+hinzukam, wurde der Name in Postgres95 geÃ¤ndert. Ende 1996 schlieÃŸlich
+entschied man sich fÃ¼r PostgreSQL.
 
-PostgreSQL läuft auf Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
+PostgreSQL lÃ¤uft auf Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
 und den meisten Unix-Systemen.
 
-%description -l es
+%description -l es.UTF-8
 Administrador de Banco de Datos PostgreSQL (conocido anteriormente
-como Postgres, y después como Postgres95). PostgreSQL es una
-continuación mejorada del Sistema Administrador de Banco de Datos
+como Postgres, y despuÃ©s como Postgres95). PostgreSQL es una
+continuaciÃ³n mejorada del Sistema Administrador de Banco de Datos
 POSTGRES, que era un prototipo de pesquisa para un SGBD de nueva
-generación. Mientras PostgreSQL mantiene el potente modelo de datos y
+generaciÃ³n. Mientras PostgreSQL mantiene el potente modelo de datos y
 los varios tipos de datos del POSTGRES, substituye el lenguaje de
 consulta PostQuel por un subconjunto extendido de la SQL. PostgreSQL
 es libre y tiene los fuentes disponibles. El desarrollo del PostgreSQL
@@ -159,163 +154,163 @@ en la lista de desarrollo del PostgreSQL. El coordinador actual es
 Marc G. Fournier (scrappy@postgreSQL.org). Este equipo es ahora
 responsable por el desarrollo actual y futuro del PostgreSQL.
 
-%description -l fr
-Système de gestion de bases de données PostgreSQL (D'abord nommé
+%description -l fr.UTF-8
+SystÃ¨me de gestion de bases de donnÃ©es PostgreSQL (D'abord nommÃ©
 Postgres, puis Postgres95).
 
-PostgreSQL est une amélioration du système de gestion de bases de
-données POSTGRES, un prototype de recherche de la génération suivant
-DBMS. Tout en conservant le puissant modèle de donnée de et les types
-de donée riches de Postgres, il remplace le langage de requêtes de
+PostgreSQL est une amÃ©lioration du systÃ¨me de gestion de bases de
+donnÃ©es POSTGRES, un prototype de recherche de la gÃ©nÃ©ration suivant
+DBMS. Tout en conservant le puissant modÃ¨le de donnÃ©e de et les types
+de donÃ©e riches de Postgres, il remplace le langage de requÃªtes de
 Postgres par un sous ensemble etendu de commandes SQL. PosrgreSQL est
 libre, et ses sources sont disponibles.
 
-Le développement de PostgreSQL est actuellement réalisé via internet
-parune équipe de développeurs inscrits sur la mailing-list de
-développement de PostgreSQL. Le coordinateur actuel est Marc G
-Fournier (scrappy@postgreSQL.org). Cette équipe est responsable du
-développemen actuel et à venir de PostgreSQL.
+Le dÃ©veloppement de PostgreSQL est actuellement rÃ©alisÃ© via internet
+parune Ã©quipe de dÃ©veloppeurs inscrits sur la mailing-list de
+dÃ©veloppement de PostgreSQL. Le coordinateur actuel est Marc G
+Fournier (scrappy@postgreSQL.org). Cette Ã©quipe est responsable du
+dÃ©veloppemen actuel et Ã  venir de PostgreSQL.
 
-Les auteurs de PostgreSQL 1.01 étaient Andrew Yu et Jolly Chen.
-Beaucoup d'autres ont contribué au portage, au test, au débogage et à
-l'amélioration du code. Le code original de Postgres, duquel
-PostgreSQL est dérivé, a été l'oeuvre d'étudiants de haut niveau, de
+Les auteurs de PostgreSQL 1.01 Ã©taient Andrew Yu et Jolly Chen.
+Beaucoup d'autres ont contribuÃ© au portage, au test, au dÃ©bogage et Ã 
+l'amÃ©lioration du code. Le code original de Postgres, duquel
+PostgreSQL est dÃ©rivÃ©, a Ã©tÃ© l'oeuvre d'Ã©tudiants de haut niveau, de
 moins haut niveau, et de programmeurs travaillant sous la direction du
-professeur Michael Stonebraker à l'université de Berkeley Californie.
+professeur Michael Stonebraker Ã  l'universitÃ© de Berkeley Californie.
 
-Le nom original du logiciel était Postgres. Quand les fonctionnalitées
-SQL furent ajoutées en 1995, son nom est devenu Postgres95. Il a été
-rebaptisé PostgreSQL en 1996.
+Le nom original du logiciel Ã©tait Postgres. Quand les fonctionnalitÃ©es
+SQL furent ajoutÃ©es en 1995, son nom est devenu Postgres95. Il a Ã©tÃ©
+rebaptisÃ© PostgreSQL en 1996.
 
 PostgreSQL tourne sur Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD,
 et la plupart des Unix.
 
-%description -l pl
-System Zarz±dzania Baz± Danych PostgreSQL (dawniej znany jako
-Postgres, nastêpnie jako Postgres95).
+%description -l pl.UTF-8
+System ZarzÄ…dzania BazÄ… Danych PostgreSQL (dawniej znany jako
+Postgres, nastÄ™pnie jako Postgres95).
 
-PostgreSQL jest rozszerzeniem systemu zarz±dzania baz danych POSTGRES,
-prototypu DBMS nastêpnej generacji. Co prawda PostgreSQL odziedziczy³
-model danych oraz bogaty zbiór ró¿nych typów danych, to jednak jêzyk
-zapytañ PostQuel zosta³ zast±piony rozszerzonym SQL-em. PostgreSQL
-jest wolnym oprogramowaniem i kody ¼ród³owe tego oprogramowania s± w
-pe³ni dostêpne.
+PostgreSQL jest rozszerzeniem systemu zarzÄ…dzania baz danych POSTGRES,
+prototypu DBMS nastÄ™pnej generacji. Co prawda PostgreSQL odziedziczyÅ‚
+model danych oraz bogaty zbiÃ³r rÃ³Å¼nych typÃ³w danych, to jednak jÄ™zyk
+zapytaÅ„ PostQuel zostaÅ‚ zastÄ…piony rozszerzonym SQL-em. PostgreSQL
+jest wolnym oprogramowaniem i kody ÅºrÃ³dÅ‚owe tego oprogramowania sÄ… w
+peÅ‚ni dostÄ™pne.
 
-System PostgreSQL jest tworzony przez zespó³ ludzi, którzy s± zapisani
-na listê dyskusyjn± dotycz±c± PostgreSQL-a. Obecnym koordynatorem jest
-Marc G. Fournier (scrappy@postgreSQL.org). Wymieniony wy¿ej zespó³
-jest odpowiedzialny za aktualny i przysz³y rozwój systemu PostgreSQL.
+System PostgreSQL jest tworzony przez zespÃ³Å‚ ludzi, ktÃ³rzy sÄ… zapisani
+na listÄ™ dyskusyjnÄ… dotyczÄ…cÄ… PostgreSQL-a. Obecnym koordynatorem jest
+Marc G. Fournier (scrappy@postgreSQL.org). Wymieniony wyÅ¼ej zespÃ³Å‚
+jest odpowiedzialny za aktualny i przyszÅ‚y rozwÃ³j systemu PostgreSQL.
 
 Autorami PostgreSQL-a 1.01 byli Andrew Yu oraz Jolly Chen. Wielu
-innych pomaga³o przenosz±c na ró¿ne platformy, testuj±c, analizuj±c i
-rozszerzaj±c kod. Oryginalny kod Postgres-a, na podstawie którego
-PostgreSQL powsta³, by³ wysi³kiem wielu absolwentów, studentów oraz
-zespo³u programistów, którzy pracowali pod kierunkiem profesora
+innych pomagaÅ‚o przenoszÄ…c na rÃ³Å¼ne platformy, testujÄ…c, analizujÄ…c i
+rozszerzajÄ…c kod. Oryginalny kod Postgres-a, na podstawie ktÃ³rego
+PostgreSQL powstaÅ‚, byÅ‚ wysiÅ‚kiem wielu absolwentÃ³w, studentÃ³w oraz
+zespoÅ‚u programistÃ³w, ktÃ³rzy pracowali pod kierunkiem profesora
 Michaela Stonebrakera z Uniwersytetu Kalifornii w Berkeley.
 
-Nazwa oryginalna oprogramowania tworzonego w Berkeley brzmia³a
-Postgres. W 1995 roku dodano jêzyk zapytañ SQL i nazwê zmieniono na
-Postgres95. W koñcu roku 1996 nazwê ostatecznie zmieniono na
+Nazwa oryginalna oprogramowania tworzonego w Berkeley brzmiaÅ‚a
+Postgres. W 1995 roku dodano jÄ™zyk zapytaÅ„ SQL i nazwÄ™ zmieniono na
+Postgres95. W koÅ„cu roku 1996 nazwÄ™ ostatecznie zmieniono na
 PostgreSQL.
 
-PostgreSQL mo¿e byæ uruchomiony pod nastêpuj±cymi systemami: Solaris,
+PostgreSQL moÅ¼e byÄ‡ uruchomiony pod nastÄ™pujÄ…cymi systemami: Solaris,
 SunOS, HPUX, AIX, Linux, Irix, FreeBSD i innymi systemami uniksowymi.
 
-%description -l pt_BR
+%description -l pt_BR.UTF-8
 Gerenciador de Banco de Dados PostgreSQL (conhecido anteriormente como
 Postgres, e depois como Postgres95).
 
-O PostgreSQL é uma continuação melhorada do Sistema Gerenciador de
-Banco de Dados POSTGRES, que era um protótipo de pesquisa para um SGBD
-de nova geração. Enquanto o PostgreSQL mantém o poderoso modelo de
-dados e os vários tipos de dados do POSTGRES, ele substitui a
+O PostgreSQL Ã© uma continuaÃ§Ã£o melhorada do Sistema Gerenciador de
+Banco de Dados POSTGRES, que era um protÃ³tipo de pesquisa para um SGBD
+de nova geraÃ§Ã£o. Enquanto o PostgreSQL mantÃ©m o poderoso modelo de
+dados e os vÃ¡rios tipos de dados do POSTGRES, ele substitui a
 linguagem de consulta PostQuel por um subconjunto estendido da SQL. O
-PostgreSQL é livre e tem os fontes disponíveis.
+PostgreSQL Ã© livre e tem os fontes disponÃ­veis.
 
-O desenvolvimento do PostgreSQL está sendo executado por uma equipe de
+O desenvolvimento do PostgreSQL estÃ¡ sendo executado por uma equipe de
 desenvolvedores da Internet, todos subscritores da lista de
-desenvolvimento do PostgreSQL. O coordenador atual é Marc G. Fournier
-(scrappy@postgreSQL.org). Esta equipe é agora responsável pelo
+desenvolvimento do PostgreSQL. O coordenador atual Ã© Marc G. Fournier
+(scrappy@postgreSQL.org). Esta equipe Ã© agora responsÃ¡vel pelo
 desenvolvimento atual e futuro do PostgreSQL.
 
-%description -l ru
-PostgreSQL - ÓÉÓÔÅÍÁ ÕÐÒÁ×ÌÅÎÉÑ ÂÁÚÁÍÉ ÄÁÎÎÙÈ (ÐÒÅÖÄÅ ÉÚ×ÅÓÔÎÁÑ ËÁË
-Postgres, ÐÏÔÏÍ ËÁË Postgres95).
+%description -l ru.UTF-8
+PostgreSQL - ÑÐ¸ÑÑ‚ÐµÐ¼Ð° ÑƒÐ¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ñ Ð±Ð°Ð·Ð°Ð¼Ð¸ Ð´Ð°Ð½Ð½Ñ‹Ñ… (Ð¿Ñ€ÐµÐ¶Ð´Ðµ Ð¸Ð·Ð²ÐµÑÑ‚Ð½Ð°Ñ ÐºÐ°Ðº
+Postgres, Ð¿Ð¾Ñ‚Ð¾Ð¼ ÐºÐ°Ðº Postgres95).
 
-PostgreSQL - ÜÔÏ ÒÁÓÛÉÒÅÎÎÁÑ ×ÅÒÓÉÑ ÓÉÓÔÅÍÙ ÕÐÒÁ×ÌÅÎÉÑ ÂÁÚÁÍÉ ÄÁÎÎÙÈ
-POSTGRES, ÉÓÓÌÅÄÏ×ÁÔÅÌØÓËÏÇÏ ÐÒÏÔÏÔÉÐÁ DBMS ÓÌÅÄÕÀÝÅÊ ÇÅÎÅÒÁÃÉÉ.
-óÏÈÒÁÎÑÑ ÍÏÝÎÕÀ ÍÏÄÅÌØ ÄÁÎÎÙÈ É ÂÏÇÁÔÙÊ ÎÁÂÏÒ ÔÉÐÏ× ÄÁÎÎÙÈ POSTGRES,
-ÏÎÁ ÚÁÍÅÎÑÅÔ ÑÚÙË ÚÁÐÒÏÓÏ× PostQuel ÒÁÓÛÉÒÅÎÎÙÍ ÎÁÂÏÒÏÍ SQL.
-PostgreSQL ÂÅÓÐÌÁÔÅÎ É ÐÏÓÔÁ×ÌÑÅÔÓÑ × ×ÉÄÅ ÐÏÌÎÏÇÏ ËÏÍÐÌÅËÔÁ ÉÓÈÏÄÎÙÈ
-ÔÅËÓÔÏ×.
+PostgreSQL - ÑÑ‚Ð¾ Ñ€Ð°ÑÑˆÐ¸Ñ€ÐµÐ½Ð½Ð°Ñ Ð²ÐµÑ€ÑÐ¸Ñ ÑÐ¸ÑÑ‚ÐµÐ¼Ñ‹ ÑƒÐ¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ñ Ð±Ð°Ð·Ð°Ð¼Ð¸ Ð´Ð°Ð½Ð½Ñ‹Ñ…
+POSTGRES, Ð¸ÑÑÐ»ÐµÐ´Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒÑÐºÐ¾Ð³Ð¾ Ð¿Ñ€Ð¾Ñ‚Ð¾Ñ‚Ð¸Ð¿Ð° DBMS ÑÐ»ÐµÐ´ÑƒÑŽÑ‰ÐµÐ¹ Ð³ÐµÐ½ÐµÑ€Ð°Ñ†Ð¸Ð¸.
+Ð¡Ð¾Ñ…Ñ€Ð°Ð½ÑÑ Ð¼Ð¾Ñ‰Ð½ÑƒÑŽ Ð¼Ð¾Ð´ÐµÐ»ÑŒ Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð¸ Ð±Ð¾Ð³Ð°Ñ‚Ñ‹Ð¹ Ð½Ð°Ð±Ð¾Ñ€ Ñ‚Ð¸Ð¿Ð¾Ð² Ð´Ð°Ð½Ð½Ñ‹Ñ… POSTGRES,
+Ð¾Ð½Ð° Ð·Ð°Ð¼ÐµÐ½ÑÐµÑ‚ ÑÐ·Ñ‹Ðº Ð·Ð°Ð¿Ñ€Ð¾ÑÐ¾Ð² PostQuel Ñ€Ð°ÑÑˆÐ¸Ñ€ÐµÐ½Ð½Ñ‹Ð¼ Ð½Ð°Ð±Ð¾Ñ€Ð¾Ð¼ SQL.
+PostgreSQL Ð±ÐµÑÐ¿Ð»Ð°Ñ‚ÐµÐ½ Ð¸ Ð¿Ð¾ÑÑ‚Ð°Ð²Ð»ÑÐµÑ‚ÑÑ Ð² Ð²Ð¸Ð´Ðµ Ð¿Ð¾Ð»Ð½Ð¾Ð³Ð¾ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ‚Ð° Ð¸ÑÑ…Ð¾Ð´Ð½Ñ‹Ñ…
+Ñ‚ÐµÐºÑÑ‚Ð¾Ð².
 
-PostgreSQL ÒÁÚÒÁÂÁÔÙ×ÁÌÓÑ ËÏÍÁÎÄÏÊ Internet-ÒÁÚÒÁÂÏÔÞÉËÏ×, ÐÏÄÐÉÓÁÎÎÙÈ
-ÎÁ ÓÐÉÓÏË ÒÁÓÓÙÌËÉ, ÐÏÓ×ÑÝÅÎÎÙÊ ÒÁÚÒÁÂÏÔËÅ PostgreSQL. ÷ ÎÁÓÔÏÑÝÅÅ
-×ÒÅÍÑ ËÏÏÒÄÉÎÁÔÏÒÏÍ Ñ×ÌÑÅÔÓÑ Marc G. Fournier
-(scrappy@postgreSQL.org). üÔÁ ËÏÍÁÎÄÁ × ÎÁÓÔÏÑÝÅÅ ×ÒÅÍÑ ÏÔ×ÅÞÁÅÔ ÚÁ
-×ÓÅ ÔÅËÕÝÉÅ É ÂÕÄÕÝÉÅ ÒÁÚÒÁÂÏÔËÉ PostgreSQL.
+PostgreSQL Ñ€Ð°Ð·Ñ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°Ð»ÑÑ ÐºÐ¾Ð¼Ð°Ð½Ð´Ð¾Ð¹ Internet-Ñ€Ð°Ð·Ñ€Ð°Ð±Ð¾Ñ‚Ñ‡Ð¸ÐºÐ¾Ð², Ð¿Ð¾Ð´Ð¿Ð¸ÑÐ°Ð½Ð½Ñ‹Ñ…
+Ð½Ð° ÑÐ¿Ð¸ÑÐ¾Ðº Ñ€Ð°ÑÑÑ‹Ð»ÐºÐ¸, Ð¿Ð¾ÑÐ²ÑÑ‰ÐµÐ½Ð½Ñ‹Ð¹ Ñ€Ð°Ð·Ñ€Ð°Ð±Ð¾Ñ‚ÐºÐµ PostgreSQL. Ð’ Ð½Ð°ÑÑ‚Ð¾ÑÑ‰ÐµÐµ
+Ð²Ñ€ÐµÐ¼Ñ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ð¾Ñ€Ð¾Ð¼ ÑÐ²Ð»ÑÐµÑ‚ÑÑ Marc G. Fournier
+(scrappy@postgreSQL.org). Ð­Ñ‚Ð° ÐºÐ¾Ð¼Ð°Ð½Ð´Ð° Ð² Ð½Ð°ÑÑ‚Ð¾ÑÑ‰ÐµÐµ Ð²Ñ€ÐµÐ¼Ñ Ð¾Ñ‚Ð²ÐµÑ‡Ð°ÐµÑ‚ Ð·Ð°
+Ð²ÑÐµ Ñ‚ÐµÐºÑƒÑ‰Ð¸Ðµ Ð¸ Ð±ÑƒÐ´ÑƒÑ‰Ð¸Ðµ Ñ€Ð°Ð·Ñ€Ð°Ð±Ð¾Ñ‚ÐºÐ¸ PostgreSQL.
 
-á×ÔÏÒÁÍÉ PostgreSQL 1.01 ÂÙÌÉ Andrew Yu É Jolly Chen. íÎÏÇÉÅ ×ÎÅÓÌÉ
-Ó×ÏÊ ×ËÌÁÄ × ÐÏÒÔÉÒÏ×ÁÎÉÅ, ÔÅÓÔÉÒÏ×ÁÎÉÅ, ÏÔÌÁÄËÕ É ÕÌÕÞÛÅÎÉÅ ËÏÄÁ.
-ïÒÉÇÉÎÁÌØÎÙÊ ËÏÄ Postgres, ÏÔ ËÏÔÏÒÏÇÏ ÐÒÏÉÚÏÛÅÌ PostgreSQL, ÂÙÌ
-ÓÏÚÄÁÎ ÕÓÉÌÉÑÍÉ ÓÔÕÄÅÎÔÏ×, ÁÓÐÉÒÁÎÔÏ× É ÐÅÒÓÏÎÁÌÁ, ÒÁÂÏÔÁÀÝÅÇÏ ÐÏÄ
-ÒÕËÏ×ÏÄÓÔ×ÏÍ ÐÒÏÆÅÓÓÏÒÁ Michael Stonebraker × University of
+ÐÐ²Ñ‚Ð¾Ñ€Ð°Ð¼Ð¸ PostgreSQL 1.01 Ð±Ñ‹Ð»Ð¸ Andrew Yu Ð¸ Jolly Chen. ÐœÐ½Ð¾Ð³Ð¸Ðµ Ð²Ð½ÐµÑÐ»Ð¸
+ÑÐ²Ð¾Ð¹ Ð²ÐºÐ»Ð°Ð´ Ð² Ð¿Ð¾Ñ€Ñ‚Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ, Ñ‚ÐµÑÑ‚Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ, Ð¾Ñ‚Ð»Ð°Ð´ÐºÑƒ Ð¸ ÑƒÐ»ÑƒÑ‡ÑˆÐµÐ½Ð¸Ðµ ÐºÐ¾Ð´Ð°.
+ÐžÑ€Ð¸Ð³Ð¸Ð½Ð°Ð»ÑŒÐ½Ñ‹Ð¹ ÐºÐ¾Ð´ Postgres, Ð¾Ñ‚ ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð³Ð¾ Ð¿Ñ€Ð¾Ð¸Ð·Ð¾ÑˆÐµÐ» PostgreSQL, Ð±Ñ‹Ð»
+ÑÐ¾Ð·Ð´Ð°Ð½ ÑƒÑÐ¸Ð»Ð¸ÑÐ¼Ð¸ ÑÑ‚ÑƒÐ´ÐµÐ½Ñ‚Ð¾Ð², Ð°ÑÐ¿Ð¸Ñ€Ð°Ð½Ñ‚Ð¾Ð² Ð¸ Ð¿ÐµÑ€ÑÐ¾Ð½Ð°Ð»Ð°, Ñ€Ð°Ð±Ð¾Ñ‚Ð°ÑŽÑ‰ÐµÐ³Ð¾ Ð¿Ð¾Ð´
+Ñ€ÑƒÐºÐ¾Ð²Ð¾Ð´ÑÑ‚Ð²Ð¾Ð¼ Ð¿Ñ€Ð¾Ñ„ÐµÑÑÐ¾Ñ€Ð° Michael Stonebraker Ð² University of
 California, Berkeley.
 
-ïÒÉÇÉÎÁÌØÎÏÅ ÎÁÚ×ÁÎÉÅ ðï × Berkeley ÂÙÌÏ Postgres. ëÏÇÄÁ × 1995 ÇÏÄÕ
-ÂÙÌÁ ÄÏÂÁ×ÌÅÎÁ ÆÕÎËÃÉÏÎÁÌØÎÏÓÔØ SQL, ÎÁÚ×ÁÎÉÅ ÉÚÍÅÎÉÌÏÓØ ÎÁ
-Postgres95. ÷ ËÏÎÃÅ 1996 ÇÏÄÁ ÏÎÏ ÅÝÅ ÒÁÚ ÉÚÍÅÎÉÌÏÓØ É ÔÅÐÅÒØ ÜÔÏ
+ÐžÑ€Ð¸Ð³Ð¸Ð½Ð°Ð»ÑŒÐ½Ð¾Ðµ Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ ÐŸÐž Ð² Berkeley Ð±Ñ‹Ð»Ð¾ Postgres. ÐšÐ¾Ð³Ð´Ð° Ð² 1995 Ð³Ð¾Ð´Ñƒ
+Ð±Ñ‹Ð»Ð° Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð° Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¾Ð½Ð°Ð»ÑŒÐ½Ð¾ÑÑ‚ÑŒ SQL, Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ Ð¸Ð·Ð¼ÐµÐ½Ð¸Ð»Ð¾ÑÑŒ Ð½Ð°
+Postgres95. Ð’ ÐºÐ¾Ð½Ñ†Ðµ 1996 Ð³Ð¾Ð´Ð° Ð¾Ð½Ð¾ ÐµÑ‰Ðµ Ñ€Ð°Ð· Ð¸Ð·Ð¼ÐµÐ½Ð¸Ð»Ð¾ÑÑŒ Ð¸ Ñ‚ÐµÐ¿ÐµÑ€ÑŒ ÑÑ‚Ð¾
 PostgreSQL.
 
-PostgreSQL ÒÁÂÏÔÁÅÔ ÎÁ Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
-É ÂÏÌØÛÉÎÓÔ×Å ÄÒÕÇÉÈ ÒÁÚÎÏ×ÉÄÎÏÓÔÅÊ Unix.
+PostgreSQL Ñ€Ð°Ð±Ð¾Ñ‚Ð°ÐµÑ‚ Ð½Ð° Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
+Ð¸ Ð±Ð¾Ð»ÑŒÑˆÐ¸Ð½ÑÑ‚Ð²Ðµ Ð´Ñ€ÑƒÐ³Ð¸Ñ… Ñ€Ð°Ð·Ð½Ð¾Ð²Ð¸Ð´Ð½Ð¾ÑÑ‚ÐµÐ¹ Unix.
 
-%description -l tr
-PostgreSQL, POSTGRES'den türemiþ bir veri tabaný yönetim sistemidir
-(DBMS). Güçlü veri modeli ve zengin POSTGRES veri tiplerini
-desteklerken SQL'in geniþletilmiþ bir altkümesi yerine PostQuel
+%description -l tr.UTF-8
+PostgreSQL, POSTGRES'den tÃ¼remiÅŸ bir veri tabanÄ± yÃ¶netim sistemidir
+(DBMS). GÃ¼Ã§lÃ¼ veri modeli ve zengin POSTGRES veri tiplerini
+desteklerken SQL'in geniÅŸletilmiÅŸ bir altkÃ¼mesi yerine PostQuel
 sorgulama dilini koyar.
 
-%description -l uk
-PostgreSQL - ÓÉÓÔÅÍÁ ËÅÒÕ×ÁÎÎÑ ÂÁÚÁÍÉ ÄÁÎÉÈ (ÒÁÎ¦Û ×¦ÄÏÍÁ ÑË Postgres,
-ÐÏÔ¦Í ÑË Postgres95).
+%description -l uk.UTF-8
+PostgreSQL - ÑÐ¸ÑÑ‚ÐµÐ¼Ð° ÐºÐµÑ€ÑƒÐ²Ð°Ð½Ð½Ñ Ð±Ð°Ð·Ð°Ð¼Ð¸ Ð´Ð°Ð½Ð¸Ñ… (Ñ€Ð°Ð½Ñ–Ñˆ Ð²Ñ–Ð´Ð¾Ð¼Ð° ÑÐº Postgres,
+Ð¿Ð¾Ñ‚Ñ–Ð¼ ÑÐº Postgres95).
 
-PostgreSQL - ÃÅ ÒÏÚÛÉÒÅÎÁ ×ÅÒÓ¦Ñ ÓÉÓÔÅÍÉ ËÅÒÕ×ÁÎÎÑ ÂÁÚÁÍÉ ÄÁÎÉÈ
-POSTGRES, ÄÏÓÌ¦ÄÎÉÃØËÏÇÏ ÐÒÏÔÏÔÉÐÕ DBMS ÎÁÓÔÕÐÎÏ§ ÇÅÎÅÒÁÃ¦§.
-úÂÅÒ¦ÇÁÀÞÉ ÐÏÔÕÖÎÕ ÍÏÄÅÌØ ÄÁÎÉÈ ÔÁ ÂÁÇÁÔÉÊ ÎÁÂ¦Ò ÔÉÐ¦× ÄÁÎÉÈ POSTGRES,
-×ÏÎÁ ÚÁÍ¦ÎÀ¤ ÍÏ×Õ ÚÁÐÉÔ¦× PostQuel ÒÏÚÛÉÒÅÎÉÍ ÎÁÂÏÒÏÍ SQL. PostgreSQL
-ÂÅÚËÏÛÔÏ×ÎÁ ÔÁ ÐÏÓÔÁ×ÌÑ¤ÔØÓÑ Õ ×ÉÇÌÑÄ¦ ÐÏ×ÎÏÇÏ ËÏÍÐÌÅËÔÕ ×ÉÈ¦ÄÎÉÈ
-ÔÅËÓÔ¦×.
+PostgreSQL - Ñ†Ðµ Ñ€Ð¾Ð·ÑˆÐ¸Ñ€ÐµÐ½Ð° Ð²ÐµÑ€ÑÑ–Ñ ÑÐ¸ÑÑ‚ÐµÐ¼Ð¸ ÐºÐµÑ€ÑƒÐ²Ð°Ð½Ð½Ñ Ð±Ð°Ð·Ð°Ð¼Ð¸ Ð´Ð°Ð½Ð¸Ñ…
+POSTGRES, Ð´Ð¾ÑÐ»Ñ–Ð´Ð½Ð¸Ñ†ÑŒÐºÐ¾Ð³Ð¾ Ð¿Ñ€Ð¾Ñ‚Ð¾Ñ‚Ð¸Ð¿Ñƒ DBMS Ð½Ð°ÑÑ‚ÑƒÐ¿Ð½Ð¾Ñ— Ð³ÐµÐ½ÐµÑ€Ð°Ñ†Ñ–Ñ—.
+Ð—Ð±ÐµÑ€Ñ–Ð³Ð°ÑŽÑ‡Ð¸ Ð¿Ð¾Ñ‚ÑƒÐ¶Ð½Ñƒ Ð¼Ð¾Ð´ÐµÐ»ÑŒ Ð´Ð°Ð½Ð¸Ñ… Ñ‚Ð° Ð±Ð°Ð³Ð°Ñ‚Ð¸Ð¹ Ð½Ð°Ð±Ñ–Ñ€ Ñ‚Ð¸Ð¿Ñ–Ð² Ð´Ð°Ð½Ð¸Ñ… POSTGRES,
+Ð²Ð¾Ð½Ð° Ð·Ð°Ð¼Ñ–Ð½ÑŽÑ” Ð¼Ð¾Ð²Ñƒ Ð·Ð°Ð¿Ð¸Ñ‚Ñ–Ð² PostQuel Ñ€Ð¾Ð·ÑˆÐ¸Ñ€ÐµÐ½Ð¸Ð¼ Ð½Ð°Ð±Ð¾Ñ€Ð¾Ð¼ SQL. PostgreSQL
+Ð±ÐµÐ·ÐºÐ¾ÑˆÑ‚Ð¾Ð²Ð½Ð° Ñ‚Ð° Ð¿Ð¾ÑÑ‚Ð°Ð²Ð»ÑÑ”Ñ‚ÑŒÑÑ Ñƒ Ð²Ð¸Ð³Ð»ÑÐ´Ñ– Ð¿Ð¾Ð²Ð½Ð¾Ð³Ð¾ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ‚Ñƒ Ð²Ð¸Ñ…Ñ–Ð´Ð½Ð¸Ñ…
+Ñ‚ÐµÐºÑÑ‚Ñ–Ð².
 
-PostgreSQL ÒÏÚÒÏÂÌÑ¤ÔØÓÑ ËÏÍÁÎÄÏÀ Internet-ÐÒÏÇÒÁÍ¦ÓÔ¦×, ÕÞÁÓÎÉË¦×
-ÓÐÉÓËÕ ÒÏÚÓÉÌËÉ, ÐÒÉÓ×ÑÞÅÎÏÇÏ ÒÏÚÒÏÂÃ¦ PostgreSQL. îÁÒÁÚ¦
-ËÏÏÒÄÉÎÁÔÏÒÏÍ ¤ Marc G. Fournier (scrappy@postgreSQL.org). ãÑ ËÏÍÁÎÄÁ
-×¦ÄÐÏ×¦ÄÁ¤ ÚÁ ×Ó¦ ÐÏÔÏÞÎ¦ ÔÁ ÍÁÊÂÕÔÎ¦ ÒÏÚÒÏÂËÉ PostgreSQL.
+PostgreSQL Ñ€Ð¾Ð·Ñ€Ð¾Ð±Ð»ÑÑ”Ñ‚ÑŒÑÑ ÐºÐ¾Ð¼Ð°Ð½Ð´Ð¾ÑŽ Internet-Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ñ–ÑÑ‚Ñ–Ð², ÑƒÑ‡Ð°ÑÐ½Ð¸ÐºÑ–Ð²
+ÑÐ¿Ð¸ÑÐºÑƒ Ñ€Ð¾Ð·ÑÐ¸Ð»ÐºÐ¸, Ð¿Ñ€Ð¸ÑÐ²ÑÑ‡ÐµÐ½Ð¾Ð³Ð¾ Ñ€Ð¾Ð·Ñ€Ð¾Ð±Ñ†Ñ– PostgreSQL. ÐÐ°Ñ€Ð°Ð·Ñ–
+ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ð¾Ñ€Ð¾Ð¼ Ñ” Marc G. Fournier (scrappy@postgreSQL.org). Ð¦Ñ ÐºÐ¾Ð¼Ð°Ð½Ð´Ð°
+Ð²Ñ–Ð´Ð¿Ð¾Ð²Ñ–Ð´Ð°Ñ” Ð·Ð° Ð²ÑÑ– Ð¿Ð¾Ñ‚Ð¾Ñ‡Ð½Ñ– Ñ‚Ð° Ð¼Ð°Ð¹Ð±ÑƒÑ‚Ð½Ñ– Ñ€Ð¾Ð·Ñ€Ð¾Ð±ÐºÐ¸ PostgreSQL.
 
-á×ÔÏÒÁÍÉ PostgreSQL 1.01 ÂÕÌÉ Andrew Yu ÔÁ Jolly Chen. âÁÇÁÔÏ ÌÀÄÅÊ
-×ÎÅÓÌÉ Ó×¦Ê ×ÎÅÓÏË × ÐÏÒÔÕ×ÁÎÎÑ, ÔÅÓÔÕ×ÁÎÎÑ, ×¦ÄÌÁÄËÕ ÔÁ ÐÏËÒÁÝÅÎÎÑ
-ËÏÄÕ. ïÒÉÇ¦ÎÁÌØÎÉÊ ËÏÄ Postgres, ×¦Ä ÑËÏÇÏ ÐÏÈÏÄÉÔØ PostgreSQL, ÂÕ×
-ÓÔ×ÏÒÅÎÉÊ ÚÕÓÉÌÌÑÍÉ ÓÔÕÄÅÎÔ¦×, ÁÓÐ¦ÒÁÎÔ¦× ÔÁ ÐÅÒÓÏÎÁÌÕ, ÑËÉÊ ÐÒÁÃÀ×Á×
-Ð¦Ä ËÅÒ¦×ÎÉÃÔ×ÏÍ ÐÒÏÆÅÓÏÒÁ Michael Stonebraker × University of
+ÐÐ²Ñ‚Ð¾Ñ€Ð°Ð¼Ð¸ PostgreSQL 1.01 Ð±ÑƒÐ»Ð¸ Andrew Yu Ñ‚Ð° Jolly Chen. Ð‘Ð°Ð³Ð°Ñ‚Ð¾ Ð»ÑŽÐ´ÐµÐ¹
+Ð²Ð½ÐµÑÐ»Ð¸ ÑÐ²Ñ–Ð¹ Ð²Ð½ÐµÑÐ¾Ðº Ð² Ð¿Ð¾Ñ€Ñ‚ÑƒÐ²Ð°Ð½Ð½Ñ, Ñ‚ÐµÑÑ‚ÑƒÐ²Ð°Ð½Ð½Ñ, Ð²Ñ–Ð´Ð»Ð°Ð´ÐºÑƒ Ñ‚Ð° Ð¿Ð¾ÐºÑ€Ð°Ñ‰ÐµÐ½Ð½Ñ
+ÐºÐ¾Ð´Ñƒ. ÐžÑ€Ð¸Ð³Ñ–Ð½Ð°Ð»ÑŒÐ½Ð¸Ð¹ ÐºÐ¾Ð´ Postgres, Ð²Ñ–Ð´ ÑÐºÐ¾Ð³Ð¾ Ð¿Ð¾Ñ…Ð¾Ð´Ð¸Ñ‚ÑŒ PostgreSQL, Ð±ÑƒÐ²
+ÑÑ‚Ð²Ð¾Ñ€ÐµÐ½Ð¸Ð¹ Ð·ÑƒÑÐ¸Ð»Ð»ÑÐ¼Ð¸ ÑÑ‚ÑƒÐ´ÐµÐ½Ñ‚Ñ–Ð², Ð°ÑÐ¿Ñ–Ñ€Ð°Ð½Ñ‚Ñ–Ð² Ñ‚Ð° Ð¿ÐµÑ€ÑÐ¾Ð½Ð°Ð»Ñƒ, ÑÐºÐ¸Ð¹ Ð¿Ñ€Ð°Ñ†ÑŽÐ²Ð°Ð²
+Ð¿Ñ–Ð´ ÐºÐµÑ€Ñ–Ð²Ð½Ð¸Ñ†Ñ‚Ð²Ð¾Ð¼ Ð¿Ñ€Ð¾Ñ„ÐµÑÐ¾Ñ€Ð° Michael Stonebraker Ð² University of
 California, Berkeley.
 
-ïÒÉÇ¦ÎÁÌØÎÁ ÎÁÚ×Á ÐÒÏÇÒÁÍÉ × Berkeley ÂÕÌÁ Postgres. ëÏÌÉ × 1995 ÒÏÃ¦
-ÂÕÌÏ ÄÏÄÁÎÏ ÆÕÎËÃ¦ÏÎÁÌØÎ¦ÓÔØ SQL, ÎÁÚ×Á ÚÍ¦ÎÉÌÁÓÑ ÎÁ Postgres95. ÷
-Ë¦ÎÃ¦ 1996 ÒÏËÕ ×ÏÎÁ ÝÅ ÒÁÚ ÚÍ¦ÎÉÌÁÓØ ¦ ÚÁÒÁÚ ÃÅ PostgreSQL.
+ÐžÑ€Ð¸Ð³Ñ–Ð½Ð°Ð»ÑŒÐ½Ð° Ð½Ð°Ð·Ð²Ð° Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¸ Ð² Berkeley Ð±ÑƒÐ»Ð° Postgres. ÐšÐ¾Ð»Ð¸ Ð² 1995 Ñ€Ð¾Ñ†Ñ–
+Ð±ÑƒÐ»Ð¾ Ð´Ð¾Ð´Ð°Ð½Ð¾ Ñ„ÑƒÐ½ÐºÑ†Ñ–Ð¾Ð½Ð°Ð»ÑŒÐ½Ñ–ÑÑ‚ÑŒ SQL, Ð½Ð°Ð·Ð²Ð° Ð·Ð¼Ñ–Ð½Ð¸Ð»Ð°ÑÑ Ð½Ð° Postgres95. Ð’
+ÐºÑ–Ð½Ñ†Ñ– 1996 Ñ€Ð¾ÐºÑƒ Ð²Ð¾Ð½Ð° Ñ‰Ðµ Ñ€Ð°Ð· Ð·Ð¼Ñ–Ð½Ð¸Ð»Ð°ÑÑŒ Ñ– Ð·Ð°Ñ€Ð°Ð· Ñ†Ðµ PostgreSQL.
 
-PostgreSQL ÐÒÁÃÀ¤ ÎÁ Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
-ÔÁ Â¦ÌØÛÏÓÔ¦ ¦ÎÛÉÈ Ò¦ÚÎÏ×ÉÄ¦× Unix.
+PostgreSQL Ð¿Ñ€Ð°Ñ†ÑŽÑ” Ð½Ð° Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
+Ñ‚Ð° Ð±Ñ–Ð»ÑŒÑˆÐ¾ÑÑ‚Ñ– Ñ–Ð½ÑˆÐ¸Ñ… Ñ€Ñ–Ð·Ð½Ð¾Ð²Ð¸Ð´Ñ–Ð² Unix.
 
 %package devel
 Summary:	PostgreSQL development header files and libraries
-Summary(de):	PostgreSQL-Entwicklungs-Header-Dateien und Libraries
-Summary(es):	Archivos de inclusión y bibliotecas PostgreSQL
-Summary(fr):	En-têtes et bibliothèques de développement PostgreSQL
-Summary(pl):	PostgreSQL - pliki nag³ówkowe i biblioteki
-Summary(pt_BR):	Arquivos de inclusão e bibliotecas para desenvolvimento com o PostgreSQL
-Summary(ru):	PostgreSQL - ÈÅÄÅÒÙ É ÂÉÂÌÉÏÔÅËÉ ÒÁÚÒÁÂÏÔÞÉËÁ
-Summary(tr):	PostgreSQL baþlýk dosyalarý ve kitaplýklar
-Summary(uk):	PostgreSQL - ÈÅÄÅÒÉ ÔÁ Â¦ÂÌ¦ÏÔÅËÉ ÐÒÏÇÒÁÍ¦ÓÔÁ
+Summary(de.UTF-8):	PostgreSQL-Entwicklungs-Header-Dateien und Libraries
+Summary(es.UTF-8):	Archivos de inclusiÃ³n y bibliotecas PostgreSQL
+Summary(fr.UTF-8):	En-tÃªtes et bibliothÃ¨ques de dÃ©veloppement PostgreSQL
+Summary(pl.UTF-8):	PostgreSQL - pliki nagÅ‚Ã³wkowe i biblioteki
+Summary(pt_BR.UTF-8):	Arquivos de inclusÃ£o e bibliotecas para desenvolvimento com o PostgreSQL
+Summary(ru.UTF-8):	PostgreSQL - Ñ…ÐµÐ´ÐµÑ€Ñ‹ Ð¸ Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÐ¸ Ñ€Ð°Ð·Ñ€Ð°Ð±Ð¾Ñ‚Ñ‡Ð¸ÐºÐ°
+Summary(tr.UTF-8):	PostgreSQL baÅŸlÄ±k dosyalarÄ± ve kitaplÄ±klar
+Summary(uk.UTF-8):	PostgreSQL - Ñ…ÐµÐ´ÐµÑ€Ð¸ Ñ‚Ð° Ð±Ñ–Ð±Ð»Ñ–Ð¾Ñ‚ÐµÐºÐ¸ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ñ–ÑÑ‚Ð°
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 
@@ -324,45 +319,45 @@ This package contains header files and libraries required to compile
 applications that are talking directly to the PostgreSQL backend
 server.
 
-%description devel -l de
-Dieses Paket enthält die Header-Dateien und Libraries, die zum
+%description devel -l de.UTF-8
+Dieses Paket enthÃ¤lt die Header-Dateien und Libraries, die zum
 Kompilieren von Applikationen notwendig sind, die direkt mit dem
 PostgreSQL-Backend-Server kommunizieren.
 
-%description devel -l es
-Este paquete contiene archivos de inclusión y bibliotecas requeridas
-para compilación de aplicativos que se comunican directamente con el
+%description devel -l es.UTF-8
+Este paquete contiene archivos de inclusiÃ³n y bibliotecas requeridas
+para compilaciÃ³n de aplicativos que se comunican directamente con el
 servidor backend PostgreSQL.
 
-%description devel -l fr
-Ce package contient les fichiers d'en-tête et les bibliothéques
-nécessaires pour compiler des applications ayant des échanges directs
+%description devel -l fr.UTF-8
+Ce package contient les fichiers d'en-tÃªte et les bibliothÃ©ques
+nÃ©cessaires pour compiler des applications ayant des Ã©changes directs
 avec le serveur du backend PostgreSQL.
 
-%description devel -l pl
-Pakiet zawiera nag³ówki oraz biblioteki wymagane do kompilacji
-aplikacji ³±cz±cych siê bezpo¶rednio z serwerem PostgreSQL.
+%description devel -l pl.UTF-8
+Pakiet zawiera nagÅ‚Ã³wki oraz biblioteki wymagane do kompilacji
+aplikacji Å‚Ä…czÄ…cych siÄ™ bezpoÅ›rednio z serwerem PostgreSQL.
 
-%description devel -l pt_BR
-Este pacote contém arquivos de inclusão e bibliotecas requeridas para
-compilação de aplicativos que se comunicam diretamente com o servidor
+%description devel -l pt_BR.UTF-8
+Este pacote contÃ©m arquivos de inclusÃ£o e bibliotecas requeridas para
+compilaÃ§Ã£o de aplicativos que se comunicam diretamente com o servidor
 backend PostgreSQL.
 
-%description devel -l ru
-üÔÏÔ ÐÁËÅÔ ÓÏÄÅÒÖÉÔ ÈÅÄÅÒÙ É ÂÉÂÌÉÏÔÅËÉ, ÎÅÏÂÈÏÄÉÍÙÅ ÄÌÑ ÓÂÏÒËÉ
-ÐÒÉÌÏÖÅÎÉÊ, ÎÅÐÏÓÒÅÄÓÔ×ÅÎÎÏ ×ÚÁÉÍÏÄÅÊÓÔ×ÕÀÝÉÈ Ó ÓÅÒ×ÅÒÏÍ PostgreSQL.
+%description devel -l ru.UTF-8
+Ð­Ñ‚Ð¾Ñ‚ Ð¿Ð°ÐºÐµÑ‚ ÑÐ¾Ð´ÐµÑ€Ð¶Ð¸Ñ‚ Ñ…ÐµÐ´ÐµÑ€Ñ‹ Ð¸ Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÐ¸, Ð½ÐµÐ¾Ð±Ñ…Ð¾Ð´Ð¸Ð¼Ñ‹Ðµ Ð´Ð»Ñ ÑÐ±Ð¾Ñ€ÐºÐ¸
+Ð¿Ñ€Ð¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¹, Ð½ÐµÐ¿Ð¾ÑÑ€ÐµÐ´ÑÑ‚Ð²ÐµÐ½Ð½Ð¾ Ð²Ð·Ð°Ð¸Ð¼Ð¾Ð´ÐµÐ¹ÑÑ‚Ð²ÑƒÑŽÑ‰Ð¸Ñ… Ñ ÑÐµÑ€Ð²ÐµÑ€Ð¾Ð¼ PostgreSQL.
 
-%description devel -l tr
-Bu paket, PostgreSQL sunucusuyla konuþacak yazýlýmlar geliþtirmek için
-gereken baþlýk dosyalarýný ve kitaplýklarý içerir.
+%description devel -l tr.UTF-8
+Bu paket, PostgreSQL sunucusuyla konuÅŸacak yazÄ±lÄ±mlar geliÅŸtirmek iÃ§in
+gereken baÅŸlÄ±k dosyalarÄ±nÄ± ve kitaplÄ±klarÄ± iÃ§erir.
 
-%description devel -l uk
-ãÅÊ ÐÁËÅÔ Í¦ÓÔÉÔØ ÈÅÄÅÒÉ ÔÁ Â¦ÂÌ¦ÏÔÅËÉ, ÎÅÏÂÈ¦ÄÎ¦ ÄÌÑ ÒÏÚÒÏÂËÉ
-ÐÒÏÇÒÁÍ, ÑË¦ ÂÅÚÐÏÓÅÒÅÄÎØÏ ×ÚÁ¤ÍÏÄ¦ÀÔØ Ú ÓÅÒ×ÅÒÏÍ PostgreSQL.
+%description devel -l uk.UTF-8
+Ð¦ÐµÐ¹ Ð¿Ð°ÐºÐµÑ‚ Ð¼Ñ–ÑÑ‚Ð¸Ñ‚ÑŒ Ñ…ÐµÐ´ÐµÑ€Ð¸ Ñ‚Ð° Ð±Ñ–Ð±Ð»Ñ–Ð¾Ñ‚ÐµÐºÐ¸, Ð½ÐµÐ¾Ð±Ñ…Ñ–Ð´Ð½Ñ– Ð´Ð»Ñ Ñ€Ð¾Ð·Ñ€Ð¾Ð±ÐºÐ¸
+Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼, ÑÐºÑ– Ð±ÐµÐ·Ð¿Ð¾ÑÐµÑ€ÐµÐ´Ð½ÑŒÐ¾ Ð²Ð·Ð°Ñ”Ð¼Ð¾Ð´Ñ–ÑŽÑ‚ÑŒ Ð· ÑÐµÑ€Ð²ÐµÑ€Ð¾Ð¼ PostgreSQL.
 
 %package backend-devel
 Summary:	PostgreSQL backend development header files
-Summary(pl):	PostgreSQL - pliki nag³ówkowe dla backendu
+Summary(pl.UTF-8):	PostgreSQL - pliki nagÅ‚Ã³wkowe dla backendu
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
@@ -371,17 +366,17 @@ Requires:	%{name}-libs = %{version}-%{release}
 This package contains header files required to compile functions that
 could be loaded directly by backend
 
-%description backend-devel -l pl
-Pakiet zawiera nag³ówki wymagane do kompilacji funkcji ktore moga byc
+%description backend-devel -l pl.UTF-8
+Pakiet zawiera nagÅ‚Ã³wki wymagane do kompilacji funkcji ktore moga byc
 bezposrednio ladowane przez beckend serwera PostgreSQL.
 
 %package clients
 Summary:	Clients needed to access a PostgreSQL server
-Summary(es):	Clientes necesarios para acceder al servidor PostgreSQL
-Summary(pl):	Klienci wymagani do dostêpu do serwera PostgreSQL
-Summary(pt_BR):	Clientes necessários para acessar o servidor PostgreSQL
-Summary(ru):	ëÌÉÅÎÔÓËÉÅ ÐÒÏÇÒÁÍÍÙ, ÎÅÏÂÈÏÄÉÍÙÅ ÄÌÑ ÄÏÓÔÕÐÁ Ë ÓÅÒ×ÅÒÕ PostgreSQL
-Summary(uk):	ëÌ¦¤ÎÔÓØË¦ ÐÒÏÇÒÁÍÉ, ÎÅÏÂÈ¦ÄÎ¦ ÄÌÑ ÄÏÓÔÕÐÕ ÄÏ ÓÅÒ×ÅÒÁ PostgreSQL
+Summary(es.UTF-8):	Clientes necesarios para acceder al servidor PostgreSQL
+Summary(pl.UTF-8):	Klienci wymagani do dostÄ™pu do serwera PostgreSQL
+Summary(pt_BR.UTF-8):	Clientes necessÃ¡rios para acessar o servidor PostgreSQL
+Summary(ru.UTF-8):	ÐšÐ»Ð¸ÐµÐ½Ñ‚ÑÐºÐ¸Ðµ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ñ‹, Ð½ÐµÐ¾Ð±Ñ…Ð¾Ð´Ð¸Ð¼Ñ‹Ðµ Ð´Ð»Ñ Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð° Ðº ÑÐµÑ€Ð²ÐµÑ€Ñƒ PostgreSQL
+Summary(uk.UTF-8):	ÐšÐ»Ñ–Ñ”Ð½Ñ‚ÑÑŒÐºÑ– Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¸, Ð½ÐµÐ¾Ð±Ñ…Ñ–Ð´Ð½Ñ– Ð´Ð»Ñ Ð´Ð¾ÑÑ‚ÑƒÐ¿Ñƒ Ð´Ð¾ ÑÐµÑ€Ð²ÐµÑ€Ð° PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name}-libs = %{version}-%{release}
 
@@ -392,88 +387,88 @@ to connect to another PostgreSQL server, the this is the only package
 you need to install. Clients include several command-line utilities
 you can use to manage your databases on a remote PostgreSQL server.
 
-%description clients -l es
+%description clients -l es.UTF-8
 Este paquete incluye solamente los clientes necesarios para acceder un
-servidor PostgreSQL. El servidor está en el paquete principal.
+servidor PostgreSQL. El servidor estÃ¡ en el paquete principal.
 
-%description clients -l pl
-Pakiet zawiera programy klienckie potrzebne dla dostêpu do serwera
-PostgreSQL oraz narzêdzia do zarz±dzania bazami dzia³aj±ce z linii
-poleceñ. Serwer znajduje siê w g³ównym pakiecie.
+%description clients -l pl.UTF-8
+Pakiet zawiera programy klienckie potrzebne dla dostÄ™pu do serwera
+PostgreSQL oraz narzÄ™dzia do zarzÄ…dzania bazami dziaÅ‚ajÄ…ce z linii
+poleceÅ„. Serwer znajduje siÄ™ w gÅ‚Ã³wnym pakiecie.
 
-%description clients -l pt_BR
-Este pacote inclui somente os clientes necessários para acessar um
-servidor PostgreSQL. O servidor está no pacote principal.
+%description clients -l pt_BR.UTF-8
+Este pacote inclui somente os clientes necessÃ¡rios para acessar um
+servidor PostgreSQL. O servidor estÃ¡ no pacote principal.
 
-%description clients -l ru
-üÔÏÔ ÐÁËÅÔ ×ËÌÀÞÁÅÔ ÔÏÌØËÏ ËÌÉÅÎÔÓËÉÅ ÐÒÏÇÒÁÍÍÙ É ÂÉÂÌÉÏÔÅËÉ,
-ÎÅÏÂÈÏÄÉÍÙÅ ÄÌÑ ÄÏÓÔÕÐÁ Ë ÓÅÒ×ÅÒÕ PostgreSQL. óÅÒ×ÅÒ ×ÈÏÄÉÔ × ÇÌÁ×ÎÙÊ
-ÐÁËÅÔ. åÓÌÉ ×ÁÍ ÎÁÄÏ ÔÏÌØËÏ ÒÁÂÏÔÁÔØ Ó ÄÒÕÇÉÍ ÓÅÒ×ÅÒÏÍ PostgreSQL, ÜÔÏ
-ÅÄÉÎÓÔ×ÅÎÎÙÊ ÐÁËÅÔ, ËÏÔÏÒÙÊ ×ÁÍ ÎÁÄÏ ÕÓÔÁÎÏ×ÉÔØ.
+%description clients -l ru.UTF-8
+Ð­Ñ‚Ð¾Ñ‚ Ð¿Ð°ÐºÐµÑ‚ Ð²ÐºÐ»ÑŽÑ‡Ð°ÐµÑ‚ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ ÐºÐ»Ð¸ÐµÐ½Ñ‚ÑÐºÐ¸Ðµ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ñ‹ Ð¸ Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÐ¸,
+Ð½ÐµÐ¾Ð±Ñ…Ð¾Ð´Ð¸Ð¼Ñ‹Ðµ Ð´Ð»Ñ Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð° Ðº ÑÐµÑ€Ð²ÐµÑ€Ñƒ PostgreSQL. Ð¡ÐµÑ€Ð²ÐµÑ€ Ð²Ñ…Ð¾Ð´Ð¸Ñ‚ Ð² Ð³Ð»Ð°Ð²Ð½Ñ‹Ð¹
+Ð¿Ð°ÐºÐµÑ‚. Ð•ÑÐ»Ð¸ Ð²Ð°Ð¼ Ð½Ð°Ð´Ð¾ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ñ€Ð°Ð±Ð¾Ñ‚Ð°Ñ‚ÑŒ Ñ Ð´Ñ€ÑƒÐ³Ð¸Ð¼ ÑÐµÑ€Ð²ÐµÑ€Ð¾Ð¼ PostgreSQL, ÑÑ‚Ð¾
+ÐµÐ´Ð¸Ð½ÑÑ‚Ð²ÐµÐ½Ð½Ñ‹Ð¹ Ð¿Ð°ÐºÐµÑ‚, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð²Ð°Ð¼ Ð½Ð°Ð´Ð¾ ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚ÑŒ.
 
-ôÅÐÅÒØ ÐÁËÅÔÙ Ó ÂÉÂÌÉÏÔÅËÁÍÉ ÄÌÑ ÒÁÚÎÙÈ ÑÚÙËÏ× ÐÒÏÇÒÁÍÍÉÒÏ×ÁÎÉÑ (C,
-C++, Perl É Tcl) ÒÁÚÄÅÌÅÎÙ. üÔÏÔ ÐÁËÅÔ ×ËÌÀÞÁÅÔ ÔÏÌØËÏ ÂÉÂÌÉÏÔÅËÉ ÄÌÑ
-ÑÚÙËÁ C.
+Ð¢ÐµÐ¿ÐµÑ€ÑŒ Ð¿Ð°ÐºÐµÑ‚Ñ‹ Ñ Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÐ°Ð¼Ð¸ Ð´Ð»Ñ Ñ€Ð°Ð·Ð½Ñ‹Ñ… ÑÐ·Ñ‹ÐºÐ¾Ð² Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ñ (C,
+C++, Perl Ð¸ Tcl) Ñ€Ð°Ð·Ð´ÐµÐ»ÐµÐ½Ñ‹. Ð­Ñ‚Ð¾Ñ‚ Ð¿Ð°ÐºÐµÑ‚ Ð²ÐºÐ»ÑŽÑ‡Ð°ÐµÑ‚ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÐ¸ Ð´Ð»Ñ
+ÑÐ·Ñ‹ÐºÐ° C.
 
-%description clients -l uk
-ãÅÊ ÐÁËÅÔ Í¦ÓÔÉÔØ Ô¦ÌØËÉ ËÌ¦¤ÎÔÓØË¦ ÐÒÏÇÒÁÍÉ ÔÁ Â¦ÂÌ¦ÏÔÅËÉ, ÎÅÏÂÈ¦ÄÎ¦
-ÄÌÑ ÄÏÓÔÕÐÕ ÄÏ ÓÅÒ×ÅÒÁ PostgreSQL. óÅÒ×ÅÒ Í¦ÓÔÉÔØÓÑ × ÇÏÌÏ×ÎÏÍÕ
-ÐÁËÅÔ¦. ñËÝÏ ×ÁÍ ÐÏÔÒ¦ÂÎÏ ÐÒÁÃÀ×ÁÔÉ Ú ¦ÎÛÉÍ ÓÅÒ×ÅÒÏÍ PostgreSQL, ÃÅ
-¤ÄÉÎÉÊ ÐÁËÅÔ, ÑËÉÊ ×ÁÍ ÔÒÅÂÁ ×ÓÔÁÎÏ×ÉÔÉ.
+%description clients -l uk.UTF-8
+Ð¦ÐµÐ¹ Ð¿Ð°ÐºÐµÑ‚ Ð¼Ñ–ÑÑ‚Ð¸Ñ‚ÑŒ Ñ‚Ñ–Ð»ÑŒÐºÐ¸ ÐºÐ»Ñ–Ñ”Ð½Ñ‚ÑÑŒÐºÑ– Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¸ Ñ‚Ð° Ð±Ñ–Ð±Ð»Ñ–Ð¾Ñ‚ÐµÐºÐ¸, Ð½ÐµÐ¾Ð±Ñ…Ñ–Ð´Ð½Ñ–
+Ð´Ð»Ñ Ð´Ð¾ÑÑ‚ÑƒÐ¿Ñƒ Ð´Ð¾ ÑÐµÑ€Ð²ÐµÑ€Ð° PostgreSQL. Ð¡ÐµÑ€Ð²ÐµÑ€ Ð¼Ñ–ÑÑ‚Ð¸Ñ‚ÑŒÑÑ Ð² Ð³Ð¾Ð»Ð¾Ð²Ð½Ð¾Ð¼Ñƒ
+Ð¿Ð°ÐºÐµÑ‚Ñ–. Ð¯ÐºÑ‰Ð¾ Ð²Ð°Ð¼ Ð¿Ð¾Ñ‚Ñ€Ñ–Ð±Ð½Ð¾ Ð¿Ñ€Ð°Ñ†ÑŽÐ²Ð°Ñ‚Ð¸ Ð· Ñ–Ð½ÑˆÐ¸Ð¼ ÑÐµÑ€Ð²ÐµÑ€Ð¾Ð¼ PostgreSQL, Ñ†Ðµ
+Ñ”Ð´Ð¸Ð½Ð¸Ð¹ Ð¿Ð°ÐºÐµÑ‚, ÑÐºÐ¸Ð¹ Ð²Ð°Ð¼ Ñ‚Ñ€ÐµÐ±Ð° Ð²ÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚Ð¸.
 
-ôÅÐÅÒ ÐÁËÅÔÉ Ú Â¦ÂÌ¦ÏÔÅËÁÍÉ ÄÌÑ Ò¦ÚÎÉÈ ÍÏ× ÐÒÏÇÒÁÍÕ×ÁÎÎÑ (C, C++, Perl
-¦ Tcl) ÒÏÚÄ¦ÌÅÎ¦. ãÅÊ ÐÁËÅÔ Í¦ÓÔÉÔØ Ô¦ÌØËÉ Â¦ÂÌ¦ÏÔÅËÉ ÄÌÑ ÍÏ×É C.
+Ð¢ÐµÐ¿ÐµÑ€ Ð¿Ð°ÐºÐµÑ‚Ð¸ Ð· Ð±Ñ–Ð±Ð»Ñ–Ð¾Ñ‚ÐµÐºÐ°Ð¼Ð¸ Ð´Ð»Ñ Ñ€Ñ–Ð·Ð½Ð¸Ñ… Ð¼Ð¾Ð² Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼ÑƒÐ²Ð°Ð½Ð½Ñ (C, C++, Perl
+Ñ– Tcl) Ñ€Ð¾Ð·Ð´Ñ–Ð»ÐµÐ½Ñ–. Ð¦ÐµÐ¹ Ð¿Ð°ÐºÐµÑ‚ Ð¼Ñ–ÑÑ‚Ð¸Ñ‚ÑŒ Ñ‚Ñ–Ð»ÑŒÐºÐ¸ Ð±Ñ–Ð±Ð»Ñ–Ð¾Ñ‚ÐµÐºÐ¸ Ð´Ð»Ñ Ð¼Ð¾Ð²Ð¸ C.
 
 %package doc
 Summary:	Documentation for PostgreSQL
-Summary(pl):	Dodatkowa dokumantacja dla PostgreSQL
+Summary(pl.UTF-8):	Dodatkowa dokumantacja dla PostgreSQL
 Group:		Applications/Databases
 
 %description doc
 This package includes documentation and HOWTO for programmer, admin
 etc., in HTML format.
 
-%description doc -l pl
-Pakiet ten zawiera dokumentacjê oraz HOWTO m.in. dla programistów,
-administratorów w formacie HTML.
+%description doc -l pl.UTF-8
+Pakiet ten zawiera dokumentacjÄ™ oraz HOWTO m.in. dla programistÃ³w,
+administratorÃ³w w formacie HTML.
 
 %package libs
 Summary:	PostgreSQL libraries
-Summary(es):	Biblioteca compartida del PostgreSQL
-Summary(pl):	Biblioteki dzielone programu PostgreSQL
-Summary(pt_BR):	Biblioteca compartilhada do PostgreSQL
-Summary(zh_CN):	PostgreSQL ¿Í»§ËùÐèÒªµÄ¹²Ïí¿â
+Summary(es.UTF-8):	Biblioteca compartida del PostgreSQL
+Summary(pl.UTF-8):	Biblioteki dzielone programu PostgreSQL
+Summary(pt_BR.UTF-8):	Biblioteca compartilhada do PostgreSQL
+Summary(zh_CN.UTF-8):	PostgreSQL å®¢æˆ·æ‰€éœ€è¦çš„å…±äº«åº“
 Group:		Libraries
 
 %description libs
 PostgreSQL shared libraries.
 
-%description libs -l es
+%description libs -l es.UTF-8
 Este paquete contiene la biblioteca compartida para acceso al
 PostgreSQL.
 
-%description libs -l pl
+%description libs -l pl.UTF-8
 Biblioteki dzielone programu PostgreSQL.
 
-%description libs -l pt_BR
-Este pacote contém a biblioteca compartilhada para acesso ao
+%description libs -l pt_BR.UTF-8
+Este pacote contÃ©m a biblioteca compartilhada para acesso ao
 PostgreSQL.
 
 %package ecpg
 Summary:	Embedded SQL in C interface
-Summary(pl):	Interfejs wbudowanego SQL-a w jêzyk C
+Summary(pl.UTF-8):	Interfejs wbudowanego SQL-a w jÄ™zyk C
 Group:		Libraries
 Requires:	%{name}-libs = %{version}-%{release}
 
 %description ecpg
 Embedded SQL in C interface.
 
-%description ecpg -l pl
-Interfejs wbudowanego SQL-a w jêzyk C.
+%description ecpg -l pl.UTF-8
+Interfejs wbudowanego SQL-a w jÄ™zyk C.
 
 %package ecpg-devel
 Summary:	Embedded SQL in C interface files
-Summary(pl):	Pliki programistyczne interfejsu wbudowanego SQL-a w jêzyk C
+Summary(pl.UTF-8):	Pliki programistyczne interfejsu wbudowanego SQL-a w jÄ™zyk C
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 Requires:	%{name}-ecpg = %{version}-%{release}
@@ -481,46 +476,46 @@ Requires:	%{name}-ecpg = %{version}-%{release}
 %description ecpg-devel
 Embedded SQL in C interface files.
 
-%description ecpg-devel -l pl
-Pliki programistyczne interfejsu wbudowanego SQL-a w jêzyk C.
+%description ecpg-devel -l pl.UTF-8
+Pliki programistyczne interfejsu wbudowanego SQL-a w jÄ™zyk C.
 
 %package static
 Summary:	PostgreSQL static libraries
-Summary(es):	Bibliotecas estaticas PostgreSQL
-Summary(pl):	Biblioteki statyczne programu PostgreSQL
-Summary(pt_BR):	Bibliotecas estáticas PostgreSQL
-Summary(ru):	óÔÁÔÉÞÅÓËÉÅ ÂÉÂÌÉÏÔÅËÉ ÄÌÑ ÐÒÏÇÒÁÍÍÉÒÏ×ÁÎÉÑ Ó PostgreSQL
-Summary(uk):	óÔÁÔÉÞÎ¦ Â¦ÂÌ¦ÏÔÅËÉ ÄÌÑ ÐÒÏÇÒÁÍÕ×ÁÎÎÑ Ú PostgreSQL
+Summary(es.UTF-8):	Bibliotecas estaticas PostgreSQL
+Summary(pl.UTF-8):	Biblioteki statyczne programu PostgreSQL
+Summary(pt_BR.UTF-8):	Bibliotecas estÃ¡ticas PostgreSQL
+Summary(ru.UTF-8):	Ð¡Ñ‚Ð°Ñ‚Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÐ¸ Ð´Ð»Ñ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ñ Ñ PostgreSQL
+Summary(uk.UTF-8):	Ð¡Ñ‚Ð°Ñ‚Ð¸Ñ‡Ð½Ñ– Ð±Ñ–Ð±Ð»Ñ–Ð¾Ñ‚ÐµÐºÐ¸ Ð´Ð»Ñ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼ÑƒÐ²Ð°Ð½Ð½Ñ Ð· PostgreSQL
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 PostgreSQL static libraries.
 
-%description static -l es
-Este paquete contiene bibliotecas estaticas requerida para compilación
+%description static -l es.UTF-8
+Este paquete contiene bibliotecas estaticas requerida para compilaciÃ³n
 de aplicativos que se comunican directamente con el servidor backend
 PostgreSQL.
 
-%description static -l pl
+%description static -l pl.UTF-8
 Biblioteki statyczne programu PostgreSQL.
 
-%description static -l pt_BR
-Este pacote contém as bibliotecas estáticas requeridas para compilação
+%description static -l pt_BR.UTF-8
+Este pacote contÃ©m as bibliotecas estÃ¡ticas requeridas para compilaÃ§Ã£o
 de aplicativos que se comunicam diretamente com o servidor backend
 PostgreSQL.
 
-%description static -l ru
-üÔÏ ÏÔÄÅÌØÎÙÊ ÐÁËÅÔ ÓÏ ÓÔÁÔÉÞÅÓËÉÍÉ ÂÉÂÌÉÏÔÅËÁÍÉ, ËÏÔÏÒÙÅ ÂÏÌØÛÅ ÎÅ
-×ÈÏÄÑÔ × %{name}-devel.
+%description static -l ru.UTF-8
+Ð­Ñ‚Ð¾ Ð¾Ñ‚Ð´ÐµÐ»ÑŒÐ½Ñ‹Ð¹ Ð¿Ð°ÐºÐµÑ‚ ÑÐ¾ ÑÑ‚Ð°Ñ‚Ð¸Ñ‡ÐµÑÐºÐ¸Ð¼Ð¸ Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÐ°Ð¼Ð¸, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð±Ð¾Ð»ÑŒÑˆÐµ Ð½Ðµ
+Ð²Ñ…Ð¾Ð´ÑÑ‚ Ð² %{name}-devel.
 
-%description static -l uk
-ãÅ ÏËÒÅÍÉÊ ÐÁËÅÔ Ú¦ ÓÔÁÔÉÞÎÉÍÉ Â¦ÂÌ¦ÏÔÅËÁÍÉ, ÑË¦ Â¦ÌØÛ ÎÅ ×ÈÏÄÑÔØ ×
+%description static -l uk.UTF-8
+Ð¦Ðµ Ð¾ÐºÑ€ÐµÐ¼Ð¸Ð¹ Ð¿Ð°ÐºÐµÑ‚ Ð·Ñ– ÑÑ‚Ð°Ñ‚Ð¸Ñ‡Ð½Ð¸Ð¼Ð¸ Ð±Ñ–Ð±Ð»Ñ–Ð¾Ñ‚ÐµÐºÐ°Ð¼Ð¸, ÑÐºÑ– Ð±Ñ–Ð»ÑŒÑˆ Ð½Ðµ Ð²Ñ…Ð¾Ð´ÑÑ‚ÑŒ Ð²
 %{name}-devel.
 
 %package module-plpgsql
 Summary:	PL/pgSQL - PostgreSQL procedural language
-Summary(pl):	PL/pgSQL - jêzyk proceduralny bazy danych PostgreSQL
+Summary(pl.UTF-8):	PL/pgSQL - jÄ™zyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -538,23 +533,23 @@ on demand.
 To enable PL/pgSQL procedural language for your database you have to
 run createlang command.
 
-%description module-plpgsql -l pl
+%description module-plpgsql -l pl.UTF-8
 Z dokumentacji PostgreSQL:
 
-Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy
-programista zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku
-proceduralnym, baza danych nie ma pojêcia jak interpretowaæ tego typu
-funkcjê. Funkcja lub procedura ta jest przekazywana do interpretera,
-który wie jak j± wykonaæ. Interpreter jest odpowiedni±, specjaln±
-funkcj±, która jest skompilowana w obiekt dzielony i ³adowany w razie
+Postgres ma wsparcie dla jÄ™zykÃ³w proceduralnych. W przypadku, kiedy
+programista zdefiniuje procedurÄ™ wyzwalacza lub funkcjÄ™ w jÄ™zyku
+proceduralnym, baza danych nie ma pojÄ™cia jak interpretowaÄ‡ tego typu
+funkcjÄ™. Funkcja lub procedura ta jest przekazywana do interpretera,
+ktÃ³ry wie jak jÄ… wykonaÄ‡. Interpreter jest odpowiedniÄ…, specjalnÄ…
+funkcjÄ…, ktÃ³ra jest skompilowana w obiekt dzielony i Å‚adowany w razie
 potrzeby.
 
-Za pomoc± polecenia createlang mo¿na dodaæ obs³ugê jêzyka
+Za pomocÄ… polecenia createlang moÅ¼na dodaÄ‡ obsÅ‚ugÄ™ jÄ™zyka
 proceduralnego PL/pgSQL dla swojej bazy danych.
 
 %package module-plperl
 Summary:	PL/perl - PostgreSQL procedural language
-Summary(pl):	PL/perl - jêzyk proceduralny bazy danych PostgreSQL
+Summary(pl.UTF-8):	PL/perl - jÄ™zyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
@@ -573,58 +568,23 @@ on demand.
 To enable PL/Perl procedural language for your database you have to
 run createlang command.
 
-%description module-plperl -l pl
+%description module-plperl -l pl.UTF-8
 Z dokumentacji PostgreSQL:
 
-Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy
-programista zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku
-proceduralnym, baza danych nie ma pojêcia jak interpretowaæ tego typu
-funkcjê. Funkcja lub procedura ta jest przekazywana do interpretera,
-który wie jak j± wykonaæ. Interpreter jest odpowiedni±, specjaln±
-funkcj±, która jest skompilowana w obiekt dzielony i ³adowany w razie
+Postgres ma wsparcie dla jÄ™zykÃ³w proceduralnych. W przypadku, kiedy
+programista zdefiniuje procedurÄ™ wyzwalacza lub funkcjÄ™ w jÄ™zyku
+proceduralnym, baza danych nie ma pojÄ™cia jak interpretowaÄ‡ tego typu
+funkcjÄ™. Funkcja lub procedura ta jest przekazywana do interpretera,
+ktÃ³ry wie jak jÄ… wykonaÄ‡. Interpreter jest odpowiedniÄ…, specjalnÄ…
+funkcjÄ…, ktÃ³ra jest skompilowana w obiekt dzielony i Å‚adowany w razie
 potrzeby.
 
-Za pomoc± polecenia createlang mo¿na dodaæ obs³ugê jêzyka
+Za pomocÄ… polecenia createlang moÅ¼na dodaÄ‡ obsÅ‚ugÄ™ jÄ™zyka
 proceduralnego PL/Perl dla swojej bazy danych.
-
-%package module-plphp
-Summary:	PL/PHP - PostgreSQL procedural language
-Summary(pl):	PL/PHP - jêzyk proceduralny bazy danych PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
-%{?requires_php_extension}
-
-%description module-plphp
-From PostgreSQL documentation:
-
-Postgres supports the definition of procedural languages. In the case
-of a function or trigger procedure defined in a procedural language,
-the database has no built-in knowledge about how to interpret the
-function's source text. Instead, the task is passed to a handler that
-knows the details of the language. The handler itself is a special
-programming language function compiled into a shared object and loaded
-on demand.
-
-To enable PL/PHP procedural language for your database you have to run
-createlang command.
-
-%description module-plphp -l pl
-Z dokumentacji PostgreSQL:
-
-Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy
-programista zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku
-proceduralnym, baza danych nie ma pojêcia jak interpretowaæ tego typu
-funkcjê. Funkcja lub procedura ta jest przekazywana do interpretera,
-który wie jak j± wykonaæ. Interpreter jest odpowiedni±, specjaln±
-funkcj±, która jest skompilowana w obiekt dzielony i ³adowany w razie
-potrzeby.
-
-Za pomoc± polecenia createlang mo¿na dodaæ obs³ugê jêzyka
-proceduralnego PL/PHP dla swojej bazy danych.
 
 %package module-plpython
 Summary:	PL/Python - PostgreSQL procedural language
-Summary(pl):	PL/Python - jêzyk proceduralny bazy danych PostgreSQL
+Summary(pl.UTF-8):	PL/Python - jÄ™zyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 %pyrequires_eq	python
@@ -643,25 +603,26 @@ on demand.
 To enable PL/Python procedural language for your database you have to
 run createlang command.
 
-%description module-plpython -l pl
+%description module-plpython -l pl.UTF-8
 Z dokumentacji PostgreSQL:
 
-Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy
-programista zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku
-proceduralnym, baza danych nie ma pojêcia jak interpretowaæ tego typu
-funkcjê. Funkcja lub procedura ta jest przekazywana do interpretera,
-który wie jak j± wykonaæ. Interpreter jest odpowiedni±, specjaln±
-funkcj±, która jest skompilowana w obiekt dzielony i ³adowany w razie
+Postgres ma wsparcie dla jÄ™zykÃ³w proceduralnych. W przypadku, kiedy
+programista zdefiniuje procedurÄ™ wyzwalacza lub funkcjÄ™ w jÄ™zyku
+proceduralnym, baza danych nie ma pojÄ™cia jak interpretowaÄ‡ tego typu
+funkcjÄ™. Funkcja lub procedura ta jest przekazywana do interpretera,
+ktÃ³ry wie jak jÄ… wykonaÄ‡. Interpreter jest odpowiedniÄ…, specjalnÄ…
+funkcjÄ…, ktÃ³ra jest skompilowana w obiekt dzielony i Å‚adowany w razie
 potrzeby.
 
-Za pomoc± polecenia createlang mo¿na dodaæ obs³ugê jêzyka
+Za pomocÄ… polecenia createlang moÅ¼na dodaÄ‡ obsÅ‚ugÄ™ jÄ™zyka
 proceduralnego PL/Python dla swojej bazy danych.
 
 %package module-pltcl
 Summary:	PL/Tcl - PostgreSQL procedural language
-Summary(pl):	PL/Tcl - jêzyk proceduralny bazy danych PostgreSQL
+Summary(pl.UTF-8):	PL/Tcl - jÄ™zyk proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
+Requires:	tcl(Pgtcl)
 
 %description module-pltcl
 From PostgreSQL documentation:
@@ -677,23 +638,23 @@ on demand.
 To enable PL/Tcl procedural language for your database you have to run
 createlang command.
 
-%description module-pltcl -l pl
+%description module-pltcl -l pl.UTF-8
 Z dokumentacji PostgreSQL:
 
-Postgres ma wsparcie dla jêzyków proceduralnych. W przypadku, kiedy
-programista zdefiniuje procedurê wyzwalacza lub funkcjê w jêzyku
-proceduralnym, baza danych nie ma pojêcia jak interpretowaæ tego typu
-funkcjê. Funkcja lub procedura ta jest przekazywana do interpretera,
-który wie jak j± wykonaæ. Interpreter jest odpowiedni±, specjaln±
-funkcj±, która jest skompilowana w obiekt dzielony i ³adowany w razie
+Postgres ma wsparcie dla jÄ™zykÃ³w proceduralnych. W przypadku, kiedy
+programista zdefiniuje procedurÄ™ wyzwalacza lub funkcjÄ™ w jÄ™zyku
+proceduralnym, baza danych nie ma pojÄ™cia jak interpretowaÄ‡ tego typu
+funkcjÄ™. Funkcja lub procedura ta jest przekazywana do interpretera,
+ktÃ³ry wie jak jÄ… wykonaÄ‡. Interpreter jest odpowiedniÄ…, specjalnÄ…
+funkcjÄ…, ktÃ³ra jest skompilowana w obiekt dzielony i Å‚adowany w razie
 potrzeby.
 
-Za pomoc± polecenia createlang mo¿na dodaæ obs³ugê jêzyka
+Za pomocÄ… polecenia createlang moÅ¼na dodaÄ‡ obsÅ‚ugÄ™ jÄ™zyka
 proceduralnego PL/Tcl dla swojej bazy danych.
 
 %package module-dblink
 Summary:	dblink module for PostgreSQL
-Summary(pl):	Modu³ dblink dla PostgreSQL-a
+Summary(pl.UTF-8):	ModuÅ‚ dblink dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -701,13 +662,13 @@ Requires:	%{name} = %{version}-%{release}
 dblink module for PostgreSQL provides functions returning results from
 remote database.
 
-%description module-dblink -l pl
-Modu³ dblink dla PostgreSQL-a udostêpnia funkcje zwracaj±ce wyniki ze
+%description module-dblink -l pl.UTF-8
+ModuÅ‚ dblink dla PostgreSQL-a udostÄ™pnia funkcje zwracajÄ…ce wyniki ze
 zdalnej bazy danych.
 
 %package module-lo
 Summary:	Large Objects module for PostgreSQL
-Summary(pl):	Modu³ Large Objects dla PostgreSQL-a
+Summary(pl.UTF-8):	ModuÅ‚ Large Objects dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -715,54 +676,38 @@ Requires:	%{name} = %{version}-%{release}
 Large Objects module for PostgreSQL adds a new data type 'lo', some
 support functions and a trigger which handles the orphaning problem.
 
-%description module-lo -l pl
-Modu³ Large Objects dla PostgreSQL-a dodaje nowy typ danych 'lo',
-kilka funkcji pomocniczych i wyzwalacz rozwi±zuj±cy problem
-osieroconych obiektów.
+%description module-lo -l pl.UTF-8
+ModuÅ‚ Large Objects dla PostgreSQL-a dodaje nowy typ danych 'lo',
+kilka funkcji pomocniczych i wyzwalacz rozwiÄ…zujÄ…cy problem
+osieroconych obiektÃ³w.
 
 %package module-pgcrypto
 Summary:	Cryptographic functions for PostgreSQL
-Summary(pl):	Funkcje kryptograficzne dla PostgreSQL-a
+Summary(pl.UTF-8):	Funkcje kryptograficzne dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
 %description module-pgcrypto
 Cryptographic functions for PostgreSQL.
 
-%description module-pgcrypto -l pl
+%description module-pgcrypto -l pl.UTF-8
 Funkcje kryptograficzne dla PostgreSQL.
 
 %package module-tablefunc
 Summary:	crosstab functions for PostgreSQL
-Summary(pl):	Funkcje crosstab dla PostgreSQL-a
+Summary(pl.UTF-8):	Funkcje crosstab dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
 %description module-tablefunc
 crosstab functions for PostgreSQL.
 
-%description module-tablefunc -l pl
+%description module-tablefunc -l pl.UTF-8
 Funkcje crosstab dla PostgreSQL-a.
-
-%package module-tsearch2
-Summary:	Full text extension for PostgreSQL
-Summary(pl):	Rozszerzenie pe³notekstowe dla PostgreSQL-a
-Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
-
-%description module-tsearch2
-Implementation of a new data type tsvector - a searchable data type
-with indexed access:
-http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
-
-%description module-tsearch2 -l pl
-Implementacja nowego typu danych tsvector - typu danych podlegaj±cego
-przeszukiwaniu z dostêpem poprzez indeksy:
-http://www.sai.msu.su/~megera/postgres/gist/tsearch/V2/
 
 %package module-pg_trgm
 Summary:	Trigram matching for PostgreSQL
-Summary(pl):	Dopasowanie trigramowe dla PostgreSQL-a
+Summary(pl.UTF-8):	Dopasowanie trigramowe dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
@@ -770,27 +715,49 @@ Requires:	%{name} = %{version}-%{release}
 This module provides functions and index classes for determining the
 similarity of text based on trigram matching.
 
-%description module-pg_trgm -l pl
-Ten modu³ dostarcza funkcje i klasy do rozpoznawania podobnych tekstów
+%description module-pg_trgm -l pl.UTF-8
+Ten moduÅ‚ dostarcza funkcje i klasy do rozpoznawania podobnych tekstÃ³w
 w oparciu o dopasowywanie trigramowe (trigram matching).
 
+%package module-xml2
+Summary:	XML-handling functions for PostgreSQL
+Summary(pl.UTF-8):	Funkcje do obsÅ‚ugi XML-a dla PostgreSQL-a
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description module-xml2
+Module with XML functions provides both XPath querying and XSLT
+functionality. There is also a new table function which allows the
+straightforward return of multiple XML results.
+
+%description module-xml2 -l pl.UTF-8
+ModuÅ‚ z funkcjami XML zapewniajÄ…cymi obsÅ‚ugÄ™ zapytaÅ„ XPath oraz
+funkcjonalnoÅ›Ä‡ XSLT. Jest takÅ¼e nowa funkcja tabelowa pozwalajÄ…ca na
+bezpoÅ›rednie zwracanie wielu wynikÃ³w XML.
+
+%package contrib
+Summary:	Misc PostgreSQL contrib modules
+#Summary(pl.UTF-8):	
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description contrib
+Misc PostgreSQL contrib modules.
+
 %prep
-%setup -q -a8
+%setup -q
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
-%patch5 -p0
-
-%if %{with php}
-patch -p1 < plphp.patch
-%endif
 
 tar xzf doc/man*.tar.gz
 
 mkdir doc/unpacked
 tar zxf doc/postgres.tar.gz -C doc/unpacked
+
+# force rebuild of bison/flex files
+find src -name \*.l -o -name \*.y | xargs touch
 
 # Erase all CVS dirs
 #find contrib -type d -name CVS -exec rm -rf {} \;
@@ -803,42 +770,28 @@ tar zxf doc/postgres.tar.gz -C doc/unpacked
 	--disable-rpath \
 	--enable-depend \
 	--enable-integer-datetimes \
-	%{?with_pgsql_locale:--enable-locale} \
-	%{?with_pgsql_multibyte:--enable-multibyte} \
+	--with-system-tzdata=%{_datadir}/zoneinfo \
 	--enable-nls \
-	--enable-recode \
-	--enable-syslog \
 	--enable-thread-safety \
-	--enable-unicode-conversion \
-	--with-CXX \
 	%{?with_kerberos5:--with-krb5} \
 	--with-openssl \
 	--with-pam \
 	%{?with_perl:--with-perl} \
-	%{?with_php:--with-php=/usr/include/php} \
 	%{?with_python:--with-python} \
-	%{?with_tcl:--with-tcl} \
-	--with-x \
+	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
 	--without-docdir
 
 %{__make}
-%{__make} -C contrib/dblink
-%{__make} -C contrib/lo
-%{__make} -C contrib/pgcrypto
-%{__make} -C contrib/tablefunc
-%{__make} -C contrib/tsearch2
-%{__make} -C contrib/pg_trgm
+
+for mod in %{contrib_modules}; do \
+	%{__make} -C contrib/$mod
+done
+
 %{__make} -C src/tutorial \
 	NO_PGXS=1
 
 %ifnarch sparc sparcv9 sparc64 alpha
 %{?with_tests:%{__make} check}
-%endif
-
-%if %{with php}
-cd src/pl/plphp
-%{__make}
-cd ../../../
 %endif
 
 %install
@@ -859,30 +812,10 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 	DESTDIR=$RPM_BUILD_ROOT
 %endif
 
-%{__make} -C contrib/dblink install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/lo install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/pgcrypto install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/tablefunc install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/tsearch2 install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%{__make} -C contrib/pg_trgm install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%if %{with php}
-cd src/pl/plphp
-%{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT
-cd ../../../
-%endif
+for mod in %{contrib_modules}; do \
+	%{__make} -C contrib/$mod install \
+		DESTDIR=$RPM_BUILD_ROOT
+done
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
 
@@ -906,6 +839,10 @@ cat pg_dump.lang psql.lang initdb.lang pg_ctl.lang > clients.lang
 # Remove Contrib documentation. We use macro %doc
 rm -rf $RPM_BUILD_ROOT/contrib
 
+mv $RPM_BUILD_ROOT{%{_datadir}/postgresql,%{_pgsqldir}}/unknown.pltcl
+
+install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -920,7 +857,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ `cat $pgdir/PG_VERSION` != '8.2' ]; then
+		if [ `cat $pgdir/PG_VERSION` != '8.3' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
@@ -986,6 +923,7 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/euc*
 %attr(755,root,root) %{_pgmoduledir}/latin*
 %attr(755,root,root) %{_pgmoduledir}/utf*
+%attr(755,root,root) %{_pgmoduledir}/dict_*
 
 %dir %{_pgsqldir}
 %dir %{_datadir}/postgresql
@@ -995,8 +933,8 @@ fi
 %{_datadir}/postgresql/*.shdescription
 %{_datadir}/postgresql/*.sql
 %{_datadir}/postgresql/*.txt
-%{_datadir}/postgresql/timezone
 %{_datadir}/postgresql/timezonesets
+%{_datadir}/postgresql/tsearch_data
 
 %attr(700,postgres,postgres) /home/services/postgres
 %attr(700,postgres,postgres) %dir /var/lib/pgsql
@@ -1122,43 +1060,84 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
+%{_pgsqldir}/unknown.pltcl
 %endif
 
 %files module-dblink
 %defattr(644,root,root,755)
-%doc contrib/dblink/README.dblink
 %attr(755,root,root) %{_pgmoduledir}/dblink.so
 %{_pgsqldir}/*dblink.sql
 
 %files module-lo
 %defattr(644,root,root,755)
-%doc contrib/lo/README.lo
 %attr(755,root,root) %{_pgmoduledir}/lo.so
 %{_pgsqldir}/*lo.sql
 
 %files module-pgcrypto
 %defattr(644,root,root,755)
-%doc contrib/pgcrypto/README*
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
 %{_pgsqldir}/*pgcrypto.sql
 
 %files module-tablefunc
 %defattr(644,root,root,755)
-%doc contrib/tablefunc/README.tablefunc
 %attr(755,root,root) %{_pgmoduledir}/tablefunc.so
 %{_pgsqldir}/*tablefunc.sql
 
-%files module-tsearch2
-%defattr(644,root,root,755)
-%doc contrib/tsearch2/README*
-%attr(755,root,root) %{_pgmoduledir}/tsearch2.so
-%{_pgsqldir}/*tsearch2.sql
-%{_pgsqldir}/russian.stop.utf8
-%{_pgsqldir}/thesaurus
-%{_pgsqldir}/*.stop
-
 %files module-pg_trgm
 %defattr(644,root,root,755)
-%doc contrib/pg_trgm/README*
 %attr(755,root,root) %{_pgmoduledir}/pg_trgm.so
 %{_pgsqldir}/*pg_trgm.sql
+
+%files module-xml2
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_pgmoduledir}/pgxml.so
+%{_pgsqldir}/*pgxml.sql
+
+%files contrib
+%defattr(644,root,root,755)
+%doc contrib/README
+%{_bindir}/oid2name
+%{_bindir}/pgbench
+%{_bindir}/vacuumlo
+%attr(755,root,root) %{_pgmoduledir}/_int.so
+%attr(755,root,root) %{_pgmoduledir}/adminpack.so
+%attr(755,root,root) %{_pgmoduledir}/btree_gist.so
+%attr(755,root,root) %{_pgmoduledir}/chkpass.so
+%attr(755,root,root) %{_pgmoduledir}/hstore.so
+%attr(755,root,root) %{_pgmoduledir}/int_aggregate.so
+%attr(755,root,root) %{_pgmoduledir}/isn.so
+%attr(755,root,root) %{_pgmoduledir}/ltree.so
+%attr(755,root,root) %{_pgmoduledir}/pageinspect.so
+%attr(755,root,root) %{_pgmoduledir}/pg_buffercache.so
+%attr(755,root,root) %{_pgmoduledir}/pg_freespacemap.so
+%attr(755,root,root) %{_pgmoduledir}/pgrowlocks.so
+%attr(755,root,root) %{_pgmoduledir}/pgstattuple.so
+%attr(755,root,root) %{_pgmoduledir}/sslinfo.so
+%{_pgsqldir}/_int.sql
+%{_pgsqldir}/adminpack.sql
+%{_pgsqldir}/btree_gist.sql
+%{_pgsqldir}/chkpass.sql
+%{_pgsqldir}/hstore.sql
+%{_pgsqldir}/int_aggregate.sql
+%{_pgsqldir}/isn.sql
+%{_pgsqldir}/ltree.sql
+%{_pgsqldir}/pageinspect.sql
+%{_pgsqldir}/pg_buffercache.sql
+%{_pgsqldir}/pg_freespacemap.sql
+%{_pgsqldir}/pgrowlocks.sql
+%{_pgsqldir}/pgstattuple.sql
+%{_pgsqldir}/sslinfo.sql
+%{_pgsqldir}/uninstall__int.sql
+%{_pgsqldir}/uninstall_adminpack.sql
+%{_pgsqldir}/uninstall_btree_gist.sql
+%{_pgsqldir}/uninstall_chkpass.sql
+%{_pgsqldir}/uninstall_hstore.sql
+%{_pgsqldir}/uninstall_int_aggregate.sql
+%{_pgsqldir}/uninstall_isn.sql
+%{_pgsqldir}/uninstall_ltree.sql
+%{_pgsqldir}/uninstall_pageinspect.sql
+%{_pgsqldir}/uninstall_pg_buffercache.sql
+%{_pgsqldir}/uninstall_pg_freespacemap.sql
+%{_pgsqldir}/uninstall_pgrowlocks.sql
+%{_pgsqldir}/uninstall_pgstattuple.sql
+%{_pgsqldir}/uninstall_sslinfo.sql
