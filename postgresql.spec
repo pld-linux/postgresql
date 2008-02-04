@@ -33,6 +33,7 @@ Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		%{name}-ac_version.patch
+Patch4:		%{name}-disable_horology_test.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -750,6 +751,7 @@ Misc PostgreSQL contrib modules.
 %{?with_absolute_dbpaths:%patch1 -p1}
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 tar xzf doc/man*.tar.gz
 
