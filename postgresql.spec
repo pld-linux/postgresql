@@ -737,13 +737,16 @@ funkcjonalność XSLT. Jest także nowa funkcja tabelowa pozwalająca na
 bezpośrednie zwracanie wielu wyników XML.
 
 %package contrib
-Summary:	Misc PostgreSQL contrib modules
-#Summary(pl.UTF-8):	
+Summary:	Miscellaneous PostgreSQL contrib modules
+Summary(pl.UTF-8):	Różne moduły dołączone do PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
 %description contrib
-Misc PostgreSQL contrib modules.
+Miscellaneous PostgreSQL contrib modules.
+
+%description contrib -l pl.UTF-8
+Różne moduły dołączone do PostgreSQL-a.
 
 %prep
 %setup -q
