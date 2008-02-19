@@ -1,28 +1,37 @@
---- postgresql-8.2.5/src/bin/pg_ctl/pg_ctl.c.orig	2007-09-18 22:08:39.757996485 +0100
-+++ postgresql-8.2.5/src/bin/pg_ctl/pg_ctl.c	2007-09-18 22:43:12.441795575 +0100
-@@ -19,6 +19,7 @@
- 
- #include "postgres_fe.h"
- #include "libpq-fe.h"
-+#include "pg_config_manual.h"
- 
- #include <locale.h>
- #include <signal.h>
-@@ -404,10 +405,12 @@
+--- postgresql-8.3.0/src/bin/pg_ctl/pg_ctl.c.orig	2008-01-01 20:45:55.000000000 +0100
++++ postgresql-8.3.0/src/bin/pg_ctl/pg_ctl.c	2008-02-19 21:30:21.369174813 +0100
+@@ -414,11 +414,11 @@
+ 	PGconn	   *conn;
  	bool		success = false;
  	int			i;
- 	char		portstr[32];
-+ 	char		sockstr[MAXPGPATH];
+-	char		portstr[32];
++	char		portstr[32], sockstr[MAXPGPATH];
  	char	   *p;
--	char		connstr[128]; /* Should be way more than enough! */
-+	char		connstr[MAXPGPATH+128];
+-	char		connstr[128];	/* Should be way more than enough! */
++	char		connstr[128+MAXPGPATH];	/* Should be way more than enough! */
  
- 	*portstr = '\0';
-+ 	*sockstr = '\0';
+-	*portstr = '\0';
++	*portstr = *sockstr = '\0';
  
  	/* post_opts */
  	for (p = post_opts; *p;)
-@@ -432,7 +435,7 @@
+@@ -436,6 +436,15 @@
+ 			strlcpy(portstr, p, Min(strcspn(p, "\"'" WHITESPACE) + 1,
+ 									sizeof(portstr)));
+ 			/* keep looking, maybe there is another -p */
++		} else if (strncmp(p, "-k", strlen("-k")) == 0)
++		{
++			p += strlen("-k");
++			/* advance past whitespace/quoting */
++			while (isspace((unsigned char) *p) || *p == '\'' || *p == '"')
++				p++;
++			strlcpy(sockstr, p, Min(strcspn(p, "\"'" WHITESPACE) + 1,
++									sizeof(sockstr)));
++			/* keep looking, maybe there is another -k */
+ 		}
+ 		/* Advance to next whitespace */
+ 		while (*p && !isspace((unsigned char) *p))
+@@ -443,7 +452,7 @@
  	}
  
  	/* config file */
@@ -31,7 +40,7 @@
  	{
  		char	  **optlines;
  
-@@ -445,18 +448,32 @@
+@@ -456,19 +465,30 @@
  
  				while (isspace((unsigned char) *p))
  					p++;
@@ -39,51 +48,47 @@
 -					continue;
 -				p += strlen("port");
 -				while (isspace((unsigned char) *p))
--					p++;
--				if (*p != '=')
--					continue;
--				p++;
--				while (isspace((unsigned char) *p))
-+				if (!*portstr && strncmp(p, "port", strlen("port")) == 0)
-+				{
++				if (!strncmp(p, "port", strlen("port"))) {
 +					p += strlen("port");
 +					while (isspace((unsigned char) *p))
 +						p++;
 +					if (*p != '=')
 +						continue;
  					p++;
--				StrNCpy(portstr, p, Min(strcspn(p, "#" WHITESPACE) + 1,
+-				if (*p != '=')
+-					continue;
+-				p++;
+-				while (isspace((unsigned char) *p))
 +					while (isspace((unsigned char) *p))
 +						p++;
-+					StrNCpy(portstr, p, Min(strcspn(p, "#" WHITESPACE) + 1,
- 										sizeof(portstr)));
-+				}
-+				if (!*sockstr && strncmp(p, "unix_socket_directory", strlen("unix_socket_directory")) == 0)
-+				{
++					strlcpy(portstr, p, Min(strcspn(p, "#" WHITESPACE) + 1,
++											sizeof(portstr)));
++					/* keep looking, maybe there is another */
++				} else if(!strncmp(p, "unix_socket_directory", strlen("unix_socket_directory"))) {
 +					p += strlen("unix_socket_directory");
 +					while (isspace((unsigned char) *p))
 +						p++;
 +					if (*p != '=')
 +						continue;
-+					p++;
+ 					p++;
+-				strlcpy(portstr, p, Min(strcspn(p, "#" WHITESPACE) + 1,
+-										sizeof(portstr)));
+-				/* keep looking, maybe there is another */
 +					while (isspace((unsigned char) *p) || *p == '\'' || *p == '"')
 +						p++;
-+					StrNCpy(sockstr, p, Min(strcspn(p, "#\"'" WHITESPACE) + 1,
-+										sizeof(sockstr)));
++					strlcpy(sockstr, p, Min(strcspn(p, "\"'#" WHITESPACE) + 1,
++											sizeof(sockstr)));
 +				}
- 				/* keep looking, maybe there is another */
  			}
  		}
-@@ -473,6 +490,12 @@
- 	/* We need to set a connect timeout otherwise on Windows the SCM will probably timeout first */
- 	snprintf(connstr, sizeof(connstr), "dbname=postgres port=%s connect_timeout=5", portstr);
+ 	}
+@@ -486,7 +506,8 @@
+ 	 * probably timeout first
+ 	 */
+ 	snprintf(connstr, sizeof(connstr),
+-			 "dbname=postgres port=%s connect_timeout=5", portstr);
++			 "dbname=postgres port=%s connect_timeout=5%s%s", portstr,
++			 (*sockstr ? " host=" : ""), sockstr);
  
-+	/* path to directory containing the unix socket */
-+	if (*sockstr) {
-+		strncat(connstr, " host=", sizeof(connstr) - strlen(connstr));
-+		strncat(connstr, sockstr,  sizeof(connstr) - strlen(connstr));
-+	}
-+
  	for (i = 0; i < wait_seconds; i++)
  	{
- 		if ((conn = PQconnectdb(connstr)) != NULL &&
