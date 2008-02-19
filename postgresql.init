@@ -164,6 +164,7 @@ stop() {
 	pgsubsys
 }
 
+RETVAL=0
 # See how we were called.
 # Every action is performed for all given (all configured by default)
 # db clusters.
@@ -191,23 +192,36 @@ case "$action" in
 	stop
 	start
 	;;
-  reload|force-reload)
+  reload|force-reload|try-restart)
+	if [ "$action" = "reload" ]; then
+		# "reload" must not restart service - so let it reload only what's possible
+		pgctlact="reload"
+	else
+		pgctlact="restart"
+	fi
 	for pgdir in $DB_CLUSTERS; do
 		pgstatus "$pgdir"
 		if [ "$PG_STATUS" = "not running" ]; then
 			msg_not_running "PostgreSQL $pgdir"
+			if [ "$action" != "try-restart" ]; then
+				RETVAL=7
+			fi
 		else
 			msg_reloading "PostgreSQL $pgdir"
 			busy
 			# is postgresql really alive?
 			if ps -p "$PG_PID" >/dev/null; then
-				TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir restart 2>&1 >/dev/null"
+				TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $pgdir $pgctlact 2>&1 >/dev/null"
 					pgstatus "$pgdir"
 				if [ "$PG_STATUS" = "running" ]; then
 					ok
 				else
 					fail
 				fi
+			elif [ "$action" != "try-restart" ]; then
+				# postgresql died and pg_ctl has misinformed us about
+				# the status - i.e. service is actually not running
+				RETVAL=7
 			else
 				# postgresql died and pg_ctl has misinformed us about
 				# the status; remove pid file and start it again
@@ -241,4 +255,4 @@ case "$action" in
 	exit 3
 esac
 
-exit 0
+exit $RETVAL
