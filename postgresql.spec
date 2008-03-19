@@ -7,7 +7,7 @@
 %bcond_without	python			# disable Python support
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
-
+#
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
 Summary(es.UTF-8):	Gestor de Banco de Datos PostgreSQL
@@ -34,6 +34,7 @@ Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		%{name}-ac_version.patch
 Patch4:		%{name}-disable_horology_test.patch
+Patch5:		%{name}-pg_ctl-fix.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -737,13 +738,16 @@ funkcjonalność XSLT. Jest także nowa funkcja tabelowa pozwalająca na
 bezpośrednie zwracanie wielu wyników XML.
 
 %package contrib
-Summary:	Misc PostgreSQL contrib modules
-#Summary(pl.UTF-8):	
+Summary:	Miscellaneous PostgreSQL contrib modules
+Summary(pl.UTF-8):	Różne moduły dołączone do PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
 
 %description contrib
-Misc PostgreSQL contrib modules.
+Miscellaneous PostgreSQL contrib modules.
+
+%description contrib -l pl.UTF-8
+Różne moduły dołączone do PostgreSQL-a.
 
 %prep
 %setup -q
@@ -752,6 +756,7 @@ Misc PostgreSQL contrib modules.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -958,14 +963,18 @@ fi
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libpq.so.5
 %dir %{_pgmoduledir}
 
 %files ecpg
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/ecpg
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libecpg.so.6
 %attr(755,root,root) %{_libdir}/libecpg_compat.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libecpg_compat.so.3
 %attr(755,root,root) %{_libdir}/libpgtypes.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libpgtypes.so.3
 %{_mandir}/man1/ecpg.1*
 
 %files ecpg-devel
