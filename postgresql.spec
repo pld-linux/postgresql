@@ -64,14 +64,15 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(pre):	/usr/sbin/usermod
+Requires(triggerpostun):	/bin/id
+Requires(triggerpostun):	/usr/sbin/usermod
 Requires:	%{name}-clients = %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	rc-scripts
 Requires:	tzdata
+Obsoletes:	postgresql-module-tsearch2
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
-Obsoletes:	postgresql-module-tsearch2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
@@ -892,6 +893,7 @@ fi
 %groupadd -g 88 -r postgres
 %useradd -M -o -r -u 88 -d /home/services/postgres -s /bin/sh -g postgres -c "PostgreSQL Server" postgres
 
+%triggerpostun -- %{name} < 7.2-2
 if [ -n "`/bin/id -u postgres 2>/dev/null`" ]; then
 	/usr/sbin/usermod -d /home/services/postgres postgres
 fi
@@ -1108,9 +1110,9 @@ fi
 %files contrib
 %defattr(644,root,root,755)
 %doc contrib/README
-%{_bindir}/oid2name
-%{_bindir}/pgbench
-%{_bindir}/vacuumlo
+%attr(755,root,root) %{_bindir}/oid2name
+%attr(755,root,root) %{_bindir}/pgbench
+%attr(755,root,root) %{_bindir}/vacuumlo
 %attr(755,root,root) %{_pgmoduledir}/_int.so
 %attr(755,root,root) %{_pgmoduledir}/adminpack.so
 %attr(755,root,root) %{_pgmoduledir}/btree_gist.so
