@@ -853,7 +853,7 @@ install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
+%pretrans
 PG_DB_CLUSTERS=""
 if [ -f /etc/sysconfig/postgresql ]; then
 	. /etc/sysconfig/postgresql
@@ -864,7 +864,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ `cat $pgdir/PG_VERSION` != '8.3' ]; then
+		if [ $(cat $pgdir/PG_VERSION) != '8.3' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
@@ -888,6 +888,7 @@ if [ "$foundold" = "1" ]; then
 	exit 1
 fi
 
+%pre
 %groupadd -g 88 -r postgres
 %useradd -M -o -r -u 88 -d /home/services/postgres -s /bin/sh -g postgres -c "PostgreSQL Server" postgres
 
