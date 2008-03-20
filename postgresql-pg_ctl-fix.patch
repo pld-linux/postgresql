@@ -1,88 +1,90 @@
---- postgresql-8.3.0/src/bin/pg_ctl/pg_ctl.c.orig	2008-01-01 20:45:55.000000000 +0100
-+++ postgresql-8.3.0/src/bin/pg_ctl/pg_ctl.c	2008-02-19 21:30:21.369174813 +0100
-@@ -414,11 +414,11 @@
+--- postgresql-8.3.1/src/bin/pg_ctl/pg_ctl.c.orig	2008-03-01 00:31:42.000000000 +0100
++++ postgresql-8.3.1/src/bin/pg_ctl/pg_ctl.c	2008-03-20 22:59:22.658133220 +0100
+@@ -412,12 +412,12 @@
  	PGconn	   *conn;
  	bool		success = false;
  	int			i;
 -	char		portstr[32];
 +	char		portstr[32], sockstr[MAXPGPATH];
  	char	   *p;
+ 	char	   *q;
 -	char		connstr[128];	/* Should be way more than enough! */
 +	char		connstr[128+MAXPGPATH];	/* Should be way more than enough! */
  
 -	*portstr = '\0';
 +	*portstr = *sockstr = '\0';
  
- 	/* post_opts */
- 	for (p = post_opts; *p;)
-@@ -436,6 +436,15 @@
- 			strlcpy(portstr, p, Min(strcspn(p, "\"'" WHITESPACE) + 1,
- 									sizeof(portstr)));
+ 	/*
+ 	 * Look in post_opts for a -p switch.
+@@ -448,6 +448,21 @@
+ 			strlcpy(portstr, p, Min((q - p) + 1, sizeof(portstr)));
  			/* keep looking, maybe there is another -p */
+ 			p = q;
 +		} else if (strncmp(p, "-k", strlen("-k")) == 0)
 +		{
-+			p += strlen("-k");
++			p += 2;
 +			/* advance past whitespace/quoting */
 +			while (isspace((unsigned char) *p) || *p == '\'' || *p == '"')
 +				p++;
-+			strlcpy(sockstr, p, Min(strcspn(p, "\"'" WHITESPACE) + 1,
-+									sizeof(sockstr)));
++			/* find end of value (not including any ending quote!) */
++			q = p;
++			while (*q &&
++				   !(isspace((unsigned char) *q) || *q == '\'' || *q == '"'))
++				q++;
++			/* and save the argument value */
++			strlcpy(sockstr, p, Min(q - p + 1, sizeof(sockstr)));
 +			/* keep looking, maybe there is another -k */
++			p = q;
  		}
  		/* Advance to next whitespace */
  		while (*p && !isspace((unsigned char) *p))
-@@ -443,7 +452,7 @@
- 	}
- 
- 	/* config file */
+@@ -460,7 +475,7 @@
+ 	 * This parsing code isn't amazingly bright either, but it should be
+ 	 * okay for valid port settings.
+ 	 */
 -	if (!*portstr)
 +	if (!*portstr || !*sockstr)
  	{
  		char	  **optlines;
  
-@@ -456,19 +465,30 @@
+@@ -473,8 +488,7 @@
  
  				while (isspace((unsigned char) *p))
  					p++;
--				if (strncmp(p, "port", strlen("port")) != 0)
+-				if (strncmp(p, "port", 4) != 0)
 -					continue;
--				p += strlen("port");
--				while (isspace((unsigned char) *p))
-+				if (!strncmp(p, "port", strlen("port"))) {
-+					p += strlen("port");
++				if (!strncmp(p, "port", 4)) {
+ 				p += 4;
+ 				while (isspace((unsigned char) *p))
+ 					p++;
+@@ -493,6 +507,26 @@
+ 				/* and save the argument value */
+ 				strlcpy(portstr, p, Min((q - p) + 1, sizeof(portstr)));
+ 				/* keep looking, maybe there is another */
++				} else if(!strncmp(p, "unix_socket_directory", 21)) {
++					p += 21;
 +					while (isspace((unsigned char) *p))
 +						p++;
 +					if (*p != '=')
 +						continue;
- 					p++;
--				if (*p != '=')
--					continue;
--				p++;
--				while (isspace((unsigned char) *p))
-+					while (isspace((unsigned char) *p))
-+						p++;
-+					strlcpy(portstr, p, Min(strcspn(p, "#" WHITESPACE) + 1,
-+											sizeof(portstr)));
-+					/* keep looking, maybe there is another */
-+				} else if(!strncmp(p, "unix_socket_directory", strlen("unix_socket_directory"))) {
-+					p += strlen("unix_socket_directory");
-+					while (isspace((unsigned char) *p))
-+						p++;
-+					if (*p != '=')
-+						continue;
- 					p++;
--				strlcpy(portstr, p, Min(strcspn(p, "#" WHITESPACE) + 1,
--										sizeof(portstr)));
--				/* keep looking, maybe there is another */
++					p++;
++					/* advance past any whitespace/quoting */
 +					while (isspace((unsigned char) *p) || *p == '\'' || *p == '"')
 +						p++;
-+					strlcpy(sockstr, p, Min(strcspn(p, "\"'#" WHITESPACE) + 1,
-+											sizeof(sockstr)));
++					/* find end of value (not including any ending quote/comment!) */
++					q = p;
++					while (*q &&
++						   !(isspace((unsigned char) *q) ||
++							 *q == '\'' || *q == '"' || *q == '#'))
++						q++;
++					/* and save the argument value */
++					strlcpy(sockstr, p, Min((q - p) + 1, sizeof(sockstr)));
++					/* keep looking, maybe there is another */
 +				}
  			}
  		}
  	}
-@@ -486,7 +506,8 @@
+@@ -510,7 +544,8 @@
  	 * probably timeout first
  	 */
  	snprintf(connstr, sizeof(connstr),
