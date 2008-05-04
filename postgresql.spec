@@ -833,8 +833,10 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
 install -d howto
 tar zxf %{SOURCE2} -C howto
 
+%if %{with python}
 %py_comp $RPM_BUILD_ROOT%{py_libdir}
 %py_ocomp $RPM_BUILD_ROOT%{py_libdir}
+%endif
 
 # find locales
 for f in libpq pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl pg_config; do
@@ -847,7 +849,7 @@ cat pg_dump.lang psql.lang initdb.lang pg_ctl.lang > clients.lang
 # Remove Contrib documentation. We use macro %doc
 rm -rf $RPM_BUILD_ROOT/contrib
 
-mv $RPM_BUILD_ROOT{%{_datadir}/postgresql,%{_pgsqldir}}/unknown.pltcl
+%{?with_tcl:mv $RPM_BUILD_ROOT{%{_datadir}/postgresql,%{_pgsqldir}}/unknown.pltcl}
 
 install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
 
