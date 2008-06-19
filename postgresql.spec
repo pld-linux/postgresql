@@ -20,12 +20,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	8.2.5
+Version:	8.2.9
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	bb1cd309ea72f070cb964736f5755847
+# Source0-md5:	579506cf91881f6ede67e3be98a47c37
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -37,6 +37,7 @@ Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg_link.patch
 Patch3:		%{name}-ecpg-includedir.patch
 Patch4:		%{name}-pg_ctl-fix.patch
+Patch5:		%{name}-autoconf.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -796,6 +797,7 @@ bezpośrednie zwracanie wielu wyników XML.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %if %{with php}
 patch -p1 < plphp.patch
