@@ -1,5 +1,5 @@
---- postgresql-8.2.5/src/bin/pg_ctl/pg_ctl.c.orig	2007-09-18 22:08:39.757996485 +0100
-+++ postgresql-8.2.5/src/bin/pg_ctl/pg_ctl.c	2007-09-18 22:43:12.441795575 +0100
+--- postgresql-8.2.9.orig/src/bin/pg_ctl/pg_ctl.c	2008-06-19 09:58:21.653344252 +0200
++++ postgresql-8.2.9/src/bin/pg_ctl/pg_ctl.c	2008-06-19 10:05:45.576633140 +0200
 @@ -19,6 +19,7 @@
  
  #include "postgres_fe.h"
@@ -8,73 +8,89 @@
  
  #include <locale.h>
  #include <signal.h>
-@@ -404,10 +405,12 @@
+@@ -402,11 +403,13 @@
  	bool		success = false;
  	int			i;
  	char		portstr[32];
-+ 	char		sockstr[MAXPGPATH];
++	char		sockstr[MAXPGPATH];
  	char	   *p;
+ 	char	   *q;
 -	char		connstr[128]; /* Should be way more than enough! */
-+	char		connstr[MAXPGPATH+128];
++	char		connstr[MAXPGPATH+128]; /* Should be way more than enough! */
  
  	*portstr = '\0';
-+ 	*sockstr = '\0';
++	*sockstr = '\0';
  
- 	/* post_opts */
- 	for (p = post_opts; *p;)
-@@ -432,7 +435,7 @@
- 	}
- 
- 	/* config file */
+ 	/*
+ 	 * Look in post_opts for a -p switch.
+@@ -449,7 +452,7 @@
+ 	 * This parsing code isn't amazingly bright either, but it should be
+ 	 * okay for valid port settings.
+ 	 */
 -	if (!*portstr)
 +	if (!*portstr || !*sockstr)
  	{
  		char	  **optlines;
  
-@@ -445,18 +448,32 @@
+@@ -462,25 +465,40 @@
  
  				while (isspace((unsigned char) *p))
  					p++;
--				if (strncmp(p, "port", strlen("port")) != 0)
+-				if (strncmp(p, "port", 4) != 0)
 -					continue;
--				p += strlen("port");
+-				p += 4;
 -				while (isspace((unsigned char) *p))
--					p++;
--				if (*p != '=')
--					continue;
--				p++;
--				while (isspace((unsigned char) *p))
-+				if (!*portstr && strncmp(p, "port", strlen("port")) == 0)
-+				{
-+					p += strlen("port");
++				if (!*portstr && strncmp(p, "port", 4) == 0) {
++					p += 4;
 +					while (isspace((unsigned char) *p))
 +						p++;
 +					if (*p != '=')
 +						continue;
  					p++;
--				StrNCpy(portstr, p, Min(strcspn(p, "#" WHITESPACE) + 1,
-+					while (isspace((unsigned char) *p))
+-				if (*p != '=')
+-					continue;
+-				p++;
+-				/* advance past any whitespace/quoting */
+-				while (isspace((unsigned char) *p) || *p == '\'' || *p == '"')
++					/* advance past any whitespace/quoting */
++					while (isspace((unsigned char) *p) || *p == '\'' || *p == '"')
 +						p++;
-+					StrNCpy(portstr, p, Min(strcspn(p, "#" WHITESPACE) + 1,
- 										sizeof(portstr)));
++					/* find end of value (not including any ending quote/comment!) */
++					q = p;
++					while (*q && !(isspace((unsigned char) *q) || *q == '\'' || *q == '"' || *q == '#'))
++						q++;
++					/* and save the argument value */
++					StrNCpy(portstr, p, Min((q - p) + 1, sizeof(portstr)));
 +				}
-+				if (!*sockstr && strncmp(p, "unix_socket_directory", strlen("unix_socket_directory")) == 0)
-+				{
-+					p += strlen("unix_socket_directory");
++				if (!*portstr && strncmp(p, "unix_socket_directory", strlen("unix_socket_directory")) == 0) {
++					p += 4;
 +					while (isspace((unsigned char) *p))
 +						p++;
 +					if (*p != '=')
 +						continue;
-+					p++;
+ 					p++;
+-				/* find end of value (not including any ending quote/comment!) */
+-				q = p;
+-				while (*q &&
+-					   !(isspace((unsigned char) *q) ||
+-						 *q == '\'' || *q == '"' || *q == '#'))
+-					q++;
+-				/* and save the argument value */
+-				StrNCpy(portstr, p, Min((q - p) + 1, sizeof(portstr)));
++					/* advance past any whitespace/quoting */
 +					while (isspace((unsigned char) *p) || *p == '\'' || *p == '"')
 +						p++;
-+					StrNCpy(sockstr, p, Min(strcspn(p, "#\"'" WHITESPACE) + 1,
-+										sizeof(sockstr)));
++					/* find end of value (not including any ending quote/comment!) */
++					q = p;
++					while (*q && !(isspace((unsigned char) *q) || *q == '\'' || *q == '"' || *q == '#'))
++						q++;
++					/* and save the argument value */
++					StrNCpy(sockstr, p, Min((q - p) + 1, sizeof(sockstr)));
 +				}
  				/* keep looking, maybe there is another */
  			}
  		}
-@@ -473,6 +490,12 @@
+@@ -497,6 +515,13 @@
  	/* We need to set a connect timeout otherwise on Windows the SCM will probably timeout first */
  	snprintf(connstr, sizeof(connstr), "dbname=postgres port=%s connect_timeout=5", portstr);
  
@@ -83,6 +99,7 @@
 +		strncat(connstr, " host=", sizeof(connstr) - strlen(connstr));
 +		strncat(connstr, sockstr,  sizeof(connstr) - strlen(connstr));
 +	}
++
 +
  	for (i = 0; i < wait_seconds; i++)
  	{
