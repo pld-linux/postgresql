@@ -6,6 +6,9 @@
 # you should change TCP/IP port, at least.
 #
 
+# locale used at service postgresql init
+# PG_INIT_LOCALE=C
+
 # standard setting
 PG_DB_CLUSTERS="/var/lib/pgsql"
 

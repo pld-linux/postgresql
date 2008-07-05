@@ -18,6 +18,8 @@ cd /
 # Get network config
 . /etc/sysconfig/network
 
+PG_INIT_LOCALE=C
+
 # Get service config
 if [ -f /etc/sysconfig/postgresql ]; then
 	. /etc/sysconfig/postgresql
@@ -245,7 +247,7 @@ case "$action" in
 			mkdir -p $pgdir
 			chmod 700 $pgdir
 			chown postgres:postgres $pgdir
-			TMPDIR=/tmp su postgres -s /bin/sh -c "initdb -E UNICODE -D $pgdir"
+			LC_ALL=$PG_INIT_LOCALE TMPDIR=/tmp su postgres -s /bin/sh -c "initdb -E UNICODE -D $pgdir"
 		fi
 	done
 	echo $(nls "REMEMBER to setup password for user \"postgres\"")'!'
