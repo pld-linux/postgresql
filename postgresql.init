@@ -92,8 +92,9 @@ pgstatus() {
 # $1 - db cluster
 #
 pgstart() {
+	is_no $RC_LOGGING && fork=--fork
 	msg_starting "PostgreSQL $1"
-	daemon --user postgres /usr/bin/pg_ctl -s -w -D $1 start
+	daemon $fork --user postgres /usr/bin/pg_ctl -s -w -D $1 start
 }
 
 #
