@@ -20,7 +20,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.3.4
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -47,6 +47,7 @@ BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.6.23
 BuildRequires:	libxslt-devel
 BuildRequires:	ncurses-devel >= 5.0
+BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
@@ -782,8 +783,10 @@ find src -name \*.l -o -name \*.y | xargs touch
 	--enable-nls \
 	--enable-thread-safety \
 	%{?with_kerberos5:--with-krb5} \
+	--with-ldap \
 	--with-openssl \
 	--with-pam \
+	--with-libxml \
 	%{?with_perl:--with-perl} \
 	%{?with_python:--with-python} \
 	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
