@@ -20,7 +20,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.3.4
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -787,6 +787,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 	--with-openssl \
 	--with-pam \
 	--with-libxml \
+	--with-libxslt \
 	%{?with_perl:--with-perl} \
 	%{?with_python:--with-python} \
 	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
