@@ -5,6 +5,7 @@
 %bcond_without	kerberos5		# disable kerberos5 support
 %bcond_without	perl			# disable Perl support
 %bcond_without	python			# disable Python support
+%bcond_without	ldap			# disable LDAP support
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 #
@@ -47,7 +48,7 @@ BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.6.23
 BuildRequires:	libxslt-devel
 BuildRequires:	ncurses-devel >= 5.0
-BuildRequires:	openldap-devel
+%{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
@@ -783,7 +784,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 	--enable-nls \
 	--enable-thread-safety \
 	%{?with_kerberos5:--with-krb5} \
-	--with-ldap \
+	%{?with_ldap:---with-ldap} \
 	--with-openssl \
 	--with-pam \
 	--with-libxml \
