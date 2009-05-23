@@ -10,7 +10,7 @@
 					# (disabled by default because it is a security risk)
 #
 
-%define beta beta1
+%define beta beta2
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -27,8 +27,8 @@ Version:	8.4
 Release:	0.%{beta}.1
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v8.4beta/%{name}-%{version}%{beta}.tar.bz2
-# Source0-md5:	d007478ee15faceeb85a6afe50e701a3
+Source0:	ftp://ftp.postgresql.org/pub/source/v8.4%{beta}/%{name}-%{version}%{beta}.tar.bz2
+# Source0-md5:	03cc37cdbd85d7e352f1a0308a0255da
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -849,7 +849,7 @@ tar zxf %{SOURCE2} -C howto
 %endif
 
 # find locales
-for f in libpq5 pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl pg_config; do
+for f in libpq5 pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 plperl plpgsql plpython; do
 	%find_lang $f-%{version}
 done
 # merge locales
