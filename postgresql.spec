@@ -21,7 +21,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.3.7
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -82,7 +82,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_ulibdir	/usr/lib
 
-%define	contrib_modules	adminpack btree_gist chkpass dblink hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pgstattuple pg_trgm sslinfo tablefunc vacuumlo xml2
+%define	contrib_modules	adminpack btree_gist chkpass dblink fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pgstattuple pg_trgm sslinfo tablefunc vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -1126,6 +1126,7 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/adminpack.so
 %attr(755,root,root) %{_pgmoduledir}/btree_gist.so
 %attr(755,root,root) %{_pgmoduledir}/chkpass.so
+%attr(755,root,root) %{_pgmoduledir}/fuzzystrmatch.so
 %attr(755,root,root) %{_pgmoduledir}/hstore.so
 %attr(755,root,root) %{_pgmoduledir}/int_aggregate.so
 %attr(755,root,root) %{_pgmoduledir}/isn.so
@@ -1140,6 +1141,7 @@ fi
 %{_pgsqldir}/adminpack.sql
 %{_pgsqldir}/btree_gist.sql
 %{_pgsqldir}/chkpass.sql
+%{_pgsqldir}/fuzzystrmatch.sql
 %{_pgsqldir}/hstore.sql
 %{_pgsqldir}/int_aggregate.sql
 %{_pgsqldir}/isn.sql
@@ -1154,6 +1156,7 @@ fi
 %{_pgsqldir}/uninstall_adminpack.sql
 %{_pgsqldir}/uninstall_btree_gist.sql
 %{_pgsqldir}/uninstall_chkpass.sql
+%{_pgsqldir}/uninstall_fuzzystrmatch.sql
 %{_pgsqldir}/uninstall_hstore.sql
 %{_pgsqldir}/uninstall_int_aggregate.sql
 %{_pgsqldir}/uninstall_isn.sql
