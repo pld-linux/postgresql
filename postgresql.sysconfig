@@ -2,12 +2,15 @@
 
 #
 # Edit postgresql.conf file in database cluster directory to configure
-# PostgreSQL. When you want to start more then one PostgreSQL instance,
-# than you should change TCP/IP port, at least.
+# PostgreSQL. If you want to start more than one PostgreSQL instance,
+# you should change TCP/IP port, at least.
 #
 
+# locale used at service postgresql init
+# PG_INIT_LOCALE=C
+
 # standard setting
-# PG_DB_CLUSTERS="/var/lib/pgsql"
+PG_DB_CLUSTERS="/var/lib/pgsql"
 
 # predictable usage
 # PG_DB_CLUSTERS="/var/lib/pgsql/01 /var/lib/pgsql/02"
