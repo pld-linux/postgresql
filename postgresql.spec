@@ -864,7 +864,10 @@ cat pg_dump-%{mver}.lang psql-%{mver}.lang initdb-%{mver}.lang \
 # Remove Contrib documentation. We use macro %doc
 rm -rf $RPM_BUILD_ROOT/contrib
 
-%{?with_tcl:mv $RPM_BUILD_ROOT{%{_datadir}/postgresql,%{_pgsqldir}}/unknown.pltcl}
+%if %{with tcl}
+%find_lang pltcl-%{mver}
+mv $RPM_BUILD_ROOT{%{_datadir}/postgresql,%{_pgsqldir}}/unknown.pltcl
+%endif
 
 install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
 
@@ -984,7 +987,7 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libpq.so.5
 %dir %{_pgmoduledir}
 
-%files ecpg -f ecpg.lang
+%files ecpg -f ecpg-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/ecpg
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
