@@ -10,7 +10,8 @@
 					# (disabled by default because it is a security risk)
 #
 
-%define beta beta2
+%define beta %{nil}
+%define mver 8.4
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -23,12 +24,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	8.4
+Version:	%{mver}.0
 Release:	0.%{beta}.1
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v8.4%{beta}/%{name}-%{version}%{beta}.tar.bz2
-# Source0-md5:	03cc37cdbd85d7e352f1a0308a0255da
+Source0:	ftp://ftp.postgresql.org/pub/source/v8.4.0%{beta}/%{name}-%{version}%{beta}.tar.bz2
+# Source0-md5:	1f172d5f60326e972837f58fa5acd130
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -850,14 +851,14 @@ tar zxf %{SOURCE2} -C howto
 
 # find locales
 for f in libpq5 pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 plperl plpgsql plpython; do
-	%find_lang $f-%{version}
+	%find_lang $f-%{mver}
 done
 # merge locales
-cat pgscripts-%{version}.lang pg_resetxlog-%{version}.lang \
-    postgres-%{version}.lang pg_controldata-%{version}.lang \
-    > main-%{version}.lang
-cat pg_dump-%{version}.lang psql-%{version}.lang initdb-%{version}.lang \
-    pg_ctl-%{version}.lang > clients-%{version}.lang
+cat pgscripts-%{mver}.lang pg_resetxlog-%{mver}.lang \
+    postgres-%{mver}.lang pg_controldata-%{mver}.lang \
+    > main-%{mver}.lang
+cat pg_dump-%{mver}.lang psql-%{mver}.lang initdb-%{mver}.lang \
+    pg_ctl-%{mver}.lang > clients-%{mver}.lang
 
 # Remove Contrib documentation. We use macro %doc
 rm -rf $RPM_BUILD_ROOT/contrib
@@ -929,7 +930,7 @@ fi
 %post	ecpg -p /sbin/ldconfig
 %postun	ecpg -p /sbin/ldconfig
 
-%files -f main-%{version}.lang
+%files -f main-%{mver}.lang
 %defattr(644,root,root,755)
 %doc COPYRIGHT README HISTORY doc/{FAQ*,README*,bug.template}
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
@@ -978,7 +979,7 @@ fi
 %doc doc/unpacked/* doc/src/FAQ howto
 %{_examplesdir}/%{name}-%{version}
 
-%files libs -f libpq5-%{version}.lang
+%files libs -f libpq5-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libpq.so.5
@@ -1002,7 +1003,7 @@ fi
 %attr(755,root,root) %{_libdir}/libpgtypes.so
 %{_includedir}/ecpg*
 
-%files devel -f pg_config-%{version}.lang
+%files devel -f pg_config-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pg_config
 %attr(755,root,root) %{_libdir}/libpq.so
@@ -1038,7 +1039,7 @@ fi
 %{_libdir}/libpgtypes.a
 %{_libdir}/libpgport.a
 
-%files clients -f clients-%{version}.lang
+%files clients -f clients-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/clusterdb
 %attr(755,root,root) %{_bindir}/createdb
