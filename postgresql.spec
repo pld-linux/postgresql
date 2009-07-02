@@ -848,14 +848,14 @@ tar zxf %{SOURCE2} -C howto
 
 # find locales
 for f in libpq5 pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 plperl plpgsql plpython; do
-	%find_lang $f-%{mver}
+	%find_lang $f
 done
 # merge locales
-cat pgscripts-%{mver}.lang pg_resetxlog-%{mver}.lang \
-    postgres-%{mver}.lang pg_controldata-%{mver}.lang \
-    > main-%{mver}.lang
-cat pg_dump-%{mver}.lang psql-%{mver}.lang initdb-%{mver}.lang \
-    pg_ctl-%{mver}.lang > clients-%{mver}.lang
+cat pgscripts.lang pg_resetxlog.lang \
+    postgres.lang pg_controldata.lang \
+    > main.lang
+cat pg_dump.lang psql.lang initdb.lang \
+    pg_ctl.lang > clients.lang
 
 # Remove Contrib documentation. We use macro %doc
 rm -rf $RPM_BUILD_ROOT/contrib
@@ -927,7 +927,7 @@ fi
 %post	ecpg -p /sbin/ldconfig
 %postun	ecpg -p /sbin/ldconfig
 
-%files -f main-%{mver}.lang
+%files -f main.lang
 %defattr(644,root,root,755)
 %doc COPYRIGHT README HISTORY doc/{FAQ*,README*,bug.template}
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
@@ -974,7 +974,7 @@ fi
 %doc doc/unpacked/* doc/src/FAQ howto
 %{_examplesdir}/%{name}-%{version}
 
-%files libs -f libpq5-%{mver}.lang
+%files libs -f libpq5.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libpq.so.5
@@ -998,7 +998,7 @@ fi
 %attr(755,root,root) %{_libdir}/libpgtypes.so
 %{_includedir}/ecpg*
 
-%files devel -f pg_config-%{mver}.lang
+%files devel -f pg_config.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pg_config
 %attr(755,root,root) %{_libdir}/libpq.so
@@ -1034,7 +1034,7 @@ fi
 %{_libdir}/libpgtypes.a
 %{_libdir}/libpgport.a
 
-%files clients -f clients-%{mver}.lang
+%files clients -f clients.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/clusterdb
 %attr(755,root,root) %{_bindir}/createdb
