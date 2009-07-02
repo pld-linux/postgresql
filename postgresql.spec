@@ -10,6 +10,9 @@
 					# (disabled by default because it is a security risk)
 #
 
+%define beta %{nil}
+%define mver 8.4
+
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
 Summary(es.UTF-8):	Gestor de Banco de Datos PostgreSQL
@@ -21,11 +24,11 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	8.4.0
-Release:	0.1
+Version:	%{mver}.0
+Release:	0.%{beta}.1
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}%{beta}/%{name}-%{version}%{beta}.tar.bz2
 # Source0-md5:	1f172d5f60326e972837f58fa5acd130
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
@@ -848,16 +851,15 @@ tar zxf %{SOURCE2} -C howto
 %endif
 
 # find locales
-for f in libpq5 pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 plperl plpgsql plpython pltcl; do
-	%find_lang $f-8.4
+for f in libpq5 pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 plperl plpgsql plpython; do
+	%find_lang $f-%{mver}
 done
 # merge locales
-cat pgscripts-8.4.lang pg_resetxlog-8.4.lang \
-    postgres-8.4.lang pg_controldata-8.4.lang \
-    > main-8.4.lang
-cat pg_dump-8.4.lang psql-8.4.lang initdb-8.4.lang \
-    pg_ctl-8.4.lang > clients-8.4.lang
-cat ecpg-8.4.lang ecpglib6-8.4.lang > ecpg.lang
+cat pgscripts-%{mver}.lang pg_resetxlog-%{mver}.lang \
+    postgres-%{mver}.lang pg_controldata-%{mver}.lang \
+    > main-%{mver}.lang
+cat pg_dump-%{mver}.lang psql-%{mver}.lang initdb-%{mver}.lang \
+    pg_ctl-%{mver}.lang > clients-%{mver}.lang
 
 # Remove Contrib documentation. We use macro %doc
 rm -rf $RPM_BUILD_ROOT/contrib
@@ -929,7 +931,7 @@ fi
 %post	ecpg -p /sbin/ldconfig
 %postun	ecpg -p /sbin/ldconfig
 
-%files -f main-8.4.lang
+%files -f main-%{mver}.lang
 %defattr(644,root,root,755)
 %doc COPYRIGHT README HISTORY doc/{FAQ*,README*,bug.template}
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
@@ -978,7 +980,7 @@ fi
 %doc doc/unpacked/* doc/src/FAQ howto
 %{_examplesdir}/%{name}-%{version}
 
-%files libs -f libpq5-8.4.lang
+%files libs -f libpq5-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libpq.so.5
@@ -1002,7 +1004,7 @@ fi
 %attr(755,root,root) %{_libdir}/libpgtypes.so
 %{_includedir}/ecpg*
 
-%files devel -f pg_config-8.4.lang
+%files devel -f pg_config-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pg_config
 %attr(755,root,root) %{_libdir}/libpq.so
@@ -1038,7 +1040,7 @@ fi
 %{_libdir}/libpgtypes.a
 %{_libdir}/libpgport.a
 
-%files clients -f clients-8.4.lang
+%files clients -f clients-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/clusterdb
 %attr(755,root,root) %{_bindir}/createdb
