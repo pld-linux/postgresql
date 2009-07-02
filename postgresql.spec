@@ -44,7 +44,7 @@ BuildRequires:	automake
 BuildRequires:	bison >= 1.875
 BuildRequires:	flex
 BuildRequires:	gettext-devel
-%{?with_kerberos5:BuildRequires:	krb5-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.6.23
 BuildRequires:	libxslt-devel
@@ -784,6 +784,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 	--with-system-tzdata=%{_datadir}/zoneinfo \
 	--enable-nls \
 	--enable-thread-safety \
+	%{?with_kerberos5:--with-gssapi} \
 	%{?with_kerberos5:--with-krb5} \
 	%{?with_ldap:--with-ldap} \
 	--with-openssl \
