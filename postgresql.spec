@@ -9,10 +9,6 @@
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 #
-
-%define beta %{nil}
-%define mver 8.4
-
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
 Summary(es.UTF-8):	Gestor de Banco de Datos PostgreSQL
@@ -24,11 +20,11 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.0
-Release:	0.%{beta}.1
+Version:	8.4.0
+Release:	0.1
 License:	BSD
 Group:		Applications/Databases
-Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}%{beta}/%{name}-%{version}%{beta}.tar.bz2
+Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
 # Source0-md5:	1f172d5f60326e972837f58fa5acd130
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
