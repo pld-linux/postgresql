@@ -25,7 +25,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.0
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -54,6 +54,7 @@ BuildRequires:	libxslt-devel
 BuildRequires:	ncurses-devel >= 5.0
 %{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7d
+BuildRequires:	ossp-uuid-devel
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
 %if %{with python}
@@ -86,7 +87,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_ulibdir	/usr/lib
 
-%define	contrib_modules	adminpack btree_gist chkpass dblink fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pgstattuple pg_trgm sslinfo tablefunc vacuumlo xml2
+%define	contrib_modules	auto_explain adminpack btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pg_standby pg_stat_statements pgstattuple pg_trgm seg sslinfo tablefunc uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -780,7 +781,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 %{__aclocal} -I config
 %{__autoconf}
 %configure \
-	CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS" \
+	CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS `uuid-config --cflags`" \
 	--disable-rpath \
 	--enable-depend \
 	--enable-integer-datetimes \
@@ -797,13 +798,15 @@ find src -name \*.l -o -name \*.y | xargs touch
 	%{?with_perl:--with-perl} \
 	%{?with_python:--with-python} \
 	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
+	--with-ossp-uuid \
 	--without-docdir
 
 %{__make}
 
 for mod in %{contrib_modules}; do \
 	flags="%{rpmcflags} -DNEED_REENTRANT_FUNCS"
-	if [ $mod = xml2 ]; then flags="$flags -I/usr/include/libxml2"; fi
+	if [ $mod = "xml2"      ]; then flags="$flags -I/usr/include/libxml2"; fi
+	if [ $mod = "uuid-ossp" ]; then flags="$flags `uuid-config --cflags`"; fi
 	%{__make} -C contrib/$mod CFLAGS="$flags"
 done
 
@@ -870,6 +873,9 @@ mv $RPM_BUILD_ROOT{%{_datadir}/postgresql,%{_pgsqldir}}/unknown.pltcl
 %endif
 
 install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
+
+# package it...?  nah, why bother.
+rm -rf $RPM_BUILD_ROOT%{_datadir}/doc/postgresql/html
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1130,27 +1136,41 @@ fi
 %defattr(644,root,root,755)
 %doc contrib/README
 %attr(755,root,root) %{_bindir}/oid2name
+%attr(755,root,root) %{_bindir}/pg_standby
 %attr(755,root,root) %{_bindir}/pgbench
 %attr(755,root,root) %{_bindir}/vacuumlo
 %attr(755,root,root) %{_pgmoduledir}/_int.so
 %attr(755,root,root) %{_pgmoduledir}/adminpack.so
+%attr(755,root,root) %{_pgmoduledir}/auto_explain.so
+%attr(755,root,root) %{_pgmoduledir}/btree_gin.so
 %attr(755,root,root) %{_pgmoduledir}/btree_gist.so
 %attr(755,root,root) %{_pgmoduledir}/chkpass.so
+%attr(755,root,root) %{_pgmoduledir}/citext.so
+%attr(755,root,root) %{_pgmoduledir}/cube.so
+%attr(755,root,root) %{_pgmoduledir}/earthdistance.so
 %attr(755,root,root) %{_pgmoduledir}/fuzzystrmatch.so
 %attr(755,root,root) %{_pgmoduledir}/hstore.so
-#%attr(755,root,root) %{_pgmoduledir}/int_aggregate.so
 %attr(755,root,root) %{_pgmoduledir}/isn.so
 %attr(755,root,root) %{_pgmoduledir}/ltree.so
 %attr(755,root,root) %{_pgmoduledir}/pageinspect.so
 %attr(755,root,root) %{_pgmoduledir}/pg_buffercache.so
 %attr(755,root,root) %{_pgmoduledir}/pg_freespacemap.so
+%attr(755,root,root) %{_pgmoduledir}/pg_stat_statements.so
 %attr(755,root,root) %{_pgmoduledir}/pgrowlocks.so
 %attr(755,root,root) %{_pgmoduledir}/pgstattuple.so
+%attr(755,root,root) %{_pgmoduledir}/seg.so
 %attr(755,root,root) %{_pgmoduledir}/sslinfo.so
+%attr(755,root,root) %{_pgmoduledir}/uuid-ossp.so
 %{_pgsqldir}/_int.sql
 %{_pgsqldir}/adminpack.sql
+%{_pgsqldir}/btree_gin.sql
 %{_pgsqldir}/btree_gist.sql
 %{_pgsqldir}/chkpass.sql
+%{_pgsqldir}/citext.sql
+%{_pgsqldir}/cube.sql
+%{_pgsqldir}/dict_int.sql
+%{_pgsqldir}/dict_xsyn.sql
+%{_pgsqldir}/earthdistance.sql
 %{_pgsqldir}/fuzzystrmatch.sql
 %{_pgsqldir}/hstore.sql
 %{_pgsqldir}/int_aggregate.sql
@@ -1159,13 +1179,22 @@ fi
 %{_pgsqldir}/pageinspect.sql
 %{_pgsqldir}/pg_buffercache.sql
 %{_pgsqldir}/pg_freespacemap.sql
+%{_pgsqldir}/pg_stat_statements.sql
 %{_pgsqldir}/pgrowlocks.sql
 %{_pgsqldir}/pgstattuple.sql
+%{_pgsqldir}/seg.sql
 %{_pgsqldir}/sslinfo.sql
+%{_pgsqldir}/uuid-ossp.sql
 %{_pgsqldir}/uninstall__int.sql
 %{_pgsqldir}/uninstall_adminpack.sql
+%{_pgsqldir}/uninstall_btree_gin.sql
 %{_pgsqldir}/uninstall_btree_gist.sql
 %{_pgsqldir}/uninstall_chkpass.sql
+%{_pgsqldir}/uninstall_citext.sql
+%{_pgsqldir}/uninstall_cube.sql
+%{_pgsqldir}/uninstall_dict_int.sql
+%{_pgsqldir}/uninstall_dict_xsyn.sql
+%{_pgsqldir}/uninstall_earthdistance.sql
 %{_pgsqldir}/uninstall_fuzzystrmatch.sql
 %{_pgsqldir}/uninstall_hstore.sql
 %{_pgsqldir}/uninstall_int_aggregate.sql
@@ -1174,6 +1203,9 @@ fi
 %{_pgsqldir}/uninstall_pageinspect.sql
 %{_pgsqldir}/uninstall_pg_buffercache.sql
 %{_pgsqldir}/uninstall_pg_freespacemap.sql
+%{_pgsqldir}/uninstall_pg_stat_statements.sql
 %{_pgsqldir}/uninstall_pgrowlocks.sql
 %{_pgsqldir}/uninstall_pgstattuple.sql
+%{_pgsqldir}/uninstall_seg.sql
 %{_pgsqldir}/uninstall_sslinfo.sql
+%{_pgsqldir}/uninstall_uuid-ossp.sql
