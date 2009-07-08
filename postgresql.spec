@@ -865,6 +865,7 @@ cat pgscripts-%{mver}.lang pg_resetxlog-%{mver}.lang \
     > main-%{mver}.lang
 cat pg_dump-%{mver}.lang psql-%{mver}.lang initdb-%{mver}.lang \
     pg_ctl-%{mver}.lang > clients-%{mver}.lang
+cat ecpg-8.4.lang ecpglib6-8.4.lang > ecpg.lang
 
 # Remove Contrib documentation. We use macro %doc
 rm -rf $RPM_BUILD_ROOT/contrib
@@ -995,7 +996,7 @@ fi
 %attr(755,root,root) %ghost %{_libdir}/libpq.so.5
 %dir %{_pgmoduledir}
 
-%files ecpg -f ecpg-%{mver}.lang
+%files ecpg -f ecpg.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/ecpg
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
