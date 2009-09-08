@@ -24,12 +24,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.0
-Release:	3
+Version:	%{mver}.1
+Release:	0.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	1f172d5f60326e972837f58fa5acd130
+# Source0-md5:	f2015af17bacbbfe140daf0d1067f9c9
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -40,7 +40,6 @@ Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		%{name}-ac_version.patch
 Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-pg_ctl-fix.patch
-Patch6:		%{name}-pg_perm_setlocale.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -766,7 +765,6 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -945,7 +943,7 @@ fi
 
 %files -f main-%{mver}.lang
 %defattr(644,root,root,755)
-%doc COPYRIGHT README HISTORY doc/{FAQ*,README*,bug.template}
+%doc COPYRIGHT README HISTORY doc/{README*,bug.template}
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/postgresql
 
@@ -987,7 +985,7 @@ fi
 
 %files doc
 %defattr(644,root,root,755)
-%doc doc/unpacked/* doc/src/FAQ howto
+%doc doc/unpacked/* howto
 %{_examplesdir}/%{name}-%{version}
 
 %files libs -f libpq5-%{mver}.lang
