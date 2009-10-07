@@ -20,12 +20,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	8.3.7
-Release:	3
+Version:	8.3.8
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	7b7e91a2221e55fe1b167e663217a96d
+# Source0-md5:	aac683d03f765dc58a3a0e5eaa1927bf
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -43,7 +43,7 @@ BuildRequires:	automake
 BuildRequires:	bison >= 1.875
 BuildRequires:	flex
 BuildRequires:	gettext-devel
-%{?with_kerberos5:BuildRequires:	krb5-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.6.23
 BuildRequires:	libxslt-devel
@@ -783,6 +783,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 	--with-system-tzdata=%{_datadir}/zoneinfo \
 	--enable-nls \
 	--enable-thread-safety \
+	%{?with_kerberos5:--with-gssapi} \
 	%{?with_kerberos5:--with-krb5} \
 	%{?with_ldap:--with-ldap} \
 	--with-openssl \
