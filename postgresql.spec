@@ -35,6 +35,7 @@ Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
 Source4:	edb-debugger-20100404.tar.gz
+# Source4-md5:	a10daee9a2017db40c7550c40cb47e8d
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
