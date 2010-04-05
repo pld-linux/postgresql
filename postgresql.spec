@@ -25,7 +25,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.3
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -34,6 +34,7 @@ Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
+Source4:	edb-debugger-20100404.tar.gz
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
@@ -87,7 +88,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_ulibdir	/usr/lib
 
-%define	contrib_modules	auto_explain adminpack btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pg_standby pg_stat_statements pgstattuple pg_trgm seg sslinfo tablefunc uuid-ossp vacuumlo xml2
+%define	contrib_modules	auto_explain adminpack btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pg_standby pg_stat_statements pgstattuple pg_trgm pldebugger seg sslinfo tablefunc uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -765,6 +766,8 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch4 -p1
 %patch5 -p1
 
+tar xzf %{SOURCE4} -C contrib
+
 tar xzf doc/man*.tar.gz
 
 mkdir doc/unpacked
@@ -992,6 +995,7 @@ fi
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libpq.so.5
 %dir %{_pgmoduledir}
+%dir %{_pgmoduledir}/plugins
 
 %files ecpg -f ecpg.lang
 %defattr(644,root,root,755)
@@ -1134,7 +1138,7 @@ fi
 
 %files contrib
 %defattr(644,root,root,755)
-%doc contrib/README
+%doc contrib/README contrib/pldebugger/README.pl*
 %attr(755,root,root) %{_bindir}/oid2name
 %attr(755,root,root) %{_bindir}/pg_standby
 %attr(755,root,root) %{_bindir}/pgbench
@@ -1158,8 +1162,12 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/pg_stat_statements.so
 %attr(755,root,root) %{_pgmoduledir}/pgrowlocks.so
 %attr(755,root,root) %{_pgmoduledir}/pgstattuple.so
+%attr(755,root,root) %{_pgmoduledir}/pldbgapi.so
+%attr(755,root,root) %{_pgmoduledir}/plugins/plugin_debugger.so
+%attr(755,root,root) %{_pgmoduledir}/plugins/plugin_profiler.so
 %attr(755,root,root) %{_pgmoduledir}/seg.so
 %attr(755,root,root) %{_pgmoduledir}/sslinfo.so
+%attr(755,root,root) %{_pgmoduledir}/targetinfo.so
 %attr(755,root,root) %{_pgmoduledir}/uuid-ossp.so
 %{_pgsqldir}/_int.sql
 %{_pgsqldir}/adminpack.sql
@@ -1182,6 +1190,7 @@ fi
 %{_pgsqldir}/pg_stat_statements.sql
 %{_pgsqldir}/pgrowlocks.sql
 %{_pgsqldir}/pgstattuple.sql
+%{_pgsqldir}/pldbgapi.sql
 %{_pgsqldir}/seg.sql
 %{_pgsqldir}/sslinfo.sql
 %{_pgsqldir}/uuid-ossp.sql
