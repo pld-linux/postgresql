@@ -79,7 +79,7 @@ Requires(triggerpostun):	/bin/id
 Requires(triggerpostun):	/usr/sbin/usermod
 Requires:	%{name}-clients = %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	rc-scripts
+Requires:	rc-scripts > 0.4.2.8
 Requires:	tzdata
 Obsoletes:	postgresql-module-tsearch2
 Obsoletes:	postgresql-server
@@ -337,8 +337,7 @@ Summary:	Upstart job description for PostgreSQL server
 Summary(pl.UTF-8):	Opis zadania Upstart dla serwera PostgreSQL
 Group:		Daemons
 Requires:	%{name} = %{version}-%{release}
-Requires:	upstart
-Requires:	rc-scripts > 0.4.2.8
+Requires:	upstart >= 0.6
 
 %description upstart
 Upstart job description for PostgreSQL.
