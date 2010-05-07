@@ -1,0 +1,20 @@
+
+stop on pld.shutdown-started
+stop on stopping postgresql
+
+instance $DATADIR
+
+env DATADIR=/var/lib/pgsql
+
+script
+	exec >>/var/log/pgsql 2>&1
+
+	# please note: 'pg_ctl start' does not work with 'expect daemon' 
+	# nor 'expect fork', so we need to start postgres directly
+	exec /sbin/setuidgid -s postgres \
+		/usr/bin/postgres -D $DATADIR
+end script
+
+# TODO: wait for the server in post-start
+
+# vi: ft=upstart
