@@ -167,6 +167,9 @@ stop() {
 	pgsubsys
 }
 
+
+upstart_controlled --except status init
+
 RETVAL=0
 # See how we were called.
 # Every action is performed for all given (all configured by default)

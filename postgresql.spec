@@ -25,7 +25,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.3
-Release:	4
+Release:	4.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -36,6 +36,8 @@ Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
 Source4:	edb-debugger-20100404.tgz
 # Source4-md5:	a10daee9a2017db40c7550c40cb47e8d
+Source5:	%{name}.upstart
+Source6:	%{name}-instance.upstart
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
@@ -77,7 +79,7 @@ Requires(triggerpostun):	/bin/id
 Requires(triggerpostun):	/usr/sbin/usermod
 Requires:	%{name}-clients = %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	rc-scripts
+Requires:	rc-scripts >= 0.4.3.0
 Requires:	tzdata
 Obsoletes:	postgresql-module-tsearch2
 Obsoletes:	postgresql-server
@@ -90,6 +92,25 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_ulibdir	/usr/lib
 
 %define	contrib_modules	auto_explain adminpack btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pg_standby pg_stat_statements pgstattuple pg_trgm pldebugger seg sslinfo tablefunc uuid-ossp vacuumlo xml2
+
+## to be moved to rpm-build-macros
+## TODO: handle RPM_SKIP_AUTO_RESTART
+
+# migrate from init script to upstart job
+%define	upstart_post() \
+	if [ -f /var/lock/subsys/"%1" ] ; then \
+		/sbin/service --no-upstart "%1" stop \
+		/sbin/service "%1" start \
+	else \
+		/sbin/service "%1" try-restart \
+	fi
+
+# restart the job after upgrade or migrate to init script on removal
+%define	upstart_postun() \
+	if [ -x /sbin/initctl ] && /sbin/initctl status "%1" 2>/dev/null | grep -q 'running' ; then \
+		/sbin/initctl stop "%1" 2>/dev/null \
+		[ -f "/etc/rc.d/init.d/%1" -o -f "/etc/init/%1.conf" ] && /sbin/service "%1" start \
+	fi
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -312,6 +333,19 @@ California, Berkeley.
 
 PostgreSQL працює на Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
 та більшості інших різновидів Unix.
+
+%package upstart
+Summary:	Upstart job description for PostgreSQL server
+Summary(pl.UTF-8):	Opis zadania Upstart dla serwera PostgreSQL
+Group:		Daemons
+Requires:	%{name} = %{version}-%{release}
+Requires:	upstart >= 0.6
+
+%description upstart
+Upstart job description for PostgreSQL.
+
+%description upstart -l pl.UTF-8
+Opis zadania Upstart dla PostgreSQL.
 
 %package devel
 Summary:	PostgreSQL development header files and libraries
@@ -822,7 +856,7 @@ done
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig,init/%{name}}} \
 	$RPM_BUILD_ROOT{/var/{lib/pgsql,log},%{_pgsqldir}} \
 	$RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version} \
 	$RPM_BUILD_ROOT%{_mandir} \
@@ -847,6 +881,9 @@ touch $RPM_BUILD_ROOT/var/log/pgsql
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
+
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/init/%{name}.conf
+install %{SOURCE6} $RPM_BUILD_ROOT/etc/init/%{name}/instance.conf
 
 install -d howto
 tar zxf %{SOURCE2} -C howto
@@ -938,6 +975,12 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del postgresql
 fi
 
+%post upstart
+%upstart_post postgresql
+
+%postun upstart
+%upstart_postun postgresql
+
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
 
@@ -985,6 +1028,12 @@ fi
 %{_mandir}/man1/pg_resetxlog.1*
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
+
+%files upstart
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) /etc/init/postgresql.conf
+%dir /etc/init/postgresql
+%config(noreplace) %verify(not md5 mtime size) /etc/init/postgresql/instance.conf
 
 %files doc
 %defattr(644,root,root,755)
