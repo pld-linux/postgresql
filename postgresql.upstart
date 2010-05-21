@@ -2,7 +2,7 @@ description "Starts PostgreSQL instances for all configured clusters"
 
 start on started SERVICE=syslog
 
-env PG_DB_CLUSTERS=
+env PG_DB_CLUSTERS
 
 pre-start script
 	exec >/tmp/pre-start 2>&1
