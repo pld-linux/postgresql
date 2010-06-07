@@ -25,7 +25,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.4
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -1029,11 +1029,13 @@ fi
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
 
+%if "%{pld_release}" != "ti"
 %files upstart
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) /etc/init/postgresql.conf
 %dir /etc/init/postgresql
 %config(noreplace) %verify(not md5 mtime size) /etc/init/postgresql/instance.conf
+%endif
 
 %files doc
 %defattr(644,root,root,755)
