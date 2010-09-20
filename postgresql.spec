@@ -1,3 +1,7 @@
+# TODO:
+# - package rest of files
+# - test init script (db initialization)
+# - test generally
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
@@ -860,6 +864,8 @@ install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+%{__make} -C doc/src/sgml install-man \
+	DESTDIR=$RPM_BUILD_ROOT
 
 %if %{with perl}
 %{__make} install -C src/pl/plperl \
@@ -926,7 +932,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ $(cat $pgdir/PG_VERSION) != '8.4' ]; then
+		if [ $(cat $pgdir/PG_VERSION) != '9.0' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
@@ -983,7 +989,7 @@ fi
 
 %files -f main-%{mver}.lang
 %defattr(644,root,root,755)
-%doc COPYRIGHT README HISTORY doc/{README*,bug.template}
+%doc COPYRIGHT README HISTORY doc/{README*,bug.template,KNOWN_BUGS,MISSING_FEATURES,TODO}
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/postgresql
 
@@ -1033,7 +1039,7 @@ fi
 
 %files doc
 %defattr(644,root,root,755)
-%doc doc/unpacked/* howto
+%doc doc/src/sgml/html howto
 %{_examplesdir}/%{name}-%{version}
 
 %files libs -f libpq5-%{mver}.lang
@@ -1128,24 +1134,24 @@ fi
 %{_mandir}/man1/vacuumdb.1*
 %{_mandir}/man7/*.7*
 
-%files module-plpgsql -f plpgsql-8.4.lang
+%files module-plpgsql -f plpgsql-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/plpgsql.so
 
 %if %{with perl}
-%files module-plperl -f plperl-8.4.lang
+%files module-plperl -f plperl-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/plperl.so
 %endif
 
 %if %{with python}
-%files module-plpython -f plpython-8.4.lang
+%files module-plpython -f plpython-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/plpython.so
 %endif
 
 %if %{with tcl}
-%files module-pltcl -f pltcl-8.4.lang
+%files module-pltcl -f pltcl-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
