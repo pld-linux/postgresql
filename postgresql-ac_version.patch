@@ -2,9 +2,9 @@
 +++ postgresql-8.3RC1/configure.in	2008-01-07 22:23:50.888568429 +0000
 @@ -19,10 +19,10 @@
  
- AC_INIT([PostgreSQL], [8.4.0], [pgsql-bugs@postgresql.org])
+ AC_INIT([PostgreSQL], [9.0.0], [pgsql-bugs@postgresql.org])
  
--m4_if(m4_defn([m4_PACKAGE_VERSION]), [2.61], [], [m4_fatal([Autoconf version 2.61 is required.
+-m4_if(m4_defn([m4_PACKAGE_VERSION]), [2.63], [], [m4_fatal([Autoconf version 2.63 is required.
 -Untested combinations of 'autoconf' and PostgreSQL versions are not
 -recommended.  You can remove the check from 'configure.in' but it is then
 -your responsibility whether the result works or not.])])
@@ -12,6 +12,7 @@
 +dnl Untested combinations of 'autoconf' and PostgreSQL versions are not
 +dnl recommended.  You can remove the check from 'configure.in' but it is then
 +dnl your responsibility whether the result works or not.])])
- AC_COPYRIGHT([Copyright (c) 1996-2009, PostgreSQL Global Development Group])
+ AC_COPYRIGHT([Copyright (c) 1996-2010, PostgreSQL Global Development Group])
  AC_CONFIG_SRCDIR([src/backend/access/common/heaptuple.c])
  AC_CONFIG_AUX_DIR(config)
+

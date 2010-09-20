@@ -1,12 +1,12 @@
 --- postgresql-8.3RC1/src/backend/utils/misc/postgresql.conf.sample.orig	2007-12-07 16:44:56.000000000 +0000
 +++ postgresql-8.3RC1/src/backend/utils/misc/postgresql.conf.sample	2008-01-07 22:19:56.904649611 +0000
-@@ -231,7 +231,7 @@
+@@ -253,7 +253,7 @@
  
  # - Where to Log -
  
 -#log_destination = 'stderr'		# Valid values are combinations of
 +log_destination = 'syslog'		# Valid values are combinations of
- 					# stderr, csvlog, syslog and eventlog,
+ 					# stderr, csvlog, syslog, and eventlog,
  					# depending on platform.  csvlog
  					# requires logging_collector to be on.
 @@ -262,8 +262,8 @@

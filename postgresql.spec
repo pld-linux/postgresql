@@ -11,7 +11,7 @@
 #
 
 %define beta %{nil}
-%define mver 8.4
+%define mver 9.0
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -24,12 +24,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.4
-Release:	4
+Version:	%{mver}.0
+Release:	0.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	4bf2448ad965bca3940df648c02194df
+# Source0-md5:	14c2122cc322e69ab2ab702ed7714bbe
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -803,11 +803,6 @@ Różne moduły dołączone do PostgreSQL-a.
 
 tar xzf %{SOURCE4} -C contrib
 
-tar xzf doc/man*.tar.gz
-
-mkdir doc/unpacked
-tar zxf doc/postgres.tar.gz -C doc/unpacked
-
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
 
@@ -836,7 +831,6 @@ find src -name \*.l -o -name \*.y | xargs touch
 	%{?with_python:--with-python} \
 	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
 	--with-ossp-uuid \
-	--without-docdir
 
 %{__make}
 
