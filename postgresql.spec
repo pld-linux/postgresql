@@ -51,6 +51,7 @@ Patch5:		%{name}-pg_ctl-fix.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	docbook-dtd42-sgml
 # not needed for releases... but fixes something in snapshot
 BuildRequires:	bison >= 1.875
 BuildRequires:	flex
