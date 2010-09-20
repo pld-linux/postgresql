@@ -1,5 +1,5 @@
 # TODO:
-# - package rest of files
+# - python 3 and python 2 subpackages?
 # - test init script (db initialization)
 # - test generally
 #
@@ -564,40 +564,6 @@ PostgreSQL.
 Це окремий пакет зі статичними бібліотеками, які більш не входять в
 %{name}-devel.
 
-%package module-plpgsql
-Summary:	PL/pgSQL - PostgreSQL procedural language
-Summary(pl.UTF-8):	PL/pgSQL - język proceduralny bazy danych PostgreSQL
-Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
-
-%description module-plpgsql
-From PostgreSQL documentation:
-
-Postgres supports the definition of procedural languages. In the case
-of a function or trigger procedure defined in a procedural language,
-the database has no built-in knowledge about how to interpret the
-function's source text. Instead, the task is passed to a handler that
-knows the details of the language. The handler itself is a special
-programming language function compiled into a shared object and loaded
-on demand.
-
-To enable PL/pgSQL procedural language for your database you have to
-run createlang command.
-
-%description module-plpgsql -l pl.UTF-8
-Z dokumentacji PostgreSQL:
-
-Postgres ma wsparcie dla języków proceduralnych. W przypadku, kiedy
-programista zdefiniuje procedurę wyzwalacza lub funkcję w języku
-proceduralnym, baza danych nie ma pojęcia jak interpretować tego typu
-funkcję. Funkcja lub procedura ta jest przekazywana do interpretera,
-który wie jak ją wykonać. Interpreter jest odpowiednią, specjalną
-funkcją, która jest skompilowana w obiekt dzielony i ładowany w razie
-potrzeby.
-
-Za pomocą polecenia createlang można dodać obsługę języka
-proceduralnego PL/pgSQL dla swojej bazy danych.
-
 %package module-plperl
 Summary:	PL/perl - PostgreSQL procedural language
 Summary(pl.UTF-8):	PL/perl - język proceduralny bazy danych PostgreSQL
@@ -901,6 +867,7 @@ done
 # merge locales
 cat pgscripts-%{mver}.lang pg_resetxlog-%{mver}.lang \
     postgres-%{mver}.lang pg_controldata-%{mver}.lang \
+    plpgsql-%{mver}.lang \
     > main-%{mver}.lang
 cat pg_dump-%{mver}.lang psql-%{mver}.lang initdb-%{mver}.lang \
     pg_ctl-%{mver}.lang > clients-%{mver}.lang
@@ -1003,10 +970,12 @@ fi
 
 %attr(755,root,root) %{_pgmoduledir}/ascii*
 %attr(755,root,root) %{_pgmoduledir}/cyrillic*
+%attr(755,root,root) %{_pgmoduledir}/dict_*
 %attr(755,root,root) %{_pgmoduledir}/euc*
 %attr(755,root,root) %{_pgmoduledir}/latin*
+%attr(755,root,root) %{_pgmoduledir}/libpqwalreceiver*
+%attr(755,root,root) %{_pgmoduledir}/plpgsql*
 %attr(755,root,root) %{_pgmoduledir}/utf*
-%attr(755,root,root) %{_pgmoduledir}/dict_*
 
 %dir %{_pgsqldir}
 %dir %{_datadir}/postgresql
@@ -1088,6 +1057,7 @@ fi
 %{_includedir}/postgresql/internal/libpq
 %{_includedir}/libpq
 %{_mandir}/man1/pg_config.1*
+%{_mandir}/man3/*.3*
 
 %files backend-devel
 %defattr(644,root,root,755)
@@ -1135,10 +1105,6 @@ fi
 %{_mandir}/man1/vacuumdb.1*
 %{_mandir}/man7/*.7*
 
-%files module-plpgsql -f plpgsql-%{mver}.lang
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_pgmoduledir}/plpgsql.so
-
 %if %{with perl}
 %files module-plperl -f plperl-%{mver}.lang
 %defattr(644,root,root,755)
@@ -1149,6 +1115,7 @@ fi
 %files module-plpython -f plpython-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/plpython.so
+%attr(755,root,root) %{_pgmoduledir}/plpython2.so
 %endif
 
 %if %{with tcl}
