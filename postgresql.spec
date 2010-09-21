@@ -1,7 +1,6 @@
 # TODO:
 # - python 3 and python 2 subpackages?
 # - test init script (db initialization)
-# - test generally
 #
 # Conditional build:
 %bcond_without	tests			# disable testing
