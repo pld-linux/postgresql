@@ -59,6 +59,7 @@ BuildRequires:	gettext-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.6.23
 BuildRequires:	libxslt-devel
+BuildRequires:	libxslt-progs
 BuildRequires:	ncurses-devel >= 5.0
 %{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7d
@@ -73,6 +74,7 @@ BuildRequires:	python-modules >= 1:2.3
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.268
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
+%{?with_tests:BuildRequires:	tzdata}
 BuildRequires:	zlib-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires(pre):	/bin/id
