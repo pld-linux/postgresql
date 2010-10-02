@@ -28,7 +28,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.0
-Release:	0.1
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -890,7 +890,7 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/doc/postgresql/html
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pretrans
+%pre
 PG_DB_CLUSTERS=""
 if [ -f /etc/sysconfig/postgresql ]; then
 	. /etc/sysconfig/postgresql
@@ -916,7 +916,7 @@ if [ "$foundold" = "1" ]; then
 	echo
 	echo "Warning for upgrade from version *before* 7.2."
 	echo "Please note, that postgresql module path changed from"
-	echo "/usr/lib/pgsql/module to /usr/lib/postgresql. Change the path"
+	echo "%{_libdir}/pgsql/module to %{_libdir}/postgresql. Change the path"
 	echo "in dump file before restore."
 	echo
 	echo "Warning for upgrade from version *before* 7.3."
@@ -924,8 +924,6 @@ if [ "$foundold" = "1" ]; then
 	echo "http://www.ca.postgresql.org/docs/momjian/upgrade_tips_7.3"
 	exit 1
 fi
-
-%pre
 %groupadd -g 88 -r postgres
 %useradd -M -o -r -u 88 -d /home/services/postgres -s /bin/sh -g postgres -c "PostgreSQL Server" postgres
 
