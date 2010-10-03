@@ -1071,7 +1071,7 @@ fi
 %{_includedir}/postgresql/internal/libpq
 %{_includedir}/libpq
 %{_mandir}/man1/pg_config.1*
-%{_mandir}/man3/*.3*
+%{_mandir}/man3/SPI_*.3*
 
 %files backend-devel
 %defattr(644,root,root,755)
@@ -1144,6 +1144,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/dblink.so
 %{_pgsqldir}/*dblink.sql
+%{_mandir}/man3/dblink*.3*
 
 %files module-lo
 %defattr(644,root,root,755)
