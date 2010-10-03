@@ -1,0 +1,4 @@
+- merged plpgsql subpackage with main package as this language is enabled
+  by default for each created database since postgresql 9.0
+- packaged wal receiver
+- packaged development manuals into devel subpackage
