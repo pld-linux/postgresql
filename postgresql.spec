@@ -921,6 +921,9 @@ if [ "$foundold" = "1" ]; then
 	echo "restore all data (using pg_restore or psql)."
 	echo "Remember to stop the daemon before upgrading!"
 	echo
+	echo "Alternatively you can use pg_upgrade for 8.3+ online upgrade with"
+	echo "some restrictions: http://www.postgresql.org/docs/9.0/static/pgupgrade.html"
+	echo
 	echo "Warning for upgrade from version *before* 7.2."
 	echo "Please note, that postgresql module path changed from"
 	echo "%{_libdir}/pgsql/module to %{_libdir}/postgresql. Change the path"
