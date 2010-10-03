@@ -47,6 +47,7 @@ Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		%{name}-ac_version.patch
 Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-pg_ctl-fix.patch
+Patch6:		%{name}-heimdal.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -773,6 +774,7 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 tar xzf %{SOURCE4} -C contrib
 
