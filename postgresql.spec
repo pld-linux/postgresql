@@ -1071,7 +1071,6 @@ fi
 %{_includedir}/postgresql/internal/libpq
 %{_includedir}/libpq
 %{_mandir}/man1/pg_config.1*
-%{_mandir}/man3/SPI_*.3*
 
 %files backend-devel
 %defattr(644,root,root,755)
@@ -1079,6 +1078,7 @@ fi
 %dir %{_pgmoduledir}/pgxs
 %attr(755,root,root) %{_pgmoduledir}/pgxs/config
 %{_pgmoduledir}/pgxs/src
+%{_mandir}/man3/SPI_*.3*
 
 %files static
 %defattr(644,root,root,755)
