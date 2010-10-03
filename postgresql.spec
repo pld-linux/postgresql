@@ -87,6 +87,7 @@ Requires:	%{name}-clients = %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	rc-scripts >= 0.4.3.0
 Requires:	tzdata
+Obsoletes:	postgresql-module-plpgsql
 Obsoletes:	postgresql-module-tsearch2
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
