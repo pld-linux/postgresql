@@ -1,5 +1,6 @@
 # TODO:
 # - python 3 and python 2 subpackages?
+# - think about pg_upgrade integration (sysconfig variable to allow upgrade from 8.3+ without dump/restore?)
 # - test init script (db initialization)
 #
 # Conditional build:
@@ -99,7 +100,10 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_ulibdir	/usr/lib
 
-%define	contrib_modules	auto_explain adminpack btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect pgbench pg_buffercache pgcrypto pg_freespacemap pgrowlocks pg_standby pg_stat_statements pgstattuple pg_trgm pldebugger seg sslinfo tablefunc uuid-ossp vacuumlo xml2
+# omitted contribs:
+# spi and test_parser - examples 
+# tsearch2 - old module for compatibility only
+%define	contrib_modules	adminpack auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pgbench pgcrypto pgrowlocks pgstattuple pldebugger seg sslinfo tablefunc unaccent uuid-ossp vacuumlo xml2
 
 ## to be moved to rpm-build-macros
 ## TODO: handle RPM_SKIP_AUTO_RESTART
@@ -967,17 +971,22 @@ fi
 %attr(755,root,root) %{_bindir}/pg_controldata
 %attr(755,root,root) %{_bindir}/pg_ctl
 %attr(755,root,root) %{_bindir}/pg_resetxlog
+%attr(755,root,root) %{_bindir}/pg_upgrade
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
 
-%attr(755,root,root) %{_pgmoduledir}/ascii*
-%attr(755,root,root) %{_pgmoduledir}/cyrillic*
-%attr(755,root,root) %{_pgmoduledir}/dict_*
-%attr(755,root,root) %{_pgmoduledir}/euc*
-%attr(755,root,root) %{_pgmoduledir}/latin*
-%attr(755,root,root) %{_pgmoduledir}/libpqwalreceiver*
-%attr(755,root,root) %{_pgmoduledir}/plpgsql*
-%attr(755,root,root) %{_pgmoduledir}/utf*
+%attr(755,root,root) %{_pgmoduledir}/ascii_and_mic.so
+%attr(755,root,root) %{_pgmoduledir}/cyrillic_and_mic.so
+%attr(755,root,root) %{_pgmoduledir}/dict_int.so
+%attr(755,root,root) %{_pgmoduledir}/dict_snowball.so
+%attr(755,root,root) %{_pgmoduledir}/dict_xsyn.so
+%attr(755,root,root) %{_pgmoduledir}/euc*.so
+%attr(755,root,root) %{_pgmoduledir}/latin2_and_win1250.so
+%attr(755,root,root) %{_pgmoduledir}/latin_and_mic.so
+%attr(755,root,root) %{_pgmoduledir}/libpqwalreceiver.so
+%attr(755,root,root) %{_pgmoduledir}/pg_upgrade_support.so
+%attr(755,root,root) %{_pgmoduledir}/plpgsql.so
+%attr(755,root,root) %{_pgmoduledir}/utf8_and_*.so
 
 %dir %{_pgsqldir}
 %dir %{_datadir}/postgresql
@@ -1162,6 +1171,7 @@ fi
 %defattr(644,root,root,755)
 %doc contrib/README contrib/pldebugger/README.pl*
 %attr(755,root,root) %{_bindir}/oid2name
+%attr(755,root,root) %{_bindir}/pg_archivecleanup
 %attr(755,root,root) %{_bindir}/pg_standby
 %attr(755,root,root) %{_bindir}/pgbench
 %attr(755,root,root) %{_bindir}/vacuumlo
@@ -1179,6 +1189,7 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/isn.so
 %attr(755,root,root) %{_pgmoduledir}/ltree.so
 %attr(755,root,root) %{_pgmoduledir}/pageinspect.so
+%attr(755,root,root) %{_pgmoduledir}/passwordcheck.so
 %attr(755,root,root) %{_pgmoduledir}/pg_buffercache.so
 %attr(755,root,root) %{_pgmoduledir}/pg_freespacemap.so
 %attr(755,root,root) %{_pgmoduledir}/pg_stat_statements.so
@@ -1190,6 +1201,7 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/seg.so
 %attr(755,root,root) %{_pgmoduledir}/sslinfo.so
 %attr(755,root,root) %{_pgmoduledir}/targetinfo.so
+%attr(755,root,root) %{_pgmoduledir}/unaccent.so
 %attr(755,root,root) %{_pgmoduledir}/uuid-ossp.so
 %{_pgsqldir}/_int.sql
 %{_pgsqldir}/adminpack.sql
@@ -1215,6 +1227,7 @@ fi
 %{_pgsqldir}/pldbgapi.sql
 %{_pgsqldir}/seg.sql
 %{_pgsqldir}/sslinfo.sql
+%{_pgsqldir}/unaccent.sql
 %{_pgsqldir}/uuid-ossp.sql
 %{_pgsqldir}/uninstall__int.sql
 %{_pgsqldir}/uninstall_adminpack.sql
@@ -1239,4 +1252,5 @@ fi
 %{_pgsqldir}/uninstall_pgstattuple.sql
 %{_pgsqldir}/uninstall_seg.sql
 %{_pgsqldir}/uninstall_sslinfo.sql
+%{_pgsqldir}/uninstall_unaccent.sql
 %{_pgsqldir}/uninstall_uuid-ossp.sql
