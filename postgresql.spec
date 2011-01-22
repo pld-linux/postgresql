@@ -52,9 +52,11 @@ Patch6:		%{name}-heimdal.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	docbook-dtd42-sgml
 # not needed for releases... but fixes something in snapshot
 BuildRequires:	bison >= 1.875
+BuildRequires:	docbook-dtd42-sgml
+BuildRequires:	docbook-dtd42-xml
+BuildRequires:	docbook-style-xsl
 BuildRequires:	flex
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
