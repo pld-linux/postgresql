@@ -1,11 +1,11 @@
 --- src/bin/pg_ctl/pg_ctl.c.orig	2006-04-04 15:52:48.000000000 +0000
 +++ src/bin/pg_ctl/pg_ctl.c	2006-04-04 16:43:27.000000000 +0000
 @@ -373,9 +373,11 @@
- 	bool		success = false;
  	int			i;
  	char		portstr[32];
 +	char		sockstr[256];
  	char	   *p;
+ 	char	   *q;
  
  	*portstr = '\0';
 +	*sockstr = '\0';
@@ -13,9 +13,9 @@
  	/* post_opts */
  	for (p = post_opts; *p;)
 @@ -400,7 +402,7 @@
- 	}
- 
- 	/* config file */
+ 	 * This parsing code isn't amazingly bright either, but it should be
+ 	 * okay for valid port settings.
+ 	 */
 -	if (!*portstr)
 +	if (!*portstr || !*sockstr)
  	{
@@ -25,9 +25,9 @@
  
  				while (isspace((unsigned char) *p))
  					p++;
--				if (strncmp(p, "port", strlen("port")) != 0)
+-				if (strncmp(p, "port", 4) != 0)
 -					continue;
--				p += strlen("port");
+-				p += 4;
 -				while (isspace((unsigned char) *p))
 -					p++;
 -				if (*p != '=')
