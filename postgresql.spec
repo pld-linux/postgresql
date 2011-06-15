@@ -29,7 +29,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.4
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -106,25 +106,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # spi and test_parser - examples 
 # tsearch2 - old module for compatibility only
 %define	contrib_modules	adminpack auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pgbench pgcrypto pgrowlocks pgstattuple pldebugger seg sslinfo tablefunc unaccent uuid-ossp vacuumlo xml2
-
-## to be moved to rpm-build-macros
-## TODO: handle RPM_SKIP_AUTO_RESTART
-
-# migrate from init script to upstart job
-%define	upstart_post() \
-	if [ -f /var/lock/subsys/"%1" ] ; then \
-		/sbin/service --no-upstart "%1" stop \
-		/sbin/service "%1" start \
-	else \
-		/sbin/service "%1" try-restart \
-	fi
-
-# restart the job after upgrade or migrate to init script on removal
-%define	upstart_postun() \
-	if [ -x /sbin/initctl ] && /sbin/initctl status "%1" 2>/dev/null | grep -q 'running' ; then \
-		/sbin/initctl stop "%1" 2>/dev/null \
-		[ -f "/etc/rc.d/init.d/%1" -o -f "/etc/init/%1.conf" ] && /sbin/service "%1" start \
-	fi
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -354,6 +335,7 @@ Summary(pl.UTF-8):	Opis zadania Upstart dla serwera PostgreSQL
 Group:		Daemons
 Requires:	%{name} = %{version}-%{release}
 Requires:	upstart >= 0.6
+Conflicts:	syslog-ng < 3.2.4-1
 
 %description upstart
 Upstart job description for PostgreSQL.

@@ -1,6 +1,6 @@
 description "Starts PostgreSQL instances for all configured clusters"
 
-start on started SERVICE=syslog
+start on started SERVICE_syslog=y
 
 env PG_DB_CLUSTERS
 
