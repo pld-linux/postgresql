@@ -15,7 +15,7 @@
 #
 
 %define beta %{nil}
-%define mver 9.0
+%define mver 9.1
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -28,18 +28,19 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.4
-Release:	3
+Version:	%{mver}.0
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	80390514d568a7af5ab61db1cda27e29
+# Source0-md5:	0497b9da1d7c380c340a9a87ba5500fe
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
-Source4:	edb-debugger-20100404.tgz
-# Source4-md5:	a10daee9a2017db40c7550c40cb47e8d
+# cvs -d :pserver:anonymous@cvs.pgfoundry.org:/cvsroot/edb-debugger (module server)
+Source4:	edb-debugger-20110912.tgz
+# Source4-md5:	6a9b6576b8ccac062243dd29e58a371b
 Source5:	%{name}.upstart
 Source6:	%{name}-instance.upstart
 Patch0:		%{name}-conf.patch
@@ -98,7 +99,7 @@ Obsoletes:	postgresql-test
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
-%define		_pgsqldir	%{_datadir}/postgresql/contrib
+%define		_pgsqldir	%{_datadir}/postgresql/extension
 
 %define		_ulibdir	/usr/lib
 
@@ -761,7 +762,7 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
+#%patch5 -p1
 %patch6 -p1
 
 tar xzf %{SOURCE4} -C contrib
@@ -808,7 +809,7 @@ done
 	NO_PGXS=1
 
 %ifnarch sparc sparcv9 sparc64 alpha
-%{?with_tests:%{__make} check}
+%{?with_tests:%{__make} -j1 check}
 %endif
 
 %install
@@ -853,13 +854,14 @@ tar zxf %{SOURCE2} -C howto
 %endif
 
 # find locales
-for f in libpq5 pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 %{?with_perl:plperl} plpgsql %{?with_python: plpython}; do
+for f in libpq5 pg_basebackup pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 %{?with_perl:plperl} plpgsql %{?with_python: plpython}; do
 	%find_lang $f-%{mver}
 done
 # merge locales
 cat pgscripts-%{mver}.lang pg_resetxlog-%{mver}.lang \
     postgres-%{mver}.lang pg_controldata-%{mver}.lang \
     plpgsql-%{mver}.lang \
+    pg_basebackup-%{mver}.lang \
     > main-%{mver}.lang
 cat pg_dump-%{mver}.lang psql-%{mver}.lang initdb-%{mver}.lang \
     pg_ctl-%{mver}.lang > clients-%{mver}.lang
@@ -872,6 +874,8 @@ rm -rf $RPM_BUILD_ROOT/contrib
 %find_lang pltcl-%{mver}
 mv $RPM_BUILD_ROOT{%{_datadir}/postgresql,%{_pgsqldir}}/unknown.pltcl
 %endif
+
+mv $RPM_BUILD_ROOT{%{_datadir}/postgresql/contrib,%{_pgsqldir}}/pldbgapi.sql
 
 install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
 
@@ -892,7 +896,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ $(cat $pgdir/PG_VERSION) != '9.0' ]; then
+		if [ $(cat $pgdir/PG_VERSION) != '9.1' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
@@ -950,11 +954,12 @@ fi
 
 %files -f main-%{mver}.lang
 %defattr(644,root,root,755)
-%doc COPYRIGHT README HISTORY doc/{README*,bug.template,KNOWN_BUGS,MISSING_FEATURES,TODO}
+%doc COPYRIGHT README HISTORY doc/{bug.template,KNOWN_BUGS,MISSING_FEATURES,TODO}
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/postgresql
 
 %attr(755,root,root) %{_bindir}/initdb
+%attr(755,root,root) %{_bindir}/pg_basebackup
 %attr(755,root,root) %{_bindir}/pg_controldata
 %attr(755,root,root) %{_bindir}/pg_ctl
 %attr(755,root,root) %{_bindir}/pg_resetxlog
@@ -976,6 +981,9 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/utf8_and_*.so
 
 %dir %{_pgsqldir}
+%{_pgsqldir}/plpgsql--*.sql
+%{_pgsqldir}/plpgsql.control
+
 %dir %{_datadir}/postgresql
 %{_datadir}/postgresql/*.bki
 %{_datadir}/postgresql/*.sample
@@ -991,6 +999,7 @@ fi
 %attr(640,postgres,postgres) %config(noreplace) %verify(not md5 mtime size) /var/log/pgsql
 
 %{_mandir}/man1/initdb.1*
+%{_mandir}/man1/pg_basebackup.1*
 %{_mandir}/man1/pg_controldata.1*
 %{_mandir}/man1/pg_ctl.1*
 %{_mandir}/man1/pg_resetxlog.1*
@@ -1107,13 +1116,18 @@ fi
 %files module-plperl -f plperl-%{mver}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/plperl.so
+%{_pgsqldir}/plperl--*.sql
+%{_pgsqldir}/plperl.control
+%{_pgsqldir}/plperlu--*.sql
+%{_pgsqldir}/plperlu.control
 %endif
 
 %if %{with python}
 %files module-plpython -f plpython-%{mver}.lang
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_pgmoduledir}/plpython.so
 %attr(755,root,root) %{_pgmoduledir}/plpython2.so
+%{_pgsqldir}/plpython*--*.sql
+%{_pgsqldir}/plpython*.control
 %endif
 
 %if %{with tcl}
@@ -1122,38 +1136,46 @@ fi
 %attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
 %{_pgsqldir}/unknown.pltcl
+%{_pgsqldir}/pltcl*--*.sql
+%{_pgsqldir}/pltcl*.control
 %endif
 
 %files module-dblink
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/dblink.so
-%{_pgsqldir}/*dblink.sql
+%{_pgsqldir}/dblink--*.sql
+%{_pgsqldir}/dblink.control
 %{_mandir}/man3/dblink*.3*
 
 %files module-lo
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/lo.so
-%{_pgsqldir}/*lo.sql
+%{_pgsqldir}/lo--*.sql
+%{_pgsqldir}/lo.control
 
 %files module-pgcrypto
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
-%{_pgsqldir}/*pgcrypto.sql
+%{_pgsqldir}/pgcrypto--*.sql
+%{_pgsqldir}/pgcrypto.control
 
 %files module-tablefunc
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/tablefunc.so
-%{_pgsqldir}/*tablefunc.sql
+%{_pgsqldir}/*tablefunc--*.sql
+%{_pgsqldir}/*tablefunc.control
 
 %files module-pg_trgm
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/pg_trgm.so
-%{_pgsqldir}/*pg_trgm.sql
+%{_pgsqldir}/pg_trgm--*.sql
+%{_pgsqldir}/pg_trgm.control
 
 %files module-xml2
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/pgxml.so
-%{_pgsqldir}/*pgxml.sql
+%{_pgsqldir}/xml2--*.sql
+%{_pgsqldir}/xml2.control
 
 %files contrib
 %defattr(644,root,root,755)
@@ -1191,54 +1213,54 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/targetinfo.so
 %attr(755,root,root) %{_pgmoduledir}/unaccent.so
 %attr(755,root,root) %{_pgmoduledir}/uuid-ossp.so
-%{_pgsqldir}/_int.sql
-%{_pgsqldir}/adminpack.sql
-%{_pgsqldir}/btree_gin.sql
-%{_pgsqldir}/btree_gist.sql
-%{_pgsqldir}/chkpass.sql
-%{_pgsqldir}/citext.sql
-%{_pgsqldir}/cube.sql
-%{_pgsqldir}/dict_int.sql
-%{_pgsqldir}/dict_xsyn.sql
-%{_pgsqldir}/earthdistance.sql
-%{_pgsqldir}/fuzzystrmatch.sql
-%{_pgsqldir}/hstore.sql
-%{_pgsqldir}/int_aggregate.sql
-%{_pgsqldir}/isn.sql
-%{_pgsqldir}/ltree.sql
-%{_pgsqldir}/pageinspect.sql
-%{_pgsqldir}/pg_buffercache.sql
-%{_pgsqldir}/pg_freespacemap.sql
-%{_pgsqldir}/pg_stat_statements.sql
-%{_pgsqldir}/pgrowlocks.sql
-%{_pgsqldir}/pgstattuple.sql
+%{_pgsqldir}/adminpack--*.sql
+%{_pgsqldir}/adminpack.control
+%{_pgsqldir}/btree_gin--*.sql
+%{_pgsqldir}/btree_gin.control
+%{_pgsqldir}/btree_gist--*.sql
+%{_pgsqldir}/btree_gist.control
+%{_pgsqldir}/chkpass--*.sql
+%{_pgsqldir}/chkpass.control
+%{_pgsqldir}/citext--*.sql
+%{_pgsqldir}/citext.control
+%{_pgsqldir}/cube--*.sql
+%{_pgsqldir}/cube.control
+%{_pgsqldir}/dict_int--*.sql
+%{_pgsqldir}/dict_int.control
+%{_pgsqldir}/dict_xsyn--*.sql
+%{_pgsqldir}/dict_xsyn.control
+%{_pgsqldir}/earthdistance--*.sql
+%{_pgsqldir}/earthdistance.control
+%{_pgsqldir}/fuzzystrmatch--*.sql
+%{_pgsqldir}/fuzzystrmatch.control
+%{_pgsqldir}/hstore--*.sql
+%{_pgsqldir}/hstore.control
+%{_pgsqldir}/intarray--*.sql
+%{_pgsqldir}/intarray.control
+%{_pgsqldir}/intagg--*.sql
+%{_pgsqldir}/intagg.control
+%{_pgsqldir}/isn--*.sql
+%{_pgsqldir}/isn.control
+%{_pgsqldir}/ltree--*.sql
+%{_pgsqldir}/ltree.control
+%{_pgsqldir}/pageinspect--*.sql
+%{_pgsqldir}/pageinspect.control
+%{_pgsqldir}/pg_buffercache--*.sql
+%{_pgsqldir}/pg_buffercache.control
+%{_pgsqldir}/pg_freespacemap--*.sql
+%{_pgsqldir}/pg_freespacemap.control
+%{_pgsqldir}/pg_stat_statements--*.sql
+%{_pgsqldir}/pg_stat_statements.control
+%{_pgsqldir}/pgrowlocks--*.sql
+%{_pgsqldir}/pgrowlocks.control
+%{_pgsqldir}/pgstattuple--*.sql
+%{_pgsqldir}/pgstattuple.control
 %{_pgsqldir}/pldbgapi.sql
-%{_pgsqldir}/seg.sql
-%{_pgsqldir}/sslinfo.sql
-%{_pgsqldir}/unaccent.sql
-%{_pgsqldir}/uuid-ossp.sql
-%{_pgsqldir}/uninstall__int.sql
-%{_pgsqldir}/uninstall_adminpack.sql
-%{_pgsqldir}/uninstall_btree_gin.sql
-%{_pgsqldir}/uninstall_btree_gist.sql
-%{_pgsqldir}/uninstall_chkpass.sql
-%{_pgsqldir}/uninstall_citext.sql
-%{_pgsqldir}/uninstall_cube.sql
-%{_pgsqldir}/uninstall_dict_int.sql
-%{_pgsqldir}/uninstall_dict_xsyn.sql
-%{_pgsqldir}/uninstall_earthdistance.sql
-%{_pgsqldir}/uninstall_fuzzystrmatch.sql
-%{_pgsqldir}/uninstall_hstore.sql
-%{_pgsqldir}/uninstall_int_aggregate.sql
-%{_pgsqldir}/uninstall_isn.sql
-%{_pgsqldir}/uninstall_ltree.sql
-%{_pgsqldir}/uninstall_pageinspect.sql
-%{_pgsqldir}/uninstall_pg_buffercache.sql
-%{_pgsqldir}/uninstall_pg_freespacemap.sql
-%{_pgsqldir}/uninstall_pg_stat_statements.sql
-%{_pgsqldir}/uninstall_pgrowlocks.sql
-%{_pgsqldir}/uninstall_pgstattuple.sql
-%{_pgsqldir}/uninstall_seg.sql
-%{_pgsqldir}/uninstall_sslinfo.sql
-%{_pgsqldir}/uninstall_unaccent.sql
-%{_pgsqldir}/uninstall_uuid-ossp.sql
+%{_pgsqldir}/seg--*.sql
+%{_pgsqldir}/seg.control
+%{_pgsqldir}/sslinfo--*.sql
+%{_pgsqldir}/sslinfo.control
+%{_pgsqldir}/unaccent--*.sql
+%{_pgsqldir}/unaccent.control
+%{_pgsqldir}/uuid-ossp--*.sql
+%{_pgsqldir}/uuid-ossp.control
