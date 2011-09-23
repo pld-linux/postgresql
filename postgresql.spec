@@ -1,5 +1,6 @@
 # TODO:
 # - python 3 and python 2 subpackages?
+# - consider dns_sd/Bonjour support (--with-bonjour)
 # - think about pg_upgrade integration (sysconfig variable to allow upgrade from 8.3+ without dump/restore?)
 # - test init script (db initialization)
 #
@@ -10,6 +11,7 @@
 %bcond_without	perl			# disable Perl support
 %bcond_without	python			# disable Python support
 %bcond_without	ldap			# disable LDAP support
+%bcond_without	selinux			# sepgsql contrib module
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 #
@@ -57,9 +59,10 @@ BuildRequires:	bison >= 1.875
 BuildRequires:	docbook-dtd42-sgml
 BuildRequires:	docbook-dtd42-xml
 BuildRequires:	docbook-style-xsl
-BuildRequires:	flex
+BuildRequires:	flex >= 2.5.31
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
+%{?with_selinux:BuildRequires:	libselinux-devel >= 2.0.93}
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.6.23
 BuildRequires:	libxslt-devel
@@ -103,9 +106,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_ulibdir	/usr/lib
 
 # omitted contribs:
-# spi and test_parser - examples 
+# dummy_seclabel, pg_test_fsync, spi and test_parser - examples/tests
 # tsearch2 - old module for compatibility only
-%define	contrib_modules	adminpack auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pgbench pgcrypto pgrowlocks pgstattuple pldebugger seg sslinfo tablefunc unaccent uuid-ossp vacuumlo xml2
+%define	contrib_modules	adminpack auth_delay auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pgbench pgcrypto pgrowlocks pgstattuple pldebugger seg %{?with_selinux:sepgsql} sslinfo tablefunc unaccent uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -688,30 +691,6 @@ Moduł Large Objects dla PostgreSQL-a dodaje nowy typ danych 'lo',
 kilka funkcji pomocniczych i wyzwalacz rozwiązujący problem
 osieroconych obiektów.
 
-%package module-pgcrypto
-Summary:	Cryptographic functions for PostgreSQL
-Summary(pl.UTF-8):	Funkcje kryptograficzne dla PostgreSQL-a
-Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
-
-%description module-pgcrypto
-Cryptographic functions for PostgreSQL.
-
-%description module-pgcrypto -l pl.UTF-8
-Funkcje kryptograficzne dla PostgreSQL.
-
-%package module-tablefunc
-Summary:	crosstab functions for PostgreSQL
-Summary(pl.UTF-8):	Funkcje crosstab dla PostgreSQL-a
-Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
-
-%description module-tablefunc
-crosstab functions for PostgreSQL.
-
-%description module-tablefunc -l pl.UTF-8
-Funkcje crosstab dla PostgreSQL-a.
-
 %package module-pg_trgm
 Summary:	Trigram matching for PostgreSQL
 Summary(pl.UTF-8):	Dopasowanie trigramowe dla PostgreSQL-a
@@ -725,6 +704,43 @@ similarity of text based on trigram matching.
 %description module-pg_trgm -l pl.UTF-8
 Ten moduł dostarcza funkcje i klasy do rozpoznawania podobnych tekstów
 w oparciu o dopasowywanie trigramowe (trigram matching).
+
+%package module-pgcrypto
+Summary:	Cryptographic functions for PostgreSQL
+Summary(pl.UTF-8):	Funkcje kryptograficzne dla PostgreSQL-a
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description module-pgcrypto
+Cryptographic functions for PostgreSQL.
+
+%description module-pgcrypto -l pl.UTF-8
+Funkcje kryptograficzne dla PostgreSQL.
+
+%package module-sepgsql
+Summary:	PostgreSQL external security provider using SELinux
+Summary(pl.UTF-8):	Zewnętrzny moduł bezpieczeństwa PostgreSQL-a wykorzystujący SELinuksa
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+Requires:	libselinux >= 2.0.93
+
+%description module-sepgsql
+PostgreSQL external security provider using SELinux.
+
+%description module-sepgsql -l pl.UTF-8
+Zewnętrzny moduł bezpieczeństwa PostgreSQL-a wykorzystujący SELinuksa.
+
+%package module-tablefunc
+Summary:	crosstab functions for PostgreSQL
+Summary(pl.UTF-8):	Funkcje crosstab dla PostgreSQL-a
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description module-tablefunc
+crosstab functions for PostgreSQL.
+
+%description module-tablefunc -l pl.UTF-8
+Funkcje crosstab dla PostgreSQL-a.
 
 %package module-xml2
 Summary:	XML-handling functions for PostgreSQL
@@ -791,6 +807,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 	--with-libxslt \
 	%{?with_perl:--with-perl} \
 	%{?with_python:--with-python} \
+	%{?with_selinux:--with-selinux} \
 	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
 	--with-ossp-uuid \
 
@@ -865,20 +882,20 @@ cat pg_dump-%{mver}.lang psql-%{mver}.lang initdb-%{mver}.lang \
     pg_ctl-%{mver}.lang > clients-%{mver}.lang
 cat ecpg-%{mver}.lang ecpglib6-%{mver}.lang > ecpg.lang
 
-# Remove Contrib documentation. We use macro %doc
-rm -rf $RPM_BUILD_ROOT/contrib
-
 %if %{with tcl}
 %find_lang pltcl-%{mver}
 mv $RPM_BUILD_ROOT{%{_datadir}/postgresql,%{_pgsqldir}}/unknown.pltcl
 %endif
 
 mv $RPM_BUILD_ROOT{%{_datadir}/postgresql/contrib,%{_pgsqldir}}/pldbgapi.sql
+%if %{with selinux}
+mv $RPM_BUILD_ROOT{%{_datadir}/postgresql/contrib,%{_pgsqldir}}/sepgsql.sql
+%endif
 
 install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
 
 # package it...?  nah, why bother.
-rm -rf $RPM_BUILD_ROOT%{_datadir}/doc/postgresql/html
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/doc/postgresql/html
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1151,23 +1168,28 @@ fi
 %{_pgsqldir}/lo--*.sql
 %{_pgsqldir}/lo.control
 
+%files module-pg_trgm
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_pgmoduledir}/pg_trgm.so
+%{_pgsqldir}/pg_trgm--*.sql
+%{_pgsqldir}/pg_trgm.control
+
 %files module-pgcrypto
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
 %{_pgsqldir}/pgcrypto--*.sql
 %{_pgsqldir}/pgcrypto.control
 
+%files module-sepgsql
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_pgmoduledir}/sepgsql.so
+%{_pgsqldir}/sepgsql.sql
+
 %files module-tablefunc
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/tablefunc.so
 %{_pgsqldir}/*tablefunc--*.sql
 %{_pgsqldir}/*tablefunc.control
-
-%files module-pg_trgm
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_pgmoduledir}/pg_trgm.so
-%{_pgsqldir}/pg_trgm--*.sql
-%{_pgsqldir}/pg_trgm.control
 
 %files module-xml2
 %defattr(644,root,root,755)
@@ -1185,6 +1207,7 @@ fi
 %attr(755,root,root) %{_bindir}/vacuumlo
 %attr(755,root,root) %{_pgmoduledir}/_int.so
 %attr(755,root,root) %{_pgmoduledir}/adminpack.so
+%attr(755,root,root) %{_pgmoduledir}/auth_delay.so
 %attr(755,root,root) %{_pgmoduledir}/auto_explain.so
 %attr(755,root,root) %{_pgmoduledir}/btree_gin.so
 %attr(755,root,root) %{_pgmoduledir}/btree_gist.so
@@ -1192,6 +1215,7 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/citext.so
 %attr(755,root,root) %{_pgmoduledir}/cube.so
 %attr(755,root,root) %{_pgmoduledir}/earthdistance.so
+%attr(755,root,root) %{_pgmoduledir}/file_fdw.so
 %attr(755,root,root) %{_pgmoduledir}/fuzzystrmatch.so
 %attr(755,root,root) %{_pgmoduledir}/hstore.so
 %attr(755,root,root) %{_pgmoduledir}/isn.so
@@ -1229,6 +1253,9 @@ fi
 %{_pgsqldir}/dict_xsyn.control
 %{_pgsqldir}/earthdistance--*.sql
 %{_pgsqldir}/earthdistance.control
+%{_pgsqldir}/file_fdw--*.sql
+%{_pgsqldir}/file_fdw.control
+%{_pgsqldir}/fuzzystrmatch--*.sql
 %{_pgsqldir}/fuzzystrmatch--*.sql
 %{_pgsqldir}/fuzzystrmatch.control
 %{_pgsqldir}/hstore--*.sql
