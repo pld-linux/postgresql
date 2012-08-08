@@ -21,49 +21,43 @@
  	{
  		char	  **optlines;
  
-@@ -413,18 +415,32 @@
+@@ -432,8 +432,7 @@
  
  				while (isspace((unsigned char) *p))
  					p++;
 -				if (strncmp(p, "port", 4) != 0)
 -					continue;
--				p += 4;
--				while (isspace((unsigned char) *p))
--					p++;
--				if (*p != '=')
--					continue;
--				p++;
--				while (isspace((unsigned char) *p))
-+				if (strncmp(p, "port", strlen("port")) == 0)
-+				{
-+					p += strlen("port");
-+					while (isspace((unsigned char) *p))
-+						p++;
-+					if (*p != '=')
-+						continue;
++				if (!strncmp(p, "port", 4) != 0) {
+ 				p += 4;
+ 				while (isspace((unsigned char) *p))
  					p++;
--				StrNCpy(portstr, p, Min(strcspn(p, "#" WHITESPACE) + 1,
-+					while (isspace((unsigned char) *p))
-+						p++;
-+					StrNCpy(portstr, p, Min(strcspn(p, "#" WHITESPACE) + 1,
- 										sizeof(portstr)));
-+				}
-+				if (strncmp(p, "unix_socket_directory", strlen("unix_socket_directory")) == 0)
-+				{
-+					p += strlen("unix_socket_directory");
+@@ -452,6 +451,26 @@
+ 				/* and save the argument value */
+ 				StrNCpy(portstr, p, Min((q - p) + 1, sizeof(portstr)));
+ 				/* keep looking, maybe there is another */
++				} else if(!strncmp(p, "unix_socket_directory", 21)) {
++					p += 21;
 +					while (isspace((unsigned char) *p))
 +						p++;
 +					if (*p != '=')
 +						continue;
 +					p++;
++					/* advance past any whitespace/quoting */
 +					while (isspace((unsigned char) *p) || *p == '\'' || *p == '"')
 +						p++;
-+					StrNCpy(sockstr, p, Min(strcspn(p, "#\"'" WHITESPACE) + 1,
-+										sizeof(sockstr)));
++					/* find end of value (not including any ending quote/comment!) */
++					q = p;
++					while (*q &&
++							!(isspace((unsigned char) *q) ||
++								*q == '\'' || *q == '"' || *q == '#'))
++						q++;
++					/* and save the argument value */
++					StrNCpy(sockstr, p, Min((q - p) + 1, sizeof(portstr)));
++					/* keep looking, maybe there is another */
 +				}
- 				/* keep looking, maybe there is another */
  			}
  		}
+ 	}
 @@ -440,7 +456,7 @@
  
  	for (i = 0; i < wait_seconds; i++)
