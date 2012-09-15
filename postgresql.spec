@@ -40,8 +40,8 @@ Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
-# cvs -d :pserver:anonymous@cvs.pgfoundry.org:/cvsroot/edb-debugger (module server)
-Source4:	edb-debugger-20110912.tgz
+# http://git.postgresql.org/gitweb/?p=pldebugger.git;a=snapshot;h=eb754b6ba9a1c18e7bc4ddf521408be06768c697;sf=tgz
+Source4:	pldebugger-eb754b6.tar.gz
 # Source4-md5:	6a9b6576b8ccac062243dd29e58a371b
 Source5:	%{name}.upstart
 Source6:	%{name}-instance.upstart
@@ -780,6 +780,7 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch5 -p1
 
 tar xzf %{SOURCE4} -C contrib
+mv contrib/pldebugger-* contrib/pldebugger
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
@@ -887,7 +888,6 @@ cat ecpg-%{mver}.lang ecpglib6-%{mver}.lang > ecpg.lang
 mv $RPM_BUILD_ROOT{%{_datadir}/postgresql,%{_pgsqldir}}/unknown.pltcl
 %endif
 
-mv $RPM_BUILD_ROOT{%{_datadir}/postgresql/contrib,%{_pgsqldir}}/pldbgapi.sql
 %if %{with selinux}
 mv $RPM_BUILD_ROOT{%{_datadir}/postgresql/contrib,%{_pgsqldir}}/sepgsql.sql
 %endif
@@ -978,6 +978,7 @@ fi
 %attr(755,root,root) %{_bindir}/pg_controldata
 %attr(755,root,root) %{_bindir}/pg_ctl
 %attr(755,root,root) %{_bindir}/pg_resetxlog
+%attr(755,root,root) %{_bindir}/pg_receivexlog
 %attr(755,root,root) %{_bindir}/pg_upgrade
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
@@ -1022,6 +1023,16 @@ fi
 %{_mandir}/man1/pg_resetxlog.1*
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
+%{_mandir}/man1/oid2name.1.gz
+%{_mandir}/man1/pg_archivecleanup.1.gz
+%{_mandir}/man1/pg_receivexlog.1.gz
+%{_mandir}/man1/pg_standby.1.gz
+%{_mandir}/man1/pg_test_fsync.1.gz
+%{_mandir}/man1/pg_test_timing.1.gz
+%{_mandir}/man1/pg_upgrade.1.gz
+%{_mandir}/man1/pgbench.1.gz
+%{_mandir}/man1/vacuumlo.1.gz
+
 
 %if "%{pld_release}" != "ti"
 %files upstart
@@ -1041,7 +1052,6 @@ fi
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libpq.so.5
 %dir %{_pgmoduledir}
-%dir %{_pgmoduledir}/plugins
 
 %files ecpg -f ecpg.lang
 %defattr(644,root,root,755)
@@ -1229,12 +1239,9 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/pg_stat_statements.so
 %attr(755,root,root) %{_pgmoduledir}/pgrowlocks.so
 %attr(755,root,root) %{_pgmoduledir}/pgstattuple.so
-%attr(755,root,root) %{_pgmoduledir}/pldbgapi.so
-%attr(755,root,root) %{_pgmoduledir}/plugins/plugin_debugger.so
-%attr(755,root,root) %{_pgmoduledir}/plugins/plugin_profiler.so
+%attr(755,root,root) %{_pgmoduledir}/plugin_debugger.so
 %attr(755,root,root) %{_pgmoduledir}/seg.so
 %attr(755,root,root) %{_pgmoduledir}/sslinfo.so
-%attr(755,root,root) %{_pgmoduledir}/targetinfo.so
 %attr(755,root,root) %{_pgmoduledir}/unaccent.so
 %attr(755,root,root) %{_pgmoduledir}/uuid-ossp.so
 %{_pgsqldir}/adminpack--*.sql
@@ -1257,7 +1264,6 @@ fi
 %{_pgsqldir}/earthdistance.control
 %{_pgsqldir}/file_fdw--*.sql
 %{_pgsqldir}/file_fdw.control
-%{_pgsqldir}/fuzzystrmatch--*.sql
 %{_pgsqldir}/fuzzystrmatch--*.sql
 %{_pgsqldir}/fuzzystrmatch.control
 %{_pgsqldir}/hstore--*.sql
@@ -1282,7 +1288,8 @@ fi
 %{_pgsqldir}/pgrowlocks.control
 %{_pgsqldir}/pgstattuple--*.sql
 %{_pgsqldir}/pgstattuple.control
-%{_pgsqldir}/pldbgapi.sql
+%{_pgsqldir}/pldbgapi--*.sql
+%{_pgsqldir}/pldbgapi.control
 %{_pgsqldir}/seg--*.sql
 %{_pgsqldir}/seg.control
 %{_pgsqldir}/sslinfo--*.sql
