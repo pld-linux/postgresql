@@ -43,9 +43,6 @@ Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
-# http://git.postgresql.org/gitweb/?p=pldebugger.git;a=snapshot;h=eb754b6ba9a1c18e7bc4ddf521408be06768c697;sf=tgz 
-Source4:	pldebugger-eb754b6.tar.gz
-# Source4-md5:	e596193b87695d29fa9161e7182dcd32
 Source5:	%{name}.upstart
 Source6:	%{name}-instance.upstart
 Source7:	ftp://ftp.postgresql.org/pub/source/v%{prevver}/%{name}-%{prevver}.tar.bz2
@@ -114,7 +111,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # omitted contribs:
 # dummy_seclabel, pg_test_fsync, spi and test_parser - examples/tests
 # tsearch2 - old module for compatibility only
-%define	contrib_modules	adminpack auth_delay auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pgbench pgcrypto pgrowlocks pgstattuple pldebugger seg %{?with_selinux:sepgsql} sslinfo tablefunc unaccent uuid-ossp vacuumlo xml2
+%define	contrib_modules	adminpack auth_delay auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pgbench pgcrypto pgrowlocks pgstattuple seg %{?with_selinux:sepgsql} sslinfo tablefunc unaccent uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -812,9 +809,6 @@ cd postgresql-%{prevver}
 %patch6 -p1
 cd ..
 
-tar xzf %{SOURCE4} -C contrib
-mv contrib/pldebugger-* contrib/pldebugger
-
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
 
@@ -1311,7 +1305,7 @@ fi
 
 %files contrib
 %defattr(644,root,root,755)
-%doc contrib/README contrib/pldebugger/README.pl*
+%doc contrib/README
 %attr(755,root,root) %{_bindir}/oid2name
 %attr(755,root,root) %{_bindir}/pg_archivecleanup
 %attr(755,root,root) %{_bindir}/pg_standby
@@ -1339,7 +1333,6 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/pg_stat_statements.so
 %attr(755,root,root) %{_pgmoduledir}/pgrowlocks.so
 %attr(755,root,root) %{_pgmoduledir}/pgstattuple.so
-%attr(755,root,root) %{_pgmoduledir}/plugin_debugger.so
 %attr(755,root,root) %{_pgmoduledir}/seg.so
 %attr(755,root,root) %{_pgmoduledir}/sslinfo.so
 %attr(755,root,root) %{_pgmoduledir}/unaccent.so
@@ -1388,8 +1381,6 @@ fi
 %{_pgsqldir}/pgrowlocks.control
 %{_pgsqldir}/pgstattuple--*.sql
 %{_pgsqldir}/pgstattuple.control
-%{_pgsqldir}/pldbgapi--*.sql
-%{_pgsqldir}/pldbgapi.control
 %{_pgsqldir}/seg--*.sql
 %{_pgsqldir}/seg.control
 %{_pgsqldir}/sslinfo--*.sql
