@@ -19,9 +19,6 @@
 %define beta %{nil}
 %define mver 9.2
 
-%define prevmver 9.1
-%define prevver 9.1.6
-
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
 Summary(es.UTF-8):	Gestor de Banco de Datos PostgreSQL
@@ -34,7 +31,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.1
-Release:	0.1
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -45,15 +42,12 @@ Source2:	pgsql-Database-HOWTO-html.tar.gz
 Source3:	%{name}.sysconfig
 Source5:	%{name}.upstart
 Source6:	%{name}-instance.upstart
-Source7:	ftp://ftp.postgresql.org/pub/source/v%{prevver}/%{name}-%{prevver}.tar.bz2
-# Source7-md5:	000755f66c0de58bbd4cd2b89b45b8e2
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		%{name}-ac_version.patch
 Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-heimdal.patch
-Patch6:		%{name}_%{prevmver}-ac_version.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -773,41 +767,14 @@ Miscellaneous PostgreSQL contrib modules.
 %description contrib -l pl.UTF-8
 Różne moduły dołączone do PostgreSQL-a.
 
-%package upgrade
-Summary:	Support for upgrading from the previous major release
-Summary(pl.UTF-8):	Wsparcie
-Group:		Applications/Databases
-Requires:	%{name} = %{version}-%{release}
-
-%description upgrade
-The postgresql-upgrade package contains the pg_upgrade utility and supporting
-files needed for upgrading a PostgreSQL database from the previous major
-version of PostgreSQL.
-
-
-%description upgrade -l pl.UTF-8
-The postgresql-upgrade package contains the pg_upgrade utility and supporting
-files needed for upgrading a PostgreSQL database from the previous major
-version of PostgreSQL.
-
 %prep
-%setup -q -a 7
+%setup -q
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-
-cd postgresql-%{prevver}
-
-%patch0 -p1
-%{?with_absolute_dbpaths:%patch1 -p1}
-%patch2 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-cd ..
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
@@ -854,35 +821,6 @@ done
 %ifnarch sparc sparcv9 sparc64 alpha
 %{?with_tests:%{__make} -j1 check}
 %endif
-
-cd postgresql-%{prevver}
-%{__aclocal} -I config
-%{__autoconf}
-
-./configure \
-	CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS `uuid-config --cflags`" \
-	--prefix=%{_libdir}/pgsql/postgresql-%{prevmver} \
-	--disable-rpath \
-	--enable-depend \
-	--enable-integer-datetimes \
-	--with-system-tzdata=%{_datadir}/zoneinfo \
-	--enable-nls \
-	--enable-thread-safety \
-	%{?with_kerberos5:--with-gssapi} \
-	%{?with_kerberos5:--with-krb5} \
-	%{?with_ldap:--with-ldap} \
-	--with-openssl \
-	--with-pam \
-	--with-libxml \
-	--with-libxslt \
-	%{?with_perl:--with-perl} \
-	%{?with_python:--with-python} \
-	%{?with_selinux:--with-selinux} \
-	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
-	--with-ossp-uuid \
-
-%{__make}
-cd ..
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -953,49 +891,8 @@ install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
 # package it...?  nah, why bother.
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/doc/postgresql/html
 
-cd postgresql-%{prevver}
-%{__make} install \
-        DESTDIR=$RPM_BUILD_ROOT/postgresql-%{prevmver}
-cd $RPM_BUILD_ROOT/postgresql-%{prevmver}%{_libdir}/pgsql/postgresql-%{prevmver}
-	rm bin/clusterdb
-	rm bin/createdb
-	rm bin/createlang
-	rm bin/createuser
-	rm bin/dropdb
-	rm bin/droplang
-	rm bin/dropuser
-	rm bin/ecpg
-	rm bin/initdb
-	rm bin/pg_basebackup
-	rm bin/pg_config
-	rm bin/pg_controldata
-	rm bin/pg_dump
-	rm bin/pg_dumpall
-	rm bin/pg_restore
-	rm bin/psql
-	rm bin/reindexdb
-	rm bin/vacuumdb
-	rm -rf include
-	rm lib/dict_snowball.so
-	rm lib/libecpg*
-	rm lib/libpg*
-	rm lib/libpq*
-	rm -rf lib/pgxs
-	rm lib/plpgsql.so
-	rm -rf share/doc
-	rm -rf share/man
-	rm -rf share/tsearch_data
-	rm share/*.bki
-	rm share/*description
-	rm share/*.sample
-	rm share/*.sql
-	rm share/*.txt
-	mkdir -p $RPM_BUILD_ROOT%{_libdir}/postgresql-%{prevmver}
-	cp -ra $RPM_BUILD_ROOT/postgresql-%{prevmver}%{_libdir}/pgsql/postgresql-%{prevmver}/* $RPM_BUILD_ROOT%{_libdir}/postgresql-%{prevmver}
-cd $RPM_BUILD_ROOT
-
 %clean
-#rm -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
 
 %pre
 PG_DB_CLUSTERS=""
@@ -1008,7 +905,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ $(cat $pgdir/PG_VERSION) != '9.1' ]; then
+		if [ $(cat $pgdir/PG_VERSION) != '9.2' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
@@ -1076,6 +973,7 @@ fi
 %attr(755,root,root) %{_bindir}/pg_ctl
 %attr(755,root,root) %{_bindir}/pg_resetxlog
 %attr(755,root,root) %{_bindir}/pg_receivexlog
+%attr(755,root,root) %{_bindir}/pg_upgrade
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
 
@@ -1088,6 +986,7 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/latin2_and_win1250.so
 %attr(755,root,root) %{_pgmoduledir}/latin_and_mic.so
 %attr(755,root,root) %{_pgmoduledir}/libpqwalreceiver.so
+%attr(755,root,root) %{_pgmoduledir}/pg_upgrade_support.so
 %attr(755,root,root) %{_pgmoduledir}/plpgsql.so
 %attr(755,root,root) %{_pgmoduledir}/utf8_and_*.so
 
@@ -1228,6 +1127,7 @@ fi
 %{_mandir}/man1/pg_dump.1*
 %{_mandir}/man1/pg_dumpall.1*
 %{_mandir}/man1/pg_restore.1*
+%{_mandir}/man1/pg_upgrade.1.gz
 %{_mandir}/man1/psql.1*
 %{_mandir}/man1/reindexdb.1*
 %{_mandir}/man1/vacuumdb.1*
@@ -1390,9 +1290,3 @@ fi
 %{_pgsqldir}/uuid-ossp--*.sql
 %{_pgsqldir}/uuid-ossp.control
 
-%files upgrade
-%attr(755,root,root) %{_bindir}/pg_upgrade
-%attr(755,root,root) %{_pgmoduledir}/pg_upgrade_support.so
-%dir %{_libdir}/postgresql-%{prevmver}
-%{_libdir}/postgresql-%{prevmver}
-%{_mandir}/man1/pg_upgrade.1.gz
