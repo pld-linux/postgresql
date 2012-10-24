@@ -1256,7 +1256,6 @@ fi
 %{_pgsqldir}/file_fdw--*.sql
 %{_pgsqldir}/file_fdw.control
 %{_pgsqldir}/fuzzystrmatch--*.sql
-%{_pgsqldir}/fuzzystrmatch--*.sql
 %{_pgsqldir}/fuzzystrmatch.control
 %{_pgsqldir}/hstore--*.sql
 %{_pgsqldir}/hstore.control
