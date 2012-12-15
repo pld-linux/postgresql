@@ -59,7 +59,7 @@ BuildRequires:	docbook-style-xsl
 BuildRequires:	flex >= 2.5.31
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
-%{?with_selinux:BuildRequires:	libselinux-devel >= 2.0.93}
+%{?with_selinux:BuildRequires:	libselinux-devel >= 2.0.99}
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.6.23
 BuildRequires:	libxslt-devel
@@ -719,7 +719,7 @@ Summary:	PostgreSQL external security provider using SELinux
 Summary(pl.UTF-8):	Zewnętrzny moduł bezpieczeństwa PostgreSQL-a wykorzystujący SELinuksa
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
-Requires:	libselinux >= 2.0.93
+Requires:	libselinux >= 2.0.99
 
 %description module-sepgsql
 PostgreSQL external security provider using SELinux.
