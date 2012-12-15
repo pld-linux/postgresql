@@ -2,6 +2,7 @@
 # - python 3 and python 2 subpackages?
 # - consider dns_sd/Bonjour support (--with-bonjour)
 # - think about pg_upgrade integration (sysconfig variable to allow upgrade from 8.3+ without dump/restore?)
+#   create postgresqlM.N packages with parts of old pgsql required by pg_upgrade
 # - test init script (db initialization)
 #
 # Conditional build:
