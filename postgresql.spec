@@ -18,7 +18,7 @@
 #
 
 %define beta %{nil}
-%define mver 9.2
+%define mver 9.3
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -31,12 +31,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.4
-Release:	2
+Version:	%{mver}.0
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	6ee5bb53b97da7c6ad9cb0825d3300dd
+# Source0-md5:	09aee56f3a15ce4a7ea32044fb845b53
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -60,7 +60,7 @@ BuildRequires:	docbook-style-xsl
 BuildRequires:	flex >= 2.5.31
 BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
-%{?with_selinux:BuildRequires:	libselinux-devel >= 2.0.99}
+%{?with_selinux:BuildRequires:	libselinux-devel >= 2.1.10}
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 2.6.23
 BuildRequires:	libxslt-devel
@@ -106,7 +106,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # omitted contribs:
 # dummy_seclabel, pg_test_fsync, spi and test_parser - examples/tests
 # tsearch2 - old module for compatibility only
-%define	contrib_modules	adminpack auth_delay auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pgbench pgcrypto pgrowlocks pgstattuple seg %{?with_selinux:sepgsql} sslinfo tablefunc unaccent uuid-ossp vacuumlo xml2
+%define	contrib_modules	adminpack auth_delay auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pg_xlogdump pgbench pgcrypto pgrowlocks pgstattuple seg %{?with_selinux:sepgsql} sslinfo tablefunc unaccent uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -720,7 +720,7 @@ Summary:	PostgreSQL external security provider using SELinux
 Summary(pl.UTF-8):	Zewnętrzny moduł bezpieczeństwa PostgreSQL-a wykorzystujący SELinuksa
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
-Requires:	libselinux >= 2.0.99
+Requires:	libselinux >= 2.1.10
 
 %description module-sepgsql
 PostgreSQL external security provider using SELinux.
@@ -1064,6 +1064,9 @@ fi
 %attr(755,root,root) %{_libdir}/libecpg_compat.so
 %attr(755,root,root) %{_libdir}/libpgtypes.so
 %{_includedir}/ecpg*
+%{_pkgconfigdir}/libecpg.pc
+%{_pkgconfigdir}/libecpg_compat.pc
+%{_pkgconfigdir}/libpgtypes.pc
 
 %files devel -f pg_config-%{mver}.lang
 %defattr(644,root,root,755)
@@ -1073,6 +1076,7 @@ fi
 %{_includedir}/libpq-events.h
 %{_includedir}/libpq-fe.h
 %{_includedir}/pg_config.h
+%{_includedir}/pg_config_ext.h
 %{_includedir}/pg_config_manual.h
 %{_includedir}/pg_config_os.h
 %{_includedir}/postgres_ext.h
@@ -1084,6 +1088,7 @@ fi
 %{_includedir}/postgresql/internal/pqexpbuffer.h
 %{_includedir}/postgresql/internal/libpq
 %{_includedir}/libpq
+%{_pkgconfigdir}/libpq.pc
 %{_mandir}/man1/pg_config.1*
 
 %files backend-devel
@@ -1099,6 +1104,7 @@ fi
 %{_libdir}/libecpg.a
 %{_libdir}/libecpg_compat.a
 %{_libdir}/libpq.a
+%{_libdir}/libpgcommon.a
 %{_libdir}/libpgtypes.a
 %{_libdir}/libpgport.a
 
@@ -1113,6 +1119,7 @@ fi
 %attr(755,root,root) %{_bindir}/dropuser
 %attr(755,root,root) %{_bindir}/pg_dump
 %attr(755,root,root) %{_bindir}/pg_dumpall
+%attr(755,root,root) %{_bindir}/pg_isready
 %attr(755,root,root) %{_bindir}/pg_restore
 %attr(755,root,root) %{_bindir}/psql
 %attr(755,root,root) %{_bindir}/reindexdb
@@ -1127,6 +1134,7 @@ fi
 %{_mandir}/man1/dropuser.1*
 %{_mandir}/man1/pg_dump.1*
 %{_mandir}/man1/pg_dumpall.1*
+%{_mandir}/man1/pg_isready.1*
 %{_mandir}/man1/pg_restore.1*
 %{_mandir}/man1/pg_upgrade.1.gz
 %{_mandir}/man1/psql.1*
@@ -1210,6 +1218,7 @@ fi
 %attr(755,root,root) %{_bindir}/oid2name
 %attr(755,root,root) %{_bindir}/pg_archivecleanup
 %attr(755,root,root) %{_bindir}/pg_standby
+%attr(755,root,root) %{_bindir}/pg_xlogdump
 %attr(755,root,root) %{_bindir}/pgbench
 %attr(755,root,root) %{_bindir}/vacuumlo
 %attr(755,root,root) %{_pgmoduledir}/_int.so
@@ -1290,4 +1299,4 @@ fi
 %{_pgsqldir}/unaccent.control
 %{_pgsqldir}/uuid-ossp--*.sql
 %{_pgsqldir}/uuid-ossp.control
-
+%{_mandir}/man1/pg_xlogdump.1*

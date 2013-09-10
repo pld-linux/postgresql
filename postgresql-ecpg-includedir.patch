@@ -1,13 +1,13 @@
---- postgresql-7.4.1/src/interfaces/ecpg/include/Makefile.orig	2003-12-18 19:55:05.000000000 +0100
-+++ postgresql-7.4.1/src/interfaces/ecpg/include/Makefile	2003-12-23 18:57:34.712017440 +0100
+--- postgresql-9.3.0/src/interfaces/ecpg/include/Makefile~	2013-09-02 22:53:17.000000000 +0200
++++ postgresql-9.3.0/src/interfaces/ecpg/include/Makefile	2013-09-10 08:27:36.147290881 +0200
 @@ -19,12 +19,12 @@
  informix_headers = datetime.h decimal.h sqltypes.h
  
- install-headers: $(ecpg_headers) $(informix_headers)
+ install-headers: $(ecpg_headers) $(informix_headers) installdirs
 -	$(INSTALL_DATA) $(addprefix $(srcdir)/,$(ecpg_headers)) '$(DESTDIR)$(includedir)/'
 -	$(INSTALL_DATA) $(addprefix $(srcdir)/,$(informix_headers)) '$(DESTDIR)$(informix_esql_dir)/'
-+	$(INSTALL_DATA) $(addprefix $(srcdir)/,$(ecpg_headers)) '$(DESTDIR)$(includedir)/ecpg'
-+	$(INSTALL_DATA) $(addprefix $(srcdir)/,$(informix_headers)) '$(DESTDIR)$(includedir)/ecpg'
++	$(INSTALL_DATA) $(addprefix $(srcdir)/,$(ecpg_headers)) '$(DESTDIR)$(includedir)/ecpg/'
++	$(INSTALL_DATA) $(addprefix $(srcdir)/,$(informix_headers)) '$(DESTDIR)$(includedir)/ecpg/'
  	$(INSTALL_DATA) $(ecpg_config_h) '$(DESTDIR)$(includedir)'
  
  installdirs:
@@ -16,4 +16,3 @@
  
  uninstall:
  	rm -f $(addprefix '$(DESTDIR)$(includedir)'/, $(ecpg_headers))
-
