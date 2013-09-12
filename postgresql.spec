@@ -1,6 +1,7 @@
 # TODO:
 # - python 3 and python 2 subpackages?
 # - consider dns_sd/Bonjour support (--with-bonjour)
+# - --enable-dtrace (is it systemtap-compatible?)
 # - think about pg_upgrade integration (sysconfig variable to allow upgrade from 8.3+ without dump/restore?)
 #   create postgresqlM.N packages with parts of old pgsql required by pg_upgrade
 # - test init script (db initialization)
@@ -62,7 +63,7 @@ BuildRequires:	gettext-devel
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel >= 2.1.10}
 BuildRequires:	libtool
-BuildRequires:	libxml2-devel >= 2.6.23
+BuildRequires:	libxml2-devel >= 1:2.6.23
 BuildRequires:	libxslt-devel
 BuildRequires:	libxslt-progs
 BuildRequires:	ncurses-devel >= 5.0
@@ -745,6 +746,7 @@ Summary:	XML-handling functions for PostgreSQL
 Summary(pl.UTF-8):	Funkcje do obsługi XML-a dla PostgreSQL-a
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
+Requires:	libxml2 >= 1:2.6.23
 
 %description module-xml2
 Module with XML functions provides both XPath querying and XSLT
