@@ -1,7 +1,6 @@
 # TODO:
 # - python 3 and python 2 subpackages?
 # - consider dns_sd/Bonjour support (--with-bonjour)
-# - think about pg_upgrade integration (sysconfig variable to allow upgrade from 8.3+ without dump/restore?)
 # - test init script (db initialization)
 #
 # Conditional build:
@@ -12,6 +11,7 @@
 %bcond_without	python			# disable Python support
 %bcond_without	ldap			# disable LDAP support
 %bcond_without	selinux			# sepgsql contrib module
+%bcond_with	pg_upgrade		# enable pg_upgrade support
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 #
@@ -31,7 +31,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.9
-Release:	1
+Release:	1.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -770,6 +770,23 @@ Miscellaneous PostgreSQL contrib modules.
 %description contrib -l pl.UTF-8
 Różne moduły dołączone do PostgreSQL-a.
 
+%package pg_upgrade
+Summary:	Support for upgrading to new major release
+Summary(pl.UTF-8):	Wsparcie
+Group:		Applications/Databases
+#Requires:	%{name} = %{version}-%{release}
+
+%description pg_upgrade
+The postgresql-upgrade package contains minimal database files needed
+for upgrading a PostgreSQL database cluster without dump/restore operation,
+to the next major version of PostgreSQL.
+
+%description pg_upgrade -l pl.UTF-8
+Pakiet postgresql-upgrade zawiera minimalnÄ instalacjÄ bazy
+pozwalajÄcÄ na aktualizacjÄ klastra bazy danych bez
+koniecznoÅci wykonywania operacji dump/restore, do kolejnej gÅÃ³w
+wersji bazy PostgreSQL.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -778,6 +795,18 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+
+%if %{with pg_upgrade}
+tar xjf %{SOURCE0}
+cd postgresql-%{version}
+%patch0 -p1
+%{?with_absolute_dbpaths:%patch1 -p1}
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+cd ..
+%endif
 
 tar xzf %{SOURCE4} -C contrib
 
@@ -825,6 +854,37 @@ done
 
 %ifnarch sparc sparcv9 sparc64 alpha
 %{?with_tests:%{__make} -j1 check}
+%endif
+
+%if %{with pg_upgrade}
+cd postgresql-%{version}
+%{__aclocal} -I config
+%{__autoconf}
+
+./configure \
+	CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS `uuid-config --cflags`" \
+--prefix=%{_libdir}/pgsql/postgresql-%{mver} \
+	--disable-rpath \
+	--enable-depend \
+	--enable-integer-datetimes \
+	--with-system-tzdata=%{_datadir}/zoneinfo \
+	--enable-nls \
+	--enable-thread-safety \
+	%{?with_kerberos5:--with-gssapi} \
+	%{?with_kerberos5:--with-krb5} \
+	%{?with_ldap:--with-ldap} \
+	--with-openssl \
+	--with-pam \
+	--with-libxml \
+	--with-libxslt \
+	%{?with_perl:--with-perl} \
+	%{?with_python:--with-python} \
+	%{?with_selinux:--with-selinux} \
+	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
+	--with-ossp-uuid \
+
+%{__make}
+cd ..
 %endif
 
 %install
@@ -896,6 +956,48 @@ install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
 
 # package it...?  nah, why bother.
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/doc/postgresql/html
+
+%if %{with pg_upgrade}
+cd postgresql-%{version}
+%{__make} install \
+        DESTDIR=$RPM_BUILD_ROOT/postgresql-%{mver}
+cd $RPM_BUILD_ROOT/postgresql-%{mver}%{_libdir}/pgsql/postgresql-%{mver}
+	rm bin/clusterdb
+	rm bin/createdb
+	rm bin/createlang
+	rm bin/createuser
+	rm bin/dropdb
+	rm bin/droplang
+	rm bin/dropuser
+	rm bin/ecpg
+	rm bin/initdb
+	rm bin/pg_config
+	rm bin/pg_controldata
+	rm bin/pg_dump
+	rm bin/pg_dumpall
+	rm bin/pg_restore
+	rm bin/psql
+	rm bin/reindexdb
+	rm bin/vacuumdb
+	rm -rf include
+	rm lib/dict_snowball.so
+	rm lib/libecpg*
+	rm lib/libpg*
+	rm lib/libpq*
+	rm -rf lib/pgxs
+	rm lib/plpgsql.so
+	rm -rf share/doc
+	rm -rf share/man
+	rm -rf share/tsearch_data
+	rm share/*.bki
+	rm share/*description
+	rm share/*.sample
+	rm share/*.sql
+	rm share/*.txt
+	mkdir -p $RPM_BUILD_ROOT%{_libdir}/postgresql-%{mver}
+	cp -ra $RPM_BUILD_ROOT/postgresql-%{mver}%{_libdir}/pgsql/postgresql-%{mver}/* $RPM_BUILD_ROOT%{_libdir}/postgresql-%{mver}
+cd $RPM_BUILD_ROOT
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -1290,3 +1392,8 @@ fi
 %{_pgsqldir}/unaccent.control
 %{_pgsqldir}/uuid-ossp--*.sql
 %{_pgsqldir}/uuid-ossp.control
+
+%if %{with pg_upgrade}
+%files pg_upgrade
+%{_libdir}/postgresql-%{mver}
+%endif
