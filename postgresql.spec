@@ -32,12 +32,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.0
+Version:	%{mver}.1
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	09aee56f3a15ce4a7ea32044fb845b53
+# Source0-md5:	c003d871f712d4d3895956b028a96e74
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -908,7 +908,7 @@ fi
 foundold=0
 for pgdir in $PG_DB_CLUSTERS; do
 	if [ -f $pgdir/PG_VERSION ]; then
-		if [ $(cat $pgdir/PG_VERSION) != '9.2' ]; then
+		if [ $(cat $pgdir/PG_VERSION) != '9.3' ]; then
 			echo "Found database(s) in older, incompatible format in cluster $pgdir."
 			foundold=1
 		fi
