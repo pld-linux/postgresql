@@ -32,12 +32,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.1
+Version:	%{mver}.2
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	c003d871f712d4d3895956b028a96e74
+# Source0-md5:	8c905155e3e9f9367b4299a9acb41d2a
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -1197,10 +1197,12 @@ fi
 %{_pgsqldir}/pgcrypto--*.sql
 %{_pgsqldir}/pgcrypto.control
 
+%if %{with selinux}
 %files module-sepgsql
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/sepgsql.so
 %{_pgsqldir}/sepgsql.sql
+%endif
 
 %files module-tablefunc
 %defattr(644,root,root,755)
