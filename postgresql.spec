@@ -105,9 +105,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_ulibdir	/usr/lib
 
 # omitted contribs:
-# dummy_seclabel, pg_test_fsync, spi and test_parser - examples/tests
+# dummy_seclabel, pg_test_fsync, pg_test_timing, spi, test_parser, worker_spi - examples/tests
 # tsearch2 - old module for compatibility only
-%define	contrib_modules	adminpack auth_delay auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pg_xlogdump pgbench pgcrypto pgrowlocks pgstattuple seg %{?with_selinux:sepgsql} sslinfo tablefunc unaccent uuid-ossp vacuumlo xml2
+%define	contrib_modules	adminpack auth_delay auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pg_xlogdump pgbench pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn unaccent uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -891,6 +891,9 @@ mv $RPM_BUILD_ROOT{%{_datadir}/postgresql/contrib,%{_pgsqldir}}/sepgsql.sql
 
 install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
 
+# unpackaged contribs
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man1/{pg_test_fsync,pg_test_timing}.1
+
 # package it...?  nah, why bother.
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/doc/postgresql/html
 
@@ -1018,17 +1021,9 @@ fi
 %{_mandir}/man1/pg_controldata.1*
 %{_mandir}/man1/pg_ctl.1*
 %{_mandir}/man1/pg_resetxlog.1*
+%{_mandir}/man1/pg_receivexlog.1*
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
-%{_mandir}/man1/oid2name.1.gz
-%{_mandir}/man1/pg_archivecleanup.1.gz
-%{_mandir}/man1/pg_receivexlog.1.gz
-%{_mandir}/man1/pg_standby.1.gz
-%{_mandir}/man1/pg_test_fsync.1.gz
-%{_mandir}/man1/pg_test_timing.1.gz
-%{_mandir}/man1/pgbench.1.gz
-%{_mandir}/man1/vacuumlo.1.gz
-
 
 %if "%{pld_release}" != "ti"
 %files upstart
@@ -1247,8 +1242,10 @@ fi
 %attr(755,root,root) %{_pgmoduledir}/pg_stat_statements.so
 %attr(755,root,root) %{_pgmoduledir}/pgrowlocks.so
 %attr(755,root,root) %{_pgmoduledir}/pgstattuple.so
+%attr(755,root,root) %{_pgmoduledir}/postgres_fdw.so
 %attr(755,root,root) %{_pgmoduledir}/seg.so
 %attr(755,root,root) %{_pgmoduledir}/sslinfo.so
+%attr(755,root,root) %{_pgmoduledir}/tcn.so
 %attr(755,root,root) %{_pgmoduledir}/unaccent.so
 %attr(755,root,root) %{_pgmoduledir}/uuid-ossp.so
 %{_pgsqldir}/adminpack--*.sql
@@ -1295,12 +1292,21 @@ fi
 %{_pgsqldir}/pgrowlocks.control
 %{_pgsqldir}/pgstattuple--*.sql
 %{_pgsqldir}/pgstattuple.control
+%{_pgsqldir}/postgres_fdw--*.sql
+%{_pgsqldir}/postgres_fdw.control
 %{_pgsqldir}/seg--*.sql
 %{_pgsqldir}/seg.control
 %{_pgsqldir}/sslinfo--*.sql
 %{_pgsqldir}/sslinfo.control
+%{_pgsqldir}/tcn--*.sql
+%{_pgsqldir}/tcn.control
 %{_pgsqldir}/unaccent--*.sql
 %{_pgsqldir}/unaccent.control
 %{_pgsqldir}/uuid-ossp--*.sql
 %{_pgsqldir}/uuid-ossp.control
+%{_mandir}/man1/oid2name.1*
+%{_mandir}/man1/pg_archivecleanup.1*
+%{_mandir}/man1/pg_standby.1*
 %{_mandir}/man1/pg_xlogdump.1*
+%{_mandir}/man1/pgbench.1*
+%{_mandir}/man1/vacuumlo.1*
