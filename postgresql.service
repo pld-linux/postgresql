@@ -1,0 +1,13 @@
+[Unit]
+Description=PostgreSQL server
+Wants=postgresql.target
+After=postgresql.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/systemctl is-active postgresql.target
+ExecReload=/bin/true
+
+[Install]
+WantedBy=multi-user.target

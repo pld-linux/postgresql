@@ -1,0 +1,15 @@
+[Unit]
+Description=PostgreSQL database server at %f
+PartOf=postgresql.target postgresql.service
+ReloadPropagatedFrom=postgresql.service
+
+[Service]
+Type=forking
+User=postgres
+ExecStart=/usr/bin/pg_ctl -D %f start -w -s
+ExecStop=/usr/bin/pg_ctl -D %f stop -w -s -m fast
+ExecReload=/usr/bin/pg_ctl -D %f reload -w -s
+PIDFile=%f/postmaster.pid
+
+[Install]
+RequiredBy=postgresql.target

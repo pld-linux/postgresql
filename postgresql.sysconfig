@@ -5,6 +5,10 @@
 # PostgreSQL. If you want to start more than one PostgreSQL instance,
 # you should change TCP/IP port, at least.
 #
+# Under systemd each cluster is started under a different postgresql@.service
+# instance, the default being postgresql@var-lib-pgsql.service
+#
+# To enable a new one use;  /bin/systemctl enable postgresql@${instance}.service
 
 # locale used at service postgresql init
 # PG_INIT_LOCALE=C

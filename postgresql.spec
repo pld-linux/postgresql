@@ -33,7 +33,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.3
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -42,8 +42,11 @@ Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
 Source3:	%{name}.sysconfig
-Source5:	%{name}.upstart
-Source6:	%{name}-instance.upstart
+Source4:	%{name}@.service
+Source5:	%{name}.service
+Source6:	%{name}.target
+Source7:	%{name}.upstart
+Source8:	%{name}-instance.upstart
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
@@ -78,7 +81,7 @@ BuildRequires:	python-devel >= 1:2.3
 BuildRequires:	python-modules >= 1:2.3
 %endif
 BuildRequires:	readline-devel >= 4.2
-BuildRequires:	rpmbuild(macros) >= 1.268
+BuildRequires:	rpmbuild(macros) >= 1.671
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
 %{?with_tests:BuildRequires:	tzdata}
 BuildRequires:	zlib-devel
@@ -92,6 +95,7 @@ Requires(triggerpostun):	/usr/sbin/usermod
 Requires:	%{name}-clients = %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	rc-scripts >= 0.4.3.0
+Requires:	systemd-units >= 38
 Requires:	tzdata
 Obsoletes:	postgresql-module-plpgsql
 Obsoletes:	postgresql-module-tsearch2
@@ -831,6 +835,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig,init/%{nam
 	$RPM_BUILD_ROOT{/var/{lib/pgsql,log},%{_pgsqldir}} \
 	$RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version} \
 	$RPM_BUILD_ROOT%{_mandir} \
+	$RPM_BUILD_ROOT{%{systemdunitdir},/etc/systemd/system/%{name}.target.requires} \
 	$RPM_BUILD_ROOT/home/services/postgres
 
 install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
@@ -855,8 +860,12 @@ touch $RPM_BUILD_ROOT/var/log/pgsql
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
 
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/init/%{name}.conf
-install %{SOURCE6} $RPM_BUILD_ROOT/etc/init/%{name}/instance.conf
+install %{SOURCE4} $RPM_BUILD_ROOT%{systemdunitdir}/%{name}@.service
+install %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}/%{name}.service
+install %{SOURCE6} $RPM_BUILD_ROOT%{systemdunitdir}/%{name}.target
+
+install %{SOURCE7} $RPM_BUILD_ROOT/etc/init/%{name}.conf
+install %{SOURCE8} $RPM_BUILD_ROOT/etc/init/%{name}/instance.conf
 
 install -d howto
 tar zxf %{SOURCE2} -C howto
@@ -948,12 +957,43 @@ fi
 %post
 /sbin/chkconfig --add postgresql
 %service postgresql restart "postgresql server"
+if [ "$1" -eq "1" ]; then
+	PG_DB_CLUSTERS=""
+	[ -f /etc/sysconfig/postgresql ] && . /etc/sysconfig/postgresql
+	export SYSTEMD_LOG_LEVEL=warning SYSTEMD_LOG_TARGET=syslog
+	for pgdir in $PG_DB_CLUSTERS; do
+		instance="$(echo "$pgdir" | sed -e 's/^\///;s/-/\\x2d/g;s/@/\\x40/g;s/\//-/g')"
+		/bin/systemctl --quiet enable "postgresql@$instance.service" || :
+	done
+fi
+%systemd_post postgresql.service
 
 %preun
 if [ "$1" = "0" ]; then
 	%service postgresql stop
 	/sbin/chkconfig --del postgresql
+
+	PG_DB_CLUSTERS=""
+	[ -f /etc/sysconfig/postgresql ] && . /etc/sysconfig/postgresql
+	export SYSTEMD_LOG_LEVEL=warning SYSTEMD_LOG_TARGET=syslog
+	for pgdir in $PG_DB_CLUSTERS; do
+		instance="$(echo "$pgdir" | sed -e 's/^\///;s/-/\\x2d/g;s/@/\\x40/g;s/\//-/g')"
+		/bin/systemctl --quiet disable "postgresql@$instance.service" || :
+	done
 fi
+%systemd_preun postgresql.service
+
+%postun
+%systemd_reload
+
+%triggerpostun -- %{name} < 9.3.3-2
+PG_DB_CLUSTERS=""
+[ -f /etc/sysconfig/postgresql ] && . /etc/sysconfig/postgresql
+for pgdir in $PG_DB_CLUSTERS; do
+	instance="$(echo "$pgdir" | sed -e 's/^\///;s/-/\\x2d/g;s/@/\\x40/g;s/\//-/g')"
+	/bin/systemctl --quiet enable "postgresql@$instance.service" || :
+done
+%systemd_trigger postgresql.service
 
 %post upstart
 %upstart_post postgresql
@@ -972,6 +1012,10 @@ fi
 %doc COPYRIGHT README HISTORY doc/{bug.template,KNOWN_BUGS,MISSING_FEATURES,TODO}
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/postgresql
+%{systemdunitdir}/%{name}.service
+%{systemdunitdir}/%{name}@.service
+%{systemdunitdir}/%{name}.target
+%dir /etc/systemd/system/%{name}.target.requires
 
 %attr(755,root,root) %{_bindir}/initdb
 %attr(755,root,root) %{_bindir}/pg_basebackup
