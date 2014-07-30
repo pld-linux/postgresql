@@ -80,7 +80,7 @@ pgstatus() {
 		PG_STATUS="not running"
 	elif [ $status -eq 0 ]; then
 		PG_STATUS="running"
-        # or maybe grab it from postmaster.pid file?
+	# or maybe grab it from postmaster.pid file?
 		PG_PID=$(echo "$output" | awk '/PID: / { match($0, "PID: [0-9]+"); print substr($0,RSTART+5,RLENGTH-5) }')
 	fi
 }
@@ -176,10 +176,10 @@ RETVAL=0
 # db clusters.
 case "$action" in
   start)
-  	start
+	start
 	;;
   stop)
-  	stop
+	stop
 	;;
   status)
 	for pgdir in $DB_CLUSTERS; do
@@ -251,7 +251,7 @@ case "$action" in
 			mkdir -p $pgdir
 			chmod 700 $pgdir
 			chown postgres:postgres $pgdir
-			LC_ALL=$PG_INIT_LOCALE TMPDIR=/tmp su postgres -s /bin/sh -c "initdb -E UNICODE -D $pgdir"
+			LC_ALL=$PG_INIT_LOCALE TMPDIR=/tmp su postgres -s /bin/sh -c "initdb -E UNICODE --data-checksums -D $pgdir"
 		fi
 	done
 	echo $(nls "REMEMBER to setup password for user \"postgres\"")'!'
