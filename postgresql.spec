@@ -19,7 +19,7 @@
 #
 
 %define beta %{nil}
-%define mver 9.3
+%define mver 9.4
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -32,12 +32,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.5
-Release:	2
+Version:	%{mver}.0
+Release:	0.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	5059857c7d7e6ad83b6d55893a121b59
+# Source0-md5:	8cd6e33e1f8d4d2362c8c08bd0e8802b
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -53,6 +53,7 @@ Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		%{name}-ac_version.patch
 Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-heimdal.patch
+Patch6:		%{name}-ossp_uuid.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -112,7 +113,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # omitted contribs:
 # dummy_seclabel, pg_test_fsync, pg_test_timing, spi, test_parser, worker_spi - examples/tests
 # tsearch2 - old module for compatibility only
-%define	contrib_modules	adminpack auth_delay auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pg_xlogdump pgbench pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn unaccent uuid-ossp vacuumlo xml2
+%define	contrib_modules	adminpack auth_delay auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_prewarm pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pg_xlogdump pgbench pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn unaccent uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -783,6 +784,7 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
@@ -802,7 +804,6 @@ find src -name \*.l -o -name \*.y | xargs touch
 	--enable-nls \
 	--enable-thread-safety \
 	%{?with_kerberos5:--with-gssapi} \
-	%{?with_kerberos5:--with-krb5} \
 	%{?with_ldap:--with-ldap} \
 	--with-openssl \
 	--with-pam \
@@ -812,7 +813,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 	%{?with_python:--with-python} \
 	%{?with_selinux:--with-selinux} \
 	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
-	--with-ossp-uuid \
+	--with-uuid=e2fs \
 
 %{__make}
 
@@ -1024,6 +1025,7 @@ done
 %attr(755,root,root) %{_bindir}/pg_ctl
 %attr(755,root,root) %{_bindir}/pg_resetxlog
 %attr(755,root,root) %{_bindir}/pg_receivexlog
+%attr(755,root,root) %{_bindir}/pg_recvlogical
 %attr(755,root,root) %{_bindir}/pg_upgrade
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
@@ -1067,6 +1069,7 @@ done
 %{_mandir}/man1/pg_ctl.1*
 %{_mandir}/man1/pg_resetxlog.1*
 %{_mandir}/man1/pg_receivexlog.1*
+%{_mandir}/man1/pg_recvlogical.1*
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
 
@@ -1284,6 +1287,7 @@ done
 %attr(755,root,root) %{_pgmoduledir}/passwordcheck.so
 %attr(755,root,root) %{_pgmoduledir}/pg_buffercache.so
 %attr(755,root,root) %{_pgmoduledir}/pg_freespacemap.so
+%attr(755,root,root) %{_pgmoduledir}/pg_prewarm.so
 %attr(755,root,root) %{_pgmoduledir}/pg_stat_statements.so
 %attr(755,root,root) %{_pgmoduledir}/pgrowlocks.so
 %attr(755,root,root) %{_pgmoduledir}/pgstattuple.so
@@ -1331,6 +1335,8 @@ done
 %{_pgsqldir}/pg_buffercache.control
 %{_pgsqldir}/pg_freespacemap--*.sql
 %{_pgsqldir}/pg_freespacemap.control
+%{_pgsqldir}/pg_prewarm--*.sql
+%{_pgsqldir}/pg_prewarm.control
 %{_pgsqldir}/pg_stat_statements--*.sql
 %{_pgsqldir}/pg_stat_statements.control
 %{_pgsqldir}/pgrowlocks--*.sql
