@@ -18,3 +18,17 @@
  fi
  
  if test "$PORTNAME" = "win32" ; then
+--- postgresql-9.4.1/contrib/uuid-ossp/uuid-ossp.c.org	2015-03-23 10:41:24.000000000 +0100
++++ postgresql-9.4.1/contrib/uuid-ossp/uuid-ossp.c	2015-03-23 10:54:29.403373571 +0100
+@@ -29,8 +29,8 @@
+ #ifdef HAVE_UUID_H
+ #include <uuid.h>
+ #endif
+-#ifdef HAVE_OSSP_UUID_H
+-#include <ossp/uuid.h>
++#ifdef HAVE_OSSP_UUID_UUID_H
++#include <ossp-uuid/uuid.h>
+ #endif
+ #ifdef HAVE_UUID_UUID_H
+ #include <uuid/uuid.h>
+
