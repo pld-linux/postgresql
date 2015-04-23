@@ -45,8 +45,6 @@ Source3:	%{name}.sysconfig
 Source4:	%{name}@.service
 Source5:	%{name}.service
 Source6:	%{name}.target
-Source7:	%{name}.upstart
-Source8:	%{name}-instance.upstart
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
@@ -336,20 +334,6 @@ California, Berkeley.
 
 PostgreSQL працює на Solaris, SunOS, HPUX, AIX, Linux, Irix, FreeBSD
 та більшості інших різновидів Unix.
-
-%package upstart
-Summary:	Upstart job description for PostgreSQL server
-Summary(pl.UTF-8):	Opis zadania Upstart dla serwera PostgreSQL
-Group:		Daemons
-Requires:	%{name} = %{version}-%{release}
-Requires:	upstart >= 0.6
-Conflicts:	syslog-ng < 3.2.4-1
-
-%description upstart
-Upstart job description for PostgreSQL.
-
-%description upstart -l pl.UTF-8
-Opis zadania Upstart dla PostgreSQL.
 
 %package devel
 Summary:	PostgreSQL development header files and libraries
@@ -834,7 +818,7 @@ done
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig,init/%{name}}} \
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 	$RPM_BUILD_ROOT{/var/{lib/pgsql,log},%{_pgsqldir}} \
 	$RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version} \
 	$RPM_BUILD_ROOT%{_mandir} \
@@ -866,9 +850,6 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
 install %{SOURCE4} $RPM_BUILD_ROOT%{systemdunitdir}/%{name}@.service
 install %{SOURCE5} $RPM_BUILD_ROOT%{systemdunitdir}/%{name}.service
 install %{SOURCE6} $RPM_BUILD_ROOT%{systemdunitdir}/%{name}.target
-
-install %{SOURCE7} $RPM_BUILD_ROOT/etc/init/%{name}.conf
-install %{SOURCE8} $RPM_BUILD_ROOT/etc/init/%{name}/instance.conf
 
 install -d howto
 tar zxf %{SOURCE2} -C howto
@@ -998,12 +979,6 @@ for pgdir in $PG_DB_CLUSTERS; do
 done
 %systemd_trigger postgresql.service
 
-%post upstart
-%upstart_post postgresql
-
-%postun upstart
-%upstart_postun postgresql
-
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
 
@@ -1073,14 +1048,6 @@ done
 %{_mandir}/man1/pg_recvlogical.1*
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
-
-%if "%{pld_release}" != "ti"
-%files upstart
-%defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/init/postgresql.conf
-%dir /etc/init/postgresql
-%config(noreplace) %verify(not md5 mtime size) /etc/init/postgresql/instance.conf
-%endif
 
 %files doc
 %defattr(644,root,root,755)
