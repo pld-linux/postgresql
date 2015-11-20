@@ -626,7 +626,7 @@ Summary:	PL/Python - PostgreSQL procedural language
 Summary(pl.UTF-8):	PL/Python - język proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
-%pyrequires_eq	python
+Requires:	python
 
 %description module-plpython
 From PostgreSQL documentation:
@@ -859,7 +859,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/etc/{rc.d/init.d,sysconfig}} \
 	$RPM_BUILD_ROOT%{_mandir} \
 	$RPM_BUILD_ROOT/home/services/postgres
 
-install src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+cp -p src/tutorial/*.sql $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -899,8 +899,8 @@ cd ../../../
 
 touch $RPM_BUILD_ROOT/var/log/pgsql
 
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
+install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/postgresql
+cp -p %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/postgresql
 
 install -d howto
 tar zxf %{SOURCE2} -C howto
@@ -1031,14 +1031,18 @@ fi
 %files libs -f libpq.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
+%ghost %{_libdir}/libpq.so.5
 %dir %{_pgmoduledir}
 
 %files ecpg
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/ecpg
 %attr(755,root,root) %{_libdir}/libecpg.so.*.*
+%ghost %{_libdir}/libecpg.so.5
 %attr(755,root,root) %{_libdir}/libecpg_compat.so.*.*
+%ghost %{_libdir}/libecpg_compat.so.2
 %attr(755,root,root) %{_libdir}/libpgtypes.so.*.*
+%ghost %{_libdir}/libpgtypes.so.2
 %{_mandir}/man1/ecpg.1*
 
 %files ecpg-devel
