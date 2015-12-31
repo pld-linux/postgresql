@@ -33,7 +33,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.5
-Release:	3
+Release:	4
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -52,6 +52,7 @@ Patch3:		%{name}-ac_version.patch
 Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		%{name}-ossp_uuid.patch
+Patch7:		%{name}-libxml2.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -769,6 +770,7 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
