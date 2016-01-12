@@ -19,7 +19,7 @@
 #
 
 %define beta %{nil}
-%define mver 9.4
+%define mver 9.5
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -32,12 +32,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.5
-Release:	4
+Version:	%{mver}.0
+Release:	0.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	8b2e3472a8dc786649b4d02d02e039a0
+# Source0-md5:	e58fffe9359e311ead94490a06b7147c
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -52,7 +52,6 @@ Patch3:		%{name}-ac_version.patch
 Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		%{name}-ossp_uuid.patch
-Patch7:		%{name}-libxml2.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -110,9 +109,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_ulibdir	/usr/lib
 
 # omitted contribs:
-# dummy_seclabel, pg_test_fsync, pg_test_timing, spi, test_parser, worker_spi - examples/tests
+# dummy_seclabel, spi, test_parser, worker_spi - examples/tests
 # tsearch2 - old module for compatibility only
-%define	contrib_modules	adminpack auth_delay auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_archivecleanup pg_buffercache pg_freespacemap pg_prewarm pg_standby pg_stat_statements pg_trgm pg_upgrade pg_upgrade_support pg_xlogdump pgbench pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn unaccent uuid-ossp vacuumlo xml2
+%define	contrib_modules	adminpack auth_delay auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_buffercache pg_freespacemap pg_prewarm pg_standby pg_stat_statements pg_trgm pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn unaccent uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -770,7 +769,6 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
@@ -862,13 +860,13 @@ tar zxf %{SOURCE2} -C howto
 %endif
 
 # find locales
-for f in libpq5 pg_basebackup pg_controldata pg_dump pg_resetxlog pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 %{?with_perl:plperl} plpgsql %{?with_python: plpython}; do
+for f in libpq5 pg_basebackup pg_controldata pg_dump pg_resetxlog pg_rewind pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 %{?with_perl:plperl} plpgsql %{?with_python: plpython}; do
 	%find_lang $f-%{mver}
 done
 # merge locales
 cat pgscripts-%{mver}.lang pg_resetxlog-%{mver}.lang \
     postgres-%{mver}.lang pg_controldata-%{mver}.lang \
-    plpgsql-%{mver}.lang \
+    plpgsql-%{mver}.lang pg_rewind-%{mver}.lang \
     pg_basebackup-%{mver}.lang \
     > main-%{mver}.lang
 cat pg_dump-%{mver}.lang psql-%{mver}.lang initdb-%{mver}.lang \
@@ -885,9 +883,6 @@ mv $RPM_BUILD_ROOT{%{_datadir}/postgresql/contrib,%{_pgsqldir}}/sepgsql.sql
 %endif
 
 install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
-
-# unpackaged contribs
-%{__rm} $RPM_BUILD_ROOT%{_mandir}/man1/{pg_test_fsync,pg_test_timing}.1
 
 # package it...?  nah, why bother.
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/doc/postgresql/html
@@ -1004,7 +999,12 @@ done
 %attr(755,root,root) %{_bindir}/pg_resetxlog
 %attr(755,root,root) %{_bindir}/pg_receivexlog
 %attr(755,root,root) %{_bindir}/pg_recvlogical
+%attr(755,root,root) %{_bindir}/pg_rewind
+%attr(755,root,root) %{_bindir}/pg_test_fsync
+%attr(755,root,root) %{_bindir}/pg_test_timing
 %attr(755,root,root) %{_bindir}/pg_upgrade
+%attr(755,root,root) %{_bindir}/pg_xlogdump
+%attr(755,root,root) %{_bindir}/pgbench
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
 
@@ -1017,7 +1017,6 @@ done
 %attr(755,root,root) %{_pgmoduledir}/latin2_and_win1250.so
 %attr(755,root,root) %{_pgmoduledir}/latin_and_mic.so
 %attr(755,root,root) %{_pgmoduledir}/libpqwalreceiver.so
-%attr(755,root,root) %{_pgmoduledir}/pg_upgrade_support.so
 %attr(755,root,root) %{_pgmoduledir}/plpgsql.so
 %attr(755,root,root) %{_pgmoduledir}/utf8_and_*.so
 
@@ -1048,6 +1047,12 @@ done
 %{_mandir}/man1/pg_resetxlog.1*
 %{_mandir}/man1/pg_receivexlog.1*
 %{_mandir}/man1/pg_recvlogical.1*
+%{_mandir}/man1/pg_rewind.1*
+%{_mandir}/man1/pg_xlogdump.1*
+%{_mandir}/man1/pg_test_fsync.1*
+%{_mandir}/man1/pg_test_timing.1*
+%{_mandir}/man1/pg_upgrade.1*
+%{_mandir}/man1/pgbench.1*
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
 
@@ -1132,6 +1137,7 @@ done
 %attr(755,root,root) %{_bindir}/dropdb
 %attr(755,root,root) %{_bindir}/droplang
 %attr(755,root,root) %{_bindir}/dropuser
+%attr(755,root,root) %{_bindir}/pg_archivecleanup
 %attr(755,root,root) %{_bindir}/pg_dump
 %attr(755,root,root) %{_bindir}/pg_dumpall
 %attr(755,root,root) %{_bindir}/pg_isready
@@ -1147,11 +1153,11 @@ done
 %{_mandir}/man1/dropdb.1*
 %{_mandir}/man1/droplang.1*
 %{_mandir}/man1/dropuser.1*
+%{_mandir}/man1/pg_archivecleanup.1*
 %{_mandir}/man1/pg_dump.1*
 %{_mandir}/man1/pg_dumpall.1*
 %{_mandir}/man1/pg_isready.1*
 %{_mandir}/man1/pg_restore.1*
-%{_mandir}/man1/pg_upgrade.1.gz
 %{_mandir}/man1/psql.1*
 %{_mandir}/man1/reindexdb.1*
 %{_mandir}/man1/vacuumdb.1*
@@ -1233,10 +1239,7 @@ done
 %defattr(644,root,root,755)
 %doc contrib/README
 %attr(755,root,root) %{_bindir}/oid2name
-%attr(755,root,root) %{_bindir}/pg_archivecleanup
 %attr(755,root,root) %{_bindir}/pg_standby
-%attr(755,root,root) %{_bindir}/pg_xlogdump
-%attr(755,root,root) %{_bindir}/pgbench
 %attr(755,root,root) %{_bindir}/vacuumlo
 %attr(755,root,root) %{_pgmoduledir}/_int.so
 %attr(755,root,root) %{_pgmoduledir}/adminpack.so
@@ -1326,8 +1329,5 @@ done
 %{_pgsqldir}/uuid-ossp--*.sql
 %{_pgsqldir}/uuid-ossp.control
 %{_mandir}/man1/oid2name.1*
-%{_mandir}/man1/pg_archivecleanup.1*
 %{_mandir}/man1/pg_standby.1*
-%{_mandir}/man1/pg_xlogdump.1*
-%{_mandir}/man1/pgbench.1*
 %{_mandir}/man1/vacuumlo.1*
