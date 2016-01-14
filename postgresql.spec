@@ -1,7 +1,5 @@
 # TODO:
 # - python 3 and python 2 subpackages?
-# - consider dns_sd/Bonjour support (--with-bonjour)
-# - --enable-dtrace (is it systemtap-compatible?)
 # - think about pg_upgrade integration (sysconfig variable to allow upgrade from 8.3+ without dump/restore?)
 #   create postgresqlM.N packages with parts of old pgsql required by pg_upgrade
 # - test init script (db initialization)
@@ -12,8 +10,10 @@
 %bcond_without	kerberos5		# disable kerberos5 support
 %bcond_without	perl			# disable Perl support
 %bcond_without	python			# disable Python support
+%bcond_with	bonjour			# Bonjour/DNS_SD support
 %bcond_without	ldap			# disable LDAP support
 %bcond_without	selinux			# sepgsql contrib module
+%bcond_with	systemtap		# systemtap/dtrace probes
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 #
@@ -52,9 +52,11 @@ Patch3:		%{name}-ac_version.patch
 Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		%{name}-ossp_uuid.patch
+Patch7:		%{name}-link.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
+%{?with_bonjour:BuildRequires:	avahi-compat-libdns_sd-devel}
 # not needed for releases... but fixes something in snapshot
 BuildRequires:	bison >= 1.875
 BuildRequires:	docbook-dtd42-sgml
@@ -82,6 +84,7 @@ BuildRequires:	python-modules >= 1:2.3
 %endif
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.671
+%{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
 %{?with_tests:BuildRequires:	tzdata}
 BuildRequires:	zlib-devel
@@ -769,6 +772,7 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
@@ -784,19 +788,21 @@ find src -name \*.l -o -name \*.y | xargs touch
 	CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS `uuid-config --cflags`" \
 	--disable-rpath \
 	--enable-depend \
+	%{?with_systemtap:--enable-dtrace} \
 	--enable-integer-datetimes \
-	--with-system-tzdata=%{_datadir}/zoneinfo \
 	--enable-nls \
 	--enable-thread-safety \
+	%{?with_bonjour:--with-bonjour} \
 	%{?with_kerberos5:--with-gssapi} \
 	%{?with_ldap:--with-ldap} \
-	--with-openssl \
-	--with-pam \
 	--with-libxml \
 	--with-libxslt \
+	--with-openssl \
+	--with-pam \
 	%{?with_perl:--with-perl} \
 	%{?with_python:--with-python} \
 	%{?with_selinux:--with-selinux} \
+	--with-system-tzdata=%{_datadir}/zoneinfo \
 	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
 	--with-uuid=ossp
 

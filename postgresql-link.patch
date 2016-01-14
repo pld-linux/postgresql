@@ -1,0 +1,33 @@
+--- postgresql-9.5.0/configure.in.orig	2016-01-14 18:59:41.640973653 +0100
++++ postgresql-9.5.0/configure.in	2016-01-14 21:10:21.783977990 +0100
+@@ -1192,7 +1192,9 @@
+ 
+ if test "$with_bonjour" = yes ; then
+   AC_CHECK_HEADER(dns_sd.h, [], [AC_MSG_ERROR([header file <dns_sd.h> is required for Bonjour])])
++  AC_CHECK_LIB(dns_sd, DNSServiceRegister, [BONJOUR_LIBS=-ldns_sd])
+ fi
++AC_SUBST([BONJOUR_LIBS])
+ 
+ # for contrib/uuid-ossp
+ if test "$with_uuid" = bsd ; then
+--- postgresql-9.5.0/src/backend/Makefile.orig	2016-01-04 22:29:34.000000000 +0100
++++ postgresql-9.5.0/src/backend/Makefile	2016-01-14 21:10:48.093976872 +0100
+@@ -54,7 +54,7 @@
+ ifneq ($(PORTNAME), aix)
+ 
+ postgres: $(OBJS)
+-	$(CC) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_EX) $(export_dynamic) $(call expand_subsys,$^) $(LIBS) -o $@
++	$(CC) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_EX) $(export_dynamic) $(call expand_subsys,$^) $(LIBS) $(BONJOUR_LIBS) -o $@
+ 
+ endif
+ endif
+--- postgresql-9.5.0/src/Makefile.global.in.orig	2016-01-04 22:29:34.000000000 +0100
++++ postgresql-9.5.0/src/Makefile.global.in	2016-01-14 21:11:50.820640805 +0100
+@@ -216,6 +216,7 @@
+ PTHREAD_CFLAGS		= @PTHREAD_CFLAGS@
+ PTHREAD_LIBS		= @PTHREAD_LIBS@
+ 
++BONJOUR_LIBS            = @BONJOUR_LIBS@
+ 
+ ##########################################################################
+ #
