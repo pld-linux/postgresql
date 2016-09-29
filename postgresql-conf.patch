@@ -10,16 +10,18 @@
  					# depending on platform.  csvlog
  					# requires logging_collector to be on.
 @@ -262,8 +262,8 @@
- 					# 0 to disable.
+ 					# 0 disables.
  
  # These are relevant when logging to syslog:
 -#syslog_facility = 'LOCAL0'
 -#syslog_ident = 'postgres'
+-#syslog_sequence_numbers = on
 +syslog_facility = 'LOCAL0'
 +syslog_ident = 'postgres'
++syslog_sequence_numbers = on
+ #syslog_split_messages = on
  
- 
- # - When to Log -
+ # This is only relevant when logging to eventlog (win32):
 @@ -324,7 +324,7 @@
  #debug_print_plan = off
  #debug_pretty_print = off
