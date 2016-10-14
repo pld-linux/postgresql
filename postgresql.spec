@@ -1,5 +1,6 @@
 # TODO:
 # - python 3 and python 2 subpackages?
+# - subpackage *_plperl and *_plpython contribs?
 # - think about pg_upgrade integration (sysconfig variable to allow upgrade from 8.3+ without dump/restore?)
 #   create postgresqlM.N packages with parts of old pgsql required by pg_upgrade
 # - test init script (db initialization)
@@ -13,6 +14,7 @@
 %bcond_with	bonjour			# Bonjour/DNS_SD support
 %bcond_without	ldap			# disable LDAP support
 %bcond_without	selinux			# sepgsql contrib module
+%bcond_without	systemd			# systemd (notify) support
 %bcond_with	systemtap		# systemtap/dtrace probes
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
@@ -54,7 +56,7 @@ Patch5:		%{name}-heimdal.patch
 Patch6:		%{name}-ossp_uuid.patch
 Patch7:		%{name}-link.patch
 URL:		http://www.postgresql.org/
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake
 %{?with_bonjour:BuildRequires:	avahi-compat-libdns_sd-devel}
 # not needed for releases... but fixes something in snapshot
@@ -84,6 +86,7 @@ BuildRequires:	python-modules >= 1:2.3
 %endif
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.671
+%{?with_systemd:BuildRequires:	systemd-devel >= 1:209}
 %{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
 %{?with_tests:BuildRequires:	tzdata}
@@ -112,9 +115,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_ulibdir	/usr/lib
 
 # omitted contribs:
-# dummy_seclabel, spi, test_parser, worker_spi - examples/tests
+# spi, test_decoding, worker_spi - examples/tests
 # tsearch2 - old module for compatibility only
-%define	contrib_modules	adminpack auth_delay auto_explain btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore intagg intarray isn lo ltree oid2name pageinspect passwordcheck pg_buffercache pg_freespacemap pg_prewarm pg_standby pg_stat_statements pg_trgm pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn unaccent uuid-ossp vacuumlo xml2
+%define	contrib_modules	adminpack auth_delay auto_explain bloom btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore %{?with_perl:hstore_plperl} %{?with_python:hstore_plpython} intagg intarray isn lo ltree %{?with_python:ltree_plpython} oid2name pageinspect passwordcheck pg_buffercache pg_freespacemap pg_prewarm pg_standby pg_stat_statements pg_trgm pg_visibility pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn tsm_system_rows tsm_system_time unaccent uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -803,6 +806,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 	%{?with_python:--with-python} \
 	%{?with_selinux:--with-selinux} \
 	--with-system-tzdata=%{_datadir}/zoneinfo \
+	%{?with_systemd:--with-systemd} \
 	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
 	--with-uuid=ossp
 
@@ -1252,6 +1256,7 @@ done
 %attr(755,root,root) %{_pgmoduledir}/adminpack.so
 %attr(755,root,root) %{_pgmoduledir}/auth_delay.so
 %attr(755,root,root) %{_pgmoduledir}/auto_explain.so
+%attr(755,root,root) %{_pgmoduledir}/bloom.so
 %attr(755,root,root) %{_pgmoduledir}/btree_gin.so
 %attr(755,root,root) %{_pgmoduledir}/btree_gist.so
 %attr(755,root,root) %{_pgmoduledir}/chkpass.so
@@ -1269,16 +1274,21 @@ done
 %attr(755,root,root) %{_pgmoduledir}/pg_freespacemap.so
 %attr(755,root,root) %{_pgmoduledir}/pg_prewarm.so
 %attr(755,root,root) %{_pgmoduledir}/pg_stat_statements.so
+%attr(755,root,root) %{_pgmoduledir}/pg_visibility.so
 %attr(755,root,root) %{_pgmoduledir}/pgrowlocks.so
 %attr(755,root,root) %{_pgmoduledir}/pgstattuple.so
 %attr(755,root,root) %{_pgmoduledir}/postgres_fdw.so
 %attr(755,root,root) %{_pgmoduledir}/seg.so
 %attr(755,root,root) %{_pgmoduledir}/sslinfo.so
 %attr(755,root,root) %{_pgmoduledir}/tcn.so
+%attr(755,root,root) %{_pgmoduledir}/tsm_system_rows.so
+%attr(755,root,root) %{_pgmoduledir}/tsm_system_time.so
 %attr(755,root,root) %{_pgmoduledir}/unaccent.so
 %attr(755,root,root) %{_pgmoduledir}/uuid-ossp.so
 %{_pgsqldir}/adminpack--*.sql
 %{_pgsqldir}/adminpack.control
+%{_pgsqldir}/bloom--*.sql
+%{_pgsqldir}/bloom.control
 %{_pgsqldir}/btree_gin--*.sql
 %{_pgsqldir}/btree_gin.control
 %{_pgsqldir}/btree_gist--*.sql
@@ -1319,6 +1329,8 @@ done
 %{_pgsqldir}/pg_prewarm.control
 %{_pgsqldir}/pg_stat_statements--*.sql
 %{_pgsqldir}/pg_stat_statements.control
+%{_pgsqldir}/pg_visibility--*.sql
+%{_pgsqldir}/pg_visibility.control
 %{_pgsqldir}/pgrowlocks--*.sql
 %{_pgsqldir}/pgrowlocks.control
 %{_pgsqldir}/pgstattuple--*.sql
@@ -1331,10 +1343,37 @@ done
 %{_pgsqldir}/sslinfo.control
 %{_pgsqldir}/tcn--*.sql
 %{_pgsqldir}/tcn.control
+%{_pgsqldir}/tsm_system_rows--*.sql
+%{_pgsqldir}/tsm_system_rows.control
+%{_pgsqldir}/tsm_system_time--*.sql
+%{_pgsqldir}/tsm_system_time.control
 %{_pgsqldir}/unaccent--*.sql
 %{_pgsqldir}/unaccent.control
 %{_pgsqldir}/uuid-ossp--*.sql
 %{_pgsqldir}/uuid-ossp.control
+%if %{with perl}
+%attr(755,root,root) %{_pgmoduledir}/hstore_plperl.so
+%{_pgsqldir}/hstore_plperl--*.sql
+%{_pgsqldir}/hstore_plperl.control
+%{_pgsqldir}/hstore_plperlu--*.sql
+%{_pgsqldir}/hstore_plperlu.control
+%endif
+%if %{with python}
+%attr(755,root,root) %{_pgmoduledir}/hstore_plpython2.so
+%attr(755,root,root) %{_pgmoduledir}/ltree_plpython2.so
+%{_pgsqldir}/hstore_plpythonu--*.sql
+%{_pgsqldir}/hstore_plpythonu.control
+%{_pgsqldir}/hstore_plpython2u--*.sql
+%{_pgsqldir}/hstore_plpython2u.control
+%{_pgsqldir}/hstore_plpython3u--*.sql
+%{_pgsqldir}/hstore_plpython3u.control
+%{_pgsqldir}/ltree_plpythonu--*.sql
+%{_pgsqldir}/ltree_plpythonu.control
+%{_pgsqldir}/ltree_plpython2u--*.sql
+%{_pgsqldir}/ltree_plpython2u.control
+%{_pgsqldir}/ltree_plpython3u--*.sql
+%{_pgsqldir}/ltree_plpython3u.control
+%endif
 %{_mandir}/man1/oid2name.1*
 %{_mandir}/man1/pg_standby.1*
 %{_mandir}/man1/vacuumlo.1*
