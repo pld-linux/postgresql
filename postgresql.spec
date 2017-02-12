@@ -32,12 +32,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.9
+Version:	%{mver}.11
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	ftp://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	cb2960fb4022d57f9d7cf421a592a7c0
+# Source0-md5:	2fee03f2034034dbfcb3321a0bb0f829
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -51,8 +51,7 @@ Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		%{name}-ac_version.patch
 Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-heimdal.patch
-Patch6:		%{name}-ossp_uuid.patch
-Patch7:		%{name}-libxml2.patch
+Patch6:		%{name}-libxml2.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -770,7 +769,6 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
@@ -800,7 +798,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 	%{?with_python:--with-python} \
 	%{?with_selinux:--with-selinux} \
 	%{?with_tcl:--with-tcl --with-tclconfig=%{_ulibdir}} \
-	--with-uuid=ossp
+	--with-uuid=e2fs
 
 %{__make}
 
