@@ -76,7 +76,7 @@ pgstatus() {
 	output=$(LC_ALL=C TMPDIR=/tmp su postgres -c "/usr/bin/pg_ctl -D $1 status")
 	status=$?
 
-	if [ $status -eq 1 ]; then
+	if [ $status -eq 3 ]; then
 		PG_STATUS="not running"
 	elif [ $status -eq 0 ]; then
 		PG_STATUS="running"
