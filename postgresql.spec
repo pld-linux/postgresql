@@ -21,7 +21,7 @@
 #
 
 %define beta %{nil}
-%define mver 9.6
+%define mver 10
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -34,12 +34,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.5
+Version:	%{mver}.0
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	http://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	7a387fa6a75c84f25e7250007980679e
+# Source0-md5:	cc582bda3eda3763926e1de404709026
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -868,11 +868,12 @@ tar zxf %{SOURCE2} -C howto
 %endif
 
 # find locales
-for f in libpq5 pg_basebackup pg_controldata pg_dump pg_resetxlog pg_rewind pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 %{?with_perl:plperl} plpgsql %{?with_python: plpython}; do
+for f in libpq5 pg_basebackup pg_controldata pg_dump pg_resetwal pg_rewind pg_upgrade pg_walldump pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 %{?with_perl:plperl} plpgsql %{?with_python: plpython}; do
 	%find_lang $f-%{mver}
 done
 # merge locales
-cat pgscripts-%{mver}.lang pg_resetxlog-%{mver}.lang \
+cat pgscripts-%{mver}.lang pg_resetwal-%{mver}.lang \
+    pg_walldump-%{mver}.lang pg_upgrade-%{mver}.lang \
     postgres-%{mver}.lang pg_controldata-%{mver}.lang \
     plpgsql-%{mver}.lang pg_rewind-%{mver}.lang \
     pg_basebackup-%{mver}.lang \
@@ -883,7 +884,6 @@ cat ecpg-%{mver}.lang ecpglib6-%{mver}.lang > ecpg.lang
 
 %if %{with tcl}
 %find_lang pltcl-%{mver}
-mv $RPM_BUILD_ROOT{%{_datadir}/postgresql,%{_pgsqldir}}/unknown.pltcl
 %endif
 
 %if %{with selinux}
@@ -923,7 +923,7 @@ if [ "$foundold" = "1" ]; then
 	echo "Remember to stop the daemon before upgrading!"
 	echo
 	echo "Alternatively you can use pg_upgrade for 8.3+ online upgrade with"
-	echo "some restrictions: http://www.postgresql.org/docs/9.0/static/pgupgrade.html"
+	echo "some restrictions: http://www.postgresql.org/docs/10.0/static/pgupgrade.html"
 	echo
 	echo "Warning for upgrade from version *before* 7.2."
 	echo "Please note, that postgresql module path changed from"
@@ -1004,14 +1004,14 @@ done
 %attr(755,root,root) %{_bindir}/pg_basebackup
 %attr(755,root,root) %{_bindir}/pg_controldata
 %attr(755,root,root) %{_bindir}/pg_ctl
-%attr(755,root,root) %{_bindir}/pg_resetxlog
-%attr(755,root,root) %{_bindir}/pg_receivexlog
+%attr(755,root,root) %{_bindir}/pg_resetwal
+%attr(755,root,root) %{_bindir}/pg_receivewal
 %attr(755,root,root) %{_bindir}/pg_recvlogical
 %attr(755,root,root) %{_bindir}/pg_rewind
 %attr(755,root,root) %{_bindir}/pg_test_fsync
 %attr(755,root,root) %{_bindir}/pg_test_timing
 %attr(755,root,root) %{_bindir}/pg_upgrade
-%attr(755,root,root) %{_bindir}/pg_xlogdump
+%attr(755,root,root) %{_bindir}/pg_waldump
 %attr(755,root,root) %{_bindir}/pgbench
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
@@ -1025,6 +1025,7 @@ done
 %attr(755,root,root) %{_pgmoduledir}/latin2_and_win1250.so
 %attr(755,root,root) %{_pgmoduledir}/latin_and_mic.so
 %attr(755,root,root) %{_pgmoduledir}/libpqwalreceiver.so
+%attr(755,root,root) %{_pgmoduledir}/pgoutput.so
 %attr(755,root,root) %{_pgmoduledir}/plpgsql.so
 %attr(755,root,root) %{_pgmoduledir}/utf8_and_*.so
 
@@ -1052,11 +1053,11 @@ done
 %{_mandir}/man1/pg_basebackup.1*
 %{_mandir}/man1/pg_controldata.1*
 %{_mandir}/man1/pg_ctl.1*
-%{_mandir}/man1/pg_resetxlog.1*
-%{_mandir}/man1/pg_receivexlog.1*
+%{_mandir}/man1/pg_resetwal.1*
+%{_mandir}/man1/pg_receivewal.1*
 %{_mandir}/man1/pg_recvlogical.1*
 %{_mandir}/man1/pg_rewind.1*
-%{_mandir}/man1/pg_xlogdump.1*
+%{_mandir}/man1/pg_waldump.1*
 %{_mandir}/man1/pg_test_fsync.1*
 %{_mandir}/man1/pg_test_timing.1*
 %{_mandir}/man1/pg_upgrade.1*
@@ -1141,10 +1142,8 @@ done
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/clusterdb
 %attr(755,root,root) %{_bindir}/createdb
-%attr(755,root,root) %{_bindir}/createlang
 %attr(755,root,root) %{_bindir}/createuser
 %attr(755,root,root) %{_bindir}/dropdb
-%attr(755,root,root) %{_bindir}/droplang
 %attr(755,root,root) %{_bindir}/dropuser
 %attr(755,root,root) %{_bindir}/pg_archivecleanup
 %attr(755,root,root) %{_bindir}/pg_dump
@@ -1157,10 +1156,8 @@ done
 
 %{_mandir}/man1/clusterdb.1*
 %{_mandir}/man1/createdb.1*
-%{_mandir}/man1/createlang.1*
 %{_mandir}/man1/createuser.1*
 %{_mandir}/man1/dropdb.1*
-%{_mandir}/man1/droplang.1*
 %{_mandir}/man1/dropuser.1*
 %{_mandir}/man1/pg_archivecleanup.1*
 %{_mandir}/man1/pg_dump.1*
@@ -1193,9 +1190,7 @@ done
 %if %{with tcl}
 %files module-pltcl -f pltcl-%{mver}.lang
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/pltcl_*
 %attr(755,root,root) %{_pgmoduledir}/pltcl.so
-%{_pgsqldir}/unknown.pltcl
 %{_pgsqldir}/pltcl*--*.sql
 %{_pgsqldir}/pltcl*.control
 %endif
