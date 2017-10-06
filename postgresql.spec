@@ -35,7 +35,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.0
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	http://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -868,12 +868,12 @@ tar zxf %{SOURCE2} -C howto
 %endif
 
 # find locales
-for f in libpq5 pg_basebackup pg_controldata pg_dump pg_resetwal pg_rewind pg_upgrade pg_walldump pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 %{?with_perl:plperl} plpgsql %{?with_python: plpython}; do
+for f in libpq5 pg_basebackup pg_controldata pg_dump pg_resetwal pg_rewind pg_upgrade pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 %{?with_perl:plperl} plpgsql %{?with_python: plpython}; do
 	%find_lang $f-%{mver}
 done
 # merge locales
 cat pgscripts-%{mver}.lang pg_resetwal-%{mver}.lang \
-    pg_walldump-%{mver}.lang pg_upgrade-%{mver}.lang \
+    pg_upgrade-%{mver}.lang \
     postgres-%{mver}.lang pg_controldata-%{mver}.lang \
     plpgsql-%{mver}.lang pg_rewind-%{mver}.lang \
     pg_basebackup-%{mver}.lang \
