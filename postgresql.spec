@@ -32,12 +32,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.9
+Version:	%{mver}.11
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	http://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	1bc3c7e897a33e02bcbf2ed1d028ae01
+# Source0-md5:	0299484a0438d661cec41009bb622b2a
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
