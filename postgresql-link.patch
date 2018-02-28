@@ -1,10 +1,16 @@
---- postgresql-9.5.0/configure.in.orig	2016-01-14 18:59:41.640973653 +0100
-+++ postgresql-9.5.0/configure.in	2016-01-14 21:10:21.783977990 +0100
-@@ -1192,7 +1192,9 @@
+--- postgresql-9.5.0/configure.in.orig   2018-02-21 03:23:25.335399998 +0100
++++ postgresql-9.5.0/configure.in        2018-02-21 03:28:24.392066743 +0100
+@@ -1203,6 +1203,7 @@
  
  if test "$with_bonjour" = yes ; then
    AC_CHECK_HEADER(dns_sd.h, [], [AC_MSG_ERROR([header file <dns_sd.h> is required for Bonjour])])
 +  AC_CHECK_LIB(dns_sd, DNSServiceRegister, [BONJOUR_LIBS=-ldns_sd])
+ dnl At some point we might add something like
+ dnl AC_SEARCH_LIBS(DNSServiceRegister, dns_sd)
+ dnl but right now, what that would mainly accomplish is to encourage
+@@ -1210,6 +1211,7 @@
+ dnl If you want to use Apple's own Bonjour code on another platform,
+ dnl just add -ldns_sd to LIBS manually.
  fi
 +AC_SUBST([BONJOUR_LIBS])
  
