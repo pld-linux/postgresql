@@ -868,29 +868,30 @@ tar zxf %{SOURCE2} -C howto
 %endif
 
 # find locales
-for f in libpq5 pg_basebackup pg_controldata pg_dump pg_resetwal pg_rewind pg_upgrade pgscripts postgres psql initdb pg_ctl pg_config plpgsql ecpg ecpglib6 %{?with_perl:plperl} plpgsql %{?with_python: plpython}; do
+for f in libpq5 pgscripts postgres psql initdb ecpg ecpglib6 \
+	plpgsql %{?with_perl:plperl} %{?with_python:plpython} \
+	pg_archivecleanup pg_basebackup pg_config pg_controldata pg_ctl pg_dump pg_resetwal pg_rewind pg_test_fsync pg_test_timing pg_upgrade pg_waldump; do
 	%find_lang $f-%{mver}
 done
 # merge locales
-cat pgscripts-%{mver}.lang pg_resetwal-%{mver}.lang \
-    pg_upgrade-%{mver}.lang \
-    postgres-%{mver}.lang pg_controldata-%{mver}.lang \
-    plpgsql-%{mver}.lang pg_rewind-%{mver}.lang \
-    pg_basebackup-%{mver}.lang \
-    > main-%{mver}.lang
-cat pg_dump-%{mver}.lang psql-%{mver}.lang initdb-%{mver}.lang \
-    pg_ctl-%{mver}.lang > clients-%{mver}.lang
-cat ecpg-%{mver}.lang ecpglib6-%{mver}.lang > ecpg.lang
+merge_lang() {
+	cat $(for f in $@; do echo ${f}-%{mver}.lang ; done)
+}
+merge_lang pgscripts postgres plpgsql \
+	pg_basebackup pg_controldata pg_resetwal pg_rewind pg_upgrade pg_test_fsync pg_test_timing pg_waldump > main.lang
+merge_lang psql initdb \
+	pg_archivecleanup pg_ctl pg_dump > clients.lang
+merge_lang ecpg ecpglib6 > ecpg.lang
 
 %if %{with tcl}
 %find_lang pltcl-%{mver}
 %endif
 
 %if %{with selinux}
-mv $RPM_BUILD_ROOT{%{_datadir}/postgresql/contrib,%{_pgsqldir}}/sepgsql.sql
+%{__mv} $RPM_BUILD_ROOT{%{_datadir}/postgresql/contrib,%{_pgsqldir}}/sepgsql.sql
 %endif
 
-install src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
+cp -p src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
 
 # package it...?  nah, why bother.
 %{__rm} -r $RPM_BUILD_ROOT%{_datadir}/doc/postgresql/html
@@ -990,7 +991,7 @@ done
 %post	ecpg -p /sbin/ldconfig
 %postun	ecpg -p /sbin/ldconfig
 
-%files -f main-%{mver}.lang
+%files -f main.lang
 %defattr(644,root,root,755)
 %doc COPYRIGHT README HISTORY doc/{bug.template,KNOWN_BUGS,MISSING_FEATURES,TODO}
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
@@ -1138,7 +1139,7 @@ done
 %{_libdir}/libpgtypes.a
 %{_libdir}/libpgport.a
 
-%files clients -f clients-%{mver}.lang
+%files clients -f clients.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/clusterdb
 %attr(755,root,root) %{_bindir}/createdb
