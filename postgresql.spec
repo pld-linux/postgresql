@@ -21,7 +21,7 @@
 #
 
 %define beta %{nil}
-%define mver 10
+%define mver 11
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -34,12 +34,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.4
-Release:	3
+Version:	%{mver}.0
+Release:	0.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	http://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	8e8770c289b3e0bdb779b5b171593479
+# Source0-md5:	338ede84c0443db02ff6e8c4c8cbc5e9
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -116,7 +116,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # omitted contribs:
 # spi, test_decoding, worker_spi - examples/tests
 # tsearch2 - old module for compatibility only
-%define	contrib_modules	adminpack auth_delay auto_explain bloom btree_gin btree_gist chkpass citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore %{?with_perl:hstore_plperl} %{?with_python:hstore_plpython} intagg intarray isn lo ltree %{?with_python:ltree_plpython} oid2name pageinspect passwordcheck pg_buffercache pg_freespacemap pg_prewarm pg_standby pg_stat_statements pg_trgm pg_visibility pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn tsm_system_rows tsm_system_time unaccent uuid-ossp vacuumlo xml2
+%define	contrib_modules	adminpack auth_delay auto_explain bloom btree_gin btree_gist citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore %{?with_perl:hstore_plperl} %{?with_python:hstore_plpython} intagg intarray isn lo ltree %{?with_python:ltree_plpython} oid2name pageinspect passwordcheck pg_buffercache pg_freespacemap pg_prewarm pg_standby pg_stat_statements pg_trgm pg_visibility pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn tsm_system_rows tsm_system_time unaccent uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -870,7 +870,7 @@ tar zxf %{SOURCE2} -C howto
 # find locales
 for f in libpq5 pgscripts postgres psql initdb ecpg ecpglib6 \
 	plpgsql %{?with_perl:plperl} %{?with_python:plpython} \
-	pg_archivecleanup pg_basebackup pg_config pg_controldata pg_ctl pg_dump pg_resetwal pg_rewind pg_test_fsync pg_test_timing pg_upgrade pg_waldump; do
+	pg_archivecleanup pg_basebackup pg_config pg_controldata pg_ctl pg_dump pg_resetwal pg_rewind pg_test_fsync pg_test_timing pg_upgrade pg_verify_checksums pg_waldump; do
 	%find_lang $f-%{mver}
 done
 # merge locales
@@ -878,7 +878,7 @@ merge_lang() {
 	cat $(for f in $@; do echo ${f}-%{mver}.lang ; done)
 }
 merge_lang pgscripts postgres plpgsql \
-	pg_basebackup pg_controldata pg_resetwal pg_rewind pg_upgrade pg_test_fsync pg_test_timing pg_waldump > main.lang
+	pg_basebackup pg_controldata pg_resetwal pg_rewind pg_upgrade pg_test_fsync pg_test_timing pg_verify_checksums pg_waldump > main.lang
 merge_lang psql initdb \
 	pg_archivecleanup pg_ctl pg_dump > clients.lang
 merge_lang ecpg ecpglib6 > ecpg.lang
@@ -1012,6 +1012,7 @@ done
 %attr(755,root,root) %{_bindir}/pg_test_fsync
 %attr(755,root,root) %{_bindir}/pg_test_timing
 %attr(755,root,root) %{_bindir}/pg_upgrade
+%attr(755,root,root) %{_bindir}/pg_verify_checksums
 %attr(755,root,root) %{_bindir}/pg_waldump
 %attr(755,root,root) %{_bindir}/pgbench
 %attr(755,root,root) %{_bindir}/postgres
@@ -1062,6 +1063,7 @@ done
 %{_mandir}/man1/pg_test_fsync.1*
 %{_mandir}/man1/pg_test_timing.1*
 %{_mandir}/man1/pg_upgrade.1*
+%{_mandir}/man1/pg_verify_checksums.1*
 %{_mandir}/man1/pgbench.1*
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
@@ -1253,7 +1255,6 @@ done
 %attr(755,root,root) %{_pgmoduledir}/bloom.so
 %attr(755,root,root) %{_pgmoduledir}/btree_gin.so
 %attr(755,root,root) %{_pgmoduledir}/btree_gist.so
-%attr(755,root,root) %{_pgmoduledir}/chkpass.so
 %attr(755,root,root) %{_pgmoduledir}/citext.so
 %attr(755,root,root) %{_pgmoduledir}/cube.so
 %attr(755,root,root) %{_pgmoduledir}/earthdistance.so
@@ -1287,8 +1288,6 @@ done
 %{_pgsqldir}/btree_gin.control
 %{_pgsqldir}/btree_gist--*.sql
 %{_pgsqldir}/btree_gist.control
-%{_pgsqldir}/chkpass--*.sql
-%{_pgsqldir}/chkpass.control
 %{_pgsqldir}/citext--*.sql
 %{_pgsqldir}/citext.control
 %{_pgsqldir}/cube--*.sql
