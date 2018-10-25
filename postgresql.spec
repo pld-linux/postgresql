@@ -79,9 +79,9 @@ BuildRequires:	ossp-uuid-devel
 BuildRequires:	pam-devel
 %{?with_perl:BuildRequires:	perl-devel}
 %if %{with python}
-BuildRequires:	python >= 1:2.3
-BuildRequires:	python-devel >= 1:2.3
-BuildRequires:	python-modules >= 1:2.3
+BuildRequires:	python >= 1:2.4
+BuildRequires:	python-devel >= 1:2.4
+BuildRequires:	python-modules >= 1:2.4
 %endif
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.671
