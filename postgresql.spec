@@ -1,4 +1,5 @@
 # TODO:
+# - can jit files go to subpackage?
 # - python 3 and python 2 subpackages?
 # - subpackage *_plperl and *_plpython contribs?
 # - think about pg_upgrade integration (sysconfig variable to allow upgrade from 8.3+ without dump/restore?)
@@ -9,6 +10,7 @@
 %bcond_without	tests			# disable testing
 %bcond_without	tcl			# disable Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
+%bcond_without	llvm			# disable llvm based JIT support
 %bcond_without	perl			# disable Perl support
 %bcond_without	python			# disable Python support
 %bcond_with	bonjour			# Bonjour/DNS_SD support
@@ -60,6 +62,7 @@ BuildRequires:	automake
 %{?with_bonjour:BuildRequires:	avahi-compat-libdns_sd-devel}
 # not needed for releases... but fixes something in snapshot
 BuildRequires:	bison >= 1.875
+%{?with_llvm:BuildRequires:	clang}
 BuildRequires:	docbook-dtd42-sgml
 BuildRequires:	docbook-dtd42-xml
 BuildRequires:	docbook-style-xsl
@@ -72,6 +75,7 @@ BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:2.6.23
 BuildRequires:	libxslt-devel
 BuildRequires:	libxslt-progs
+%{?with_llvm:BuildRequires: llvm-devel >= 3.9}
 BuildRequires:	ncurses-devel >= 5.0
 %{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7d
@@ -796,6 +800,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 	%{?with_bonjour:--with-bonjour} \
 	%{?with_kerberos5:--with-gssapi} \
 	%{?with_ldap:--with-ldap} \
+	%{?with_llvm:--with-llvm} \
 	--with-libxml \
 	--with-libxslt \
 	--with-openssl \
@@ -1030,6 +1035,12 @@ done
 %attr(755,root,root) %{_pgmoduledir}/pgoutput.so
 %attr(755,root,root) %{_pgmoduledir}/plpgsql.so
 %attr(755,root,root) %{_pgmoduledir}/utf8_and_*.so
+%if %{with llvm}
+%{_pgmoduledir}/bitcode
+%attr(755,root,root) %{_pgmoduledir}/llvmjit.so
+%{_pgmoduledir}/llvmjit_types.bc
+%endif
+
 
 %dir %{_pgsqldir}
 %{_pgsqldir}/plpgsql--*.sql
