@@ -786,11 +786,16 @@ find src -name \*.l -o -name \*.y | xargs touch
 #find contrib -type d -name CVS -exec rm -rf {} \;
 
 %build
+%ifarch x32
+march="-mx32"
+%endif
 %{__aclocal} -I config
 %{__autoconf}
 %{__autoheader}
 %configure \
-	CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS `uuid-config --cflags`" \
+	CFLAGS="%{rpmcflags} $march -DNEED_REENTRANT_FUNCS `uuid-config --cflags`" \
+	CPPFLAGS="%{rpmcppflags} $march" \
+	CXXFLAGS="%{rpmcxxflags} $march" \
 	--disable-rpath \
 	--enable-depend \
 	%{?with_systemtap:--enable-dtrace} \
