@@ -1,5 +1,4 @@
 # TODO:
-# - can jit files go to subpackage?
 # - python 3 and python 2 subpackages?
 # - subpackage *_plperl and *_plpython contribs?
 # - think about pg_upgrade integration (sysconfig variable to allow upgrade from 8.3+ without dump/restore?)
@@ -62,8 +61,7 @@ BuildRequires:	automake
 %{?with_bonjour:BuildRequires:	avahi-compat-libdns_sd-devel}
 # not needed for releases... but fixes something in snapshot
 BuildRequires:	bison >= 1.875
-%{?with_llvm:BuildRequires:	clang}
-BuildRequires:	docbook-dtd42-sgml
+%{?with_llvm:BuildRequires:	clang >= 3.9}
 BuildRequires:	docbook-dtd42-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	flex >= 2.5.31
@@ -106,6 +104,9 @@ Requires:	%{name}-libs = %{version}-%{release}
 Requires:	rc-scripts >= 0.4.3.0
 Requires:	systemd-units >= 38
 Requires:	tzdata
+%if %{with llvm}
+Suggests:	%{name}-module-llvmjit = %{version}-%{release}
+%endif
 Obsoletes:	postgresql-module-plpgsql
 Obsoletes:	postgresql-module-tsearch2
 Obsoletes:	postgresql-server
@@ -555,6 +556,18 @@ PostgreSQL.
 %description static -l uk.UTF-8
 Це окремий пакет зі статичними бібліотеками, які більш не входять в
 %{name}-devel.
+
+%package module-llvmjit
+Summary:	LLVM JIT module for PostgreSQL
+Summary(pl.UTF-8):	Moduł LLVM JIT dla PostgreSQL-a
+Group:		Applications/Databases
+Requires:	%{name} = %{version}-%{release}
+
+%description module-llvmjit
+LLVM JIT module for PostgreSQL.
+
+%description module-llvmjit -l pl.UTF-8
+Moduł LLVM JIT dla PostgreSQL-a.
 
 %package module-plperl
 Summary:	PL/perl - PostgreSQL procedural language
@@ -1040,13 +1053,6 @@ done
 %attr(755,root,root) %{_pgmoduledir}/pgoutput.so
 %attr(755,root,root) %{_pgmoduledir}/plpgsql.so
 %attr(755,root,root) %{_pgmoduledir}/utf8_and_*.so
-%if %{with llvm}
-%{_pgmoduledir}/bitcode
-%attr(755,root,root) %{_pgmoduledir}/llvmjit.so
-%{_pgmoduledir}/llvmjit_types.bc
-%endif
-
-
 %dir %{_pgsqldir}
 %{_pgsqldir}/plpgsql--*.sql
 %{_pgsqldir}/plpgsql.control
@@ -1094,6 +1100,9 @@ done
 %attr(755,root,root) %{_libdir}/libpq.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libpq.so.5
 %dir %{_pgmoduledir}
+%if %{with llvm}
+%dir %{_pgmoduledir}/bitcode
+%endif
 
 %files ecpg -f ecpg.lang
 %defattr(644,root,root,755)
@@ -1188,6 +1197,22 @@ done
 %{_mandir}/man1/vacuumdb.1*
 %{_mandir}/man7/*.7*
 
+%if %{with llvm}
+%files module-llvmjit
+%defattr(644,root,root,755)
+%doc src/backend/jit/README
+%attr(755,root,root) %{_pgmoduledir}/llvmjit.so
+%{_pgmoduledir}/llvmjit_types.bc
+# base postgres bitcode
+%{_pgmoduledir}/bitcode/postgres
+%{_pgmoduledir}/bitcode/postgres.index.bc
+# base modules bitcode
+%{_pgmoduledir}/bitcode/dict_int
+%{_pgmoduledir}/bitcode/dict_int.index.bc
+%{_pgmoduledir}/bitcode/dict_xsyn
+%{_pgmoduledir}/bitcode/dict_xsyn.index.bc
+%endif
+
 %if %{with perl}
 %files module-plperl -f plperl-%{mver}.lang
 %defattr(644,root,root,755)
@@ -1217,6 +1242,10 @@ done
 %files module-dblink
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/dblink.so
+%if %{with llvm}
+%{_pgmoduledir}/bitcode/dblink
+%{_pgmoduledir}/bitcode/dblink.index.bc
+%endif
 %{_pgsqldir}/dblink--*.sql
 %{_pgsqldir}/dblink.control
 %{_mandir}/man3/dblink*.3*
@@ -1224,18 +1253,30 @@ done
 %files module-lo
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/lo.so
+%if %{with llvm}
+%{_pgmoduledir}/bitcode/lo
+%{_pgmoduledir}/bitcode/lo.index.bc
+%endif
 %{_pgsqldir}/lo--*.sql
 %{_pgsqldir}/lo.control
 
 %files module-pg_trgm
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/pg_trgm.so
+%if %{with llvm}
+%{_pgmoduledir}/bitcode/pg_trgm
+%{_pgmoduledir}/bitcode/pg_trgm.index.bc
+%endif
 %{_pgsqldir}/pg_trgm--*.sql
 %{_pgsqldir}/pg_trgm.control
 
 %files module-pgcrypto
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/pgcrypto.so
+%if %{with llvm}
+%{_pgmoduledir}/bitcode/pgcrypto
+%{_pgmoduledir}/bitcode/pgcrypto.index.bc
+%endif
 %{_pgsqldir}/pgcrypto--*.sql
 %{_pgsqldir}/pgcrypto.control
 
@@ -1243,18 +1284,30 @@ done
 %files module-sepgsql
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/sepgsql.so
+%if %{with llvm}
+%{_pgmoduledir}/bitcode/sepgsql
+%{_pgmoduledir}/bitcode/sepgsql.index.bc
+%endif
 %{_pgsqldir}/sepgsql.sql
 %endif
 
 %files module-tablefunc
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/tablefunc.so
+%if %{with llvm}
+%{_pgmoduledir}/bitcode/tablefunc
+%{_pgmoduledir}/bitcode/tablefunc.index.bc
+%endif
 %{_pgsqldir}/*tablefunc--*.sql
 %{_pgsqldir}/*tablefunc.control
 
 %files module-xml2
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_pgmoduledir}/pgxml.so
+%if %{with llvm}
+%{_pgmoduledir}/bitcode/pgxml
+%{_pgmoduledir}/bitcode/pgxml.index.bc
+%endif
 %{_pgsqldir}/xml2--*.sql
 %{_pgsqldir}/xml2.control
 
@@ -1296,6 +1349,72 @@ done
 %attr(755,root,root) %{_pgmoduledir}/tsm_system_time.so
 %attr(755,root,root) %{_pgmoduledir}/unaccent.so
 %attr(755,root,root) %{_pgmoduledir}/uuid-ossp.so
+%if %{with llvm}
+%{_pgmoduledir}/bitcode/_int
+%{_pgmoduledir}/bitcode/_int.index.bc
+%{_pgmoduledir}/bitcode/adminpack
+%{_pgmoduledir}/bitcode/adminpack.index.bc
+%{_pgmoduledir}/bitcode/auth_delay
+%{_pgmoduledir}/bitcode/auth_delay.index.bc
+%{_pgmoduledir}/bitcode/auto_explain
+%{_pgmoduledir}/bitcode/auto_explain.index.bc
+%{_pgmoduledir}/bitcode/bloom
+%{_pgmoduledir}/bitcode/bloom.index.bc
+%{_pgmoduledir}/bitcode/btree_gin
+%{_pgmoduledir}/bitcode/btree_gin.index.bc
+%{_pgmoduledir}/bitcode/btree_gist
+%{_pgmoduledir}/bitcode/btree_gist.index.bc
+%{_pgmoduledir}/bitcode/citext
+%{_pgmoduledir}/bitcode/citext.index.bc
+%{_pgmoduledir}/bitcode/cube
+%{_pgmoduledir}/bitcode/cube.index.bc
+%{_pgmoduledir}/bitcode/earthdistance
+%{_pgmoduledir}/bitcode/earthdistance.index.bc
+%{_pgmoduledir}/bitcode/file_fdw
+%{_pgmoduledir}/bitcode/file_fdw.index.bc
+%{_pgmoduledir}/bitcode/fuzzystrmatch
+%{_pgmoduledir}/bitcode/fuzzystrmatch.index.bc
+%{_pgmoduledir}/bitcode/hstore
+%{_pgmoduledir}/bitcode/hstore.index.bc
+%{_pgmoduledir}/bitcode/isn
+%{_pgmoduledir}/bitcode/isn.index.bc
+%{_pgmoduledir}/bitcode/ltree
+%{_pgmoduledir}/bitcode/ltree.index.bc
+%{_pgmoduledir}/bitcode/pageinspect
+%{_pgmoduledir}/bitcode/pageinspect.index.bc
+%{_pgmoduledir}/bitcode/passwordcheck
+%{_pgmoduledir}/bitcode/passwordcheck.index.bc
+%{_pgmoduledir}/bitcode/pg_buffercache
+%{_pgmoduledir}/bitcode/pg_buffercache.index.bc
+%{_pgmoduledir}/bitcode/pg_freespacemap
+%{_pgmoduledir}/bitcode/pg_freespacemap.index.bc
+%{_pgmoduledir}/bitcode/pg_prewarm
+%{_pgmoduledir}/bitcode/pg_prewarm.index.bc
+%{_pgmoduledir}/bitcode/pg_stat_statements
+%{_pgmoduledir}/bitcode/pg_stat_statements.index.bc
+%{_pgmoduledir}/bitcode/pg_visibility
+%{_pgmoduledir}/bitcode/pg_visibility.index.bc
+%{_pgmoduledir}/bitcode/pgrowlocks
+%{_pgmoduledir}/bitcode/pgrowlocks.index.bc
+%{_pgmoduledir}/bitcode/pgstattuple
+%{_pgmoduledir}/bitcode/pgstattuple.index.bc
+%{_pgmoduledir}/bitcode/postgres_fdw
+%{_pgmoduledir}/bitcode/postgres_fdw.index.bc
+%{_pgmoduledir}/bitcode/seg
+%{_pgmoduledir}/bitcode/seg.index.bc
+%{_pgmoduledir}/bitcode/sslinfo
+%{_pgmoduledir}/bitcode/sslinfo.index.bc
+%{_pgmoduledir}/bitcode/tcn
+%{_pgmoduledir}/bitcode/tcn.index.bc
+%{_pgmoduledir}/bitcode/tsm_system_rows
+%{_pgmoduledir}/bitcode/tsm_system_rows.index.bc
+%{_pgmoduledir}/bitcode/tsm_system_time
+%{_pgmoduledir}/bitcode/tsm_system_time.index.bc
+%{_pgmoduledir}/bitcode/unaccent
+%{_pgmoduledir}/bitcode/unaccent.index.bc
+%{_pgmoduledir}/bitcode/uuid-ossp
+%{_pgmoduledir}/bitcode/uuid-ossp.index.bc
+%endif
 %{_pgsqldir}/adminpack--*.sql
 %{_pgsqldir}/adminpack.control
 %{_pgsqldir}/bloom--*.sql
@@ -1366,10 +1485,20 @@ done
 %{_pgsqldir}/hstore_plperl.control
 %{_pgsqldir}/hstore_plperlu--*.sql
 %{_pgsqldir}/hstore_plperlu.control
+%if %{with llvm}
+%{_pgmoduledir}/bitcode/hstore_plperl
+%{_pgmoduledir}/bitcode/hstore_plperl.index.bc
+%endif
 %endif
 %if %{with python}
 %attr(755,root,root) %{_pgmoduledir}/hstore_plpython2.so
 %attr(755,root,root) %{_pgmoduledir}/ltree_plpython2.so
+%if %{with llvm}
+%{_pgmoduledir}/bitcode/hstore_plpython2
+%{_pgmoduledir}/bitcode/hstore_plpython2.index.bc
+%{_pgmoduledir}/bitcode/ltree_plpython2
+%{_pgmoduledir}/bitcode/ltree_plpython2.index.bc
+%endif
 %{_pgsqldir}/hstore_plpythonu--*.sql
 %{_pgsqldir}/hstore_plpythonu.control
 %{_pgsqldir}/hstore_plpython2u--*.sql
