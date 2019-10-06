@@ -22,7 +22,7 @@
 #
 
 %define beta %{nil}
-%define mver 11
+%define mver 12
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -35,12 +35,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.4
-Release:	2
+Version:	%{mver}.0
+Release:	0.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	http://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	dab5eed8a5f9204bf2f03a209eead4c3
+# Source0-md5:	87545416ef021eee8621d31a93fcc899
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -893,7 +893,7 @@ tar zxf %{SOURCE2} -C howto
 # find locales
 for f in libpq5 pgscripts postgres psql initdb ecpg ecpglib6 \
 	plpgsql %{?with_perl:plperl} %{?with_python:plpython} \
-	pg_archivecleanup pg_basebackup pg_config pg_controldata pg_ctl pg_dump pg_resetwal pg_rewind pg_test_fsync pg_test_timing pg_upgrade pg_verify_checksums pg_waldump; do
+	pg_archivecleanup pg_basebackup pg_checksums pg_config pg_controldata pg_ctl pg_dump pg_resetwal pg_rewind pg_test_fsync pg_test_timing pg_upgrade pg_waldump; do
 	%find_lang $f-%{mver}
 done
 # merge locales
@@ -901,7 +901,7 @@ merge_lang() {
 	cat $(for f in $@; do echo ${f}-%{mver}.lang ; done)
 }
 merge_lang pgscripts postgres plpgsql \
-	pg_basebackup pg_controldata pg_resetwal pg_rewind pg_upgrade pg_test_fsync pg_test_timing pg_verify_checksums pg_waldump > main.lang
+	pg_basebackup pg_checksums pg_controldata pg_resetwal pg_rewind pg_upgrade pg_test_fsync pg_test_timing pg_waldump > main.lang
 merge_lang psql initdb \
 	pg_archivecleanup pg_ctl pg_dump > clients.lang
 merge_lang ecpg ecpglib6 > ecpg.lang
@@ -1016,7 +1016,7 @@ done
 
 %files -f main.lang
 %defattr(644,root,root,755)
-%doc COPYRIGHT README HISTORY doc/{bug.template,KNOWN_BUGS,MISSING_FEATURES,TODO}
+%doc COPYRIGHT README HISTORY doc/{KNOWN_BUGS,MISSING_FEATURES,TODO}
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/postgresql
 %{systemdunitdir}/%{name}.service
@@ -1026,6 +1026,7 @@ done
 
 %attr(755,root,root) %{_bindir}/initdb
 %attr(755,root,root) %{_bindir}/pg_basebackup
+%attr(755,root,root) %{_bindir}/pg_checksums
 %attr(755,root,root) %{_bindir}/pg_controldata
 %attr(755,root,root) %{_bindir}/pg_ctl
 %attr(755,root,root) %{_bindir}/pg_resetwal
@@ -1035,7 +1036,6 @@ done
 %attr(755,root,root) %{_bindir}/pg_test_fsync
 %attr(755,root,root) %{_bindir}/pg_test_timing
 %attr(755,root,root) %{_bindir}/pg_upgrade
-%attr(755,root,root) %{_bindir}/pg_verify_checksums
 %attr(755,root,root) %{_bindir}/pg_waldump
 %attr(755,root,root) %{_bindir}/pgbench
 %attr(755,root,root) %{_bindir}/postgres
@@ -1075,6 +1075,7 @@ done
 
 %{_mandir}/man1/initdb.1*
 %{_mandir}/man1/pg_basebackup.1*
+%{_mandir}/man1/pg_checksums.1*
 %{_mandir}/man1/pg_controldata.1*
 %{_mandir}/man1/pg_ctl.1*
 %{_mandir}/man1/pg_resetwal.1*
@@ -1085,7 +1086,6 @@ done
 %{_mandir}/man1/pg_test_fsync.1*
 %{_mandir}/man1/pg_test_timing.1*
 %{_mandir}/man1/pg_upgrade.1*
-%{_mandir}/man1/pg_verify_checksums.1*
 %{_mandir}/man1/pgbench.1*
 %{_mandir}/man1/postgres.1*
 %{_mandir}/man1/postmaster.1*
@@ -1165,6 +1165,8 @@ done
 %{_libdir}/libpgfeutils.a
 %{_libdir}/libpgtypes.a
 %{_libdir}/libpgport.a
+%{_libdir}/libpgcommon_shlib.a
+%{_libdir}/libpgport_shlib.a
 
 %files clients -f clients.lang
 %defattr(644,root,root,755)
