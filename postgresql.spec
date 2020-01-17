@@ -79,7 +79,10 @@ BuildRequires:	ncurses-devel >= 5.0
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	ossp-uuid-devel
 BuildRequires:	pam-devel
-%{?with_perl:BuildRequires:	perl-devel}
+%if %{with perl}
+BuildRequires:	perl-Scalar-List-Utils
+BuildRequires:	perl-devel
+%endif
 %if %{with python}
 BuildRequires:	python >= 1:2.4
 BuildRequires:	python-devel >= 1:2.4
@@ -121,7 +124,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # omitted contribs:
 # spi, test_decoding, worker_spi - examples/tests
 # tsearch2 - old module for compatibility only
-%define	contrib_modules	adminpack auth_delay auto_explain bloom btree_gin btree_gist citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore %{?with_perl:hstore_plperl} %{?with_python:hstore_plpython} intagg intarray isn lo ltree %{?with_python:ltree_plpython} oid2name pageinspect passwordcheck pg_buffercache pg_freespacemap pg_prewarm pg_standby pg_stat_statements pg_trgm pg_visibility pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn tsm_system_rows tsm_system_time unaccent uuid-ossp vacuumlo xml2
+%define	contrib_modules	adminpack amcheck auth_delay auto_explain bloom btree_gin btree_gist citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore %{?with_perl:hstore_plperl} %{?with_python:hstore_plpython} intagg intarray isn %{?with_perl:jsonb_plperl} %{?with_python:jsonb_plpython} lo ltree %{?with_python:ltree_plpython} oid2name pageinspect passwordcheck pg_buffercache pg_freespacemap pg_prewarm pg_standby pg_stat_statements pg_trgm pg_visibility pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn tsm_system_rows tsm_system_time unaccent uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -922,7 +925,7 @@ cp -p src/pl/plperl/ppport.h $RPM_BUILD_ROOT%{_includedir}/postgresql/server/
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
+%pretrans
 PG_DB_CLUSTERS=""
 if [ -f /etc/sysconfig/postgresql ]; then
 	. /etc/sysconfig/postgresql
@@ -959,6 +962,8 @@ if [ "$foundold" = "1" ]; then
 	echo "http://www.ca.postgresql.org/docs/momjian/upgrade_tips_7.3"
 	exit 1
 fi
+
+%pre
 %groupadd -g 88 -r postgres
 %useradd -M -o -r -u 88 -d /home/services/postgres -s /bin/sh -g postgres -c "PostgreSQL Server" postgres
 
@@ -1321,6 +1326,7 @@ done
 %attr(755,root,root) %{_bindir}/vacuumlo
 %attr(755,root,root) %{_pgmoduledir}/_int.so
 %attr(755,root,root) %{_pgmoduledir}/adminpack.so
+%attr(755,root,root) %{_pgmoduledir}/amcheck.so
 %attr(755,root,root) %{_pgmoduledir}/auth_delay.so
 %attr(755,root,root) %{_pgmoduledir}/auto_explain.so
 %attr(755,root,root) %{_pgmoduledir}/bloom.so
@@ -1356,6 +1362,8 @@ done
 %{_pgmoduledir}/bitcode/_int.index.bc
 %{_pgmoduledir}/bitcode/adminpack
 %{_pgmoduledir}/bitcode/adminpack.index.bc
+%{_pgmoduledir}/bitcode/amcheck
+%{_pgmoduledir}/bitcode/amcheck.index.bc
 %{_pgmoduledir}/bitcode/auth_delay
 %{_pgmoduledir}/bitcode/auth_delay.index.bc
 %{_pgmoduledir}/bitcode/auto_explain
@@ -1419,6 +1427,8 @@ done
 %endif
 %{_pgsqldir}/adminpack--*.sql
 %{_pgsqldir}/adminpack.control
+%{_pgsqldir}/amcheck--*.sql
+%{_pgsqldir}/amcheck.control
 %{_pgsqldir}/bloom--*.sql
 %{_pgsqldir}/bloom.control
 %{_pgsqldir}/btree_gin--*.sql
@@ -1483,21 +1493,31 @@ done
 %{_pgsqldir}/uuid-ossp.control
 %if %{with perl}
 %attr(755,root,root) %{_pgmoduledir}/hstore_plperl.so
+%attr(755,root,root) %{_pgmoduledir}/jsonb_plperl.so
 %{_pgsqldir}/hstore_plperl--*.sql
 %{_pgsqldir}/hstore_plperl.control
 %{_pgsqldir}/hstore_plperlu--*.sql
 %{_pgsqldir}/hstore_plperlu.control
+%{_pgsqldir}/jsonb_plperl--*.sql
+%{_pgsqldir}/jsonb_plperl.control
+%{_pgsqldir}/jsonb_plperlu--*.sql
+%{_pgsqldir}/jsonb_plperlu.control
 %if %{with llvm}
 %{_pgmoduledir}/bitcode/hstore_plperl
 %{_pgmoduledir}/bitcode/hstore_plperl.index.bc
+%{_pgmoduledir}/bitcode/jsonb_plperl
+%{_pgmoduledir}/bitcode/jsonb_plperl.index.bc
 %endif
 %endif
 %if %{with python}
 %attr(755,root,root) %{_pgmoduledir}/hstore_plpython2.so
+%attr(755,root,root) %{_pgmoduledir}/jsonb_plpython2.so
 %attr(755,root,root) %{_pgmoduledir}/ltree_plpython2.so
 %if %{with llvm}
 %{_pgmoduledir}/bitcode/hstore_plpython2
 %{_pgmoduledir}/bitcode/hstore_plpython2.index.bc
+%{_pgmoduledir}/bitcode/jsonb_plpython2
+%{_pgmoduledir}/bitcode/jsonb_plpython2.index.bc
 %{_pgmoduledir}/bitcode/ltree_plpython2
 %{_pgmoduledir}/bitcode/ltree_plpython2.index.bc
 %endif
@@ -1507,6 +1527,12 @@ done
 %{_pgsqldir}/hstore_plpython2u.control
 %{_pgsqldir}/hstore_plpython3u--*.sql
 %{_pgsqldir}/hstore_plpython3u.control
+%{_pgsqldir}/jsonb_plpythonu--*.sql
+%{_pgsqldir}/jsonb_plpythonu.control
+%{_pgsqldir}/jsonb_plpython2u--*.sql
+%{_pgsqldir}/jsonb_plpython2u.control
+%{_pgsqldir}/jsonb_plpython3u--*.sql
+%{_pgsqldir}/jsonb_plpython3u.control
 %{_pgsqldir}/ltree_plpythonu--*.sql
 %{_pgsqldir}/ltree_plpythonu.control
 %{_pgsqldir}/ltree_plpython2u--*.sql
