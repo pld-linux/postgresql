@@ -56,6 +56,7 @@ Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		%{name}-link.patch
 Patch7:		llvm10.patch
+Patch8:		llvm11.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake
@@ -793,6 +794,7 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
