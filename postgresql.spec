@@ -99,8 +99,8 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(triggerpostun):	/bin/id
-Requires(triggerpostun):	/usr/sbin/usermod
+Requires(postun):	/bin/id
+Requires(postun):	/usr/sbin/usermod
 Requires:	%{name}-clients >= %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	rc-scripts >= 0.4.3.0
