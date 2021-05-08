@@ -1,6 +1,7 @@
---- postgresql-8.3RC1/src/backend/utils/misc/postgresql.conf.sample.orig	2007-12-07 16:44:56.000000000 +0000
-+++ postgresql-8.3RC1/src/backend/utils/misc/postgresql.conf.sample	2008-01-07 22:19:56.904649611 +0000
-@@ -253,7 +253,7 @@
+diff -urNp -x '*.orig' postgresql-11.5.org/src/backend/utils/misc/postgresql.conf.sample postgresql-11.5/src/backend/utils/misc/postgresql.conf.sample
+--- postgresql-11.5.org/src/backend/utils/misc/postgresql.conf.sample	2019-08-05 23:14:59.000000000 +0200
++++ postgresql-11.5/src/backend/utils/misc/postgresql.conf.sample	2021-05-08 22:44:29.704690750 +0200
+@@ -361,7 +361,7 @@
  
  # - Where to Log -
  
@@ -9,7 +10,7 @@
  					# stderr, csvlog, syslog, and eventlog,
  					# depending on platform.  csvlog
  					# requires logging_collector to be on.
-@@ -262,8 +262,8 @@
+@@ -394,9 +394,9 @@
  					# 0 disables.
  
  # These are relevant when logging to syslog:
@@ -22,12 +23,3 @@
  #syslog_split_messages = on
  
  # This is only relevant when logging to eventlog (win32):
-@@ -324,7 +324,7 @@
- #debug_print_plan = off
- #debug_pretty_print = off
- #log_checkpoints = off
--#log_connections = off
-+log_connections = on
- #log_disconnections = off
- #log_duration = off
- #log_hostname = off
