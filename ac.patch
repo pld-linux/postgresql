@@ -1,0 +1,13 @@
+--- postgresql-11.5/configure.in~	2021-05-08 22:49:16.000000000 +0200
++++ postgresql-11.5/configure.in	2021-05-08 22:50:36.956514091 +0200
+@@ -19,10 +19,6 @@
+ 
+ AC_INIT([PostgreSQL], [11.5], [pgsql-bugs@postgresql.org])
+ 
+-m4_if(m4_defn([m4_PACKAGE_VERSION]), [2.69], [], [m4_fatal([Autoconf version 2.69 is required.
+-Untested combinations of 'autoconf' and PostgreSQL versions are not
+-recommended.  You can remove the check from 'configure.in' but it is then
+-your responsibility whether the result works or not.])])
+ AC_COPYRIGHT([Copyright (c) 1996-2018, PostgreSQL Global Development Group])
+ AC_CONFIG_SRCDIR([src/backend/access/common/heaptuple.c])
+ AC_CONFIG_AUX_DIR(config)
