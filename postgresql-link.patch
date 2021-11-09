@@ -1,6 +1,7 @@
---- postgresql-9.5.0/configure.in.orig   2018-02-21 03:23:25.335399998 +0100
-+++ postgresql-9.5.0/configure.in        2018-02-21 03:28:24.392066743 +0100
-@@ -1203,6 +1203,7 @@
+diff -urNp -x '*.orig' postgresql-12.4.org/configure.in postgresql-12.4/configure.in
+--- postgresql-12.4.org/configure.in	2021-11-09 09:31:36.707897270 +0100
++++ postgresql-12.4/configure.in	2021-11-09 09:31:40.651435766 +0100
+@@ -1470,6 +1470,7 @@ fi
  
  if test "$with_bonjour" = yes ; then
    AC_CHECK_HEADER(dns_sd.h, [], [AC_MSG_ERROR([header file <dns_sd.h> is required for Bonjour])])
@@ -8,7 +9,7 @@
  dnl At some point we might add something like
  dnl AC_SEARCH_LIBS(DNSServiceRegister, dns_sd)
  dnl but right now, what that would mainly accomplish is to encourage
-@@ -1210,6 +1211,7 @@
+@@ -1477,6 +1478,7 @@ dnl people to try to use the avahi imple
  dnl If you want to use Apple's own Bonjour code on another platform,
  dnl just add -ldns_sd to LIBS manually.
  fi
@@ -16,9 +17,21 @@
  
  # for contrib/uuid-ossp
  if test "$with_uuid" = bsd ; then
---- postgresql-9.5.0/src/backend/Makefile.orig	2016-01-04 22:29:34.000000000 +0100
-+++ postgresql-9.5.0/src/backend/Makefile	2016-01-14 21:10:48.093976872 +0100
-@@ -54,7 +54,7 @@
+diff -urNp -x '*.orig' postgresql-12.4.org/src/Makefile.global.in postgresql-12.4/src/Makefile.global.in
+--- postgresql-12.4.org/src/Makefile.global.in	2020-08-10 23:15:53.000000000 +0200
++++ postgresql-12.4/src/Makefile.global.in	2021-11-09 09:31:40.651435766 +0100
+@@ -173,6 +173,7 @@ includedir_internal = $(pkgincludedir)/i
+ pgxsdir = $(pkglibdir)/pgxs
+ bitcodedir = $(pkglibdir)/bitcode
+ 
++BONJOUR_LIBS            = @BONJOUR_LIBS@
+ 
+ ##########################################################################
+ #
+diff -urNp -x '*.orig' postgresql-12.4.org/src/backend/Makefile postgresql-12.4/src/backend/Makefile
+--- postgresql-12.4.org/src/backend/Makefile	2020-08-10 23:15:53.000000000 +0200
++++ postgresql-12.4/src/backend/Makefile	2021-11-09 09:31:40.651435766 +0100
+@@ -60,7 +60,7 @@ ifneq ($(PORTNAME), win32)
  ifneq ($(PORTNAME), aix)
  
  postgres: $(OBJS)
@@ -27,13 +40,3 @@
  
  endif
  endif
---- postgresql-9.5.0/src/Makefile.global.in.orig	2016-01-04 22:29:34.000000000 +0100
-+++ postgresql-9.5.0/src/Makefile.global.in	2016-01-14 21:11:50.820640805 +0100
-@@ -216,6 +216,7 @@
- PTHREAD_CFLAGS		= @PTHREAD_CFLAGS@
- PTHREAD_LIBS		= @PTHREAD_LIBS@
- 
-+BONJOUR_LIBS            = @BONJOUR_LIBS@
- 
- ##########################################################################
- #
