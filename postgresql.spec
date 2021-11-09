@@ -22,7 +22,7 @@
 #
 
 %define beta %{nil}
-%define mver 12
+%define mver 14
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -35,12 +35,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.4
+Version:	%{mver}.0
 Release:	0.1
 License:	BSD
 Group:		Applications/Databases
 Source0:	http://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	80ebbf0e55193b123760e5f8e48c6cff
+# Source0-md5:	26e85a23c6a0ef68e9755555aea31141
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -51,6 +51,7 @@ Source6:	%{name}.target
 Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
+Patch3:		ac.patch
 
 Patch5:		%{name}-heimdal.patch
 Patch6:		%{name}-link.patch
@@ -123,7 +124,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # omitted contribs:
 # spi, test_decoding, worker_spi - examples/tests
 # tsearch2 - old module for compatibility only
-%define	contrib_modules	adminpack amcheck auth_delay auto_explain bloom btree_gin btree_gist citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore %{?with_perl:hstore_plperl} %{?with_python:hstore_plpython} intagg intarray isn %{?with_perl:jsonb_plperl} %{?with_python:jsonb_plpython} lo ltree %{?with_python:ltree_plpython} oid2name pageinspect passwordcheck pg_buffercache pg_freespacemap pg_prewarm pg_standby pg_stat_statements pg_trgm pg_visibility pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn tsm_system_rows tsm_system_time unaccent uuid-ossp vacuumlo xml2
+%define	contrib_modules	adminpack amcheck auth_delay auto_explain bloom btree_gin btree_gist citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore %{?with_perl:hstore_plperl} %{?with_python:hstore_plpython} intagg intarray isn %{?with_perl:jsonb_plperl} %{?with_python:jsonb_plpython} lo ltree %{?with_python:ltree_plpython} oid2name pageinspect passwordcheck pg_buffercache pg_freespacemap pg_prewarm pg_stat_statements pg_trgm pg_visibility pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn tsm_system_rows tsm_system_time unaccent uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -789,6 +790,7 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch0 -p1
 %{?with_absolute_dbpaths:%patch1 -p1}
 %patch2 -p1
+%patch3 -p1
 
 %patch5 -p1
 %patch6 -p1
@@ -894,7 +896,8 @@ tar zxf %{SOURCE2} -C howto
 # find locales
 for f in libpq5 pgscripts postgres psql initdb ecpg ecpglib6 \
 	plpgsql %{?with_perl:plperl} %{?with_python:plpython} \
-	pg_archivecleanup pg_basebackup pg_checksums pg_config pg_controldata pg_ctl pg_dump pg_resetwal pg_rewind pg_test_fsync pg_test_timing pg_upgrade pg_waldump; do
+	pg_amcheck pg_archivecleanup pg_basebackup pg_checksums pg_config pg_controldata pg_ctl pg_dump pg_resetwal pg_rewind pg_test_fsync \
+	pg_test_timing pg_upgrade pg_waldump pg_verifybackup; do
 	%find_lang $f-%{mver}
 done
 # merge locales
@@ -904,7 +907,7 @@ merge_lang() {
 merge_lang pgscripts postgres plpgsql \
 	pg_basebackup pg_checksums pg_controldata pg_resetwal pg_rewind pg_upgrade pg_test_fsync pg_test_timing pg_waldump > main.lang
 merge_lang psql initdb \
-	pg_archivecleanup pg_ctl pg_dump > clients.lang
+	pg_amcheck pg_archivecleanup pg_ctl pg_dump pg_verifybackup > clients.lang
 merge_lang ecpg ecpglib6 > ecpg.lang
 
 %if %{with tcl}
@@ -965,10 +968,19 @@ fi
 %groupadd -g 88 -r postgres
 %useradd -M -o -r -u 88 -d /home/services/postgres -s /bin/sh -g postgres -c "PostgreSQL Server" postgres
 
-%triggerpostun -- %{name} < 7.2-2
+%triggerpostun -- %{name} < 9.3.3-2
+#  < 7.2-2
 if [ -n "`/bin/id -u postgres 2>/dev/null`" ]; then
 	/usr/sbin/usermod -d /home/services/postgres postgres
 fi
+# < 9.3.3-2
+PG_DB_CLUSTERS=""
+[ -f /etc/sysconfig/postgresql ] && . /etc/sysconfig/postgresql
+for pgdir in $PG_DB_CLUSTERS; do
+	instance="$(echo "$pgdir" | sed -e 's/^\///;s/-/\\x2d/g;s/@/\\x40/g;s/\//-/g')"
+	/bin/systemctl --quiet enable "postgresql@$instance.service" || :
+done
+%systemd_trigger postgresql.service
 
 %post
 /sbin/chkconfig --add postgresql
@@ -1001,15 +1013,6 @@ fi
 
 %postun
 %systemd_reload
-
-%triggerpostun -- %{name} < 9.3.3-2
-PG_DB_CLUSTERS=""
-[ -f /etc/sysconfig/postgresql ] && . /etc/sysconfig/postgresql
-for pgdir in $PG_DB_CLUSTERS; do
-	instance="$(echo "$pgdir" | sed -e 's/^\///;s/-/\\x2d/g;s/@/\\x40/g;s/\//-/g')"
-	/bin/systemctl --quiet enable "postgresql@$instance.service" || :
-done
-%systemd_trigger postgresql.service
 
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
@@ -1044,7 +1047,6 @@ done
 %attr(755,root,root) %{_bindir}/postgres
 %attr(755,root,root) %{_bindir}/postmaster
 
-%attr(755,root,root) %{_pgmoduledir}/ascii_and_mic.so
 %attr(755,root,root) %{_pgmoduledir}/cyrillic_and_mic.so
 %attr(755,root,root) %{_pgmoduledir}/dict_int.so
 %attr(755,root,root) %{_pgmoduledir}/dict_snowball.so
@@ -1063,8 +1065,6 @@ done
 %dir %{_datadir}/postgresql
 %{_datadir}/postgresql/*.bki
 %{_datadir}/postgresql/*.sample
-%{_datadir}/postgresql/*.description
-%{_datadir}/postgresql/*.shdescription
 %{_datadir}/postgresql/*.sql
 %{_datadir}/postgresql/*.txt
 %{_datadir}/postgresql/timezonesets
@@ -1178,11 +1178,13 @@ done
 %attr(755,root,root) %{_bindir}/createuser
 %attr(755,root,root) %{_bindir}/dropdb
 %attr(755,root,root) %{_bindir}/dropuser
+%attr(755,root,root) %{_bindir}/pg_amcheck
 %attr(755,root,root) %{_bindir}/pg_archivecleanup
 %attr(755,root,root) %{_bindir}/pg_dump
 %attr(755,root,root) %{_bindir}/pg_dumpall
 %attr(755,root,root) %{_bindir}/pg_isready
 %attr(755,root,root) %{_bindir}/pg_restore
+%attr(755,root,root) %{_bindir}/pg_verifybackup
 %attr(755,root,root) %{_bindir}/psql
 %attr(755,root,root) %{_bindir}/reindexdb
 %attr(755,root,root) %{_bindir}/vacuumdb
@@ -1192,11 +1194,13 @@ done
 %{_mandir}/man1/createuser.1*
 %{_mandir}/man1/dropdb.1*
 %{_mandir}/man1/dropuser.1*
+%{_mandir}/man1/pg_amcheck.1*
 %{_mandir}/man1/pg_archivecleanup.1*
 %{_mandir}/man1/pg_dump.1*
 %{_mandir}/man1/pg_dumpall.1*
 %{_mandir}/man1/pg_isready.1*
 %{_mandir}/man1/pg_restore.1*
+%{_mandir}/man1/pg_verifybackup.1*
 %{_mandir}/man1/psql.1*
 %{_mandir}/man1/reindexdb.1*
 %{_mandir}/man1/vacuumdb.1*
@@ -1320,7 +1324,6 @@ done
 %defattr(644,root,root,755)
 %doc contrib/README
 %attr(755,root,root) %{_bindir}/oid2name
-%attr(755,root,root) %{_bindir}/pg_standby
 %attr(755,root,root) %{_bindir}/vacuumlo
 %attr(755,root,root) %{_pgmoduledir}/_int.so
 %attr(755,root,root) %{_pgmoduledir}/adminpack.so
@@ -1539,5 +1542,4 @@ done
 %{_pgsqldir}/ltree_plpython3u.control
 %endif
 %{_mandir}/man1/oid2name.1*
-%{_mandir}/man1/pg_standby.1*
 %{_mandir}/man1/vacuumlo.1*

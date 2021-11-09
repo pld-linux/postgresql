@@ -1,6 +1,6 @@
-diff -urNp -x '*.orig' postgresql-12.4.org/configure.in postgresql-12.4/configure.in
---- postgresql-12.4.org/configure.in	2021-11-09 09:31:36.707897270 +0100
-+++ postgresql-12.4/configure.in	2021-11-09 09:31:40.651435766 +0100
+diff -urNp -x '*.orig' postgresql-12.4.org/configure.ac postgresql-12.4/configure.ac
+--- postgresql-12.4.org/configure.ac	2021-11-09 09:31:36.707897270 +0100
++++ postgresql-12.4/configure.ac	2021-11-09 09:31:40.651435766 +0100
 @@ -1470,6 +1470,7 @@ fi
  
  if test "$with_bonjour" = yes ; then

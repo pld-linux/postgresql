@@ -10,8 +10,8 @@ diff -urNp -x '*.orig' postgresql-12.4.org/src/backend/utils/misc/postgresql.con
  					# stderr, csvlog, syslog, and eventlog,
  					# depending on platform.  csvlog
  					# requires logging_collector to be on.
-@@ -449,9 +449,9 @@
- 					# 0 disables.
+@@ -463,9 +463,9 @@ log_destination = 'syslog'		# Valid valu
+ 					# in all cases.
  
  # These are relevant when logging to syslog:
 -#syslog_facility = 'LOCAL0'
@@ -22,4 +22,5 @@ diff -urNp -x '*.orig' postgresql-12.4.org/src/backend/utils/misc/postgresql.con
 +syslog_sequence_numbers = on
  #syslog_split_messages = on
  
- # This is only relevant when logging to eventlog (win32):
+ # This is only relevant when logging to eventlog (Windows):
+
