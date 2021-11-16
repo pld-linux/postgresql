@@ -1,6 +1,7 @@
---- postgresql-8.3RC1/src/backend/utils/misc/postgresql.conf.sample.orig	2007-12-07 16:44:56.000000000 +0000
-+++ postgresql-8.3RC1/src/backend/utils/misc/postgresql.conf.sample	2008-01-07 22:19:56.904649611 +0000
-@@ -253,7 +253,7 @@
+diff -urNp -x '*.orig' postgresql-9.3.25.org/src/backend/utils/misc/postgresql.conf.sample postgresql-9.3.25/src/backend/utils/misc/postgresql.conf.sample
+--- postgresql-9.3.25.org/src/backend/utils/misc/postgresql.conf.sample	2018-11-05 22:53:28.000000000 +0100
++++ postgresql-9.3.25/src/backend/utils/misc/postgresql.conf.sample	2021-11-16 20:59:56.259079714 +0100
+@@ -291,7 +291,7 @@
  
  # - Where to Log -
  
@@ -9,8 +10,8 @@
  					# stderr, csvlog, syslog, and eventlog,
  					# depending on platform.  csvlog
  					# requires logging_collector to be on.
-@@ -262,8 +262,8 @@
- 					# 0 to disable.
+@@ -324,8 +324,8 @@
+ 					# 0 disables.
  
  # These are relevant when logging to syslog:
 -#syslog_facility = 'LOCAL0'
@@ -18,14 +19,14 @@
 +syslog_facility = 'LOCAL0'
 +syslog_ident = 'postgres'
  
- 
- # - When to Log -
-@@ -324,7 +324,7 @@
+ # This is only relevant when logging to eventlog (win32):
+ # (change requires restart)
+@@ -385,7 +385,7 @@
  #debug_print_plan = off
- #debug_pretty_print = off
+ #debug_pretty_print = on
  #log_checkpoints = off
 -#log_connections = off
 +log_connections = on
  #log_disconnections = off
  #log_duration = off
- #log_hostname = off
+ #log_error_verbosity = default		# terse, default, or verbose messages
