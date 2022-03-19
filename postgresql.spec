@@ -35,12 +35,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.5
-Release:	14
+Version:	%{mver}.15
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	http://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	580da94f6d85046ff2a228785ab2cc89
+# Source0-md5:	1536142e72dce4bed5c6f0e79e80f486
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -55,10 +55,8 @@ Patch2:		%{name}-ecpg-includedir.patch
 Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		%{name}-link.patch
-Patch7:		llvm10.patch
-Patch8:		llvm11.patch
+
 Patch9:		ac.patch
-Patch10:	llvm12.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake
@@ -795,10 +793,8 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
-%patch8 -p1
+
 %patch9 -p1
-%patch10 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
