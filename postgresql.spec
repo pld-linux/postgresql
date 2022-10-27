@@ -111,10 +111,17 @@ Requires:	tzdata
 %if %{with llvm}
 Suggests:	%{name}-module-llvmjit = %{version}-%{release}
 %endif
-Obsoletes:	postgresql-module-plpgsql
-Obsoletes:	postgresql-module-tsearch2
+Obsoletes:	postgresql-data < 6.5
+Obsoletes:	postgresql-ln < 8.3.0
+Obsoletes:	postgresql-module-datetime < 7.1
+Obsoletes:	postgresql-module-plpgsql < 9.0.0-1
+Obsoletes:	postgresql-module-tsearch2 < 8.3.0
+Obsoletes:	postgresql-replicate < 8.3.0
+Obsoletes:	postgresql-replicate-tools < 8.3.0
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
+Obsoletes:	postgresql-upgrade < 9.2.1-1
+Obsoletes:	postgresql-upstart < 9.4.1-2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_pgmoduledir	%{_libdir}/postgresql
