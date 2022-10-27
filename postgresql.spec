@@ -21,7 +21,6 @@
 					# (disabled by default because it is a security risk)
 #
 
-%define beta %{nil}
 %define mver 14
 
 Summary:	PostgreSQL Data Base Management System
@@ -96,13 +95,13 @@ BuildRequires:	rpmbuild(macros) >= 1.671
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.4.3}
 %{?with_tests:BuildRequires:	tzdata}
 BuildRequires:	zlib-devel
+Requires(post):	/bin/id
+Requires(post):	/usr/sbin/usermod
 Requires(post,preun):	/sbin/chkconfig
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
-Requires(postun):	/bin/id
-Requires(postun):	/usr/sbin/usermod
 Requires:	%{name}-clients >= %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	rc-scripts >= 0.4.3.0
