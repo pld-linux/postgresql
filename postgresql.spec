@@ -70,6 +70,7 @@ BuildRequires:	gnome-doc-tools
 %{?with_kerberos5:BuildRequires:	heimdal-devel}
 %{?with_selinux:BuildRequires:	libselinux-devel >= 2.1.10}
 BuildRequires:	libtool
+BuildRequires:	libuuid-devel
 BuildRequires:	libxml2-devel >= 1:2.6.23
 BuildRequires:	libxslt-devel
 BuildRequires:	libxslt-progs
@@ -77,7 +78,6 @@ BuildRequires:	libxslt-progs
 BuildRequires:	ncurses-devel >= 5.0
 %{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 0.9.7d
-BuildRequires:	ossp-uuid-devel
 BuildRequires:	pam-devel
 %if %{with perl}
 BuildRequires:	perl-Scalar-List-Utils
@@ -817,7 +817,7 @@ march="-mx32"
 %{__autoconf}
 %{__autoheader}
 %configure \
-	CFLAGS="%{rpmcflags} $march -DNEED_REENTRANT_FUNCS `uuid-config --cflags`" \
+	CFLAGS="%{rpmcflags} $march -DNEED_REENTRANT_FUNCS" \
 	CPPFLAGS="%{rpmcppflags} $march" \
 	CXXFLAGS="%{rpmcxxflags} $march" \
 	--disable-rpath \
@@ -847,7 +847,6 @@ march="-mx32"
 for mod in %{contrib_modules}; do \
 	flags="%{rpmcflags} %{rpmcppflags} -DNEED_REENTRANT_FUNCS"
 	if [ $mod = "xml2"      ]; then flags="$flags -I/usr/include/libxml2"; fi
-	if [ $mod = "uuid-ossp" ]; then flags="$flags `uuid-config --cflags`"; fi
 	%{__make} -C contrib/$mod CFLAGS="$flags"
 done
 
