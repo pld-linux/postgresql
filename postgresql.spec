@@ -821,6 +821,8 @@ march="-mx32"
 	CFLAGS="%{rpmcflags} $march -DNEED_REENTRANT_FUNCS" \
 	CPPFLAGS="%{rpmcppflags} $march" \
 	CXXFLAGS="%{rpmcxxflags} $march" \
+	BITCODE_CFLAGS="%{rpmcflags}" \
+	BITCODE_CXXFLAGS="%{rpmcxxflags}" \
 	--disable-rpath \
 	--enable-depend \
 	%{?with_systemtap:--enable-dtrace} \
