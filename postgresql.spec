@@ -38,7 +38,7 @@ Version:	%{mver}.5
 Release:	1
 License:	BSD
 Group:		Applications/Databases
-Source0:	http://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
+Source0:	https://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
 # Source0-md5:	1b319af2ece7fbf836d2d9533e91aa9b
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
@@ -55,7 +55,7 @@ Patch3:		ac.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		%{name}-link.patch
 Patch7:		llvm15.patch
-URL:		http://www.postgresql.org/
+URL:		https://www.postgresql.org/
 BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake
 %{?with_bonjour:BuildRequires:	avahi-compat-libdns_sd-devel}
