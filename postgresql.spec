@@ -34,12 +34,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.5
+Version:	%{mver}.8
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	https://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	1b319af2ece7fbf836d2d9533e91aa9b
+# Source0-md5:	d089f6f4f15f5b278252e867f3a45fd7
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -54,7 +54,6 @@ Patch3:		ac.patch
 
 Patch5:		%{name}-heimdal.patch
 Patch6:		%{name}-link.patch
-Patch7:		llvm15.patch
 URL:		https://www.postgresql.org/
 BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake
@@ -78,7 +77,7 @@ BuildRequires:	libxslt-progs
 %{?with_llvm:BuildRequires: llvm-devel >= 3.9}
 BuildRequires:	ncurses-devel >= 5.0
 %{?with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	openssl-devel >= 1.0.1
+BuildRequires:	openssl-devel >= 1.1.1
 BuildRequires:	pam-devel
 %if %{with perl}
 BuildRequires:	perl-Scalar-List-Utils
@@ -494,7 +493,7 @@ Summary(pl.UTF-8):	Biblioteki dzielone programu PostgreSQL
 Summary(pt_BR.UTF-8):	Biblioteca compartilhada do PostgreSQL
 Summary(zh_CN.UTF-8):	PostgreSQL 客户所需要的共享库
 Group:		Libraries
-Requires:	openssl%{?_isa} >= 1.0.1
+Requires:	openssl%{?_isa} >= 1.1.1
 
 %description libs
 PostgreSQL shared libraries.
@@ -803,7 +802,6 @@ Różne moduły dołączone do PostgreSQL-a.
 
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
