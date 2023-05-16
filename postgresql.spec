@@ -78,7 +78,7 @@ BuildRequires:	libxslt-progs
 %{?with_llvm:BuildRequires: llvm-devel >= 3.9}
 BuildRequires:	ncurses-devel >= 5.0
 %{?with_ldap:BuildRequires:	openldap-devel}
-BuildRequires:	openssl-devel >= 0.9.7d
+BuildRequires:	openssl-devel >= 1.0.1
 BuildRequires:	pam-devel
 %if %{with perl}
 BuildRequires:	perl-Scalar-List-Utils
@@ -494,6 +494,7 @@ Summary(pl.UTF-8):	Biblioteki dzielone programu PostgreSQL
 Summary(pt_BR.UTF-8):	Biblioteca compartilhada do PostgreSQL
 Summary(zh_CN.UTF-8):	PostgreSQL 客户所需要的共享库
 Group:		Libraries
+Requires:	openssl%{?_isa} >= 1.0.1
 
 %description libs
 PostgreSQL shared libraries.
