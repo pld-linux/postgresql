@@ -62,7 +62,7 @@ BuildRequires:	automake
 # not needed for releases... but fixes something in snapshot
 BuildRequires:	bison >= 1.875
 %{?with_llvm:BuildRequires:	clang >= 3.9}
-BuildRequires:	docbook-dtd42-xml
+BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	docbook-style-xsl-nons
 BuildRequires:	flex >= 2.5.31
