@@ -21,7 +21,7 @@
 					# (disabled by default because it is a security risk)
 #
 
-%define mver 14
+%define mver 15
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -34,12 +34,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.8
+Version:	%{mver}.3
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	https://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	d089f6f4f15f5b278252e867f3a45fd7
+# Source0-md5:	7cb75773ff8fbe533701562c3278206b
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -84,9 +84,9 @@ BuildRequires:	perl-Scalar-List-Utils
 BuildRequires:	perl-devel
 %endif
 %if %{with python}
-BuildRequires:	python >= 1:2.4
-BuildRequires:	python-devel >= 1:2.4
-BuildRequires:	python-modules >= 1:2.4
+BuildRequires:	python3 >= 1:2.4
+BuildRequires:	python3-devel >= 1:2.4
+BuildRequires:	python3-modules >= 1:2.4
 %endif
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.671
@@ -127,6 +127,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_pgsqldir	%{_datadir}/postgresql/extension
 
 %define		_ulibdir	/usr/lib
+
+%define          filterout_c     -fvar-tracking-assignments
+%define          filterout_cxx   -fvar-tracking-assignments
 
 # omitted contribs:
 # spi, test_decoding, worker_spi - examples/tests
@@ -1151,6 +1154,7 @@ fi
 %{_includedir}/postgres_ext.h
 %dir %{_includedir}/postgresql/internal
 %{_includedir}/postgresql/internal/c.h
+%{_includedir}/postgresql/internal/fe-auth-sasl.h
 %{_includedir}/postgresql/internal/libpq-int.h
 %{_includedir}/postgresql/internal/port.h
 %{_includedir}/postgresql/internal/postgres_fe.h
@@ -1244,7 +1248,7 @@ fi
 %if %{with python}
 %files module-plpython -f plpython-%{mver}.lang
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_pgmoduledir}/plpython2.so
+%attr(755,root,root) %{_pgmoduledir}/plpython3.so
 %{_pgsqldir}/plpython*--*.sql
 %{_pgsqldir}/plpython*.control
 %endif
@@ -1520,33 +1524,21 @@ fi
 %endif
 %endif
 %if %{with python}
-%attr(755,root,root) %{_pgmoduledir}/hstore_plpython2.so
-%attr(755,root,root) %{_pgmoduledir}/jsonb_plpython2.so
-%attr(755,root,root) %{_pgmoduledir}/ltree_plpython2.so
+%attr(755,root,root) %{_pgmoduledir}/hstore_plpython3.so
+%attr(755,root,root) %{_pgmoduledir}/jsonb_plpython3.so
+%attr(755,root,root) %{_pgmoduledir}/ltree_plpython3.so
 %if %{with llvm}
-%{_pgmoduledir}/bitcode/hstore_plpython2
-%{_pgmoduledir}/bitcode/hstore_plpython2.index.bc
-%{_pgmoduledir}/bitcode/jsonb_plpython2
-%{_pgmoduledir}/bitcode/jsonb_plpython2.index.bc
-%{_pgmoduledir}/bitcode/ltree_plpython2
-%{_pgmoduledir}/bitcode/ltree_plpython2.index.bc
+%{_pgmoduledir}/bitcode/hstore_plpython3
+%{_pgmoduledir}/bitcode/hstore_plpython3.index.bc
+%{_pgmoduledir}/bitcode/jsonb_plpython3
+%{_pgmoduledir}/bitcode/jsonb_plpython3.index.bc
+%{_pgmoduledir}/bitcode/ltree_plpython3
+%{_pgmoduledir}/bitcode/ltree_plpython3.index.bc
 %endif
-%{_pgsqldir}/hstore_plpythonu--*.sql
-%{_pgsqldir}/hstore_plpythonu.control
-%{_pgsqldir}/hstore_plpython2u--*.sql
-%{_pgsqldir}/hstore_plpython2u.control
 %{_pgsqldir}/hstore_plpython3u--*.sql
 %{_pgsqldir}/hstore_plpython3u.control
-%{_pgsqldir}/jsonb_plpythonu--*.sql
-%{_pgsqldir}/jsonb_plpythonu.control
-%{_pgsqldir}/jsonb_plpython2u--*.sql
-%{_pgsqldir}/jsonb_plpython2u.control
 %{_pgsqldir}/jsonb_plpython3u--*.sql
 %{_pgsqldir}/jsonb_plpython3u.control
-%{_pgsqldir}/ltree_plpythonu--*.sql
-%{_pgsqldir}/ltree_plpythonu.control
-%{_pgsqldir}/ltree_plpython2u--*.sql
-%{_pgsqldir}/ltree_plpython2u.control
 %{_pgsqldir}/ltree_plpython3u--*.sql
 %{_pgsqldir}/ltree_plpython3u.control
 %endif

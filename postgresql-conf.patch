@@ -1,15 +1,15 @@
 diff -urNp -x '*.orig' postgresql-12.4.org/src/backend/utils/misc/postgresql.conf.sample postgresql-12.4/src/backend/utils/misc/postgresql.conf.sample
 --- postgresql-12.4.org/src/backend/utils/misc/postgresql.conf.sample	2020-08-10 23:15:53.000000000 +0200
 +++ postgresql-12.4/src/backend/utils/misc/postgresql.conf.sample	2021-11-09 09:30:59.882648111 +0100
-@@ -416,7 +416,7 @@
+@@ -441,7 +441,7 @@
  
  # - Where to Log -
  
 -#log_destination = 'stderr'		# Valid values are combinations of
 +log_destination = 'syslog'		# Valid values are combinations of
- 					# stderr, csvlog, syslog, and eventlog,
- 					# depending on platform.  csvlog
- 					# requires logging_collector to be on.
+ 					# stderr, csvlog, jsonlog, syslog, and
+ 					# eventlog, depending on platform.
+ 					# csvlog and jsonlog require
 @@ -463,9 +463,9 @@ log_destination = 'syslog'		# Valid valu
  					# in all cases.
  
