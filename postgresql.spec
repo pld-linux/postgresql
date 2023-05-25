@@ -9,7 +9,7 @@
 %bcond_without	tests			# disable testing
 %bcond_without	tcl			# disable Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
-%bcond_without	llvm			# disable llvm based JIT support
+%bcond_with	llvm			# disable llvm based JIT support
 %bcond_without	perl			# disable Perl support
 %bcond_without	python			# disable Python support
 %bcond_with	bonjour			# Bonjour/DNS_SD support
@@ -35,7 +35,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.8
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	https://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
