@@ -1,5 +1,4 @@
 # TODO:
-# - python 3 and python 2 subpackages?
 # - subpackage *_plperl and *_plpython contribs?
 # - think about pg_upgrade integration (sysconfig variable to allow upgrade from 8.3+ without dump/restore?)
 #   create postgresqlM.N packages with parts of old pgsql required by pg_upgrade
@@ -84,9 +83,9 @@ BuildRequires:	perl-Scalar-List-Utils
 BuildRequires:	perl-devel
 %endif
 %if %{with python}
-BuildRequires:	python3 >= 1:2.4
-BuildRequires:	python3-devel >= 1:2.4
-BuildRequires:	python3-modules >= 1:2.4
+BuildRequires:	python3 >= 1:3.2
+BuildRequires:	python3-devel >= 1:3.2
+BuildRequires:	python3-modules >= 1:3.2
 %endif
 BuildRequires:	readline-devel >= 4.2
 BuildRequires:	rpmbuild(macros) >= 1.671
@@ -622,7 +621,6 @@ Summary:	PL/Python - PostgreSQL procedural language
 Summary(pl.UTF-8):	PL/Python - język proceduralny bazy danych PostgreSQL
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
-%pyrequires_eq	python
 
 %description module-plpython
 From PostgreSQL documentation:
