@@ -88,6 +88,7 @@ BuildRequires:	python3-devel >= 1:3.2
 BuildRequires:	python3-modules >= 1:3.2
 %endif
 BuildRequires:	readline-devel >= 4.2
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.671
 %{?with_systemd:BuildRequires:	systemd-devel >= 1:209}
 %{?with_systemtap:BuildRequires:	systemtap-sdt-devel}
@@ -479,6 +480,7 @@ C++, Perl и Tcl) разделены. Этот пакет включает то�
 Summary:	Documentation for PostgreSQL
 Summary(pl.UTF-8):	Dodatkowa dokumantacja dla PostgreSQL
 Group:		Applications/Databases
+BuildArch:	noarch
 
 %description doc
 This package includes documentation and HOWTO for programmer, admin
