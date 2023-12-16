@@ -20,7 +20,7 @@
 					# (disabled by default because it is a security risk)
 #
 
-%define mver 15
+%define mver 16
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -33,12 +33,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.3
-Release:	3
+Version:	%{mver}.1
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	https://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	7cb75773ff8fbe533701562c3278206b
+# Source0-md5:	9cbfb9076ed06384471802b850698a6d
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -66,7 +66,8 @@ BuildRequires:	docbook-style-xsl-nons
 BuildRequires:	flex >= 2.5.31
 BuildRequires:	gettext-tools
 BuildRequires:	gnome-doc-tools
-%{?with_kerberos5:BuildRequires:	heimdal-devel}
+%{?with_kerberos5:BuildRequires:	heimdal-devel >= 8}
+BuildRequires:	libicu-devel
 %{?with_selinux:BuildRequires:	libselinux-devel >= 2.1.10}
 BuildRequires:	libtool
 BuildRequires:	libuuid-devel
@@ -1052,7 +1053,6 @@ fi
 %attr(755,root,root) %{_bindir}/pg_waldump
 %attr(755,root,root) %{_bindir}/pgbench
 %attr(755,root,root) %{_bindir}/postgres
-%attr(755,root,root) %{_bindir}/postmaster
 
 %attr(755,root,root) %{_pgmoduledir}/cyrillic_and_mic.so
 %attr(755,root,root) %{_pgmoduledir}/dict_int.so
@@ -1098,7 +1098,6 @@ fi
 %{_mandir}/man1/pg_upgrade.1*
 %{_mandir}/man1/pgbench.1*
 %{_mandir}/man1/postgres.1*
-%{_mandir}/man1/postmaster.1*
 
 %files doc
 %defattr(644,root,root,755)

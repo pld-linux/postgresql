@@ -35,8 +35,8 @@ diff -urNp -x '*.orig' postgresql-12.4.org/src/backend/Makefile postgresql-12.4/
  ifneq ($(PORTNAME), aix)
  
  postgres: $(OBJS)
--	$(CC) $(CFLAGS) $(call expand_subsys,$^) $(LDFLAGS) $(LDFLAGS_EX) $(export_dynamic) $(LIBS) -o $@
-+	$(CC) $(CFLAGS) $(call expand_subsys,$^) $(LDFLAGS) $(LDFLAGS_EX) $(export_dynamic) $(LIBS) $(BONJOUR_LIBS) -o $@
+-	$(CC) $(CFLAGS) $(call expand_subsys,$^) $(LDFLAGS) $(LIBS) -o $@
++	$(CC) $(CFLAGS) $(call expand_subsys,$^) $(LDFLAGS) $(LIBS) $(BONJOUR_LIBS) -o $@
  
  endif
  endif
