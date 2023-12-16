@@ -900,11 +900,6 @@ install %{SOURCE6} $RPM_BUILD_ROOT%{systemdunitdir}/%{name}.target
 install -d howto
 tar zxf %{SOURCE2} -C howto
 
-%if %{with python}
-%py_comp $RPM_BUILD_ROOT%{py_libdir}
-%py_ocomp $RPM_BUILD_ROOT%{py_libdir}
-%endif
-
 # find locales
 for f in libpq5 pgscripts postgres psql initdb ecpg ecpglib6 \
 	plpgsql %{?with_perl:plperl} %{?with_python:plpython} \
