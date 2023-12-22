@@ -8,7 +8,7 @@
 %bcond_without	tests			# disable testing
 %bcond_without	tcl			# disable Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
-%bcond_with	llvm			# disable llvm based JIT support
+%bcond_without	llvm			# disable llvm based JIT support
 %bcond_without	perl			# disable Perl support
 %bcond_without	python			# disable Python support
 %bcond_with	bonjour			# Bonjour/DNS_SD support
