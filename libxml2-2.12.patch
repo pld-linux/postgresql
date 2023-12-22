@@ -1,0 +1,28 @@
+--- postgresql-16.1/src/backend/utils/adt/xml.c.orig	2023-11-06 23:04:27.000000000 +0100
++++ postgresql-16.1/src/backend/utils/adt/xml.c	2023-12-22 01:16:10.408867469 +0100
+@@ -123,7 +123,11 @@
+ 										   xmlParserCtxtPtr ctxt);
+ static void xml_errsave(Node *escontext, PgXmlErrorContext *errcxt,
+ 						int sqlcode, const char *msg);
++#if defined(LIBXML_VERSION) && LIBXML_VERSION >= 21200
++static void xml_errorHandler(void *data, const xmlError *error);
++#else
+ static void xml_errorHandler(void *data, xmlErrorPtr error);
++#endif
+ static int	errdetail_for_xml_code(int code);
+ static void chopStringInfoNewlines(StringInfo str);
+ static void appendStringInfoLineSeparator(StringInfo str);
+@@ -2001,8 +2005,13 @@
+ /*
+  * Error handler for libxml errors and warnings
+  */
++#if defined(LIBXML_VERSION) && LIBXML_VERSION >= 21200
++static void
++xml_errorHandler(void *data, const xmlError *error)
++#else
+ static void
+ xml_errorHandler(void *data, xmlErrorPtr error)
++#endif
+ {
+ 	PgXmlErrorContext *xmlerrcxt = (PgXmlErrorContext *) data;
+ 	xmlParserCtxtPtr ctxt = (xmlParserCtxtPtr) error->ctxt;
