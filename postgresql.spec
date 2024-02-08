@@ -33,12 +33,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.5
-Release:	2
+Version:	%{mver}.6
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	https://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	9a7d6515408ecb5823546d0a3d7b318c
+# Source0-md5:	666511aeb53bd4ac029e236e35b42ca8
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -50,7 +50,6 @@ Patch0:		%{name}-conf.patch
 Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		ac.patch
-Patch4:		openssl32.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		%{name}-link.patch
 URL:		https://www.postgresql.org/
@@ -802,7 +801,6 @@ Różne moduły dołączone do PostgreSQL-a.
 %{?with_absolute_dbpaths:%patch1 -p1}
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 %patch5 -p1
 %patch6 -p1
 
