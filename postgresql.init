@@ -8,7 +8,7 @@
 # description:	Starts and stops the PostgreSQL backend daemon that handles \
 #		all database requests.
 #
-# processname:	postmaster
+# processname:	postgres
 
 cd /
 
@@ -68,7 +68,7 @@ fi
 #
 # sets variables:
 # PG_STATUS = running | not running
-# PG_PID    = pid of postmaster process
+# PG_PID    = pid of postgres process
 #
 pgstatus() {
 	PG_STATUS="unknown"
@@ -122,7 +122,7 @@ start() {
 		pgstatus "$pgdir"
 		if [ "$PG_STATUS" = "running" ]; then
 			# pg_ctl status can misinform us about postgresql status
-			# so let's check if postmaster is really alive
+			# so let's check if postgres is really alive
 			if ps -p "$PG_PID" >/dev/null; then
 				msg_already_running "PostgreSQL $pgdir"
 			else
