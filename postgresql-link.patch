@@ -1,0 +1,42 @@
+diff -urNp -x '*.orig' postgresql-12.4.org/configure.ac postgresql-12.4/configure.ac
+--- postgresql-12.4.org/configure.ac	2021-11-09 09:31:36.707897270 +0100
++++ postgresql-12.4/configure.ac	2021-11-09 09:31:40.651435766 +0100
+@@ -1470,6 +1470,7 @@ fi
+ 
+ if test "$with_bonjour" = yes ; then
+   AC_CHECK_HEADER(dns_sd.h, [], [AC_MSG_ERROR([header file <dns_sd.h> is required for Bonjour])])
++  AC_CHECK_LIB(dns_sd, DNSServiceRegister, [BONJOUR_LIBS=-ldns_sd])
+ dnl At some point we might add something like
+ dnl AC_SEARCH_LIBS(DNSServiceRegister, dns_sd)
+ dnl but right now, what that would mainly accomplish is to encourage
+@@ -1477,6 +1478,7 @@ dnl people to try to use the avahi imple
+ dnl If you want to use Apple's own Bonjour code on another platform,
+ dnl just add -ldns_sd to LIBS manually.
+ fi
++AC_SUBST([BONJOUR_LIBS])
+ 
+ # for contrib/uuid-ossp
+ if test "$with_uuid" = bsd ; then
+diff -urNp -x '*.orig' postgresql-12.4.org/src/Makefile.global.in postgresql-12.4/src/Makefile.global.in
+--- postgresql-12.4.org/src/Makefile.global.in	2020-08-10 23:15:53.000000000 +0200
++++ postgresql-12.4/src/Makefile.global.in	2021-11-09 09:31:40.651435766 +0100
+@@ -173,6 +173,7 @@ includedir_internal = $(pkgincludedir)/i
+ pgxsdir = $(pkglibdir)/pgxs
+ bitcodedir = $(pkglibdir)/bitcode
+ 
++BONJOUR_LIBS            = @BONJOUR_LIBS@
+ 
+ ##########################################################################
+ #
+diff -urNp -x '*.orig' postgresql-12.4.org/src/backend/Makefile postgresql-12.4/src/backend/Makefile
+--- postgresql-12.4.org/src/backend/Makefile	2020-08-10 23:15:53.000000000 +0200
++++ postgresql-12.4/src/backend/Makefile	2021-11-09 09:31:40.651435766 +0100
+@@ -60,7 +60,7 @@ ifneq ($(PORTNAME), win32)
+ ifneq ($(PORTNAME), aix)
+ 
+ postgres: $(OBJS)
+-	$(CC) $(CFLAGS) $(call expand_subsys,$^) $(LDFLAGS) $(LIBS) -o $@
++	$(CC) $(CFLAGS) $(call expand_subsys,$^) $(LDFLAGS) $(LIBS) $(BONJOUR_LIBS) -o $@
+ 
+ endif
+ endif

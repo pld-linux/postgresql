@@ -8,7 +8,7 @@
 %bcond_without	tests			# disable testing
 %bcond_without	tcl			# disable Tcl support
 %bcond_without	kerberos5		# disable kerberos5 support
-%bcond_with	llvm			# disable llvm based JIT support
+%bcond_without	llvm			# disable llvm based JIT support
 %bcond_without	perl			# disable Perl support
 %bcond_without	python			# disable Python support
 %bcond_with	bonjour			# Bonjour/DNS_SD support
@@ -51,6 +51,7 @@ Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		ac.patch
 Patch5:		%{name}-heimdal.patch
+Patch6:		%{name}-link.patch
 URL:		https://www.postgresql.org/
 BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake
@@ -65,6 +66,7 @@ BuildRequires:	flex >= 2.5.31
 BuildRequires:	gettext-tools
 BuildRequires:	gnome-doc-tools
 %{?with_kerberos5:BuildRequires:	heimdal-devel >= 8.0}
+BuildRequires:	libicu-devel
 %{?with_selinux:BuildRequires:	libselinux-devel >= 2.1.10}
 BuildRequires:	libtool
 BuildRequires:	libuuid-devel
@@ -801,6 +803,7 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch2 -p1
 %patch3 -p1
 %patch5 -p1
+%patch6 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
