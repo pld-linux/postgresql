@@ -188,6 +188,7 @@ case "$action" in
 		else
 			show "PostgreSQL cluster %s" "$pgdir"
 			progress "$PG_STATUS" "$CFAIL"
+			RETVAL=3
 		fi
 		echo
 	done
