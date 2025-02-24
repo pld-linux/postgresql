@@ -798,12 +798,12 @@ Różne moduły dołączone do PostgreSQL-a.
 
 %prep
 %setup -q
-%patch0 -p1
-%{?with_absolute_dbpaths:%patch1 -p1}
-%patch2 -p1
-%patch3 -p1
-%patch5 -p1
-%patch6 -p1
+%patch -P0 -p1
+%{?with_absolute_dbpaths:%patch -P1 -p1}
+%patch -P2 -p1
+%patch -P3 -p1
+%patch -P5 -p1
+%patch -P6 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
