@@ -107,6 +107,8 @@ Requires:	%{name}-libs = %{version}-%{release}
 Requires:	rc-scripts >= 0.4.3.0
 Requires:	systemd-units >= 38
 Requires:	tzdata
+Provides:	group(postgres)
+Provides:	user(postgres)
 %if %{with llvm}
 Suggests:	%{name}-module-llvmjit = %{version}-%{release}
 %endif
