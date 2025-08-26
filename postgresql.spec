@@ -20,7 +20,7 @@
 					# (disabled by default because it is a security risk)
 #
 
-%define mver 16
+%define mver 17
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -33,12 +33,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.10
+Version:	%{mver}.6
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	https://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	96faafa6f2504827038f13c18781dc10
+# Source0-md5:	e72b7e5dc22d44d56b113ed1f74e4084
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -136,7 +136,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # omitted contribs:
 # spi, test_decoding, worker_spi - examples/tests
 # tsearch2 - old module for compatibility only
-%define	contrib_modules	adminpack amcheck auth_delay auto_explain bloom btree_gin btree_gist citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore %{?with_perl:hstore_plperl} %{?with_python:hstore_plpython} intagg intarray isn %{?with_perl:jsonb_plperl} %{?with_python:jsonb_plpython} lo ltree %{?with_python:ltree_plpython} oid2name pageinspect passwordcheck pg_buffercache pg_freespacemap pg_prewarm pg_stat_statements pg_trgm pg_visibility pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn tsm_system_rows tsm_system_time unaccent uuid-ossp vacuumlo xml2
+%define	contrib_modules	amcheck auth_delay auto_explain bloom btree_gin btree_gist citext cube dblink dict_int dict_xsyn earthdistance file_fdw fuzzystrmatch hstore %{?with_perl:hstore_plperl} %{?with_python:hstore_plpython} intagg intarray isn %{?with_perl:jsonb_plperl} %{?with_python:jsonb_plpython} lo ltree %{?with_python:ltree_plpython} oid2name pageinspect passwordcheck pg_buffercache pg_freespacemap pg_prewarm pg_stat_statements pg_trgm pg_visibility pgcrypto pgrowlocks pgstattuple postgres_fdw seg %{?with_selinux:sepgsql} sslinfo tablefunc tcn tsm_system_rows tsm_system_time unaccent uuid-ossp vacuumlo xml2
 
 %description
 PostgreSQL Data Base Management System (formerly known as Postgres,
@@ -859,6 +859,8 @@ done
 %{__make} -C src/tutorial \
 	NO_PGXS=1
 
+%{__make} -C doc/src/sgml
+
 %ifnarch sparc sparcv9 sparc64 alpha
 %{?with_tests:%{__make} -j1 check}
 %endif
@@ -904,8 +906,8 @@ tar zxf %{SOURCE2} -C howto
 # find locales
 for f in libpq5 pgscripts postgres psql initdb ecpg ecpglib6 \
 	plpgsql %{?with_perl:plperl} %{?with_python:plpython} \
-	pg_amcheck pg_archivecleanup pg_basebackup pg_checksums pg_config pg_controldata pg_ctl pg_dump pg_resetwal pg_rewind pg_test_fsync \
-	pg_test_timing pg_upgrade pg_waldump pg_verifybackup; do
+	pg_amcheck pg_archivecleanup pg_basebackup pg_checksums pg_combinebackup pg_config pg_controldata pg_ctl pg_dump pg_resetwal pg_rewind pg_test_fsync \
+	pg_test_timing pg_upgrade pg_waldump pg_walsummary pg_verifybackup; do
 	%find_lang $f-%{mver}
 done
 # merge locales
@@ -913,7 +915,7 @@ merge_lang() {
 	cat $(for f in $@; do echo ${f}-%{mver}.lang ; done)
 }
 merge_lang pgscripts postgres plpgsql \
-	pg_basebackup pg_checksums pg_controldata pg_resetwal pg_rewind pg_upgrade pg_test_fsync pg_test_timing pg_waldump > main.lang
+	pg_basebackup pg_checksums pg_combinebackup pg_controldata pg_resetwal pg_rewind pg_upgrade pg_test_fsync pg_test_timing pg_waldump pg_walsummary > main.lang
 merge_lang psql initdb \
 	pg_amcheck pg_archivecleanup pg_ctl pg_dump pg_verifybackup > clients.lang
 merge_lang ecpg ecpglib6 > ecpg.lang
@@ -1030,7 +1032,7 @@ fi
 
 %files -f main.lang
 %defattr(644,root,root,755)
-%doc COPYRIGHT README HISTORY doc/{KNOWN_BUGS,MISSING_FEATURES,TODO}
+%doc COPYRIGHT README.md HISTORY doc/{KNOWN_BUGS,MISSING_FEATURES,TODO}
 %attr(754,root,root) /etc/rc.d/init.d/postgresql
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/postgresql
 %{systemdunitdir}/%{name}.service
@@ -1041,7 +1043,9 @@ fi
 %attr(755,root,root) %{_bindir}/initdb
 %attr(755,root,root) %{_bindir}/pg_basebackup
 %attr(755,root,root) %{_bindir}/pg_checksums
+%attr(755,root,root) %{_bindir}/pg_combinebackup
 %attr(755,root,root) %{_bindir}/pg_controldata
+%attr(755,root,root) %{_bindir}/pg_createsubscriber
 %attr(755,root,root) %{_bindir}/pg_ctl
 %attr(755,root,root) %{_bindir}/pg_resetwal
 %attr(755,root,root) %{_bindir}/pg_receivewal
@@ -1051,6 +1055,7 @@ fi
 %attr(755,root,root) %{_bindir}/pg_test_timing
 %attr(755,root,root) %{_bindir}/pg_upgrade
 %attr(755,root,root) %{_bindir}/pg_waldump
+%attr(755,root,root) %{_bindir}/pg_walsummary
 %attr(755,root,root) %{_bindir}/pgbench
 %attr(755,root,root) %{_bindir}/postgres
 
@@ -1086,13 +1091,16 @@ fi
 %{_mandir}/man1/initdb.1*
 %{_mandir}/man1/pg_basebackup.1*
 %{_mandir}/man1/pg_checksums.1*
+%{_mandir}/man1/pg_combinebackup.1*
 %{_mandir}/man1/pg_controldata.1*
+%{_mandir}/man1/pg_createsubscriber.1*
 %{_mandir}/man1/pg_ctl.1*
 %{_mandir}/man1/pg_resetwal.1*
 %{_mandir}/man1/pg_receivewal.1*
 %{_mandir}/man1/pg_recvlogical.1*
 %{_mandir}/man1/pg_rewind.1*
 %{_mandir}/man1/pg_waldump.1*
+%{_mandir}/man1/pg_walsummary.1*
 %{_mandir}/man1/pg_test_fsync.1*
 %{_mandir}/man1/pg_test_timing.1*
 %{_mandir}/man1/pg_upgrade.1*
@@ -1333,7 +1341,6 @@ fi
 %attr(755,root,root) %{_bindir}/oid2name
 %attr(755,root,root) %{_bindir}/vacuumlo
 %attr(755,root,root) %{_pgmoduledir}/_int.so
-%attr(755,root,root) %{_pgmoduledir}/adminpack.so
 %attr(755,root,root) %{_pgmoduledir}/amcheck.so
 %attr(755,root,root) %{_pgmoduledir}/auth_delay.so
 %attr(755,root,root) %{_pgmoduledir}/auto_explain.so
@@ -1368,8 +1375,6 @@ fi
 %if %{with llvm}
 %{_pgmoduledir}/bitcode/_int
 %{_pgmoduledir}/bitcode/_int.index.bc
-%{_pgmoduledir}/bitcode/adminpack
-%{_pgmoduledir}/bitcode/adminpack.index.bc
 %{_pgmoduledir}/bitcode/amcheck
 %{_pgmoduledir}/bitcode/amcheck.index.bc
 %{_pgmoduledir}/bitcode/auth_delay
@@ -1433,8 +1438,6 @@ fi
 %{_pgmoduledir}/bitcode/uuid-ossp
 %{_pgmoduledir}/bitcode/uuid-ossp.index.bc
 %endif
-%{_pgsqldir}/adminpack--*.sql
-%{_pgsqldir}/adminpack.control
 %{_pgsqldir}/amcheck--*.sql
 %{_pgsqldir}/amcheck.control
 %{_pgsqldir}/bloom--*.sql

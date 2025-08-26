@@ -32,7 +32,7 @@ diff -urNp -x '*.orig' postgresql-12.4.org/src/backend/Makefile postgresql-12.4/
 --- postgresql-12.4.org/src/backend/Makefile	2020-08-10 23:15:53.000000000 +0200
 +++ postgresql-12.4/src/backend/Makefile	2021-11-09 09:31:40.651435766 +0100
 @@ -60,7 +60,7 @@ ifneq ($(PORTNAME), win32)
- ifneq ($(PORTNAME), aix)
+ ifneq ($(PORTNAME), win32)
  
  postgres: $(OBJS)
 -	$(CC) $(CFLAGS) $(call expand_subsys,$^) $(LDFLAGS) $(LIBS) -o $@
