@@ -53,6 +53,7 @@ Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		%{name}-ac_version.patch
 Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-heimdal.patch
+Patch6:		build.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -777,12 +778,13 @@ Różne moduły dołączone do PostgreSQL-a.
 
 %prep
 %setup -q
-%patch0 -p1
-%{?with_absolute_dbpaths:%patch1 -p1}
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
+%patch -P0 -p1
+%{?with_absolute_dbpaths:%patch -P1 -p1}
+%patch -P2 -p1
+%patch -P3 -p1
+%patch -P4 -p1
+%patch -P5 -p1
+%patch -P6 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
@@ -949,11 +951,6 @@ if [ "$foundold" = "1" ]; then
 fi
 %groupadd -g 88 -r postgres
 %useradd -M -o -r -u 88 -d /home/services/postgres -s /bin/sh -g postgres -c "PostgreSQL Server" postgres
-
-%triggerpostun -- %{name} < 7.2-2
-if [ -n "`/bin/id -u postgres 2>/dev/null`" ]; then
-	/usr/sbin/usermod -d /home/services/postgres postgres
-fi
 
 %post
 /sbin/chkconfig --add postgresql

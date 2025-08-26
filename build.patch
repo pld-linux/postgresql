@@ -1,0 +1,64 @@
+--- postgresql-9.3.25/config/c-compiler.m4~	2025-08-26 12:14:27.950791233 +0200
++++ postgresql-9.3.25/config/c-compiler.m4	2025-08-26 12:14:31.784383880 +0200
+@@ -61,7 +61,9 @@ AC_DEFUN([PGAC_TYPE_64BIT_INT],
+ define([Ac_cachevar], [translit([pgac_cv_type_$1_64], [ *], [_p])])dnl
+ AC_CACHE_CHECK([whether $1 is 64 bits], [Ac_cachevar],
+ [AC_TRY_RUN(
+-[typedef $1 ac_int64;
++[#include <unistd.h>
++#include <stdlib.h>
++typedef $1 ac_int64;
+ 
+ /*
+  * These are globals to discourage the compiler from folding all the
+--- postgresql-9.3.25/config/c-library.m4~	2018-11-05 22:53:28.000000000 +0100
++++ postgresql-9.3.25/config/c-library.m4	2025-08-26 12:13:33.993808107 +0200
+@@ -42,6 +42,7 @@ fi
+ AC_CACHE_CHECK(for tzname, ac_cv_var_tzname,
+ [AC_TRY_LINK(
+ [#include <time.h>
++#include <stdlib.h>
+ #ifndef tzname /* For SGI.  */
+ extern char *tzname[]; /* RS6000 and others reject char **tzname.  */
+ #endif
+--- postgresql-9.3.25/config/c-compiler.m4~	2025-08-26 12:15:11.363727796 +0200
++++ postgresql-9.3.25/config/c-compiler.m4	2025-08-26 12:18:25.716874356 +0200
+@@ -86,7 +86,7 @@ int does_int64_work()
+     return 0;
+   return 1;
+ }
+-main() {
++int main() {
+   exit(! does_int64_work());
+ }],
+ [Ac_cachevar=yes],
+--- postgresql-9.3.25/src/backend/utils/adt/xml.c~	2018-11-05 22:53:28.000000000 +0100
++++ postgresql-9.3.25/src/backend/utils/adt/xml.c	2025-08-26 12:22:25.676439210 +0200
+@@ -117,7 +117,7 @@ struct PgXmlErrorContext
+ 
+ static xmlParserInputPtr xmlPgEntityLoader(const char *URL, const char *ID,
+ 				  xmlParserCtxtPtr ctxt);
+-static void xml_errorHandler(void *data, xmlErrorPtr error);
++static void xml_errorHandler(void *data, const xmlError *error);
+ static void xml_ereport_by_code(int level, int sqlcode,
+ 					const char *msg, int errcode);
+ static void chopStringInfoNewlines(StringInfo str);
+@@ -1559,7 +1559,7 @@ xml_ereport(PgXmlErrorContext *errcxt, i
+  * Error handler for libxml errors and warnings
+  */
+ static void
+-xml_errorHandler(void *data, xmlErrorPtr error)
++xml_errorHandler(void *data, const xmlError *error)
+ {
+ 	PgXmlErrorContext *xmlerrcxt = (PgXmlErrorContext *) data;
+ 	xmlParserCtxtPtr ctxt = (xmlParserCtxtPtr) error->ctxt;
+--- postgresql-9.3.25/src/pl/plpython/plpython.h~	2018-11-05 22:53:28.000000000 +0100
++++ postgresql-9.3.25/src/pl/plpython/plpython.h	2025-08-26 13:16:59.697893953 +0200
+@@ -121,7 +121,6 @@ typedef int Py_ssize_t;
+ #define TEXTDOMAIN PG_TEXTDOMAIN("plpython")
+ 
+ #include <compile.h>
+-#include <eval.h>
+ 
+ /* put back our snprintf and vsnprintf */
+ #ifdef USE_REPL_SNPRINTF

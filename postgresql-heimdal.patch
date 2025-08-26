@@ -1,6 +1,7 @@
---- postgresql-9.0.0/configure.in.orig	2010-10-03 11:14:32.231741882 +0200
-+++ postgresql-9.0.0/configure.in	2010-10-03 11:46:29.767741043 +0200
-@@ -906,7 +906,7 @@
+diff -urN postgresql-9.3.25.org/configure.in postgresql-9.3.25/configure.in
+--- postgresql-9.3.25.org/configure.in	2025-08-26 12:09:28.677212907 +0200
++++ postgresql-9.3.25/configure.in	2025-08-26 12:09:58.419224934 +0200
+@@ -969,7 +969,7 @@
  
  if test "$with_gssapi" = yes ; then
    if test "$PORTNAME" != "win32"; then
@@ -9,7 +10,7 @@
  		 		  [AC_MSG_ERROR([could not find function 'gss_init_sec_context' required for GSSAPI])])
    else
      LIBS="$LIBS -lgssapi32"
-@@ -915,7 +915,7 @@
+@@ -978,7 +978,7 @@
  
  if test "$with_krb5" = yes ; then
    if test "$PORTNAME" != "win32"; then
