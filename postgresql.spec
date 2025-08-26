@@ -796,6 +796,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 %{__aclocal} -I config
 %{__autoconf}
 %configure \
+	PYTHON="%{__python}" \
 	CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS `uuid-config --cflags`" \
 	--disable-rpath \
 	--enable-depend \
