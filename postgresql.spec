@@ -15,12 +15,15 @@
 %bcond_without	ldap			# disable LDAP support
 %bcond_without	selinux			# sepgsql contrib module
 %bcond_without	systemd			# systemd (notify) support
+%bcond_without	curl			# curl support (OAuth)
+%bcond_without	io_uring		# io_uring support
+%bcond_without	numa			# NUMA support
 %bcond_with	systemtap		# systemtap/dtrace probes
 %bcond_with	absolute_dbpaths	# enable absolute paths to create database
 					# (disabled by default because it is a security risk)
 #
 
-%define mver 17
+%define mver 18
 
 Summary:	PostgreSQL Data Base Management System
 Summary(de.UTF-8):	PostgreSQL Datenbankverwaltungssystem
@@ -33,12 +36,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.6
+Version:	%{mver}.0
 Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	https://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	e72b7e5dc22d44d56b113ed1f74e4084
+# Source0-md5:	ce1c99eafd54278847a04c299cff80c5
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -59,6 +62,7 @@ BuildRequires:	automake
 # not needed for releases... but fixes something in snapshot
 BuildRequires:	bison >= 1.875
 %{?with_llvm:BuildRequires:	clang >= 3.9}
+%{?with_curl:BuildRequires:	curl-devel >= 7.61.0}
 BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	docbook-style-xsl-nons
@@ -69,12 +73,14 @@ BuildRequires:	gnome-doc-tools
 BuildRequires:	libicu-devel
 %{?with_selinux:BuildRequires:	libselinux-devel >= 2.1.10}
 BuildRequires:	libtool
+%{?with_io_uring:BuildRequires:	liburing-devel >= 2.5}
 BuildRequires:	libuuid-devel
 BuildRequires:	libxml2-devel >= 1:2.6.23
 BuildRequires:	libxslt-devel
 BuildRequires:	libxslt-progs
 %{?with_llvm:BuildRequires: llvm-devel >= 3.9}
 BuildRequires:	ncurses-devel >= 5.0
+%{?with_numa:BuildRequires:	numactl-devel}
 %{?with_ldap:BuildRequires:	openldap-devel}
 BuildRequires:	openssl-devel >= 1.1.1
 BuildRequires:	pam-devel
@@ -104,6 +110,7 @@ Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires:	%{name}-clients >= %{version}-%{release}
 Requires:	%{name}-libs = %{version}-%{release}
+%{?with_io_uring:Requires:	liburing >= 2.5}
 Requires:	rc-scripts >= 0.4.3.0
 Requires:	systemd-units >= 38
 Requires:	tzdata
@@ -499,6 +506,7 @@ Summary(pl.UTF-8):	Biblioteki dzielone programu PostgreSQL
 Summary(pt_BR.UTF-8):	Biblioteca compartilhada do PostgreSQL
 Summary(zh_CN.UTF-8):	PostgreSQL 客户所需要的共享库
 Group:		Libraries
+%{?with_curl:Suggests:	%{name}-oauth = %{version}-%{release}}
 Requires:	openssl%{?_isa} >= 1.1.1
 
 %description libs
@@ -786,6 +794,19 @@ Moduł z funkcjami XML zapewniającymi obsługę zapytań XPath oraz
 funkcjonalność XSLT. Jest także nowa funkcja tabelowa pozwalająca na
 bezpośrednie zwracanie wielu wyników XML.
 
+%package oauth
+Summary:	OAuth 2.0 authentication support
+Summary(pl.UTF-8):	Wsparcie dla uwierzytelnienia OAuth 2.0
+Group:		Applications/Databases
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	curl-libs >= 7.61.0
+
+%description oauth
+OAuth 2.0 authentication support.
+
+%description oauth -l pl.UTF-8
+Wsparcie dla uwierzytelnienia OAuth 2.0.
+
 %package contrib
 Summary:	Miscellaneous PostgreSQL contrib modules
 Summary(pl.UTF-8):	Różne moduły dołączone do PostgreSQL-a
@@ -831,13 +852,15 @@ march="-mx32"
 	%{?with_systemtap:--enable-dtrace} \
 	--enable-integer-datetimes \
 	--enable-nls \
-	--enable-thread-safety \
 	%{?with_bonjour:--with-bonjour} \
 	%{?with_kerberos5:--with-gssapi} \
 	%{?with_ldap:--with-ldap} \
-	%{?with_llvm:--with-llvm} \
+	%{?with_io_uring:--with-libcurl} \
+	%{?with_numa:--with-libnuma} \
+	%{?with_curl:--with-liburing} \
 	--with-libxml \
 	--with-libxslt \
+	%{?with_llvm:--with-llvm} \
 	--with-openssl \
 	--with-pam \
 	%{?with_perl:--with-perl} \
@@ -1150,7 +1173,6 @@ fi
 %{_includedir}/libpq-events.h
 %{_includedir}/libpq-fe.h
 %{_includedir}/pg_config.h
-%{_includedir}/pg_config_ext.h
 %{_includedir}/pg_config_manual.h
 %{_includedir}/pg_config_os.h
 %{_includedir}/postgres_ext.h
@@ -1179,6 +1201,7 @@ fi
 %{_libdir}/libecpg.a
 %{_libdir}/libecpg_compat.a
 %{_libdir}/libpq.a
+%{?with_curl:%{_libdir}/libpq-oauth.a}
 %{_libdir}/libpgcommon.a
 %{_libdir}/libpgfeutils.a
 %{_libdir}/libpgtypes.a
@@ -1334,6 +1357,12 @@ fi
 %endif
 %{_pgsqldir}/xml2--*.sql
 %{_pgsqldir}/xml2.control
+
+%if %{with curl}
+%files oauth
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libpq-oauth-%{mver}.so
+%endif
 
 %files contrib
 %defattr(644,root,root,755)
