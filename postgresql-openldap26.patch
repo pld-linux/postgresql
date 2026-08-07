@@ -1,0 +1,17 @@
+--- postgresql-8.3.23.org/configure.in	2026-08-07 13:17:13.879699632 +0200
++++ postgresql-8.3.23/configure.in	2026-08-07 13:29:14.119682554 +0200
+@@ -1272,10 +1272,11 @@ if test "$with_ldap" = yes ; then
+     LDAP_LIBS_BE="-lldap $EXTRA_LDAP_LIBS"
+     if test "$enable_thread_safety" = yes; then
+       # on some platforms ldap_r fails to link without PTHREAD_LIBS
+-      AC_CHECK_LIB(ldap_r, ldap_simple_bind, [],
+-		   [AC_MSG_ERROR([library 'ldap_r' is required for LDAP])],
++      # OpenLDAP 2.5 and later have no libldap_r; libldap is thread-safe there
++      AC_CHECK_LIB(ldap_r, ldap_simple_bind,
++		   [LDAP_LIBS_FE="-lldap_r $EXTRA_LDAP_LIBS"],
++		   [LDAP_LIBS_FE="-lldap $EXTRA_LDAP_LIBS"],
+ 		   [$PTHREAD_CFLAGS $PTHREAD_LIBS $EXTRA_LDAP_LIBS])
+-      LDAP_LIBS_FE="-lldap_r $EXTRA_LDAP_LIBS"
+     else
+       LDAP_LIBS_FE="-lldap $EXTRA_LDAP_LIBS"
+     fi

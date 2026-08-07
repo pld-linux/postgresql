@@ -1,0 +1,396 @@
+--- postgresql-8.3.23.org/configure.in	2026-08-07 13:17:13.879699632 +0200
++++ postgresql-8.3.23/configure.in	2026-08-07 13:29:14.119682554 +0200
+@@ -781,7 +781,7 @@ if test "$with_openssl" = yes ; then
+   dnl Order matters!
+   if test "$PORTNAME" != "win32"; then
+      AC_CHECK_LIB(crypto, CRYPTO_new_ex_data, [], [AC_MSG_ERROR([library 'crypto' is required for OpenSSL])])
+-     AC_CHECK_LIB(ssl,    SSL_library_init, [], [AC_MSG_ERROR([library 'ssl' is required for OpenSSL])])
++     AC_CHECK_LIB(ssl,    SSL_new, [], [AC_MSG_ERROR([library 'ssl' is required for OpenSSL])])
+   else
+      AC_CHECK_LIB(eay32, CRYPTO_new_ex_data, [], [AC_MSG_ERROR([library 'eay32' is required for OpenSSL])])
+      AC_CHECK_LIB(ssleay32,    SSL_library_init, [], [AC_MSG_ERROR([library 'ssleay32' is required for OpenSSL])])
+--- postgresql-8.3.23.org/src/backend/libpq/be-secure.c	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/backend/libpq/be-secure.c	2026-08-07 13:03:36.433016920 +0200
+@@ -128,6 +128,9 @@ static const char *SSLerrmessage(void);
+ int ssl_renegotiation_limit;
+ 
+ #ifdef USE_SSL
++/* are we in the middle of a renegotiation? */
++static bool in_ssl_renegotiation = false;
++
+ static SSL_CTX *SSL_context = NULL;
+ 
+ /* GUC variable controlling SSL cipher list */
+@@ -339,29 +342,55 @@ secure_write(Port *port, void *ptr, size
+ 	{
+ 		int			err;
+ 
+-		if (ssl_renegotiation_limit && port->count > ssl_renegotiation_limit * 1024L)
++		/*
++		 * If SSL renegotiations are enabled and we're getting close to the
++		 * limit, start one now; but avoid it if there's one already in
++		 * progress.  Request the renegotiation 1kB before the limit has
++		 * actually expired.
++		 */
++		if (ssl_renegotiation_limit && !in_ssl_renegotiation &&
++			port->count > (ssl_renegotiation_limit - 1) * 1024L)
+ 		{
++			in_ssl_renegotiation = true;
++
++			/*
++			 * The way we determine that a renegotiation has completed is by
++			 * observing OpenSSL's internal renegotiation counter.  Make sure
++			 * we start out at zero, and assume that the renegotiation is
++			 * complete when the counter advances.
++			 *
++			 * OpenSSL provides SSL_renegotiation_pending(), but this doesn't
++			 * seem to work in testing.
++			 */
++			SSL_clear_num_renegotiations(port->ssl);
++
+ 			SSL_set_session_id_context(port->ssl, (void *) &SSL_context,
+ 									   sizeof(SSL_context));
+ 			if (SSL_renegotiate(port->ssl) <= 0)
+ 				ereport(COMMERROR,
+ 						(errcode(ERRCODE_PROTOCOL_VIOLATION),
+-						 errmsg("SSL renegotiation failure")));
+-			if (SSL_do_handshake(port->ssl) <= 0)
+-				ereport(COMMERROR,
+-						(errcode(ERRCODE_PROTOCOL_VIOLATION),
+-						 errmsg("SSL renegotiation failure")));
+-			if (port->ssl->state != SSL_ST_OK)
+-				ereport(COMMERROR,
+-						(errcode(ERRCODE_PROTOCOL_VIOLATION),
+-						 errmsg("SSL failed to send renegotiation request")));
+-			port->ssl->state |= SSL_ST_ACCEPT;
+-			SSL_do_handshake(port->ssl);
+-			if (port->ssl->state != SSL_ST_OK)
+-				ereport(COMMERROR,
+-						(errcode(ERRCODE_PROTOCOL_VIOLATION),
+-						 errmsg("SSL renegotiation failure")));
+-			port->count = 0;
++						 errmsg("SSL failure during renegotiation start")));
++			else
++			{
++				int			retries;
++
++				/*
++				 * A handshake can fail, so be prepared to retry it, but only
++				 * a few times.
++				 */
++				for (retries = 0;; retries++)
++				{
++					if (SSL_do_handshake(port->ssl) > 0)
++						break;	/* done */
++					ereport(COMMERROR,
++							(errcode(ERRCODE_PROTOCOL_VIOLATION),
++							 errmsg("SSL handshake failure on renegotiation, retrying")));
++					if (retries >= 20)
++						ereport(FATAL,
++								(errcode(ERRCODE_PROTOCOL_VIOLATION),
++								 errmsg("could not complete SSL handshake on renegotiation, too many failures")));
++				}
++			}
+ 		}
+ 
+ wloop:
+@@ -407,6 +436,28 @@ wloop:
+ 				n = -1;
+ 				break;
+ 		}
++
++		if (n >= 0)
++		{
++			/* is renegotiation complete? */
++			if (in_ssl_renegotiation &&
++				SSL_num_renegotiations(port->ssl) >= 1)
++			{
++				in_ssl_renegotiation = false;
++				port->count = 0;
++			}
++
++			/*
++			 * if renegotiation is still ongoing, and we've gone beyond the
++			 * limit, kill the connection now -- continuing to use it can be
++			 * considered a security problem.
++			 */
++			if (in_ssl_renegotiation &&
++				port->count > ssl_renegotiation_limit * 1024L)
++				ereport(FATAL,
++						(errcode(ERRCODE_PROTOCOL_VIOLATION),
++						 errmsg("SSL failed to renegotiate connection before limit expired")));
++		}
+ 	}
+ 	else
+ #endif
+@@ -421,48 +472,91 @@ wloop:
+ #ifdef USE_SSL
+ 
+ /*
+- * Private substitute BIO: this wraps the SSL library's standard socket BIO
+- * so that we can enable and disable interrupts just while calling recv().
+- * We cannot have interrupts occurring while the bulk of openssl runs,
+- * because it uses malloc() and possibly other non-reentrant libc facilities.
++ * Private substitute BIO: this does the sending and receiving using send() and
++ * recv() instead, so that we can enable and disable interrupts just while
++ * calling recv().  We cannot have interrupts occurring while the bulk of
++ * openssl runs, because it uses malloc() and possibly other non-reentrant libc
++ * facilities.
+  *
+- * As of openssl 0.9.7, we can use the reasonably clean method of interposing
+- * a wrapper around the standard socket BIO's sock_read() method.  This relies
+- * on the fact that sock_read() doesn't call anything non-reentrant, in fact
+- * not much of anything at all except recv().  If this ever changes we'd
+- * probably need to duplicate the code of sock_read() in order to push the
+- * interrupt enable/disable down yet another level.
++ * These functions are closely modelled on the standard socket BIO in OpenSSL;
++ * see sock_read() and sock_write() in OpenSSL's crypto/bio/bss_sock.c.
+  */
+ 
+-static bool my_bio_initialized = false;
+-static BIO_METHOD my_bio_methods;
+-static int	(*std_sock_read) (BIO *h, char *buf, int size);
++static BIO_METHOD *my_bio_methods = NULL;
+ 
+ static int
+ my_sock_read(BIO *h, char *buf, int size)
+ {
+-	int			res;
++	int			res = 0;
+ 
+ 	prepare_for_client_read();
+ 
+-	res = std_sock_read(h, buf, size);
++	if (buf != NULL)
++	{
++		res = recv(BIO_get_fd(h, NULL), buf, size, 0);
++		BIO_clear_retry_flags(h);
++		if (res <= 0)
++		{
++			/* If we were interrupted, tell caller to retry */
++			if (errno == EINTR)
++			{
++				BIO_set_retry_read(h);
++			}
++		}
++	}
+ 
+ 	client_read_ended();
+ 
+ 	return res;
+ }
+ 
++static int
++my_sock_write(BIO *h, const char *buf, int size)
++{
++	int			res = 0;
++
++	res = send(BIO_get_fd(h, NULL), buf, size, 0);
++	BIO_clear_retry_flags(h);
++	if (res <= 0)
++	{
++		if (errno == EINTR)
++		{
++			BIO_set_retry_write(h);
++		}
++	}
++
++	return res;
++}
++
+ static BIO_METHOD *
+ my_BIO_s_socket(void)
+ {
+-	if (!my_bio_initialized)
++	if (!my_bio_methods)
+ 	{
+-		memcpy(&my_bio_methods, BIO_s_socket(), sizeof(BIO_METHOD));
+-		std_sock_read = my_bio_methods.bread;
+-		my_bio_methods.bread = my_sock_read;
+-		my_bio_initialized = true;
++		const BIO_METHOD *biom = BIO_s_socket();
++		int			my_bio_index;
++
++		my_bio_index = BIO_get_new_index();
++		if (my_bio_index == -1)
++			return NULL;
++		my_bio_methods = BIO_meth_new(my_bio_index, "PostgreSQL backend socket");
++		if (!my_bio_methods)
++			return NULL;
++		if (!BIO_meth_set_write(my_bio_methods, my_sock_write) ||
++			!BIO_meth_set_read(my_bio_methods, my_sock_read) ||
++			!BIO_meth_set_gets(my_bio_methods, BIO_meth_get_gets(biom)) ||
++			!BIO_meth_set_puts(my_bio_methods, BIO_meth_get_puts(biom)) ||
++			!BIO_meth_set_ctrl(my_bio_methods, BIO_meth_get_ctrl(biom)) ||
++			!BIO_meth_set_create(my_bio_methods, BIO_meth_get_create(biom)) ||
++			!BIO_meth_set_destroy(my_bio_methods, BIO_meth_get_destroy(biom)) ||
++			!BIO_meth_set_callback_ctrl(my_bio_methods, BIO_meth_get_callback_ctrl(biom)))
++		{
++			BIO_meth_free(my_bio_methods);
++			my_bio_methods = NULL;
++			return NULL;
++		}
+ 	}
+-	return &my_bio_methods;
++	return my_bio_methods;
+ }
+ 
+ /* This should exactly match openssl's SSL_set_fd except for using my BIO */
+@@ -470,15 +564,16 @@ static int
+ my_SSL_set_fd(SSL *s, int fd)
+ {
+ 	int			ret = 0;
+-	BIO		   *bio = NULL;
++	BIO		   *bio;
++	BIO_METHOD *bio_method;
+ 
+-	bio = BIO_new(my_BIO_s_socket());
++	bio_method = my_BIO_s_socket();
++	if (bio_method == NULL)
++		goto err;
++	bio = BIO_new(bio_method);
+ 
+ 	if (bio == NULL)
+-	{
+-		SSLerr(SSL_F_SSL_SET_FD, ERR_R_BUF_LIB);
+ 		goto err;
+-	}
+ 	BIO_set_fd(bio, fd, BIO_NOCLOSE);
+ 	SSL_set_bio(s, bio, bio);
+ 	ret = 1;
+@@ -721,7 +816,7 @@ initialize_SSL(void)
+ #endif
+ 		SSL_library_init();
+ 		SSL_load_error_strings();
+-		SSL_context = SSL_CTX_new(SSLv23_method());
++		SSL_context = SSL_CTX_new(TLS_method());
+ 		if (!SSL_context)
+ 			ereport(FATAL,
+ 					(errmsg("could not create SSL context: %s",
+--- postgresql-8.3.23.org/src/interfaces/libpq/fe-secure.c	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/interfaces/libpq/fe-secure.c	2026-08-07 13:03:32.396350259 +0200
+@@ -1035,7 +1035,7 @@ init_ssl_system(PGconn *conn)
+ 			SSL_library_init();
+ 			SSL_load_error_strings();
+ 		}
+-		SSL_context = SSL_CTX_new(TLSv1_method());
++		SSL_context = SSL_CTX_new(TLS_method());
+ 		if (!SSL_context)
+ 		{
+ 			char	   *err = SSLerrmessage();
+@@ -1050,6 +1050,9 @@ init_ssl_system(PGconn *conn)
+ 			return -1;
+ 		}
+ 
++		/* Disable old protocol versions */
++		SSL_CTX_set_options(SSL_context, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
++
+ 		/*
+ 		 * Disable OpenSSL's moving-write-buffer sanity check, because it
+ 		 * causes unnecessary failures in nonblocking send cases.
+--- postgresql-8.3.23.org/contrib/pgcrypto/openssl.c	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/contrib/pgcrypto/openssl.c	2026-08-07 13:04:29.264965533 +0200
+@@ -202,7 +202,7 @@ compat_find_digest(const char *name, PX_
+ typedef struct OSSLDigest
+ {
+ 	const EVP_MD *algo;
+-	EVP_MD_CTX	ctx;
++	EVP_MD_CTX *ctx;
+ }	OSSLDigest;
+ 
+ static unsigned
+@@ -210,7 +210,7 @@ digest_result_size(PX_MD * h)
+ {
+ 	OSSLDigest *digest = (OSSLDigest *) h->p.ptr;
+ 
+-	return EVP_MD_CTX_size(&digest->ctx);
++	return EVP_MD_CTX_size(digest->ctx);
+ }
+ 
+ static unsigned
+@@ -218,7 +218,7 @@ digest_block_size(PX_MD * h)
+ {
+ 	OSSLDigest *digest = (OSSLDigest *) h->p.ptr;
+ 
+-	return EVP_MD_CTX_block_size(&digest->ctx);
++	return EVP_MD_CTX_block_size(digest->ctx);
+ }
+ 
+ static void
+@@ -226,7 +226,7 @@ digest_reset(PX_MD * h)
+ {
+ 	OSSLDigest *digest = (OSSLDigest *) h->p.ptr;
+ 
+-	EVP_DigestInit_ex(&digest->ctx, digest->algo, NULL);
++	EVP_DigestInit_ex(digest->ctx, digest->algo, NULL);
+ }
+ 
+ static void
+@@ -234,7 +234,7 @@ digest_update(PX_MD * h, const uint8 *da
+ {
+ 	OSSLDigest *digest = (OSSLDigest *) h->p.ptr;
+ 
+-	EVP_DigestUpdate(&digest->ctx, data, dlen);
++	EVP_DigestUpdate(digest->ctx, data, dlen);
+ }
+ 
+ static void
+@@ -242,7 +242,7 @@ digest_finish(PX_MD * h, uint8 *dst)
+ {
+ 	OSSLDigest *digest = (OSSLDigest *) h->p.ptr;
+ 
+-	EVP_DigestFinal_ex(&digest->ctx, dst, NULL);
++	EVP_DigestFinal_ex(digest->ctx, dst, NULL);
+ }
+ 
+ static void
+@@ -250,7 +250,7 @@ digest_free(PX_MD * h)
+ {
+ 	OSSLDigest *digest = (OSSLDigest *) h->p.ptr;
+ 
+-	EVP_MD_CTX_cleanup(&digest->ctx);
++	EVP_MD_CTX_free(digest->ctx);
+ 
+ 	px_free(digest);
+ 	px_free(h);
+@@ -280,9 +280,14 @@ px_find_digest(const char *name, PX_MD *
+ 	digest = px_alloc(sizeof(*digest));
+ 	digest->algo = md;
+ 
+-	EVP_MD_CTX_init(&digest->ctx);
+-	if (EVP_DigestInit_ex(&digest->ctx, digest->algo, NULL) == 0)
++	digest->ctx = EVP_MD_CTX_new();
++	if (digest->ctx == NULL)
+ 		return -1;
++	if (EVP_DigestInit_ex(digest->ctx, digest->algo, NULL) == 0)
++	{
++		EVP_MD_CTX_free(digest->ctx);
++		return -1;
++	}
+ 
+ 	h = px_alloc(sizeof(*h));
+ 	h->result_size = digest_result_size;
+--- postgresql-8.3.23.org/src/backend/utils/misc/postgresql.conf.sample	2026-08-07 13:17:13.876538497 +0200
++++ postgresql-8.3.23/src/backend/utils/misc/postgresql.conf.sample	2026-08-07 13:01:31.906350315 +0200
+@@ -76,7 +76,9 @@
+ #ssl = off				# (change requires restart)
+ #ssl_ciphers = 'ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH'	# allowed SSL ciphers
+ 					# (change requires restart)
+-#ssl_renegotiation_limit = 512MB	# amount of data between renegotiations
++#ssl_renegotiation_limit = 0		# amount of data between renegotiations
++					# 0 disables renegotiation; TLS 1.3 has no
++					# renegotiation at all
+ #password_encryption = on
+ #db_user_namespace = off
+ 
+--- postgresql-8.3.23.org/src/backend/utils/misc/guc.c
++++ postgresql-8.3.23/src/backend/utils/misc/guc.c
+@@ -1728,7 +1728,7 @@ static struct config_int ConfigureNamesI
+ 			GUC_UNIT_KB,
+ 		},
+ 		&ssl_renegotiation_limit,
+-		512 * 1024, 0, MAX_KILOBYTES, NULL, NULL
++		0, 0, MAX_KILOBYTES, NULL, NULL
+ 	},
+ 
+ 	{

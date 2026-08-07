@@ -21,7 +21,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.3.23
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
 Source0:	https://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -36,6 +36,11 @@ Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		%{name}-ac_version.patch
 Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-pg_ctl-fix.patch
+Patch6:		%{name}-openssl3.patch
+Patch7:		%{name}-flexible-array-member.patch
+Patch8:		%{name}-format-security.patch
+Patch9:		%{name}-tests-tzdata.patch
+Patch10:	%{name}-openldap26.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -75,8 +80,6 @@ Obsoletes:	postgresql-module-tsearch2
 Obsoletes:	postgresql-server
 Obsoletes:	postgresql-test
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-%define		filterout_c	-Werror=format-security
 
 %define		_pgmoduledir	%{_libdir}/postgresql
 %define		_pgsqldir	%{_datadir}/postgresql/contrib
@@ -755,12 +758,17 @@ Różne moduły dołączone do PostgreSQL-a.
 
 %prep
 %setup -q
-%patch0 -p1
-%{?with_absolute_dbpaths:%patch1 -p1}
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
+%patch -P0 -p1
+%{?with_absolute_dbpaths:%patch -P1 -p1}
+%patch -P2 -p1
+%patch -P3 -p1
+%patch -P4 -p1
+%patch -P5 -p1
+%patch -P6 -p1
+%patch -P7 -p1
+%patch -P8 -p1
+%patch -P9 -p1
+%patch -P10 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -777,7 +785,8 @@ find src -name \*.l -o -name \*.y | xargs touch
 %{__aclocal} -I config
 %{__autoconf}
 %configure \
-	CFLAGS="%{rpmcflags} -DNEED_REENTRANT_FUNCS" \
+	CFLAGS="%{rpmcflags} -std=gnu89 -DNEED_REENTRANT_FUNCS" \
+	%{?with_python:PYTHON=%{__python}} \
 	--disable-rpath \
 	--enable-depend \
 	--enable-integer-datetimes \
@@ -799,7 +808,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 %{__make}
 
 for mod in %{contrib_modules}; do \
-	flags="%{rpmcflags} -DNEED_REENTRANT_FUNCS"
+	flags="%{rpmcflags} -std=gnu89 -DNEED_REENTRANT_FUNCS"
 	if [ $mod = xml2 ]; then flags="$flags -I/usr/include/libxml2"; fi
 	%{__make} -C contrib/$mod CFLAGS="$flags"
 done

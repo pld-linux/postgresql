@@ -1,0 +1,66 @@
+--- postgresql-8.3.23.org/src/include/c.h	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/include/c.h	2026-08-07 13:24:23.506349420 +0200
+@@ -426,6 +426,13 @@ typedef struct varlena BpChar;	/* blank-
+ typedef struct varlena VarChar; /* var-length char, ie SQL varchar(n) */
+ 
+ /*
++ * A trailing [1] is still bounded by the enclosing struct once the type is
++ * embedded in one (as these are, in the catalog structs), so the compiler may
++ * drop accesses past element 0.  A real flexible array member is not bounded.
++ */
++#define FLEXIBLE_ARRAY_MEMBER	/* empty */
++
++/*
+  * Specialized array types.  These are physically laid out just the same
+  * as regular arrays (so that the regular array subscripting code works
+  * with them).	They exist as distinct types mostly for historical reasons:
+@@ -443,7 +450,7 @@ typedef struct
+ 	Oid			elemtype;
+ 	int			dim1;
+ 	int			lbound1;
+-	int2		values[1];		/* VARIABLE LENGTH ARRAY */
++	int2		values[FLEXIBLE_ARRAY_MEMBER];
+ } int2vector;					/* VARIABLE LENGTH STRUCT */
+ 
+ typedef struct
+@@ -454,7 +461,7 @@ typedef struct
+ 	Oid			elemtype;
+ 	int			dim1;
+ 	int			lbound1;
+-	Oid			values[1];		/* VARIABLE LENGTH ARRAY */
++	Oid			values[FLEXIBLE_ARRAY_MEMBER];
+ } oidvector;					/* VARIABLE LENGTH STRUCT */
+ 
+ /*
+--- postgresql-8.3.23.org/src/backend/utils/cache/relcache.c	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/backend/utils/cache/relcache.c	2026-08-07 13:15:15.356349731 +0200
+@@ -3083,16 +3083,28 @@ RelationGetIndexList(Relation relation)
+ 	while (HeapTupleIsValid(htup = systable_getnext(indscan)))
+ 	{
+ 		Form_pg_index index = (Form_pg_index) GETSTRUCT(htup);
++		Datum		indclassDatum;
++		oidvector  *indclass;
++		bool		isnull;
+ 
+ 		/* Add index's OID to result list in the proper order */
+ 		result = insert_ordered_oid(result, index->indexrelid);
+ 
++		/*
++		 * indclass cannot be referenced directly through the C struct,
++		 * because it comes after the variable-width indkey field.
++		 */
++		indclassDatum = heap_getattr(htup, Anum_pg_index_indclass,
++									 GetPgIndexDescriptor(), &isnull);
++		Assert(!isnull);
++		indclass = (oidvector *) DatumGetPointer(indclassDatum);
++
+ 		/* Check to see if it is a unique, non-partial btree index on OID */
+ 		if (IndexIsValid(index) &&
+ 			index->indnatts == 1 &&
+ 			index->indisunique &&
+ 			index->indkey.values[0] == ObjectIdAttributeNumber &&
+-			index->indclass.values[0] == OID_BTREE_OPS_OID &&
++			indclass->values[0] == OID_BTREE_OPS_OID &&
+ 			heap_attisnull(htup, Anum_pg_index_indpred))
+ 			oidIndex = index->indexrelid;
+ 	}

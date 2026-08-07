@@ -1,0 +1,234 @@
+--- postgresql-8.3.23.org/src/test/regress/expected/date.out	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/test/regress/expected/date.out	2026-08-07 13:17:21.169682970 +0200
+@@ -1028,7 +1028,7 @@ SELECT DATE_TRUNC('MILLENNIUM', TIMESTAM
+ SELECT DATE_TRUNC('MILLENNIUM', DATE '1970-03-20'); -- 1001-01-01
+           date_trunc          
+ ------------------------------
+- Thu Jan 01 00:00:00 1001 PST
++ Thu Jan 01 00:00:00 1001 LMT
+ (1 row)
+ 
+ SELECT DATE_TRUNC('CENTURY', TIMESTAMP '1970-03-20 04:30:00.00000'); -- 1901
+@@ -1040,7 +1040,7 @@ SELECT DATE_TRUNC('CENTURY', TIMESTAMP '
+ SELECT DATE_TRUNC('CENTURY', DATE '1970-03-20'); -- 1901
+           date_trunc          
+ ------------------------------
+- Tue Jan 01 00:00:00 1901 PST
++ Tue Jan 01 00:00:00 1901 LMT
+ (1 row)
+ 
+ SELECT DATE_TRUNC('CENTURY', DATE '2004-08-10'); -- 2001-01-01
+@@ -1052,13 +1052,13 @@ SELECT DATE_TRUNC('CENTURY', DATE '2004-
+ SELECT DATE_TRUNC('CENTURY', DATE '0002-02-04'); -- 0001-01-01
+           date_trunc          
+ ------------------------------
+- Mon Jan 01 00:00:00 0001 PST
++ Mon Jan 01 00:00:00 0001 LMT
+ (1 row)
+ 
+ SELECT DATE_TRUNC('CENTURY', DATE '0055-08-10 BC'); -- 0100-01-01 BC
+            date_trunc            
+ ---------------------------------
+- Tue Jan 01 00:00:00 0100 PST BC
++ Tue Jan 01 00:00:00 0100 LMT BC
+ (1 row)
+ 
+ SELECT DATE_TRUNC('DECADE', DATE '1993-12-25'); -- 1990-01-01
+@@ -1070,12 +1070,12 @@ SELECT DATE_TRUNC('DECADE', DATE '1993-1
+ SELECT DATE_TRUNC('DECADE', DATE '0004-12-25'); -- 0001-01-01 BC
+            date_trunc            
+ ---------------------------------
+- Sat Jan 01 00:00:00 0001 PST BC
++ Sat Jan 01 00:00:00 0001 LMT BC
+ (1 row)
+ 
+ SELECT DATE_TRUNC('DECADE', DATE '0002-12-31 BC'); -- 0011-01-01 BC
+            date_trunc            
+ ---------------------------------
+- Mon Jan 01 00:00:00 0011 PST BC
++ Mon Jan 01 00:00:00 0011 LMT BC
+ (1 row)
+ 
+--- postgresql-8.3.23.org/src/test/regress/expected/timestamp.out	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/test/regress/expected/timestamp.out	2026-08-07 13:17:21.169682970 +0200
+@@ -1578,13 +1578,13 @@ SELECT '' AS to_char_11, to_char(d1, 'FM
+ SELECT '' AS to_timestamp_1, to_timestamp('0097/Feb/16 --> 08:14:30', 'YYYY/Mon/DD --> HH:MI:SS');
+  to_timestamp_1 |         to_timestamp         
+ ----------------+------------------------------
+-                | Sat Feb 16 08:14:30 0097 PST
++                | Sat Feb 16 08:14:30 0097 LMT
+ (1 row)
+ 
+ SELECT '' AS to_timestamp_2, to_timestamp('97/2/16 8:14:30', 'FMYYYY/FMMM/FMDD FMHH:FMMI:FMSS');
+  to_timestamp_2 |         to_timestamp         
+ ----------------+------------------------------
+-                | Sat Feb 16 08:14:30 0097 PST
++                | Sat Feb 16 08:14:30 0097 LMT
+ (1 row)
+ 
+ SELECT '' AS to_timestamp_3, to_timestamp('1985 January 12', 'YYYY FMMonth DD');
+@@ -1603,7 +1603,7 @@ SELECT '' AS to_timestamp_4, to_timestam
+ SELECT '' AS to_timestamp_5, to_timestamp('1,582nd VIII 21', 'Y,YYYth FMRM DD');
+  to_timestamp_5 |         to_timestamp         
+ ----------------+------------------------------
+-                | Sat Aug 21 00:00:00 1582 PST
++                | Sat Aug 21 00:00:00 1582 LMT
+ (1 row)
+ 
+ SELECT '' AS to_timestamp_6, to_timestamp('15 "text between quote marks" 98 54 45', 
+--- postgresql-8.3.23.org/src/test/regress/expected/timestamptz.out	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/test/regress/expected/timestamptz.out	2026-08-07 13:17:21.173016303 +0200
+@@ -260,13 +260,13 @@ SELECT '' AS "64", d1 FROM TIMESTAMPTZ_T
+     | Fri Feb 14 17:32:01 1997 PST
+     | Sat Feb 15 17:32:01 1997 PST
+     | Sun Feb 16 17:32:01 1997 PST
+-    | Tue Feb 16 17:32:01 0097 PST BC
+-    | Sat Feb 16 17:32:01 0097 PST
+-    | Thu Feb 16 17:32:01 0597 PST
+-    | Tue Feb 16 17:32:01 1097 PST
+-    | Sat Feb 16 17:32:01 1697 PST
+-    | Thu Feb 16 17:32:01 1797 PST
+-    | Tue Feb 16 17:32:01 1897 PST
++    | Tue Feb 16 17:32:01 0097 LMT BC
++    | Sat Feb 16 17:32:01 0097 LMT
++    | Thu Feb 16 17:32:01 0597 LMT
++    | Tue Feb 16 17:32:01 1097 LMT
++    | Sat Feb 16 17:32:01 1697 LMT
++    | Thu Feb 16 17:32:01 1797 LMT
++    | Tue Feb 16 17:32:01 1897 LMT
+     | Sun Feb 16 17:32:01 1997 PST
+     | Sat Feb 16 17:32:01 2097 PST
+     | Wed Feb 28 17:32:01 1996 PST
+@@ -348,13 +348,13 @@ SELECT '' AS "15", d1 FROM TIMESTAMPTZ_T
+ ----+---------------------------------
+     | -infinity
+     | Wed Dec 31 16:00:00 1969 PST
+-    | Tue Feb 16 17:32:01 0097 PST BC
+-    | Sat Feb 16 17:32:01 0097 PST
+-    | Thu Feb 16 17:32:01 0597 PST
+-    | Tue Feb 16 17:32:01 1097 PST
+-    | Sat Feb 16 17:32:01 1697 PST
+-    | Thu Feb 16 17:32:01 1797 PST
+-    | Tue Feb 16 17:32:01 1897 PST
++    | Tue Feb 16 17:32:01 0097 LMT BC
++    | Sat Feb 16 17:32:01 0097 LMT
++    | Thu Feb 16 17:32:01 0597 LMT
++    | Tue Feb 16 17:32:01 1097 LMT
++    | Sat Feb 16 17:32:01 1697 LMT
++    | Thu Feb 16 17:32:01 1797 LMT
++    | Tue Feb 16 17:32:01 1897 LMT
+     | Wed Feb 28 17:32:01 1996 PST
+     | Thu Feb 29 17:32:01 1996 PST
+     | Fri Mar 01 17:32:01 1996 PST
+@@ -416,13 +416,13 @@ SELECT '' AS "63", d1 FROM TIMESTAMPTZ_T
+     | Fri Feb 14 17:32:01 1997 PST
+     | Sat Feb 15 17:32:01 1997 PST
+     | Sun Feb 16 17:32:01 1997 PST
+-    | Tue Feb 16 17:32:01 0097 PST BC
+-    | Sat Feb 16 17:32:01 0097 PST
+-    | Thu Feb 16 17:32:01 0597 PST
+-    | Tue Feb 16 17:32:01 1097 PST
+-    | Sat Feb 16 17:32:01 1697 PST
+-    | Thu Feb 16 17:32:01 1797 PST
+-    | Tue Feb 16 17:32:01 1897 PST
++    | Tue Feb 16 17:32:01 0097 LMT BC
++    | Sat Feb 16 17:32:01 0097 LMT
++    | Thu Feb 16 17:32:01 0597 LMT
++    | Tue Feb 16 17:32:01 1097 LMT
++    | Sat Feb 16 17:32:01 1697 LMT
++    | Thu Feb 16 17:32:01 1797 LMT
++    | Tue Feb 16 17:32:01 1897 LMT
+     | Sun Feb 16 17:32:01 1997 PST
+     | Sat Feb 16 17:32:01 2097 PST
+     | Wed Feb 28 17:32:01 1996 PST
+@@ -448,13 +448,13 @@ SELECT '' AS "16", d1 FROM TIMESTAMPTZ_T
+     | -infinity
+     | Wed Dec 31 16:00:00 1969 PST
+     | Thu Jan 02 00:00:00 1997 PST
+-    | Tue Feb 16 17:32:01 0097 PST BC
+-    | Sat Feb 16 17:32:01 0097 PST
+-    | Thu Feb 16 17:32:01 0597 PST
+-    | Tue Feb 16 17:32:01 1097 PST
+-    | Sat Feb 16 17:32:01 1697 PST
+-    | Thu Feb 16 17:32:01 1797 PST
+-    | Tue Feb 16 17:32:01 1897 PST
++    | Tue Feb 16 17:32:01 0097 LMT BC
++    | Sat Feb 16 17:32:01 0097 LMT
++    | Thu Feb 16 17:32:01 0597 LMT
++    | Tue Feb 16 17:32:01 1097 LMT
++    | Sat Feb 16 17:32:01 1697 LMT
++    | Thu Feb 16 17:32:01 1797 LMT
++    | Tue Feb 16 17:32:01 1897 LMT
+     | Wed Feb 28 17:32:01 1996 PST
+     | Thu Feb 29 17:32:01 1996 PST
+     | Fri Mar 01 17:32:01 1996 PST
+@@ -1647,14 +1647,14 @@ SELECT '' AS to_char_11, to_char(d1, 'FM
+ SELECT '' AS to_timestamp_1, to_timestamp('0097/Feb/16 --> 08:14:30', 'YYYY/Mon/DD --> HH:MI:SS');
+  to_timestamp_1 |         to_timestamp         
+ ----------------+------------------------------
+-                | Sat Feb 16 08:14:30 0097 PST
++                | Sat Feb 16 08:14:30 0097 LMT
+ (1 row)
+ 
+ 	
+ SELECT '' AS to_timestamp_2, to_timestamp('97/2/16 8:14:30', 'FMYYYY/FMMM/FMDD FMHH:FMMI:FMSS');
+  to_timestamp_2 |         to_timestamp         
+ ----------------+------------------------------
+-                | Sat Feb 16 08:14:30 0097 PST
++                | Sat Feb 16 08:14:30 0097 LMT
+ (1 row)
+ 
+ SELECT '' AS to_timestamp_3, to_timestamp('1985 January 12', 'YYYY FMMonth DD');
+@@ -1673,7 +1673,7 @@ SELECT '' AS to_timestamp_4, to_timestam
+ SELECT '' AS to_timestamp_5, to_timestamp('1,582nd VIII 21', 'Y,YYYth FMRM DD');
+  to_timestamp_5 |         to_timestamp         
+ ----------------+------------------------------
+-                | Sat Aug 21 00:00:00 1582 PST
++                | Sat Aug 21 00:00:00 1582 LMT
+ (1 row)
+ 
+ SELECT '' AS to_timestamp_6, to_timestamp('15 "text between quote marks" 98 54 45', 
+--- postgresql-8.3.23.org/src/test/regress/expected/horology.out	2026-08-07 13:17:13.881466632 +0200
++++ postgresql-8.3.23/src/test/regress/expected/horology.out	2026-08-07 13:17:21.173016303 +0200
+@@ -685,13 +685,13 @@ SELECT '' AS "64", d1 + interval '1 year
+     | Sat Feb 14 17:32:01 1998 PST
+     | Sun Feb 15 17:32:01 1998 PST
+     | Mon Feb 16 17:32:01 1998 PST
+-    | Thu Feb 16 17:32:01 0096 PST BC
+-    | Sun Feb 16 17:32:01 0098 PST
+-    | Fri Feb 16 17:32:01 0598 PST
+-    | Wed Feb 16 17:32:01 1098 PST
+-    | Sun Feb 16 17:32:01 1698 PST
+-    | Fri Feb 16 17:32:01 1798 PST
+-    | Wed Feb 16 17:32:01 1898 PST
++    | Thu Feb 16 17:32:01 0096 LMT BC
++    | Sun Feb 16 17:32:01 0098 LMT
++    | Fri Feb 16 17:32:01 0598 LMT
++    | Wed Feb 16 17:32:01 1098 LMT
++    | Sun Feb 16 17:32:01 1698 LMT
++    | Fri Feb 16 17:32:01 1798 LMT
++    | Wed Feb 16 17:32:01 1898 LMT
+     | Mon Feb 16 17:32:01 1998 PST
+     | Sun Feb 16 17:32:01 2098 PST
+     | Fri Feb 28 17:32:01 1997 PST
+@@ -756,13 +756,13 @@ SELECT '' AS "64", d1 - interval '1 year
+     | Wed Feb 14 17:32:01 1996 PST
+     | Thu Feb 15 17:32:01 1996 PST
+     | Fri Feb 16 17:32:01 1996 PST
+-    | Mon Feb 16 17:32:01 0098 PST BC
+-    | Thu Feb 16 17:32:01 0096 PST
+-    | Tue Feb 16 17:32:01 0596 PST
+-    | Sun Feb 16 17:32:01 1096 PST
+-    | Thu Feb 16 17:32:01 1696 PST
+-    | Tue Feb 16 17:32:01 1796 PST
+-    | Sun Feb 16 17:32:01 1896 PST
++    | Mon Feb 16 17:32:01 0098 LMT BC
++    | Thu Feb 16 17:32:01 0096 LMT
++    | Tue Feb 16 17:32:01 0596 LMT
++    | Sun Feb 16 17:32:01 1096 LMT
++    | Thu Feb 16 17:32:01 1696 LMT
++    | Tue Feb 16 17:32:01 1796 LMT
++    | Sun Feb 16 17:32:01 1896 LMT
+     | Fri Feb 16 17:32:01 1996 PST
+     | Thu Feb 16 17:32:01 2096 PST
+     | Tue Feb 28 17:32:01 1995 PST

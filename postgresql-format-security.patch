@@ -1,0 +1,62 @@
+--- postgresql-8.3.23.org/src/backend/commands/trigger.c	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/backend/commands/trigger.c	2026-08-07 13:20:15.439913579 +0200
+@@ -604,7 +604,7 @@ ConvertTriggerToFK(CreateTrigStmt *stmt,
+ 		ereport(NOTICE,
+ 		(errmsg("ignoring incomplete trigger group for constraint \"%s\" %s",
+ 				constr_name, buf.data),
+-		 errdetail(funcdescr[funcnum])));
++		 errdetail("%s", _(funcdescr[funcnum]))));
+ 		oldContext = MemoryContextSwitchTo(TopMemoryContext);
+ 		info = (OldTriggerInfo *) palloc0(sizeof(OldTriggerInfo));
+ 		info->args = copyObject(stmt->args);
+@@ -620,7 +620,7 @@ ConvertTriggerToFK(CreateTrigStmt *stmt,
+ 		ereport(NOTICE,
+ 		(errmsg("ignoring incomplete trigger group for constraint \"%s\" %s",
+ 				constr_name, buf.data),
+-		 errdetail(funcdescr[funcnum])));
++		 errdetail("%s", _(funcdescr[funcnum]))));
+ 	}
+ 	else
+ 	{
+@@ -632,7 +632,7 @@ ConvertTriggerToFK(CreateTrigStmt *stmt,
+ 		ereport(NOTICE,
+ 				(errmsg("converting trigger group into constraint \"%s\" %s",
+ 						constr_name, buf.data),
+-				 errdetail(funcdescr[funcnum])));
++				 errdetail("%s", _(funcdescr[funcnum]))));
+ 		if (funcnum == 2)
+ 		{
+ 			/* This trigger is on the FK table */
+--- postgresql-8.3.23.org/src/backend/tcop/utility.c	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/backend/tcop/utility.c	2026-08-07 13:20:57.268351236 +0200
+@@ -129,7 +129,7 @@ DropErrorMsgWrongType(char *relname, cha
+ 	ereport(ERROR,
+ 			(errcode(ERRCODE_WRONG_OBJECT_TYPE),
+ 			 errmsg(rentry->nota_msg, relname),
+-			 (wentry->kind != '\0') ? errhint(wentry->drophint_msg) : 0));
++			 (wentry->kind != '\0') ? errhint("%s", _(wentry->drophint_msg)) : 0));
+ }
+ 
+ /*
+--- postgresql-8.3.23.org/src/bin/psql/describe.c	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/bin/psql/describe.c	2026-08-07 13:22:10.438273289 +0200
+@@ -1291,7 +1291,7 @@ describeOneTableDetails(const char *sche
+ 									 footers, &count_footers, tmpbuf, false))
+ 				{
+ 					appendPQExpBuffer(&buf, ", ");
+-					appendPQExpBuffer(&buf, tmpbuf.data);
++					appendPQExpBufferStr(&buf, tmpbuf.data);
+ 
+ 					count_footers -= 2;
+ 				}
+--- postgresql-8.3.23.org/src/backend/utils/misc/guc.c
++++ postgresql-8.3.23/src/backend/utils/misc/guc.c
+@@ -4489,7 +4489,7 @@ set_config_option(const char *name, cons
+ 								(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+ 						 errmsg("invalid value for parameter \"%s\": \"%s\"",
+ 								name, value),
+-								 hintmsg ? errhint(hintmsg) : 0));
++								 hintmsg ? errhint("%s", _(hintmsg)) : 0));
+ 						return false;
+ 					}
+ 					if (newval < conf->min || newval > conf->max)
