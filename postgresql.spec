@@ -883,7 +883,18 @@ done
 %{__make} -C doc/src/sgml
 
 %ifnarch sparc sparcv9 sparc64 alpha
-%{?with_tests:%{__make} -j1 check}
+%if %{with tests}
+# builder wipes the build tree, so failure details must reach the log itself
+%{__make} -j1 check || {
+	echo "*** regression.diffs ***"
+	find src/test contrib -name regression.diffs -print -exec cat {} \;
+	echo "*** initdb.log ***"
+	find src/test contrib -name initdb.log -print -exec cat {} \;
+	echo "*** postmaster.log (last 200 lines each) ***"
+	find src/test contrib -name postmaster.log -print -exec tail -n 200 {} \;
+	exit 1;
+}
+%endif
 %endif
 
 %install
