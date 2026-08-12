@@ -19,8 +19,6 @@
 %bcond_without	io_uring		# io_uring support
 %bcond_without	numa			# NUMA support
 %bcond_with	systemtap		# systemtap/dtrace probes
-%bcond_with	absolute_dbpaths	# enable absolute paths to create database
-					# (disabled by default because it is a security risk)
 #
 
 %define mver 18
@@ -50,7 +48,6 @@ Source4:	%{name}@.service
 Source5:	%{name}.service
 Source6:	%{name}.target
 Patch0:		%{name}-conf.patch
-Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		ac.patch
 Patch5:		%{name}-heimdal.patch
@@ -137,6 +134,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_ulibdir	/usr/lib
 
+# clang, used for the LLVM JIT bitcode, errors out on this GCC-only flag
 %define          filterout_c     -fvar-tracking-assignments
 %define          filterout_cxx   -fvar-tracking-assignments
 
@@ -822,7 +820,6 @@ Różne moduły dołączone do PostgreSQL-a.
 %prep
 %setup -q
 %patch -P0 -p1
-%{?with_absolute_dbpaths:%patch -P1 -p1}
 %patch -P2 -p1
 %patch -P3 -p1
 %patch -P5 -p1
@@ -842,7 +839,7 @@ march="-mx32"
 %{__autoconf}
 %{__autoheader}
 %configure \
-	CFLAGS="%{rpmcflags} $march -DNEED_REENTRANT_FUNCS" \
+	CFLAGS="%{rpmcflags} $march" \
 	CPPFLAGS="%{rpmcppflags} $march" \
 	CXXFLAGS="%{rpmcxxflags} $march" \
 	BITCODE_CFLAGS="%{rpmcflags}" \
@@ -850,14 +847,13 @@ march="-mx32"
 	--disable-rpath \
 	--enable-depend \
 	%{?with_systemtap:--enable-dtrace} \
-	--enable-integer-datetimes \
 	--enable-nls \
 	%{?with_bonjour:--with-bonjour} \
 	%{?with_kerberos5:--with-gssapi} \
 	%{?with_ldap:--with-ldap} \
-	%{?with_io_uring:--with-libcurl} \
+	%{?with_curl:--with-libcurl} \
 	%{?with_numa:--with-libnuma} \
-	%{?with_curl:--with-liburing} \
+	%{?with_io_uring:--with-liburing} \
 	--with-libxml \
 	--with-libxslt \
 	%{?with_llvm:--with-llvm} \
@@ -874,7 +870,7 @@ march="-mx32"
 %{__make}
 
 for mod in %{contrib_modules}; do \
-	flags="%{rpmcflags} %{rpmcppflags} -DNEED_REENTRANT_FUNCS"
+	flags="%{rpmcflags} %{rpmcppflags}"
 	if [ $mod = "xml2"      ]; then flags="$flags -I/usr/include/libxml2"; fi
 	%{__make} -C contrib/$mod CFLAGS="$flags"
 done
