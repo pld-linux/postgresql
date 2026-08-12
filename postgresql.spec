@@ -21,6 +21,12 @@
 %bcond_with	systemtap		# systemtap/dtrace probes
 #
 
+# LLVM cannot select i32-pointer calls for the x32 ABI, so every JIT-ed
+# query kills the backend with "fatal llvm error: Cannot select"
+%ifarch x32
+%undefine with_llvm
+%endif
+
 %define mver 18
 
 Summary:	PostgreSQL Data Base Management System
