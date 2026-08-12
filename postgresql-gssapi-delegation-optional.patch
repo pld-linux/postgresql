@@ -1,0 +1,163 @@
+diff -urNp -x '*.orig' postgresql-18.4.base/configure.ac postgresql-18.4/configure.ac
+--- postgresql-18.4.orig/configure.ac	2026-08-12 21:06:20.724222260 +0200
++++ postgresql-18.4/configure.ac	2026-08-12 21:10:06.639571524 +0200
+@@ -1364,8 +1364,8 @@ fi
+ 
+ if test "$with_gssapi" = yes ; then
+   if test "$PORTNAME" != "win32"; then
+-    AC_SEARCH_LIBS(gss_store_cred_into, [gssapi 'gssapi -lkrb5 -lcrypto' gssapi_krb5 gss], [],
+-                   [AC_MSG_ERROR([could not find function 'gss_store_cred_into' required for GSSAPI])])
++    AC_SEARCH_LIBS(gss_init_sec_context, [gssapi 'gssapi -lkrb5 -lcrypto' gssapi_krb5 gss], [],
++                   [AC_MSG_ERROR([could not find function 'gss_init_sec_context' required for GSSAPI])])
+   else
+     LIBS="$LIBS -lgssapi32"
+   fi
+@@ -1576,8 +1576,12 @@ fi
+ if test "$with_gssapi" = yes ; then
+   AC_CHECK_HEADERS(gssapi/gssapi.h, [],
+ 	[AC_CHECK_HEADERS(gssapi.h, [], [AC_MSG_ERROR([gssapi.h header file is required for GSSAPI])])])
+-  AC_CHECK_HEADERS(gssapi/gssapi_ext.h, [],
+-	[AC_CHECK_HEADERS(gssapi_ext.h, [], [AC_MSG_ERROR([gssapi_ext.h header file is required for GSSAPI])])])
++  dnl gssapi_ext.h and gss_store_cred_into() are only needed to accept
++  dnl delegated credentials, which is optional; Heimdal 7.x has neither.
++  AC_CHECK_HEADERS(gssapi/gssapi_ext.h, [], [AC_CHECK_HEADERS(gssapi_ext.h)])
++  if test "$ac_cv_header_gssapi_gssapi_ext_h" = yes || test "$ac_cv_header_gssapi_ext_h" = yes; then
++    AC_CHECK_FUNCS([gss_store_cred_into])
++  fi
+ fi
+ 
+ PGAC_PATH_PROGS(OPENSSL, openssl)
+diff -urNp -x '*.orig' postgresql-18.4.base/meson.build postgresql-18.4/meson.build
+--- postgresql-18.4.orig/meson.build	2026-05-11 21:44:35.000000000 +0200
++++ postgresql-18.4/meson.build	2026-08-12 21:10:28.259571532 +0200
+@@ -681,28 +681,31 @@ if not gssapiopt.disabled()
+     have_gssapi = false
+   endif
+ 
++  # gssapi_ext.h and gss_store_cred_into() are only needed to accept delegated
++  # credentials, which is optional; Heimdal 7.x has neither.
++  have_gssapi_ext = false
+   if not have_gssapi
+   elif cc.check_header('gssapi/gssapi_ext.h', dependencies: gssapi_deps, required: false,
+       args: test_c_args, include_directories: postgres_inc)
+     cdata.set('HAVE_GSSAPI_GSSAPI_EXT_H', 1)
+-  elif cc.check_header('gssapi_ext.h', dependencies: gssapi_deps, required: gssapiopt,
++    have_gssapi_ext = true
++  elif cc.check_header('gssapi_ext.h', dependencies: gssapi_deps, required: false,
+       args: test_c_args, include_directories: postgres_inc)
+     cdata.set('HAVE_GSSAPI_EXT_H', 1)
+-  else
+-    have_gssapi = false
++    have_gssapi_ext = true
+   endif
+ 
+-  if not have_gssapi
+-  elif cc.has_function('gss_store_cred_into', dependencies: gssapi_deps,
+-      args: test_c_args, include_directories: postgres_inc)
++  if have_gssapi
+     cdata.set('ENABLE_GSS', 1)
+ 
++    if have_gssapi_ext and cc.has_function('gss_store_cred_into',
++        dependencies: gssapi_deps,
++        args: test_c_args, include_directories: postgres_inc)
++      cdata.set('HAVE_GSS_STORE_CRED_INTO', 1)
++    endif
++
+     krb_srvtab = 'FILE:/@0@/krb5.keytab)'.format(get_option('sysconfdir'))
+     cdata.set_quoted('PG_KRB_SRVTAB', krb_srvtab)
+-  elif gssapiopt.enabled()
+-    error('''could not find function 'gss_store_cred_into' required for GSSAPI''')
+-  else
+-    have_gssapi = false
+   endif
+ 
+   if not have_gssapi and gssapiopt.enabled()
+diff -urNp -x '*.orig' postgresql-18.4.base/src/backend/commands/variable.c postgresql-18.4/src/backend/commands/variable.c
+--- postgresql-18.4.orig/src/backend/commands/variable.c	2026-05-11 21:44:35.000000000 +0200
++++ postgresql-18.4/src/backend/commands/variable.c	2026-08-12 21:08:02.096238166 +0200
+@@ -1246,6 +1246,19 @@ check_default_with_oids(bool *newval, vo
+ }
+ 
+ bool
++check_gss_accept_delegation(bool *newval, void **extra, GucSource source)
++{
++#ifndef HAVE_GSS_STORE_CRED_INTO
++	if (*newval)
++	{
++		GUC_check_errmsg("GSSAPI delegation is not supported by this build");
++		return false;
++	}
++#endif
++	return true;
++}
++
++bool
+ check_ssl(bool *newval, void **extra, GucSource source)
+ {
+ #ifndef USE_SSL
+diff -urNp -x '*.orig' postgresql-18.4.base/src/backend/libpq/be-gssapi-common.c postgresql-18.4/src/backend/libpq/be-gssapi-common.c
+--- postgresql-18.4.orig/src/backend/libpq/be-gssapi-common.c	2026-05-11 21:44:35.000000000 +0200
++++ postgresql-18.4/src/backend/libpq/be-gssapi-common.c	2026-08-12 21:06:40.929571493 +0200
+@@ -103,6 +103,7 @@ pg_GSS_error(const char *errmsg,
+ void
+ pg_store_delegated_credential(gss_cred_id_t cred)
+ {
++#ifdef HAVE_GSS_STORE_CRED_INTO
+ 	OM_uint32	major,
+ 				minor;
+ 	gss_OID_set mech;
+@@ -144,4 +145,11 @@ pg_store_delegated_credential(gss_cred_i
+ 	 * gss_acquire_cred will find the delegated credentials we stored.
+ 	 */
+ 	setenv("KRB5CCNAME", GSS_MEMORY_CACHE, 1);
++#else
++	/*
++	 * Unreachable: gss_accept_delegation cannot be turned on in a build
++	 * without gss_store_cred_into(), so no credential is ever delegated.
++	 */
++	elog(ERROR, "GSSAPI delegation is not supported by this build");
++#endif
+ }
+diff -urNp -x '*.orig' postgresql-18.4.base/src/backend/utils/misc/guc_tables.c postgresql-18.4/src/backend/utils/misc/guc_tables.c
+--- postgresql-18.4.orig/src/backend/utils/misc/guc_tables.c	2026-05-11 21:44:35.000000000 +0200
++++ postgresql-18.4/src/backend/utils/misc/guc_tables.c	2026-08-12 21:07:01.459571494 +0200
+@@ -1837,7 +1837,7 @@ struct config_bool ConfigureNamesBool[]
+ 		},
+ 		&pg_gss_accept_delegation,
+ 		false,
+-		NULL, NULL, NULL
++		check_gss_accept_delegation, NULL, NULL
+ 	},
+ 
+ 	{
+diff -urNp -x '*.orig' postgresql-18.4.base/src/include/libpq/pg-gssapi.h postgresql-18.4/src/include/libpq/pg-gssapi.h
+--- postgresql-18.4.orig/src/include/libpq/pg-gssapi.h	2026-05-11 21:44:35.000000000 +0200
++++ postgresql-18.4/src/include/libpq/pg-gssapi.h	2026-08-12 21:10:12.692904860 +0200
+@@ -19,11 +19,15 @@
+ /* IWYU pragma: begin_exports */
+ #if defined(HAVE_GSSAPI_H)
+ #include <gssapi.h>
++#ifdef HAVE_GSSAPI_EXT_H
+ #include <gssapi_ext.h>
++#endif
+ #else
+ #include <gssapi/gssapi.h>
++#ifdef HAVE_GSSAPI_GSSAPI_EXT_H
+ #include <gssapi/gssapi_ext.h>
+ #endif
++#endif
+ /* IWYU pragma: end_exports */
+ 
+ /*
+diff -urNp -x '*.orig' postgresql-18.4.base/src/include/utils/guc_hooks.h postgresql-18.4/src/include/utils/guc_hooks.h
+--- postgresql-18.4.orig/src/include/utils/guc_hooks.h	2026-05-11 21:44:35.000000000 +0200
++++ postgresql-18.4/src/include/utils/guc_hooks.h	2026-08-12 21:07:51.809571497 +0200
+@@ -61,6 +61,8 @@ extern bool check_default_text_search_co
+ extern void assign_default_text_search_config(const char *newval, void *extra);
+ extern bool check_default_with_oids(bool *newval, void **extra,
+ 									GucSource source);
++extern bool check_gss_accept_delegation(bool *newval, void **extra,
++										GucSource source);
+ extern bool check_huge_page_size(int *newval, void **extra, GucSource source);
+ extern void assign_io_method(int newval, void *extra);
+ extern bool check_io_max_concurrency(int *newval, void **extra, GucSource source);

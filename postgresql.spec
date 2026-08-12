@@ -52,6 +52,7 @@ Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		ac.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		%{name}-link.patch
+Patch7:		%{name}-gssapi-delegation-optional.patch
 URL:		https://www.postgresql.org/
 BuildRequires:	autoconf >= 2.69
 BuildRequires:	automake
@@ -66,7 +67,7 @@ BuildRequires:	docbook-style-xsl-nons
 BuildRequires:	flex >= 2.5.31
 BuildRequires:	gettext-tools
 BuildRequires:	gnome-doc-tools
-%{?with_kerberos5:BuildRequires:	heimdal-devel >= 8.0}
+%{?with_kerberos5:BuildRequires:	heimdal-devel}
 BuildRequires:	libicu-devel
 %{?with_selinux:BuildRequires:	libselinux-devel >= 2.1.10}
 BuildRequires:	libtool
@@ -824,6 +825,7 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch -P3 -p1
 %patch -P5 -p1
 %patch -P6 -p1
+%patch -P7 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
