@@ -16,8 +16,6 @@
 %bcond_without	selinux			# sepgsql contrib module
 %bcond_without	systemd			# systemd (notify) support
 %bcond_with	systemtap		# systemtap/dtrace probes
-%bcond_with	absolute_dbpaths	# enable absolute paths to create database
-					# (disabled by default because it is a security risk)
 #
 
 %define mver 15
@@ -33,12 +31,12 @@ Summary(tr.UTF-8):	Veri Tabanı Yönetim Sistemi
 Summary(uk.UTF-8):	PostgreSQL - система керування базами даних
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
-Version:	%{mver}.18
-Release:	2
+Version:	%{mver}.19
+Release:	1
 License:	BSD
 Group:		Applications/Databases
 Source0:	https://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
-# Source0-md5:	bcf6d9b634d0950e74cdf332dee32ef8
+# Source0-md5:	40f950b7f4b235e6e9d563a6bc43826e
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
 # Source2-md5:	5b656ddf1db41965761f85204a14398e
@@ -47,7 +45,6 @@ Source4:	%{name}@.service
 Source5:	%{name}.service
 Source6:	%{name}.target
 Patch0:		%{name}-conf.patch
-Patch1:		%{name}-absolute_dbpaths.patch
 Patch2:		%{name}-ecpg-includedir.patch
 Patch3:		ac.patch
 Patch5:		%{name}-heimdal.patch
@@ -129,6 +126,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_ulibdir	/usr/lib
 
+# clang, used for the LLVM JIT bitcode, errors out on this GCC-only flag
 %define          filterout_c     -fvar-tracking-assignments
 %define          filterout_cxx   -fvar-tracking-assignments
 
@@ -800,7 +798,6 @@ Różne moduły dołączone do PostgreSQL-a.
 %prep
 %setup -q
 %patch -P0 -p1
-%{?with_absolute_dbpaths:%patch -P1 -p1}
 %patch -P2 -p1
 %patch -P3 -p1
 %patch -P5 -p1
@@ -820,7 +817,7 @@ march="-mx32"
 %{__autoconf}
 %{__autoheader}
 %configure \
-	CFLAGS="%{rpmcflags} $march -DNEED_REENTRANT_FUNCS" \
+	CFLAGS="%{rpmcflags} $march" \
 	CPPFLAGS="%{rpmcppflags} $march" \
 	CXXFLAGS="%{rpmcxxflags} $march" \
 	BITCODE_CFLAGS="%{rpmcflags}" \
@@ -828,7 +825,6 @@ march="-mx32"
 	--disable-rpath \
 	--enable-depend \
 	%{?with_systemtap:--enable-dtrace} \
-	--enable-integer-datetimes \
 	--enable-nls \
 	--enable-thread-safety \
 	%{?with_bonjour:--with-bonjour} \
@@ -850,7 +846,7 @@ march="-mx32"
 %{__make}
 
 for mod in %{contrib_modules}; do \
-	flags="%{rpmcflags} %{rpmcppflags} -DNEED_REENTRANT_FUNCS"
+	flags="%{rpmcflags} %{rpmcppflags}"
 	if [ $mod = "xml2"      ]; then flags="$flags -I/usr/include/libxml2"; fi
 	%{__make} -C contrib/$mod CFLAGS="$flags"
 done
