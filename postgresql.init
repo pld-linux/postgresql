@@ -250,9 +250,17 @@ case "$action" in
 			mkdir -p $pgdir
 			chmod 700 $pgdir
 			chown postgres:postgres $pgdir
-			LC_ALL=$PG_INIT_LOCALE TMPDIR=/tmp su postgres -s /bin/sh -c "initdb -E UNICODE --data-checksums -D $pgdir"
+			if LC_ALL=$PG_INIT_LOCALE TMPDIR=/tmp su postgres -s /bin/sh -c "initdb -E UNICODE --data-checksums --auth-local=peer --auth-host=scram-sha-256 -D $pgdir" &&
+			   install -d -o postgres -g postgres -m 700 $pgdir/hba.d $pgdir/conf.d; then
+				# includes go last: the first matching hba line wins, so local and localhost stay as initdb set them
+				echo "include_dir hba.d" >> $pgdir/pg_hba.conf
+				echo "include_dir = 'conf.d'" >> $pgdir/postgresql.conf
+			else
+				RETVAL=1
+			fi
 		fi
 	done
+	echo $(nls "Connect as database superuser with: %s" "su postgres -c psql")
 	echo $(nls "REMEMBER to setup password for user \"postgres\"")'!'
 	;;
   *)
