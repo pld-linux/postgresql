@@ -1,0 +1,34 @@
+libxml2 >= 2.13 no longer adds a second "chunk is not well balanced" error
+after the first one; the error raised is unchanged.
+
+diff -urNp postgresql-9.3.25.orig/src/test/regress/expected/xml.out postgresql-9.3.25/src/test/regress/expected/xml.out
+--- postgresql-9.3.25.orig/src/test/regress/expected/xml.out
++++ postgresql-9.3.25/src/test/regress/expected/xml.out
+@@ -211,17 +211,11 @@ ERROR:  invalid XML content
+ DETAIL:  line 1: xmlParseEntityRef: no name
+ <invalidentity>&</invalidentity>
+                 ^
+-line 1: chunk is not well balanced
+-<invalidentity>&</invalidentity>
+-                                ^
+ SELECT xmlparse(content '<undefinedentity>&idontexist;</undefinedentity>');
+ ERROR:  invalid XML content
+ DETAIL:  line 1: Entity 'idontexist' not defined
+ <undefinedentity>&idontexist;</undefinedentity>
+                              ^
+-line 1: chunk is not well balanced
+-<undefinedentity>&idontexist;</undefinedentity>
+-                                               ^
+ SELECT xmlparse(content '<invalidns xmlns=''&lt;''/>');
+          xmlparse          
+ ---------------------------
+@@ -242,9 +236,6 @@ DETAIL:  line 1: Entity 'idontexist' not
+ line 1: Opening and ending tag mismatch: twoerrors line 1 and unbalanced
+ <twoerrors>&idontexist;</unbalanced>
+                                     ^
+-line 1: chunk is not well balanced
+-<twoerrors>&idontexist;</unbalanced>
+-                                    ^
+ SELECT xmlparse(content '<nosuchprefix:tag/>');
+       xmlparse       
+ ---------------------

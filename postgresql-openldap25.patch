@@ -1,0 +1,24 @@
+OpenLDAP 2.5+ merged libldap_r into libldap; configure aborts without it.
+Backport of upstream 3c612d9f6 (REL9_6_STABLE) / 53c38a086 (master).
+
+diff -urNp postgresql-9.3.25.orig/configure.in postgresql-9.3.25/configure.in
+--- postgresql-9.3.25.orig/configure.in
++++ postgresql-9.3.25/configure.in
+@@ -1636,11 +1636,13 @@ if test "$with_ldap" = yes ; then
+ 		 [$EXTRA_LDAP_LIBS])
+     LDAP_LIBS_BE="-lldap $EXTRA_LDAP_LIBS"
+     if test "$enable_thread_safety" = yes; then
+-      # on some platforms ldap_r fails to link without PTHREAD_LIBS
+-      AC_CHECK_LIB(ldap_r, ldap_simple_bind, [],
+-		   [AC_MSG_ERROR([library 'ldap_r' is required for LDAP])],
++      # Use ldap_r for FE if available, else assume ldap is thread-safe.
++      # On some platforms ldap_r fails to link without PTHREAD_LIBS.
++      LIBS="$_LIBS"
++      AC_CHECK_LIB(ldap_r, ldap_bind,
++		   [LDAP_LIBS_FE="-lldap_r $EXTRA_LDAP_LIBS"],
++		   [LDAP_LIBS_FE="-lldap $EXTRA_LDAP_LIBS"],
+ 		   [$PTHREAD_CFLAGS $PTHREAD_LIBS $EXTRA_LDAP_LIBS])
+-      LDAP_LIBS_FE="-lldap_r $EXTRA_LDAP_LIBS"
+     else
+       LDAP_LIBS_FE="-lldap $EXTRA_LDAP_LIBS"
+     fi

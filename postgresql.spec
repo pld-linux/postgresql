@@ -33,10 +33,10 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	%{mver}.25
-Release:	1
+Release:	2
 License:	BSD
 Group:		Applications/Databases
-Source0:	http://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
+Source0:	https://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
 # Source0-md5:	8a7c673ece44f6e3cd124676b704cc48
 Source1:	%{name}.init
 Source2:	pgsql-Database-HOWTO-html.tar.gz
@@ -54,6 +54,13 @@ Patch3:		%{name}-ac_version.patch
 Patch4:		%{name}-disable_horology_test.patch
 Patch5:		%{name}-heimdal.patch
 Patch6:		build.patch
+Patch7:		%{name}-openldap25.patch
+Patch8:		%{name}-libxml2-2.13-tests.patch
+Patch9:		%{name}-tls13-key-update.patch
+# Debian ELTS postgresql-9.4 backports
+Patch10:	%{name}-CVE-2021-23214.patch
+Patch11:	%{name}-CVE-2021-23222.patch
+Patch12:	%{name}-CVE-2024-10977.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -109,6 +116,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_pgsqldir	%{_datadir}/postgresql/extension
 
 %define		_ulibdir	/usr/lib
+
+# 9.3 sources predate C23 (typedef char bool)
+%define		specflags	-std=gnu17
 
 # omitted contribs:
 # dummy_seclabel, pg_test_fsync, spi, test_parser, worker_spi - examples/tests
@@ -785,6 +795,12 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch -P4 -p1
 %patch -P5 -p1
 %patch -P6 -p1
+%patch -P7 -p1
+%patch -P8 -p1
+%patch -P9 -p1
+%patch -P10 -p1
+%patch -P11 -p1
+%patch -P12 -p1
 
 # force rebuild of bison/flex files
 find src -name \*.l -o -name \*.y | xargs touch
