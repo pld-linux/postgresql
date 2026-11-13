@@ -1,0 +1,75 @@
+zlib >= 1.2.6 makes gzFile a struct pointer; pg_dump keeps gz handles in
+FILE * variables, which gcc 14+ rejects in C99 and later modes.
+
+--- postgresql-8.3.23.orig/src/bin/pg_dump/pg_backup_files.c
++++ postgresql-8.3.23/src/bin/pg_dump/pg_backup_files.c
+@@ -58,7 +58,7 @@ typedef struct
+ typedef struct
+ {
+ #ifdef HAVE_LIBZ
+-	gzFile	   *FH;
++	gzFile		FH;
+ #else
+ 	FILE	   *FH;
+ #endif
+@@ -290,27 +290,32 @@ _PrintFileData(ArchiveHandle *AH, char *
+ {
+ 	char		buf[4096];
+ 	size_t		cnt;
++#ifdef HAVE_LIBZ
++	gzFile		fh;
++#else
++	FILE	   *fh;
++#endif
+ 
+ 	if (!filename)
+ 		return;
+ 
+ #ifdef HAVE_LIBZ
+-	AH->FH = gzopen(filename, "rb");
++	fh = gzopen(filename, "rb");
+ #else
+-	AH->FH = fopen(filename, PG_BINARY_R);
++	fh = fopen(filename, PG_BINARY_R);
+ #endif
+ 
+-	if (AH->FH == NULL)
++	if (fh == NULL)
+ 		die_horribly(AH, modulename, "could not open input file \"%s\": %s\n",
+ 					 filename, strerror(errno));
+ 
+-	while ((cnt = GZREAD(buf, 1, 4095, AH->FH)) > 0)
++	while ((cnt = GZREAD(buf, 1, 4095, fh)) > 0)
+ 	{
+ 		buf[cnt] = '\0';
+ 		ahwrite(buf, 1, cnt, AH);
+ 	}
+ 
+-	if (GZCLOSE(AH->FH) != 0)
++	if (GZCLOSE(fh) != 0)
+ 		die_horribly(AH, modulename, "could not close data file after reading\n");
+ }
+ 
+--- postgresql-8.3.23.orig/src/bin/pg_dump/pg_backup_tar.c
++++ postgresql-8.3.23/src/bin/pg_dump/pg_backup_tar.c
+@@ -52,16 +52,13 @@ static void _EndBlobs(ArchiveHandle *AH,
+ #define K_STD_BUF_SIZE 1024
+ 
+ 
++typedef struct
++{
+ #ifdef HAVE_LIBZ
+- /* typedef gzFile	 ThingFile; */
+-typedef FILE ThingFile;
++	gzFile		zFH;
+ #else
+-typedef FILE ThingFile;
++	FILE	   *zFH;
+ #endif
+-
+-typedef struct
+-{
+-	ThingFile  *zFH;
+ 	FILE	   *nFH;
+ 	FILE	   *tarFH;
+ 	FILE	   *tmpFH;

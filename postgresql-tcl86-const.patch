@@ -1,0 +1,35 @@
+Tcl 8.6+ declares the notifier timer hooks with const Tcl_Time *, which
+gcc 14+ rejects as incompatible.  CONST86 as in upstream 9.x pltcl.c.
+
+--- postgresql-8.3.23.orig/src/pl/tcl/pltcl.c
++++ postgresql-8.3.23/src/pl/tcl/pltcl.c
+@@ -18,6 +18,11 @@
+ #define CONST84
+ #endif
+ 
++/* ... and for Tcl 8.6. */
++#ifndef CONST86
++#define CONST86
++#endif
++
+ #include "access/heapam.h"
+ #include "catalog/namespace.h"
+ #include "catalog/pg_proc.h"
+@@ -248,7 +253,7 @@ pltcl_FinalizeNotifier(ClientData client
+ }
+ 
+ static void
+-pltcl_SetTimer(Tcl_Time *timePtr)
++pltcl_SetTimer(CONST86 Tcl_Time *timePtr)
+ {
+ }
+ 
+@@ -274,7 +279,7 @@ pltcl_ServiceModeHook(int mode)
+ }
+ 
+ static int
+-pltcl_WaitForEvent(Tcl_Time *timePtr)
++pltcl_WaitForEvent(CONST86 Tcl_Time *timePtr)
+ {
+ 	return 0;
+ }

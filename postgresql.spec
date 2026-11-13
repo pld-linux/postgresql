@@ -21,7 +21,7 @@ Summary(uk.UTF-8):	PostgreSQL - система керування базами �
 Summary(zh_CN.UTF-8):	PostgreSQL 客户端程序和库文件
 Name:		postgresql
 Version:	8.3.23
-Release:	2
+Release:	3
 License:	BSD
 Group:		Applications/Databases
 Source0:	https://ftp.postgresql.org/pub/source/v%{version}/%{name}-%{version}.tar.bz2
@@ -41,6 +41,53 @@ Patch7:		%{name}-flexible-array-member.patch
 Patch8:		%{name}-format-security.patch
 Patch9:		%{name}-tests-tzdata.patch
 Patch10:	%{name}-openldap26.patch
+Patch11:	%{name}-zlib-gzfile.patch
+Patch12:	%{name}-tls13-key-update.patch
+Patch13:	%{name}-CVE-2021-23214.patch
+Patch14:	%{name}-CVE-2021-23222.patch
+Patch15:	%{name}-CVE-2024-10977.patch
+Patch16:	%{name}-tcl86-const.patch
+Patch17:	%{name}-configure-c99.patch
+Patch18:	%{name}-CVE-2013-1900.patch
+Patch19:	%{name}-CVE-2014-0060.patch
+Patch20:	%{name}-CVE-2014-0061.patch
+Patch21:	%{name}-CVE-2014-0063.patch
+Patch22:	%{name}-CVE-2014-0064.patch
+Patch23:	%{name}-CVE-2014-0065.patch
+Patch24:	%{name}-CVE-2015-0241.patch
+Patch25:	%{name}-CVE-2015-0243.patch
+Patch26:	%{name}-CVE-2015-0244.patch
+Patch27:	%{name}-CVE-2015-3165.patch
+Patch28:	%{name}-CVE-2016-0773.patch
+Patch29:	%{name}-CVE-2016-5423.patch
+Patch30:	%{name}-CVE-2017-7546.patch
+Patch31:	%{name}-CVE-2026-6478.patch
+Patch32:	%{name}-CVE-2026-6474.patch
+Patch33:	%{name}-CVE-2026-14680.patch
+Patch34:	%{name}-CVE-2021-32027.patch
+Patch35:	%{name}-CVE-2023-5869.patch
+Patch36:	%{name}-CVE-2026-14669.patch
+Patch37:	%{name}-CVE-2026-6473.patch
+Patch38:	%{name}-CVE-2026-116332.patch
+Patch39:	%{name}-CVE-2026-16239.patch
+Patch40:	%{name}-CVE-2020-25695.patch
+Patch41:	%{name}-CVE-2022-1552.patch
+Patch42:	%{name}-CVE-2026-116316.patch
+Patch43:	%{name}-CVE-2019-10208.patch
+Patch44:	%{name}-CVE-2023-2454.patch
+Patch45:	%{name}-CVE-2024-10979.patch
+Patch46:	%{name}-CVE-2026-116307.patch
+Patch47:	%{name}-CVE-2026-116319.patch
+Patch48:	%{name}-CVE-2026-116320.patch
+Patch49:	%{name}-CVE-2026-116323.patch
+Patch50:	%{name}-CVE-2026-116331.patch
+Patch51:	%{name}-CVE-2026-116335.patch
+Patch52:	%{name}-CVE-2026-2005.patch
+Patch53:	%{name}-CVE-2026-6477.patch
+Patch54:	%{name}-CVE-2016-5424.patch
+Patch55:	%{name}-CVE-2026-2006.patch
+Patch56:	%{name}-CVE-2014-0062.patch
+Patch57:	%{name}-CVE-2025-1094.patch
 URL:		http://www.postgresql.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -767,8 +814,59 @@ Różne moduły dołączone do PostgreSQL-a.
 %patch -P6 -p1
 %patch -P7 -p1
 %patch -P8 -p1
+# expected output differs with the tzdata version; pg_regress accepts either file
+for t in date timestamp timestamptz horology; do
+	cp -p src/test/regress/expected/$t.out src/test/regress/expected/${t}_1.out
+done
 %patch -P9 -p1
 %patch -P10 -p1
+%patch -P11 -p1
+%patch -P12 -p1
+%patch -P13 -p1
+%patch -P14 -p1
+%patch -P15 -p1
+%patch -P16 -p1
+%patch -P17 -p1
+%patch -P18 -p1
+%patch -P19 -p1
+%patch -P20 -p1
+%patch -P21 -p1
+%patch -P22 -p1
+%patch -P23 -p1
+%patch -P24 -p1
+%patch -P25 -p1
+%patch -P26 -p1
+%patch -P27 -p1
+%patch -P28 -p1
+%patch -P29 -p1
+%patch -P30 -p1
+%patch -P31 -p1
+%patch -P32 -p1
+%patch -P33 -p1
+%patch -P34 -p1
+%patch -P35 -p1
+%patch -P36 -p1
+%patch -P37 -p1
+%patch -P38 -p1
+%patch -P39 -p1
+%patch -P40 -p1
+%patch -P41 -p1
+%patch -P42 -p1
+%patch -P43 -p1
+%patch -P44 -p1
+%patch -P45 -p1
+%patch -P46 -p1
+%patch -P47 -p1
+%patch -P48 -p1
+%patch -P49 -p1
+%patch -P50 -p1
+%patch -P51 -p1
+%patch -P52 -p1
+%patch -P53 -p1
+%patch -P54 -p1
+%patch -P55 -p1
+%patch -P56 -p1
+%patch -P57 -p1
 
 tar xzf doc/man*.tar.gz
 
@@ -784,8 +882,9 @@ find src -name \*.l -o -name \*.y | xargs touch
 %build
 %{__aclocal} -I config
 %{__autoconf}
+# 8.3 sources predate C23 (typedef char bool)
 %configure \
-	CFLAGS="%{rpmcflags} -std=gnu89 -DNEED_REENTRANT_FUNCS" \
+	CFLAGS="%{rpmcflags} -std=gnu17 -DNEED_REENTRANT_FUNCS" \
 	%{?with_python:PYTHON=%{__python}} \
 	--disable-rpath \
 	--enable-depend \
@@ -808,7 +907,7 @@ find src -name \*.l -o -name \*.y | xargs touch
 %{__make}
 
 for mod in %{contrib_modules}; do \
-	flags="%{rpmcflags} -std=gnu89 -DNEED_REENTRANT_FUNCS"
+	flags="%{rpmcflags} -std=gnu17 -DNEED_REENTRANT_FUNCS"
 	if [ $mod = xml2 ]; then flags="$flags -I/usr/include/libxml2"; fi
 	%{__make} -C contrib/$mod CFLAGS="$flags"
 done

@@ -1,0 +1,37 @@
+configure probes with implicit int main() and undeclared exit()/atoi() fail
+to compile in C99 and later, silently undefining HAVE_LONG_INT_64 and
+HAVE_TZNAME (int4/int8 overflow checks vanish).
+
+diff -urp postgresql-8.3.23.orig/config/c-compiler.m4 postgresql-8.3.23/config/c-compiler.m4
+--- postgresql-8.3.23.orig/config/c-compiler.m4
++++ postgresql-8.3.23/config/c-compiler.m4
+@@ -26,7 +26,8 @@ AC_DEFUN([PGAC_TYPE_64BIT_INT],
+ define([Ac_cachevar], [translit([pgac_cv_type_$1_64], [ *], [_p])])dnl
+ AC_CACHE_CHECK([whether $1 is 64 bits], [Ac_cachevar],
+ [AC_TRY_RUN(
+-[typedef $1 ac_int64;
++[#include <stdlib.h>
++typedef $1 ac_int64;
+ 
+ /*
+  * These are globals to discourage the compiler from folding all the
+@@ -49,7 +50,7 @@ int does_int64_work()
+     return 0;
+   return 1;
+ }
+-main() {
++int main() {
+   exit(! does_int64_work());
+ }],
+ [Ac_cachevar=yes],
+diff -urp postgresql-8.3.23.orig/config/c-library.m4 postgresql-8.3.23/config/c-library.m4
+--- postgresql-8.3.23.orig/config/c-library.m4
++++ postgresql-8.3.23/config/c-library.m4
+@@ -42,6 +42,7 @@ fi
+ AC_CACHE_CHECK(for tzname, ac_cv_var_tzname,
+ [AC_TRY_LINK(
+ [#include <time.h>
++#include <stdlib.h>
+ #ifndef tzname /* For SGI.  */
+ extern char *tzname[]; /* RS6000 and others reject char **tzname.  */
+ #endif

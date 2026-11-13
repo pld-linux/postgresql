@@ -289,7 +289,7 @@
  		 * Disable OpenSSL's moving-write-buffer sanity check, because it
  		 * causes unnecessary failures in nonblocking send cases.
 --- postgresql-8.3.23.org/contrib/pgcrypto/openssl.c	2013-02-04 22:29:07.000000000 +0100
-+++ postgresql-8.3.23/contrib/pgcrypto/openssl.c	2026-08-07 13:04:29.264965533 +0200
++++ postgresql-8.3.23/contrib/pgcrypto/openssl.c	2026-11-13 15:18:08.222886091 +0100
 @@ -202,7 +202,7 @@ compat_find_digest(const char *name, PX_
  typedef struct OSSLDigest
  {
@@ -370,6 +370,15 @@
  
  	h = px_alloc(sizeof(*h));
  	h->result_size = digest_result_size;
+@@ -987,7 +992,7 @@ static void
+ init_openssl_rand(void)
+ {
+ 	if (RAND_get_rand_method() == NULL)
+-		RAND_set_rand_method(RAND_SSLeay());
++		RAND_set_rand_method(RAND_OpenSSL());
+ 	openssl_random_init = 1;
+ }
+ 
 --- postgresql-8.3.23.org/src/backend/utils/misc/postgresql.conf.sample	2026-08-07 13:17:13.876538497 +0200
 +++ postgresql-8.3.23/src/backend/utils/misc/postgresql.conf.sample	2026-08-07 13:01:31.906350315 +0200
 @@ -76,7 +76,9 @@

@@ -1,5 +1,8 @@
---- postgresql-8.3.23.org/src/test/regress/expected/date.out	2013-02-04 22:29:07.000000000 +0100
-+++ postgresql-8.3.23/src/test/regress/expected/date.out	2026-08-07 13:17:21.169682970 +0200
+Variant expected output for tzdata where PST8PDT links to America/Los_Angeles
+(LMT before 1883); applied to the *_1.out copies made in %prep.
+
+--- postgresql-8.3.23.org/src/test/regress/expected/date_1.out	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/test/regress/expected/date_1.out	2026-08-07 13:17:21.169682970 +0200
 @@ -1028,7 +1028,7 @@ SELECT DATE_TRUNC('MILLENNIUM', TIMESTAM
  SELECT DATE_TRUNC('MILLENNIUM', DATE '1970-03-20'); -- 1001-01-01
            date_trunc          
@@ -49,8 +52,8 @@
 + Mon Jan 01 00:00:00 0011 LMT BC
  (1 row)
  
---- postgresql-8.3.23.org/src/test/regress/expected/timestamp.out	2013-02-04 22:29:07.000000000 +0100
-+++ postgresql-8.3.23/src/test/regress/expected/timestamp.out	2026-08-07 13:17:21.169682970 +0200
+--- postgresql-8.3.23.org/src/test/regress/expected/timestamp_1.out	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/test/regress/expected/timestamp_1.out	2026-08-07 13:17:21.169682970 +0200
 @@ -1578,13 +1578,13 @@ SELECT '' AS to_char_11, to_char(d1, 'FM
  SELECT '' AS to_timestamp_1, to_timestamp('0097/Feb/16 --> 08:14:30', 'YYYY/Mon/DD --> HH:MI:SS');
   to_timestamp_1 |         to_timestamp         
@@ -76,8 +79,8 @@
  (1 row)
  
  SELECT '' AS to_timestamp_6, to_timestamp('15 "text between quote marks" 98 54 45', 
---- postgresql-8.3.23.org/src/test/regress/expected/timestamptz.out	2013-02-04 22:29:07.000000000 +0100
-+++ postgresql-8.3.23/src/test/regress/expected/timestamptz.out	2026-08-07 13:17:21.173016303 +0200
+--- postgresql-8.3.23.org/src/test/regress/expected/timestamptz_1.out	2013-02-04 22:29:07.000000000 +0100
++++ postgresql-8.3.23/src/test/regress/expected/timestamptz_1.out	2026-08-07 13:17:21.173016303 +0200
 @@ -260,13 +260,13 @@ SELECT '' AS "64", d1 FROM TIMESTAMPTZ_T
      | Fri Feb 14 17:32:01 1997 PST
      | Sat Feb 15 17:32:01 1997 PST
@@ -188,8 +191,8 @@
  (1 row)
  
  SELECT '' AS to_timestamp_6, to_timestamp('15 "text between quote marks" 98 54 45', 
---- postgresql-8.3.23.org/src/test/regress/expected/horology.out	2026-08-07 13:17:13.881466632 +0200
-+++ postgresql-8.3.23/src/test/regress/expected/horology.out	2026-08-07 13:17:21.173016303 +0200
+--- postgresql-8.3.23.org/src/test/regress/expected/horology_1.out	2026-08-07 13:17:13.881466632 +0200
++++ postgresql-8.3.23/src/test/regress/expected/horology_1.out	2026-08-07 13:17:21.173016303 +0200
 @@ -685,13 +685,13 @@ SELECT '' AS "64", d1 + interval '1 year
      | Sat Feb 14 17:32:01 1998 PST
      | Sun Feb 15 17:32:01 1998 PST
